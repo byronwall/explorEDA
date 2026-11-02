@@ -107,3 +107,7 @@ The catalogue is in priority order. IDs remain stable if a later authorized revi
 | 98       | [R075 — Explain the analytical consequences of a large applied edit](ideas/R075-applied-edit-explanations.md)                                                 | Inspection and provenance          | follow-up      |
 | 99       | [R014 — Select explicit edges without changing their accounting grain](ideas/R014-explicit-edge-selection.md)                                                 | Domain analysis                    | follow-up      |
 | 100      | [R021 — A gradient along a path that represents source values](ideas/R021-path-gradient-semantics.md)                                                         | Composed graphics                  | follow-up      |
+
+## Notebook definition navigation Design — 2026-11-02
+
+R066: Design complete, 16/20. Build the [reviewed plan](../notebook-definition-navigation/implementation-plan.md). [Summary](../../research/notebook-definition-design-2026-11-02/README.md) links all original assets. Rank remains unchanged; implementation is pending.

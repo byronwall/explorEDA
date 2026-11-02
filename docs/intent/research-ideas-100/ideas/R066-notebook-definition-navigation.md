@@ -4,7 +4,7 @@
 - Category: Notebooks and narrative
 - Priority: 83
 - Kind: new-direction
-- Status: candidate
+- Status: design-complete
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
@@ -25,3 +25,7 @@ Notebook-analysis delivered synchronized definitions and left broader reusable r
 - `packages/explorEDA/src/lib/notebook/compileNotebook.test.ts` — `shares definitions across blocks in any order`. Order-free definitions are a tested existing capability.
 - `docs/intent/notebook-analysis/intent-brief.md` — related intent; status and overlap are discussed above.
 - [Observable Framework: Reactivity](https://observablehq.github.io/framework/reactivity) — primary source accessed 2026-10-20; used only for the comparison described above.
+
+## Design result — 2026-11-02
+
+Build the [four-milestone plan](../../notebook-definition-navigation/implementation-plan.md): Definitions peek, keyed source and Return, consumers, and outline. [Summary](../../../research/notebook-definition-design-2026-11-02/README.md) and [original assets](../../notebook-definition-navigation/assets/pro-results/notebook-definition-design-2026-11-02/README.md). The earlier study/rejection gate does not govern this plan; DIRECTION makes Byron the demand. No feature is implemented.

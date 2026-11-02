@@ -2578,8 +2578,8 @@
     "path": "ideas/R066-notebook-definition-navigation.md",
     "priority": 83,
     "research_kind": "new-direction",
-    "status": "candidate",
-    "summary": "Compare inline definition links, a document outline, and authoring conventions for understanding shared notebook measures.",
+    "status": "design-complete",
+    "summary": "Build a Definitions inspector, keyed source and Return, exact consumers and a searchable outline.",
     "research_question": "What navigation exposes a chart’s defining block and other consumers with the least UI and compiler complexity?",
     "why_now": "The compiler already knows block ownership and definition names.",
     "repo_evidence": [
@@ -2599,11 +2599,14 @@
         "observation": "Order-free definitions are a tested existing capability."
       }
     ],
-    "related_intents": ["docs/intent/notebook-analysis/intent-brief.md"],
+    "related_intents": [
+      "docs/intent/notebook-analysis/intent-brief.md",
+      "docs/intent/notebook-definition-navigation/implementation-plan.md"
+    ],
     "dependencies": [],
-    "first_experiment": "Use a six-block notebook with forward references, aliases, shared calculations, and an unused definition in three navigation tasks.",
+    "first_experiment": "Implement M1 definition peek with compiler-owned references, docs and the six-block example.",
     "acceptance_evidence": "Readers locate the right definition, identify consumers, and return without inspecting generated settings.",
-    "rejection_signal": "A prose convention suffices or navigation requires a separate parser and dependency engine.",
+    "rejection_signal": "Do not add separate parsing, guessed identity or value-impact edges from chart aggregate to finding.",
     "confidence": "medium",
     "external_sources": ["https://observablehq.github.io/framework/reactivity"]
   },

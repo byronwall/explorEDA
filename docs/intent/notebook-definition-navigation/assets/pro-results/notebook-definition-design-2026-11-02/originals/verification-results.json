@@ -1,0 +1,471 @@
+{
+  "baseline": "d3920a285f3755a8324998775deb131747e959f5",
+  "researchDateLocal": "2026-11-01 America/Indianapolis",
+  "status": "Design complete; production feature not implemented",
+  "sourceAccess": {
+    "requiredCompleteFiles": 26,
+    "readCompleteFiles": 26,
+    "exactRefSupplementalAccess": "succeeded",
+    "baselineSourceModified": false
+  },
+  "originalSourceReplay": {
+    "baseline": "d3920a285f3755a8324998775deb131747e959f5",
+    "node": "v24.22.1",
+    "classification": "Executed original parser/lowerer modules and isolated source-function bodies. Not full compiler or application execution.",
+    "main": {
+      "blocks": 6,
+      "sheets": [
+        "results",
+        "definitions"
+      ],
+      "parseProblems": [],
+      "fenceIdsAcceptedButNotRetainedByBaseline": true,
+      "nestedLabelIdDiscardedByBaseline": true
+    },
+    "concreteSources": 24,
+    "compositionInstances": 8,
+    "cases": [
+      {
+        "id": "NDN-EC01",
+        "variant": null,
+        "blocks": 4,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC02",
+        "variant": null,
+        "blocks": 3,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC03",
+        "variant": null,
+        "blocks": 2,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC04",
+        "variant": "native",
+        "blocks": 2,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC04",
+        "variant": "alias-bracket",
+        "blocks": 2,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC04",
+        "variant": "literal",
+        "blocks": 1,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC05",
+        "variant": null,
+        "blocks": 4,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC06",
+        "variant": null,
+        "blocks": 3,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC07",
+        "variant": null,
+        "blocks": 3,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC08",
+        "variant": null,
+        "blocks": 2,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC09",
+        "variant": null,
+        "blocks": 1,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC10",
+        "variant": "invalid-filter",
+        "blocks": 1,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC10",
+        "variant": "optional-color-and-constant-size",
+        "blocks": 1,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC11",
+        "variant": null,
+        "blocks": 6,
+        "parseProblems": [],
+        "compositions": [
+          {
+            "id": "net-shape",
+            "structurallyValid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC12",
+        "variant": null,
+        "blocks": 6,
+        "parseProblems": [],
+        "compositions": [
+          {
+            "id": "net-shape",
+            "structurallyValid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC13",
+        "variant": null,
+        "blocks": 6,
+        "parseProblems": [],
+        "compositions": [
+          {
+            "id": "net-shape",
+            "structurallyValid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC14",
+        "variant": null,
+        "blocks": 6,
+        "parseProblems": [
+          "metric on line 2 has no closing }."
+        ],
+        "compositions": [
+          {
+            "id": "net-shape",
+            "structurallyValid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC15",
+        "variant": "no-alias-normalization",
+        "blocks": 2,
+        "parseProblems": [],
+        "compositions": [
+          {
+            "id": "shape",
+            "structurallyValid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC15",
+        "variant": "same-spelling-distinct-scope",
+        "blocks": 2,
+        "parseProblems": [],
+        "compositions": [
+          {
+            "id": "shape",
+            "structurallyValid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC16",
+        "variant": null,
+        "blocks": 1,
+        "parseProblems": [],
+        "compositions": [
+          {
+            "id": "shape",
+            "structurallyValid": true,
+            "problems": [
+              "missing is not a scale in this composition, so point \"Bad\" was left out."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC17",
+        "variant": null,
+        "blocks": 2,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC18",
+        "variant": null,
+        "blocks": 3,
+        "parseProblems": [],
+        "compositions": []
+      },
+      {
+        "id": "NDN-EC19",
+        "variant": null,
+        "blocks": 6,
+        "parseProblems": [],
+        "compositions": [
+          {
+            "id": "net-shape",
+            "structurallyValid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC20",
+        "variant": null,
+        "blocks": 3,
+        "parseProblems": [],
+        "compositions": []
+      }
+    ],
+    "isolatedFunctions": {
+      "aliasBare": "Revenue * 2",
+      "aliasBracketed": "[\"revenue\"] * 2",
+      "unknownField": "Unknown field: revenue",
+      "validationInput": "Hand-supplied literal Expression with parser-supported dependency shape; parseExpression was not run."
+    },
+    "notRun": [
+      "compileDocument",
+      "compileNotebook",
+      "parseExpression",
+      "calculation/finding evaluation",
+      "React/browser navigation",
+      "pnpm check",
+      "performance/usability measurements"
+    ]
+  },
+  "fixtureOracleCheck": {
+    "classification": "Executed fixture-oracle checks; no proposed feature implementation or browser behavior executed.",
+    "passed": true,
+    "assertions": 145,
+    "checks": [
+      "exact row arithmetic",
+      "main metric and finding = 125",
+      "composition all-row measure = 185",
+      "edited metric = 250, unchanged finding = 125",
+      "NAV-12 current-data fallback: West145/all205",
+      "EC20 population IDs",
+      "EC20 card250/selected75/eligible125/own30/unbound185",
+      "21 unique graph nodes",
+      "27 unique dependency edges",
+      "8 nondependency relations",
+      "known endpoints e01",
+      "known endpoints e02",
+      "known endpoints e03",
+      "known endpoints e04",
+      "known endpoints e05",
+      "known endpoints e06",
+      "known endpoints e07",
+      "known endpoints e08",
+      "known endpoints e09",
+      "known endpoints e10",
+      "known endpoints e11",
+      "known endpoints e12",
+      "known endpoints e13",
+      "known endpoints e14",
+      "known endpoints e15",
+      "known endpoints e16",
+      "known endpoints e17",
+      "known endpoints e18",
+      "known endpoints e19",
+      "known endpoints e20",
+      "known endpoints e21",
+      "known endpoints e22",
+      "known endpoints e23",
+      "known endpoints e24",
+      "known endpoints e25",
+      "known endpoints e26",
+      "known endpoints e27",
+      "net exact direct consumers",
+      "net exact transitive-only consumers",
+      "unused has zero consumers",
+      "chart binding is not a value edge",
+      "metric uses eligible population",
+      "stored query alias:revenue",
+      "stored query calc:gross",
+      "stored query calc:net",
+      "stored query calc:unused",
+      "stored query raw:Region",
+      "stored query chart:net-total",
+      "range text 0",
+      "range coordinate 0",
+      "range text 1",
+      "range coordinate 1",
+      "range text 2",
+      "range coordinate 2",
+      "range text 3",
+      "range coordinate 3",
+      "range text 4",
+      "range coordinate 4",
+      "range text 5",
+      "range coordinate 5",
+      "range text 6",
+      "range coordinate 6",
+      "range text 7",
+      "range coordinate 7",
+      "range text 8",
+      "range coordinate 8",
+      "range text 9",
+      "range coordinate 9",
+      "range text 10",
+      "range coordinate 10",
+      "range text 11",
+      "range coordinate 11",
+      "range text 12",
+      "range coordinate 12",
+      "range text 13",
+      "range coordinate 13",
+      "range text 14",
+      "range coordinate 14",
+      "range text 15",
+      "range coordinate 15",
+      "range text 16",
+      "range coordinate 16",
+      "range text 17",
+      "range coordinate 17",
+      "range text 18",
+      "range coordinate 18",
+      "range text 19",
+      "range coordinate 19",
+      "range text 20",
+      "range coordinate 20",
+      "range text 21",
+      "range coordinate 21",
+      "range text 22",
+      "range coordinate 22",
+      "range text 23",
+      "range coordinate 23",
+      "range text 24",
+      "range coordinate 24",
+      "range text 25",
+      "range coordinate 25",
+      "range text 26",
+      "range coordinate 26",
+      "range text 27",
+      "range coordinate 27",
+      "range text 28",
+      "range coordinate 28",
+      "range text 29",
+      "range coordinate 29",
+      "range text 30",
+      "range coordinate 30",
+      "range text 31",
+      "range coordinate 31",
+      "range text 32",
+      "range coordinate 32",
+      "range text 33",
+      "range coordinate 33",
+      "range text 34",
+      "range coordinate 34",
+      "range text 35",
+      "range coordinate 35",
+      "finding measure range selects field, not name/binding",
+      "24 unique NAV cases",
+      "20 unique compiler cases",
+      "24 concrete compiler sources",
+      "unique exact fixture edit NDN-EC11",
+      "unique exact fixture edit NDN-EC12",
+      "unique exact fixture edit NDN-EC13",
+      "unique exact fixture edit NDN-EC14",
+      "unique exact fixture edit NDN-EC19",
+      "20 stable recommendations",
+      "PNG signature responsive-mockups",
+      "image dimensions responsive-mockups",
+      "PNG signature definition-flow",
+      "image dimensions definition-flow",
+      "local link design-report.md -> recommendations.md",
+      "local link design-report.md -> six-block.eda.md",
+      "local link design-report.md -> fixture-data.json",
+      "local link design-report.md -> expected-graph.json",
+      "local link design-report.md -> edge-cases.json",
+      "local link design-report.md -> navigation-cases.json",
+      "local link design-report.md -> acceptance-spec.md",
+      "local link design-report.md -> implementation-plan.md",
+      "local link design-report.md -> verify-fixtures.py",
+      "local link acceptance-spec.md -> navigation-cases.json",
+      "local link recommendations.md -> implementation-plan.md"
+    ],
+    "sourceRangesChecked": 36,
+    "exactGraph": {
+      "nodes": 21,
+      "edges": 27,
+      "relations": 8
+    },
+    "images": {
+      "responsive-mockups": {
+        "width": 1440,
+        "height": 1770,
+        "svgWellFormed": true
+      },
+      "definition-flow": {
+        "width": 1280,
+        "height": 940,
+        "svgWellFormed": true
+      }
+    },
+    "notRun": [
+      "full compiler/calculation execution",
+      "React/browser navigation",
+      "UI accessibility conformance",
+      "performance/usability benchmarks"
+    ]
+  },
+  "visualReview": {
+    "method": "Rendered original SVGs to PNG with sharp; assistant inspected both PNGs for layout/readability.",
+    "classification": "Design-artifact QA only; no browser/application measurement",
+    "responsiveWidthsSpecified": [
+      1280,
+      783,
+      390
+    ]
+  },
+  "independentReview": {
+    "compilerSemantics": "completed",
+    "rendererIdentityFocus": "completed",
+    "primaryResearchConsistency": "completed",
+    "resolvedCorrections": [
+      "eligible-vs-selected metric population",
+      "source jump overlay focus handoff",
+      "known section return fallback",
+      "fixture-to-runtime metadata projection",
+      "provider-to-consumer direction"
+    ]
+  },
+  "notExecuted": [
+    "complete compileNotebook/compileDocument",
+    "parseExpression/calculation engine evaluation",
+    "React rendering of proposed feature",
+    "real browser navigation/focus/layout acceptance",
+    "pnpm check",
+    "performance or usability benchmarks"
+  ],
+  "replayInstructions": "See acceptance-spec.md and replay-source-checks.mjs. Source-derived expected edges and UI outcomes are acceptance contracts, not measured production behavior."
+}

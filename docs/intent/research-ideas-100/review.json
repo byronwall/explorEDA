@@ -391,9 +391,9 @@
   },
   {
     "id": "R066",
-    "disposition": "investigate",
-    "reason": "Compare inline definition links, a document outline, and authoring conventions for understanding shared notebook measures. Start with the bounded experiment; keep the current design if the rejection signal applies.",
-    "destination": "ideas/R066-notebook-definition-navigation.md"
+    "disposition": "build",
+    "reason": "Design completed 2026-11-02. Build the reviewed four-milestone plan; implementation approval remains separate.",
+    "destination": "../notebook-definition-navigation/implementation-plan.md"
   },
   {
     "id": "R067",

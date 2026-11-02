@@ -1,0 +1,1074 @@
+{
+  "status": "Proposed navigation contract; not emitted by baseline compiler",
+  "fixture": "six-block.eda.md",
+  "revision": "fixture-r1",
+  "sourceCoordinates": "0-based half-open UTF-16 offsets; 1-based line/column; LF text",
+  "direction": "provider -> consumer; containment, chart binding, and records links are separate nontraversable relations",
+  "scope": "Effective authored reference graph for this fixture at rest; static potential dependencies, not row lineage or execution history",
+  "nodes": [
+    {
+      "id": "rows:input",
+      "kind": "row-source",
+      "label": "Provided rows",
+      "state": "active",
+      "source": null
+    },
+    {
+      "id": "raw:Revenue",
+      "kind": "raw-field",
+      "label": "Revenue",
+      "state": "active",
+      "source": null
+    },
+    {
+      "id": "raw:Cost",
+      "kind": "raw-field",
+      "label": "Cost",
+      "state": "active",
+      "source": null
+    },
+    {
+      "id": "raw:Region",
+      "kind": "raw-field",
+      "label": "Region",
+      "state": "active",
+      "source": null
+    },
+    {
+      "id": "alias:revenue",
+      "kind": "alias",
+      "label": "revenue",
+      "state": "active",
+      "blockId": "revenue",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 290,
+        "end": 309,
+        "line": 17,
+        "column": 1,
+        "length": 19,
+        "text": "revenue:num=Revenue"
+      },
+      "canonicalField": "Revenue"
+    },
+    {
+      "id": "calc:gross",
+      "kind": "calculation",
+      "label": "gross",
+      "state": "active",
+      "blockId": "gross",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 341,
+        "end": 368,
+        "line": 23,
+        "column": 1,
+        "length": 27,
+        "text": "calc gross = revenue - Cost"
+      }
+    },
+    {
+      "id": "calc:net",
+      "kind": "calculation",
+      "label": "net",
+      "state": "active",
+      "blockId": "net",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 396,
+        "end": 418,
+        "line": 29,
+        "column": 1,
+        "length": 22,
+        "text": "calc net = gross * 0.5"
+      }
+    },
+    {
+      "id": "calc:unused",
+      "kind": "calculation",
+      "label": "unused",
+      "state": "active",
+      "blockId": "unused",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 452,
+        "end": 474,
+        "line": 35,
+        "column": 1,
+        "length": 22,
+        "text": "calc unused = Cost * 2"
+      }
+    },
+    {
+      "id": "population:net-total:eligible",
+      "kind": "population",
+      "label": "Net in West \u00b7 eligible rows",
+      "state": "active",
+      "blockId": "metric",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 114,
+        "end": 178,
+        "line": 8,
+        "column": 1,
+        "length": 64,
+        "text": "metric @net-total sum(net) where.Region=West title=\"Net in West\""
+      }
+    },
+    {
+      "id": "population:net-total:selected",
+      "kind": "population",
+      "label": "Net in West \u00b7 selected rows",
+      "state": "active",
+      "blockId": "metric",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 114,
+        "end": 178,
+        "line": 8,
+        "column": 1,
+        "length": 64,
+        "text": "metric @net-total sum(net) where.Region=West title=\"Net in West\""
+      }
+    },
+    {
+      "id": "chart:net-total",
+      "kind": "chart",
+      "label": "Net in West",
+      "state": "active",
+      "blockId": "metric",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 114,
+        "end": 178,
+        "line": 8,
+        "column": 1,
+        "length": 64,
+        "text": "metric @net-total sum(net) where.Region=West title=\"Net in West\""
+      },
+      "displayedOutput": true
+    },
+    {
+      "id": "finding:west-net",
+      "kind": "finding",
+      "label": "west-net",
+      "state": "active",
+      "blockId": "metric",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 179,
+        "end": 230,
+        "line": 9,
+        "column": 1,
+        "length": 51,
+        "text": "finding @west-net sum net chart=@net-total digits=2"
+      }
+    },
+    {
+      "id": "prose:west-summary",
+      "kind": "prose",
+      "label": "Net in West is \u2026",
+      "state": "active",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 28,
+        "end": 95,
+        "line": 5,
+        "column": 1,
+        "length": 67,
+        "text": "Net in West is **{{west-net}}**; [show records](#finding:west-net)."
+      },
+      "displayedOutput": true
+    },
+    {
+      "id": "population:net-shape",
+      "kind": "population",
+      "label": "Comparison \u00b7 input rows",
+      "state": "active",
+      "blockId": "composition",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 517,
+        "end": 562,
+        "line": 41,
+        "column": 1,
+        "length": 45,
+        "text": "composition @net-shape width=640 height=380 {"
+      }
+    },
+    {
+      "id": "part:net-shape:scale:revenue-scale",
+      "kind": "composition-scale",
+      "label": "revenue-scale",
+      "state": "active",
+      "blockId": "composition",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 563,
+        "end": 601,
+        "line": 42,
+        "column": 1,
+        "length": 38,
+        "text": "  scale numeric @revenue-scale Revenue"
+      }
+    },
+    {
+      "id": "part:net-shape:scale:net-scale",
+      "kind": "composition-scale",
+      "label": "net-scale",
+      "state": "active",
+      "blockId": "composition",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 602,
+        "end": 632,
+        "line": 43,
+        "column": 1,
+        "length": 30,
+        "text": "  scale numeric @net-scale net"
+      }
+    },
+    {
+      "id": "part:net-shape:measure:net-measure",
+      "kind": "composition-measure",
+      "label": "net-measure",
+      "state": "active",
+      "blockId": "composition",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 633,
+        "end": 681,
+        "line": 44,
+        "column": 1,
+        "length": 48,
+        "text": "  measure @net-measure sum(net) name=\"Net total\""
+      }
+    },
+    {
+      "id": "part:net-shape:unit:orders",
+      "kind": "composition-unit",
+      "label": "Orders",
+      "state": "active",
+      "blockId": "composition",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 682,
+        "end": 729,
+        "line": 45,
+        "column": 1,
+        "length": 47,
+        "text": "  unit @orders \"Orders\" at=48,48 size=480x280 {"
+      }
+    },
+    {
+      "id": "part:net-shape:unit:orders:label:0",
+      "kind": "composition-label",
+      "label": "Orders label",
+      "state": "active",
+      "blockId": "composition",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 730,
+        "end": 757,
+        "line": 46,
+        "column": 1,
+        "length": 27,
+        "text": "    label value=net-measure"
+      },
+      "identity": "revision-local occurrence; label has no retained baseline ID"
+    },
+    {
+      "id": "part:net-shape:unit:orders:mark:orders-points",
+      "kind": "composition-mark",
+      "label": "Orders points",
+      "state": "active",
+      "blockId": "composition",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 758,
+        "end": 835,
+        "line": 47,
+        "column": 1,
+        "length": 77,
+        "text": "    point @orders-points \"Orders\" x=revenue-scale y=net-scale sizeField=gross"
+      }
+    },
+    {
+      "id": "chart:net-shape",
+      "kind": "chart",
+      "label": "Comparison",
+      "state": "active",
+      "blockId": "composition",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 517,
+        "end": 562,
+        "line": 41,
+        "column": 1,
+        "length": 45,
+        "text": "composition @net-shape width=640 height=380 {"
+      },
+      "displayedOutput": true
+    }
+  ],
+  "edges": [
+    {
+      "id": "e01",
+      "from": "raw:Revenue",
+      "to": "alias:revenue",
+      "kind": "value",
+      "roles": [
+        "alias-target"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 302,
+          "end": 309,
+          "line": 17,
+          "column": 13,
+          "length": 7,
+          "text": "Revenue"
+        }
+      ]
+    },
+    {
+      "id": "e02",
+      "from": "alias:revenue",
+      "to": "calc:gross",
+      "kind": "value",
+      "roles": [
+        "formula-alias"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 354,
+          "end": 361,
+          "line": 23,
+          "column": 14,
+          "length": 7,
+          "text": "revenue"
+        }
+      ],
+      "canonicalField": "Revenue"
+    },
+    {
+      "id": "e03",
+      "from": "raw:Cost",
+      "to": "calc:gross",
+      "kind": "value",
+      "roles": [
+        "formula-input"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 364,
+          "end": 368,
+          "line": 23,
+          "column": 24,
+          "length": 4,
+          "text": "Cost"
+        }
+      ]
+    },
+    {
+      "id": "e04",
+      "from": "calc:gross",
+      "to": "calc:net",
+      "kind": "value",
+      "roles": [
+        "formula-input"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 407,
+          "end": 412,
+          "line": 29,
+          "column": 12,
+          "length": 5,
+          "text": "gross"
+        }
+      ]
+    },
+    {
+      "id": "e05",
+      "from": "raw:Cost",
+      "to": "calc:unused",
+      "kind": "value",
+      "roles": [
+        "formula-input"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 466,
+          "end": 470,
+          "line": 35,
+          "column": 15,
+          "length": 4,
+          "text": "Cost"
+        }
+      ]
+    },
+    {
+      "id": "e06",
+      "from": "rows:input",
+      "to": "population:net-total:eligible",
+      "kind": "population",
+      "roles": [
+        "source-population"
+      ],
+      "occurrences": [],
+      "generated": true
+    },
+    {
+      "id": "e07",
+      "from": "raw:Region",
+      "to": "population:net-total:eligible",
+      "kind": "population",
+      "roles": [
+        "local-filter"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 141,
+          "end": 158,
+          "line": 8,
+          "column": 28,
+          "length": 17,
+          "text": "where.Region=West"
+        }
+      ]
+    },
+    {
+      "id": "e08",
+      "from": "population:net-total:eligible",
+      "to": "population:net-total:selected",
+      "kind": "population",
+      "roles": [
+        "selection-base"
+      ],
+      "occurrences": [],
+      "generated": true
+    },
+    {
+      "id": "e09",
+      "from": "population:net-total:eligible",
+      "to": "chart:net-total",
+      "kind": "population",
+      "roles": [
+        "chart-population"
+      ],
+      "occurrences": [],
+      "generated": true
+    },
+    {
+      "id": "e10",
+      "from": "calc:net",
+      "to": "chart:net-total",
+      "kind": "value",
+      "roles": [
+        "metric-measure"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 132,
+          "end": 140,
+          "line": 8,
+          "column": 19,
+          "length": 8,
+          "text": "sum(net)"
+        }
+      ]
+    },
+    {
+      "id": "e11",
+      "from": "population:net-total:selected",
+      "to": "finding:west-net",
+      "kind": "population",
+      "roles": [
+        "finding-selected-population"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 205,
+          "end": 221,
+          "line": 9,
+          "column": 27,
+          "length": 16,
+          "text": "chart=@net-total"
+        }
+      ]
+    },
+    {
+      "id": "e12",
+      "from": "calc:net",
+      "to": "finding:west-net",
+      "kind": "value",
+      "roles": [
+        "finding-measure"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 201,
+          "end": 204,
+          "line": 9,
+          "column": 23,
+          "length": 3,
+          "text": "net"
+        }
+      ]
+    },
+    {
+      "id": "e13",
+      "from": "finding:west-net",
+      "to": "prose:west-summary",
+      "kind": "prose-value",
+      "roles": [
+        "finding-value"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 45,
+          "end": 57,
+          "line": 5,
+          "column": 18,
+          "length": 12,
+          "text": "{{west-net}}"
+        }
+      ]
+    },
+    {
+      "id": "e14",
+      "from": "rows:input",
+      "to": "population:net-shape",
+      "kind": "population",
+      "roles": [
+        "source-population"
+      ],
+      "occurrences": [],
+      "generated": true
+    },
+    {
+      "id": "e15",
+      "from": "raw:Revenue",
+      "to": "part:net-shape:scale:revenue-scale",
+      "kind": "value",
+      "roles": [
+        "scale-field"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 594,
+          "end": 601,
+          "line": 42,
+          "column": 32,
+          "length": 7,
+          "text": "Revenue"
+        }
+      ]
+    },
+    {
+      "id": "e16",
+      "from": "calc:net",
+      "to": "part:net-shape:scale:net-scale",
+      "kind": "value",
+      "roles": [
+        "scale-field"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 629,
+          "end": 632,
+          "line": 43,
+          "column": 28,
+          "length": 3,
+          "text": "net"
+        }
+      ]
+    },
+    {
+      "id": "e17",
+      "from": "calc:net",
+      "to": "part:net-shape:measure:net-measure",
+      "kind": "value",
+      "roles": [
+        "measure-field"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 656,
+          "end": 664,
+          "line": 44,
+          "column": 24,
+          "length": 8,
+          "text": "sum(net)"
+        }
+      ]
+    },
+    {
+      "id": "e18",
+      "from": "population:net-shape",
+      "to": "part:net-shape:measure:net-measure",
+      "kind": "population",
+      "roles": [
+        "measure-population"
+      ],
+      "occurrences": [],
+      "generated": true
+    },
+    {
+      "id": "e19",
+      "from": "part:net-shape:measure:net-measure",
+      "to": "part:net-shape:unit:orders:label:0",
+      "kind": "value",
+      "roles": [
+        "label-value"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 740,
+          "end": 757,
+          "line": 46,
+          "column": 11,
+          "length": 17,
+          "text": "value=net-measure"
+        }
+      ]
+    },
+    {
+      "id": "e20",
+      "from": "part:net-shape:scale:revenue-scale",
+      "to": "part:net-shape:unit:orders:mark:orders-points",
+      "kind": "value",
+      "roles": [
+        "x-scale"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 792,
+          "end": 807,
+          "line": 47,
+          "column": 35,
+          "length": 15,
+          "text": "x=revenue-scale"
+        }
+      ]
+    },
+    {
+      "id": "e21",
+      "from": "part:net-shape:scale:net-scale",
+      "to": "part:net-shape:unit:orders:mark:orders-points",
+      "kind": "value",
+      "roles": [
+        "y-scale"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 808,
+          "end": 819,
+          "line": 47,
+          "column": 51,
+          "length": 11,
+          "text": "y=net-scale"
+        }
+      ]
+    },
+    {
+      "id": "e22",
+      "from": "calc:gross",
+      "to": "part:net-shape:unit:orders:mark:orders-points",
+      "kind": "value",
+      "roles": [
+        "size-field"
+      ],
+      "occurrences": [
+        {
+          "revision": "fixture-r1",
+          "origin": "current",
+          "start": 820,
+          "end": 835,
+          "line": 47,
+          "column": 63,
+          "length": 15,
+          "text": "sizeField=gross"
+        }
+      ]
+    },
+    {
+      "id": "e23",
+      "from": "population:net-shape",
+      "to": "part:net-shape:unit:orders:mark:orders-points",
+      "kind": "population",
+      "roles": [
+        "mark-population"
+      ],
+      "occurrences": [],
+      "generated": true
+    },
+    {
+      "id": "e24",
+      "from": "part:net-shape:unit:orders",
+      "to": "part:net-shape:unit:orders:mark:orders-points",
+      "kind": "presentation",
+      "roles": [
+        "coordinate-space"
+      ],
+      "occurrences": [],
+      "generated": true
+    },
+    {
+      "id": "e25",
+      "from": "part:net-shape:unit:orders",
+      "to": "part:net-shape:unit:orders:label:0",
+      "kind": "presentation",
+      "roles": [
+        "coordinate-space"
+      ],
+      "occurrences": [],
+      "generated": true
+    },
+    {
+      "id": "e26",
+      "from": "part:net-shape:unit:orders:mark:orders-points",
+      "to": "chart:net-shape",
+      "kind": "render",
+      "roles": [
+        "rendered-mark"
+      ],
+      "occurrences": [],
+      "generated": true
+    },
+    {
+      "id": "e27",
+      "from": "part:net-shape:unit:orders:label:0",
+      "to": "chart:net-shape",
+      "kind": "render",
+      "roles": [
+        "rendered-label"
+      ],
+      "occurrences": [],
+      "generated": true
+    }
+  ],
+  "relations": [
+    {
+      "from": "chart:net-total",
+      "to": "finding:west-net",
+      "kind": "chart-binding",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 205,
+        "end": 221,
+        "line": 9,
+        "column": 27,
+        "length": 16,
+        "text": "chart=@net-total"
+      },
+      "traversable": false,
+      "reason": "Finding reads chart population, never chart aggregate value."
+    },
+    {
+      "from": "finding:west-net",
+      "to": "prose:west-summary",
+      "kind": "records-link",
+      "source": {
+        "revision": "fixture-r1",
+        "origin": "current",
+        "start": 61,
+        "end": 94,
+        "line": 5,
+        "column": 34,
+        "length": 33,
+        "text": "[show records](#finding:west-net)"
+      },
+      "traversable": false,
+      "reason": "Navigation reference; show in References, never infer a displayed numeric value from link text."
+    },
+    {
+      "from": "chart:net-shape",
+      "to": "part:net-shape:scale:revenue-scale",
+      "kind": "contains",
+      "traversable": false
+    },
+    {
+      "from": "chart:net-shape",
+      "to": "part:net-shape:scale:net-scale",
+      "kind": "contains",
+      "traversable": false
+    },
+    {
+      "from": "chart:net-shape",
+      "to": "part:net-shape:measure:net-measure",
+      "kind": "contains",
+      "traversable": false
+    },
+    {
+      "from": "chart:net-shape",
+      "to": "part:net-shape:unit:orders",
+      "kind": "contains",
+      "traversable": false
+    },
+    {
+      "from": "chart:net-shape",
+      "to": "part:net-shape:unit:orders:label:0",
+      "kind": "contains",
+      "traversable": false
+    },
+    {
+      "from": "chart:net-shape",
+      "to": "part:net-shape:unit:orders:mark:orders-points",
+      "kind": "contains",
+      "traversable": false
+    }
+  ],
+  "canonicalCalculationReads": {
+    "gross": [
+      "Cost",
+      "Revenue"
+    ],
+    "net": [
+      "gross"
+    ],
+    "unused": [
+      "Cost"
+    ]
+  },
+  "queries": {
+    "alias:revenue": {
+      "directConsumers": [
+        "calc:gross"
+      ],
+      "transitiveOnlyConsumers": [
+        "calc:net",
+        "chart:net-shape",
+        "chart:net-total",
+        "finding:west-net",
+        "part:net-shape:measure:net-measure",
+        "part:net-shape:scale:net-scale",
+        "part:net-shape:unit:orders:label:0",
+        "part:net-shape:unit:orders:mark:orders-points",
+        "prose:west-summary"
+      ],
+      "displayedOutputs": [
+        "chart:net-shape",
+        "chart:net-total",
+        "prose:west-summary"
+      ]
+    },
+    "calc:gross": {
+      "directConsumers": [
+        "calc:net",
+        "part:net-shape:unit:orders:mark:orders-points"
+      ],
+      "transitiveOnlyConsumers": [
+        "chart:net-shape",
+        "chart:net-total",
+        "finding:west-net",
+        "part:net-shape:measure:net-measure",
+        "part:net-shape:scale:net-scale",
+        "part:net-shape:unit:orders:label:0",
+        "prose:west-summary"
+      ],
+      "displayedOutputs": [
+        "chart:net-shape",
+        "chart:net-total",
+        "prose:west-summary"
+      ]
+    },
+    "calc:net": {
+      "directConsumers": [
+        "chart:net-total",
+        "finding:west-net",
+        "part:net-shape:measure:net-measure",
+        "part:net-shape:scale:net-scale"
+      ],
+      "transitiveOnlyConsumers": [
+        "chart:net-shape",
+        "part:net-shape:unit:orders:label:0",
+        "part:net-shape:unit:orders:mark:orders-points",
+        "prose:west-summary"
+      ],
+      "displayedOutputs": [
+        "chart:net-shape",
+        "chart:net-total",
+        "prose:west-summary"
+      ]
+    },
+    "calc:unused": {
+      "directConsumers": [],
+      "transitiveOnlyConsumers": [],
+      "displayedOutputs": []
+    },
+    "raw:Region": {
+      "directConsumers": [
+        "population:net-total:eligible"
+      ],
+      "transitiveOnlyConsumers": [
+        "chart:net-total",
+        "finding:west-net",
+        "population:net-total:selected",
+        "prose:west-summary"
+      ],
+      "displayedOutputs": [
+        "chart:net-total",
+        "prose:west-summary"
+      ]
+    },
+    "chart:net-total": {
+      "directConsumers": [],
+      "transitiveOnlyConsumers": [],
+      "displayedOutputs": []
+    }
+  },
+  "values": {
+    "gross": [
+      60,
+      120,
+      90,
+      100
+    ],
+    "net": [
+      30,
+      60,
+      45,
+      50
+    ],
+    "unused": [
+      80,
+      160,
+      120,
+      40
+    ],
+    "metricNetTotal": 125,
+    "findingWestNet": 125,
+    "compositionNetMeasure": 185,
+    "westRowOrdinals": [
+      0,
+      2,
+      3
+    ]
+  },
+  "liveMeasureDrift": {
+    "edit": "metric @net-total sum(gross) where.Region=West",
+    "replaceEdge": {
+      "from": "calc:net",
+      "to": "chart:net-total",
+      "withFrom": "calc:gross"
+    },
+    "metricValue": 250,
+    "findingValue": 125,
+    "bindingRelationIsNotAValueEdge": true
+  },
+  "unusedDefinitionIds": [
+    "calc:unused"
+  ],
+  "blockLocations": [
+    {
+      "id": "metric",
+      "index": 0,
+      "fenceLine": 7,
+      "startLine": 8,
+      "endLine": 9,
+      "closeLine": 10
+    },
+    {
+      "id": "revenue",
+      "index": 1,
+      "fenceLine": 16,
+      "startLine": 17,
+      "endLine": 17,
+      "closeLine": 18
+    },
+    {
+      "id": "gross",
+      "index": 2,
+      "fenceLine": 22,
+      "startLine": 23,
+      "endLine": 23,
+      "closeLine": 24
+    },
+    {
+      "id": "net",
+      "index": 3,
+      "fenceLine": 28,
+      "startLine": 29,
+      "endLine": 29,
+      "closeLine": 30
+    },
+    {
+      "id": "unused",
+      "index": 4,
+      "fenceLine": 34,
+      "startLine": 35,
+      "endLine": 35,
+      "closeLine": 36
+    },
+    {
+      "id": "composition",
+      "index": 5,
+      "fenceLine": 40,
+      "startLine": 41,
+      "endLine": 49,
+      "closeLine": 50
+    }
+  ],
+  "sheets": [
+    {
+      "id": "results",
+      "line": 1
+    },
+    {
+      "id": "definitions",
+      "line": 12
+    }
+  ]
+}
