@@ -1,0 +1,235 @@
+{
+  "description": "Exact independent arithmetic expectations for orders.json. Product integration and browser acceptance remain to be run by Codex.",
+  "identity": {
+    "businessKey": "order_id",
+    "sourceRowId": "Zero-based array position in this unchanged orders.json; do not persist it across data replacement.",
+    "rowGrain": "One synthetic order",
+    "measure": "revenue",
+    "unit": "USD",
+    "missingOrderIds": ["O04"],
+    "invalidOrderIds": ["O08"],
+    "validZeroOrderIds": ["O07"]
+  },
+  "populations": {
+    "all": {
+      "sourceRowIds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "orderIds": ["O01", "O02", "O03", "O04", "O05", "O06", "O07", "O08", "O09", "O10", "O11", "O12"],
+      "count": 12,
+      "validOrderIds": ["O01", "O02", "O03", "O05", "O06", "O07", "O09", "O10", "O11", "O12"],
+      "excludedOrderIds": ["O04", "O08"],
+      "validCount": 10,
+      "numericState": "value",
+      "sum": 3900,
+      "mean": 390
+    },
+    "active": {
+      "sourceRowIds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "orderIds": ["O01", "O02", "O03", "O04", "O05", "O06", "O07", "O08", "O09", "O10"],
+      "count": 10,
+      "validOrderIds": ["O01", "O02", "O03", "O05", "O06", "O07", "O09", "O10"],
+      "excludedOrderIds": ["O04", "O08"],
+      "validCount": 8,
+      "numericState": "value",
+      "sum": 1900,
+      "mean": 237.5
+    },
+    "inactive": {
+      "sourceRowIds": [10, 11],
+      "orderIds": ["O11", "O12"],
+      "count": 2,
+      "validOrderIds": ["O11", "O12"],
+      "excludedOrderIds": [],
+      "validCount": 2,
+      "numericState": "value",
+      "sum": 2000,
+      "mean": 1000
+    },
+    "eastActive": {
+      "sourceRowIds": [0, 1, 2, 3],
+      "orderIds": ["O01", "O02", "O03", "O04"],
+      "count": 4,
+      "validOrderIds": ["O01", "O02", "O03"],
+      "excludedOrderIds": ["O04"],
+      "validCount": 3,
+      "numericState": "value",
+      "sum": 600,
+      "mean": 200
+    },
+    "westActive": {
+      "sourceRowIds": [4, 5, 6],
+      "orderIds": ["O05", "O06", "O07"],
+      "count": 3,
+      "validOrderIds": ["O05", "O06", "O07"],
+      "excludedOrderIds": [],
+      "validCount": 3,
+      "numericState": "value",
+      "sum": 900,
+      "mean": 300
+    },
+    "northActive": {
+      "sourceRowIds": [7, 8, 9],
+      "orderIds": ["O08", "O09", "O10"],
+      "count": 3,
+      "validOrderIds": ["O09", "O10"],
+      "excludedOrderIds": ["O08"],
+      "validCount": 2,
+      "numericState": "value",
+      "sum": 400,
+      "mean": 200
+    },
+    "webActive": {
+      "sourceRowIds": [0, 2, 4, 6, 7],
+      "orderIds": ["O01", "O03", "O05", "O07", "O08"],
+      "count": 5,
+      "validOrderIds": ["O01", "O03", "O05", "O07"],
+      "excludedOrderIds": ["O08"],
+      "validCount": 4,
+      "numericState": "value",
+      "sum": 800,
+      "mean": 200
+    },
+    "storeActive": {
+      "sourceRowIds": [1, 3, 5, 8, 9],
+      "orderIds": ["O02", "O04", "O06", "O09", "O10"],
+      "count": 5,
+      "validOrderIds": ["O02", "O06", "O09", "O10"],
+      "excludedOrderIds": ["O04"],
+      "validCount": 4,
+      "numericState": "value",
+      "sum": 1100,
+      "mean": 275
+    },
+    "eastWebActive": {
+      "sourceRowIds": [0, 2],
+      "orderIds": ["O01", "O03"],
+      "count": 2,
+      "validOrderIds": ["O01", "O03"],
+      "excludedOrderIds": [],
+      "validCount": 2,
+      "numericState": "value",
+      "sum": 400,
+      "mean": 200
+    },
+    "eastStoreActive": {
+      "sourceRowIds": [1, 3],
+      "orderIds": ["O02", "O04"],
+      "count": 2,
+      "validOrderIds": ["O02"],
+      "excludedOrderIds": ["O04"],
+      "validCount": 1,
+      "numericState": "value",
+      "sum": 200,
+      "mean": 200
+    },
+    "westWebActive": {
+      "sourceRowIds": [4, 6],
+      "orderIds": ["O05", "O07"],
+      "count": 2,
+      "validOrderIds": ["O05", "O07"],
+      "excludedOrderIds": [],
+      "validCount": 2,
+      "numericState": "value",
+      "sum": 400,
+      "mean": 200
+    },
+    "invalidOnly": {
+      "sourceRowIds": [7],
+      "orderIds": ["O08"],
+      "count": 1,
+      "validOrderIds": [],
+      "excludedOrderIds": ["O08"],
+      "validCount": 0,
+      "numericState": "invalid",
+      "sum": null,
+      "mean": null
+    },
+    "missingOnly": {
+      "sourceRowIds": [3],
+      "orderIds": ["O04"],
+      "count": 1,
+      "validOrderIds": [],
+      "excludedOrderIds": ["O04"],
+      "validCount": 0,
+      "numericState": "invalid",
+      "sum": null,
+      "mean": null
+    },
+    "zeroOnly": {
+      "sourceRowIds": [6],
+      "orderIds": ["O07"],
+      "count": 1,
+      "validOrderIds": ["O07"],
+      "excludedOrderIds": [],
+      "validCount": 1,
+      "numericState": "value",
+      "sum": 0,
+      "mean": 0
+    },
+    "empty": {
+      "sourceRowIds": [],
+      "orderIds": [],
+      "count": 0,
+      "validOrderIds": [],
+      "excludedOrderIds": [],
+      "validCount": 0,
+      "numericState": "empty",
+      "sum": null,
+      "mean": null
+    }
+  },
+  "dashboard": {
+    "workspaceFilter": { "active": true },
+    "initial": { "sourceCount": 12, "workspaceCount": 10, "selectedCount": 10, "selectedPopulation": "active" },
+    "regionEast": {
+      "sourceCount": 12,
+      "workspaceCount": 10,
+      "selectedCount": 4,
+      "selectedPopulation": "eastActive",
+      "regionsChart": { "eligiblePopulation": "active", "eligibleCount": 10, "selectedPopulation": "eastActive", "selectedCount": 4 },
+      "channelsChart": { "eligiblePopulation": "eastActive", "eligibleCount": 4, "selectedPopulation": "eastActive", "selectedCount": 4 },
+      "webOnlyMetric": { "localFilter": { "channel": "Web" }, "eligiblePopulation": "eastWebActive", "eligibleCount": 2, "selectedCount": 2, "validCount": 2, "mean": 200 }
+    },
+    "regionEastAndChannelWeb": {
+      "sourceCount": 12,
+      "workspaceCount": 10,
+      "selectedCount": 2,
+      "selectedPopulation": "eastWebActive",
+      "regionsChart": { "eligiblePopulation": "webActive", "eligibleCount": 5, "selectedPopulation": "eastWebActive", "selectedCount": 2 },
+      "channelsChart": { "eligiblePopulation": "eastActive", "eligibleCount": 4, "selectedPopulation": "eastWebActive", "selectedCount": 2 },
+      "tableSearchO03": { "evidenceBaseCount": 2, "matchingCount": 1, "orderIds": ["O03"], "globalSelectedCountAfterSearch": 2 }
+    }
+  },
+  "notebook": {
+    "sheets": ["regions", "channels-and-data-quality"],
+    "sourceCount": 12,
+    "ownerLocalFilter": { "active": true },
+    "initial": { "n": 10, "eligible": 10, "mean-revenue": 237.5, "total-revenue": 1900, "share": "100.0%", "all": 12, "channel-gap": -75 },
+    "regionEast": { "n": 4, "eligible": 10, "mean-revenue": 200, "total-revenue": 600, "share": "40.0%", "all": 12, "channel-gap": 0, "recordsPopulation": "eastActive" },
+    "channelWebWhileRegionEast": { "channel-n": 5, "channel-eligible": 10, "channel-mean": 200, "regionNUnchanged": 4, "regionMeanUnchanged": 200, "channelRecordsPopulation": "webActive" },
+    "returnToRegions": { "n": 4, "eligible": 10, "mean-revenue": 200, "total-revenue": 600, "share": "40.0%" },
+    "additionalWorkspaceRegionWest": { "regionSelectedCount": 0, "regionEligibleCount": 3, "regionAverageState": "empty", "channelSelectedCount": 2, "channelEligibleCount": 3, "chartlessAllCount": 12 },
+    "fixedAuthorClaim": { "scope": "active=true, no chart selection", "eastCount": 4, "eligibleCount": 10, "share": "40%", "changesAfterSelection": false }
+  },
+  "comparisonAndFailureCases": {
+    "eastShareOfActive": { "part": "eastActive", "whole": "active", "numerator": 4, "denominator": 10, "formattedOneDigit": "40.0%" },
+    "eastShareOfSource": { "part": "eastActive", "whole": "all", "numerator": 4, "denominator": 12, "formattedOneDigit": "33.3%" },
+    "webMinusStoreActive": { "from": 200, "minus": 275, "value": -75, "formattedTwoDigits": "−75.00" },
+    "webMinusStoreWithinEast": { "from": 200, "minus": 200, "value": 0, "formattedTwoDigits": "0.00" },
+    "outsideShare": { "part": "eastActive", "whole": "webActive", "outsideOrderIds": ["O02", "O04"], "unavailable": "outside", "text": "not part of its whole" },
+    "emptyCount": { "value": 0, "text": "0" },
+    "emptyAverage": { "unavailable": "empty", "text": "no rows", "population": "empty" },
+    "invalidAverage": { "unavailable": "invalid", "text": "no valid values", "population": "invalidOnly" },
+    "zeroAverage": { "value": 0, "text": "0.00", "population": "zeroOnly" },
+    "missingFinding": { "lookupId": "not-declared", "unavailable": "missing", "text": "unknown finding", "ids": [] },
+    "emptyWholeShare": { "part": "empty", "whole": "empty", "unavailable": "empty", "text": "no rows" }
+  },
+  "productAcceptanceOnly": {
+    "widthsCssPixels": [1280, 783, 390],
+    "sheetChange": "Switching sheets preserves chart-owned selections; the returning region count is 4, never 2 or 5.",
+    "scopeChangeWhileEvidenceOpen": "Close the revision-bound evidence, explain that its inputs changed, and restore focus to a valid origin or fallback.",
+    "dataReplacement": "Reverse the source array in a new data prop. Business keys retain meaning, but old zero-based row IDs must not be reused. O01 moves from source row 0 to 11; O03 moves from 2 to 9.",
+    "missingFinding": "Exercise findingFor or a deliberately undeclared prose token in a test; do not add it to the primary notebook example.",
+    "outsideShare": "Use two chartless count findings: active East as part and active Web as whole. Reject the share because O02 and O04 are outside the whole.",
+    "performedByOracle": false
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "description": "Design fixture, not a SavedDataStructure. Chart settings must be built with baseline factories or DSL in the full checkout. Layouts are exact saved grid units.",
+  "data": "orders.json",
+  "columnCount": 12,
+  "rowHeight": 80,
+  "containerPadding": 12,
+  "workspaceFilter": { "active": true },
+  "declaredNumericFields": ["revenue", "units"],
+  "storedChartArray": [
+    { "id": "trend", "type": "scatter", "title": "Order units and revenue", "fields": { "x": "units", "y": "revenue" }, "layout": { "x": 0, "y": 6, "w": 6, "h": 4 } },
+    { "id": "rows", "type": "data-table", "title": "Selected order records", "fields": ["order_id", "region", "channel", "revenue", "units", "active"], "layout": { "x": 6, "y": 6, "w": 6, "h": 4 } },
+    { "id": "revenue", "type": "metric-card", "title": "Selected revenue", "aggregation": "sum", "field": "revenue", "layout": { "x": 8, "y": 0, "w": 4, "h": 2 } },
+    { "id": "regions", "type": "row", "title": "Active orders by region", "field": "region", "layout": { "x": 0, "y": 0, "w": 4, "h": 6 } },
+    { "id": "channels", "type": "row", "title": "Orders by channel", "field": "channel", "layout": { "x": 4, "y": 2, "w": 8, "h": 4 } },
+    { "id": "orders", "type": "metric-card", "title": "Selected orders", "aggregation": "count", "layout": { "x": 4, "y": 0, "w": 4, "h": 2 } }
+  ],
+  "expectedFallbackOrder": ["regions", "orders", "revenue", "channels", "trend", "rows"],
+  "expectedBaselineTwoColumnPlacement": {
+    "regions": { "x": 0, "y": 0, "w": 1 },
+    "orders": { "x": 1, "y": 0, "w": 1 },
+    "revenue": { "x": 1, "y": 2, "w": 1 },
+    "channels": { "x": 0, "y": 6, "w": 2 },
+    "trend": { "x": 0, "y": 10, "w": 1 },
+    "rows": { "x": 1, "y": 10, "w": 1 }
+  },
+  "proposedReading": {
+    "version": 1,
+    "groups": [
+      { "id": "population", "title": "Population and selected totals", "chartIds": ["regions", "orders", "revenue"] },
+      { "id": "mix", "title": "Channel mix and order values", "chartIds": ["channels", "trend"] },
+      { "id": "records", "title": "Supporting records", "chartIds": ["rows"] }
+    ]
+  },
+  "proposedAuthoredOrderVariant": {
+    "version": 1,
+    "groups": [
+      { "id": "totals", "title": "Selected totals", "chartIds": ["orders", "revenue"] },
+      { "id": "population", "title": "Population and channels", "chartIds": ["regions", "channels"] },
+      { "id": "detail", "title": "Values and exact records", "chartIds": ["trend", "rows"] }
+    ]
+  },
+  "averageEvidenceVariant": {
+    "description": "Change only the existing revenue card to average revenue, with no chart-local filter. This is the M2 four-candidate evidence state, distinct from the Web-restricted variant below.",
+    "chartId": "revenue",
+    "aggregation": "average",
+    "localFilter": null,
+    "expectedAfterEastSelection": { "candidateOrderIds": ["O01", "O02", "O03", "O04"], "includedOrderIds": ["O01", "O02", "O03"], "excludedOrderIds": ["O04"], "count": 4, "sum": 600, "mean": 200, "globalSelectedCount": 4 }
+  },
+  "localFilterVariant": {
+    "description": "Change only the existing revenue card to average revenue with local channel=Web. It is still a six-chart fixture; this is a separate test state.",
+    "chartId": "revenue",
+    "aggregation": "average",
+    "localFilter": { "channel": "Web" },
+    "expectedAfterEastSelection": { "candidateOrderIds": ["O01", "O03"], "count": 2, "mean": 200, "globalSelectedCount": 4 }
+  }
+}

@@ -1,0 +1,14 @@
+[
+  { "order_id": "O01", "region": "East", "channel": "Web", "active": true, "revenue": 100, "units": 1 },
+  { "order_id": "O02", "region": "East", "channel": "Store", "active": true, "revenue": 200, "units": 2 },
+  { "order_id": "O03", "region": "East", "channel": "Web", "active": true, "revenue": 300, "units": 3 },
+  { "order_id": "O04", "region": "East", "channel": "Store", "active": true, "revenue": null, "units": 4 },
+  { "order_id": "O05", "region": "West", "channel": "Web", "active": true, "revenue": 400, "units": 4 },
+  { "order_id": "O06", "region": "West", "channel": "Store", "active": true, "revenue": 500, "units": 5 },
+  { "order_id": "O07", "region": "West", "channel": "Web", "active": true, "revenue": 0, "units": 1 },
+  { "order_id": "O08", "region": "North", "channel": "Web", "active": true, "revenue": "bad", "units": 2 },
+  { "order_id": "O09", "region": "North", "channel": "Store", "active": true, "revenue": 150, "units": 1 },
+  { "order_id": "O10", "region": "North", "channel": "Store", "active": true, "revenue": 250, "units": 2 },
+  { "order_id": "O11", "region": "East", "channel": "Web", "active": false, "revenue": 900, "units": 9 },
+  { "order_id": "O12", "region": "West", "channel": "Store", "active": false, "revenue": 1100, "units": 11 }
+]
