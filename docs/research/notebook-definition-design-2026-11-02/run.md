@@ -1,6 +1,6 @@
 # Notebook definition navigation Design
 
-Phase: integrated; PR pending. Follow-ups: 0/1.
+Phase: complete. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA
 Baseline: `d3920a285f3755a8324998775deb131747e959f5`. Branch: `codex/notebook-definition-design-2026-11-02`.
@@ -36,3 +36,11 @@ Pro complete after 29m 36s. No follow-up. Downloaded existing notebook-definitio
 Current main unchanged. Local decisions check compiler, duplicate calculations, aliases, source editing, controlled sheets, host memory callers and finding populations. M2 includes App/ProjectWorkspace/readNotebook memory migration. NDN01–13 Build;14–15 Explore;16 Defer;17–20 Avoid. No feature implementation approval inferred.
 
 Locally authored temporary probe: main fixture and 24 variants, 25 tests pass for applicable chart/calculation/status assertions; existing compiler/sheets/findings 29 tests pass, total54. Initial probe property error corrected from name to resultColumnName. Probe moved to ignored tmp. Pro145 assertions are attributed, not rerun. No graph-feature/browser/performance acceptance. Full check not required for docs-only PR.
+
+## Complete
+
+Verified OPEN https://github.com/byronwall/explorEDA/pull/590, main ← codex/notebook-definition-design-2026-11-02. Saved body and all28 PR files verified, including16 exact original assets. Integration831d1be9 pushed; PR attached to this chat. Documentation label applied; codex/codex-automation labels are unavailable.
+
+Docs3files74tests pass with existing React act warnings. Authored Prettier,130 relative links, byte inventory, whitespace and PR checks pass. Full check skipped for documentation only. Collector deletion confirmed deleteStatus=deleted. Parent supported view and saved configuration confirm ACTIVE every six hours, GPT6.1Sol Medium. No implementation, merge, deploy or paid service. Stop for review.
+
+Completed 2026-11-02T04:55:03.306133+00:00.
