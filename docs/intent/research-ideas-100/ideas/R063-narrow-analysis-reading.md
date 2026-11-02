@@ -4,7 +4,7 @@
 - Category: Accessibility and interaction
 - Priority: 86
 - Kind: follow-up
-- Status: candidate
+- Status: design complete; implementation pending
 - Confidence: medium
 - Baseline: `9b16d78e3ed0742ed4d5858c1939fec9e758b510`
 
@@ -24,3 +24,7 @@ This follows the existing UI defaults and the completed landing-docs-entry work,
 - `packages/explorEDA/src/components/chartGridPlacement.ts` — `NARROW_GRID_WIDTH`, `narrowColumnCount`, `flowTwoColumns`. One- and two-column narrow placement rules are explicit.
 - `apps/demo/src/docs/live/LiveExample.tsx` — `LiveExample`, `useWideViewport`. Documentation switches to screenshots at narrow widths.
 - `docs/intent/landing-docs-entry/intent-brief.md` — related intent; status and overlap are discussed above.
+
+## Design result — 2026-11-02
+
+Design16/20. Build the [ordered-reader plan](../../narrow-analysis-reading/implementation-plan.md). [Summary](../../../research/narrow-reading-design-2026-11-02/README.md) links all original results. The older demand and keep-current gates above are superseded by DIRECTION. Rank stays unchanged.

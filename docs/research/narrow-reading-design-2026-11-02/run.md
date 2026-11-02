@@ -1,6 +1,6 @@
 # Narrow analytical reading Design
 
-Phase: prepared. Follow-ups: 0/1.
+Phase: integrated; PR pending. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA
 Baseline: `d3920a285f3755a8324998775deb131747e959f5`.
@@ -30,3 +30,11 @@ Submitted 2026-11-02 08:54 UTC. Chrome byroni.us; Chat mode Pro effort5/5 verifi
 Collector: `collect-exploreda-narrow-reading-design`, ACTIVE hourly minute56, attached to this chat. First intended eligible check 2026-11-02 09:56 UTC; no browser inspection before09:54UTC. Supported create/view verified. Parent remains ACTIVE every six hours GPT6.1SolMedium. Collector owns collection, integration, verified PR and its deletion. Plan, summary, assets and PR pending; no preparation-only PR.
 
 Docs checks: 3 files,74 tests pass with existing React act warnings. Authored Prettier and whitespace pass. Both Git identities verified Byron Wall <byron@byroni.us>. Docs only; no full check or changeset needed. No feature or browser acceptance claimed. Standing upload approval applied; no download or rejection. Initial sandbox network failed; approved network refreshed main and open PRs. Initial home opened Work mode, then switched to Chat and verified Pro before sending. No substitute model used for submission.
+
+## Collected and reviewed
+
+Pro finished in29m39s. No follow-up. Existing ZIP downloaded from the recorded conversation under direct human standing approval. All12 unique safe entries passed traversal/symlink/size/CRC checks. All originals preserved byte-for-byte with linked index. ZIP/input packet remain ignored. Reports, type sketch, fixtures and scripts inspected; PNG viewed and SVG parsed. No downloaded program execution or Library upload.
+
+Current main unchanged. Decisive checks and local corrections are in intent decisions.md. BuildNAR01–16, Explore17–18, Defer19, Avoid20. Plan and summary written at recorded targets; R063/catalogue updated without rank change. Local probe18tests plus existing14tests pass, including native compiler, all15 numerical populations, owner-local notebook values, linked eligibility5/4 and six exact placements. Initial probe wrongly expected no compiler diagnostics; corrected to two deliberate Wholesale warnings. Probe moved to ignoredtmp. Browser/provider/focus/paging/feature acceptance remains unperformed.
+
+Integration checks: docs3files74tests pass with existing React act warnings. Authored Prettier,74 local links, whitespace, and12 ZIP/disk byte comparisons pass. An initial formatting invocation included .prettierignore, which has no parser; the corrected authored-Markdown check passes. Full pnpm check and changeset skipped for docs only. No original program executed.

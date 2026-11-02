@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1080" viewBox="0 0 1280 1080" role="img" aria-label="Proposed narrow notebook reader and exact-record evidence view. East selects four of ten active orders. Three revenue values total 600 and average 200; O04 is excluded because revenue is missing.">
+  <defs>
+    <style>
+      text { font-family: 'DejaVu Sans', sans-serif; fill: #172033; }
+      .muted { fill: #5c687a; }
+      .small { font-size: 12px; }
+      .body { font-size: 14px; }
+      .label { font-size: 13px; }
+      .strong { font-weight: 700; }
+      .accent { fill: #1d4ed8; }
+      .line { stroke: #d8dee8; stroke-width: 1; }
+      .mono { font-family: 'DejaVu Sans Mono', monospace; }
+    </style>
+  </defs>
+  <rect width="1280" height="1080" fill="#f3f5f8"/>
+  <text x="32" y="49" font-size="29" class="strong">Read the claim. Check the exact inputs. Return.</text>
+  <text x="32" y="78" font-size="15" class="muted">Design proposal · 390px reading surfaces · deterministic fixture values · not application screenshots</text>
+  <text x="32" y="124" font-size="16" class="strong">01  Notebook reader</text>
+  <text x="454" y="124" font-size="16" class="strong">02  Evidence excursion</text>
+
+  <rect x="32" y="144" width="390" height="864" rx="12" fill="#ffffff" stroke="#c4cedc"/>
+  <text x="52" y="176" class="small muted">ORDERS / READER</text>
+  <text x="52" y="204" font-size="22" class="strong">Regions</text>
+  <text x="52" y="238" class="body strong accent">Regions</text>
+  <text x="152" y="238" class="body muted">Channels and data quality</text>
+  <line x1="52" y1="250" x2="402" y2="250" class="line"/>
+  <line x1="52" y1="250" x2="119" y2="250" stroke="#2563eb" stroke-width="3"/>
+
+  <rect x="52" y="271" width="350" height="89" rx="5" fill="#f7f9fc" stroke="#d8dee8"/>
+  <text x="64" y="293" class="small strong muted">AUTHOR’S NOTE · ALL ACTIVE ORDERS</text>
+  <text x="64" y="318" class="body">East accounts for 4 of 10 active orders</text>
+  <text x="64" y="342" class="body">(40%). <tspan fill="#1d4ed8">Show the claim’s records</tspan></text>
+
+  <text x="52" y="390" font-size="17" class="strong">4 of 10 active orders selected</text>
+  <text x="52" y="419" font-size="18">Average revenue <tspan class="strong">$200.00</tspan></text>
+  <text x="52" y="443" class="body muted">3 valid values · 1 excluded input</text>
+  <rect x="52" y="458" width="236" height="40" rx="5" fill="#edf3ff" stroke="#adc2ee"/>
+  <text x="66" y="483" class="body strong accent">Show average’s records →</text>
+
+  <rect x="48" y="519" width="358" height="279" rx="6" fill="#ffffff" stroke="#d8dee8"/>
+  <text x="62" y="547" font-size="16" class="strong">Active orders by region</text>
+  <rect x="62" y="561" width="100" height="36" rx="4" fill="#ffffff" stroke="#c7d0df"/>
+  <text x="78" y="584" class="label">Records</text>
+  <rect x="172" y="561" width="116" height="36" rx="4" fill="#ffffff" stroke="#c7d0df"/>
+  <text x="187" y="584" class="label">Selection</text>
+  <text x="62" y="633" class="body strong">East</text>
+  <rect x="126" y="615" width="218" height="25" rx="2" fill="#2563eb"/>
+  <text x="359" y="633" class="body strong">4</text>
+  <text x="62" y="679" class="body muted">West</text>
+  <rect x="126" y="661" width="164" height="25" rx="2" fill="#c7d5ed"/>
+  <text x="305" y="679" class="body muted">3</text>
+  <text x="62" y="725" class="body muted">North</text>
+  <rect x="126" y="707" width="164" height="25" rx="2" fill="#c7d5ed"/>
+  <text x="305" y="725" class="body muted">3</text>
+  <line x1="62" y1="751" x2="391" y2="751" class="line"/>
+  <text x="62" y="776" class="small muted">4 selected · 10 eligible for Regions</text>
+
+  <text x="52" y="830" class="label muted">Source: synthetic orders, 2 November 2026.</text>
+  <text x="52" y="852" class="label muted">One row per order. Revenue in USD.</text>
+  <text x="52" y="874" class="label muted">O04 has missing revenue; O08 is invalid.</text>
+  <text x="52" y="910" class="body accent">Web − Store average: $0.00 · Records</text>
+  <rect x="33" y="940" width="388" height="67" rx="0" fill="#f7f9fc"/>
+  <line x1="33" y1="940" x2="421" y2="940" class="line"/>
+  <text x="52" y="966" class="body strong">Regions · 4 of 10 selected</text>
+  <text x="52" y="990" class="small muted">12 source rows · This chart: Active = true</text>
+
+  <rect x="454" y="144" width="390" height="864" rx="12" fill="#ffffff" stroke="#c4cedc"/>
+  <text x="474" y="178" class="body strong accent">← Back to finding</text>
+  <line x1="474" y1="195" x2="824" y2="195" class="line"/>
+  <text x="474" y="228" font-size="21" class="strong">Average revenue</text>
+  <text x="474" y="274" font-size="34" class="strong">$200.00</text>
+  <text x="474" y="303" class="body">Regions · Active orders · East selected</text>
+  <text x="474" y="329" class="body strong">4 inputs · 3 used · 1 excluded</text>
+  <text x="474" y="353" class="body muted">600 ÷ 3 valid revenue values</text>
+
+  <rect x="474" y="374" width="98" height="40" rx="4" fill="#e8efff" stroke="#a9bfe8"/>
+  <text x="492" y="399" class="label strong accent">All (4)</text>
+  <rect x="580" y="374" width="115" height="40" rx="4" fill="#ffffff" stroke="#c7d0df"/>
+  <text x="594" y="399" class="label">Included (3)</text>
+  <rect x="703" y="374" width="121" height="40" rx="4" fill="#ffffff" stroke="#c7d0df"/>
+  <text x="717" y="399" class="label">Excluded (1)</text>
+  <rect x="474" y="430" width="350" height="40" rx="4" fill="#ffffff" stroke="#aebccc"/>
+  <text x="488" y="455" class="body muted">Search these 4 records</text>
+
+  <rect x="474" y="488" width="350" height="265" rx="4" fill="#ffffff" stroke="#d8dee8"/>
+  <rect x="475" y="489" width="348" height="39" fill="#f3f5f8"/>
+  <text x="486" y="514" class="label strong">Order / row</text>
+  <text x="685" y="514" class="label strong" text-anchor="end">Raw USD</text>
+  <text x="711" y="514" class="label strong">Used</text>
+  <line x1="475" y1="528" x2="823" y2="528" class="line"/>
+  <text x="486" y="551" class="body strong">O01</text>
+  <text x="486" y="571" class="small muted">Source row 0</text>
+  <text x="685" y="561" class="body mono" text-anchor="end">100</text>
+  <text x="711" y="561" class="body">Yes</text>
+  <line x1="475" y1="584" x2="823" y2="584" class="line"/>
+  <text x="486" y="607" class="body strong">O02</text>
+  <text x="486" y="627" class="small muted">Source row 1</text>
+  <text x="685" y="617" class="body mono" text-anchor="end">200</text>
+  <text x="711" y="617" class="body">Yes</text>
+  <line x1="475" y1="640" x2="823" y2="640" class="line"/>
+  <text x="486" y="663" class="body strong">O03</text>
+  <text x="486" y="683" class="small muted">Source row 2</text>
+  <text x="685" y="673" class="body mono" text-anchor="end">300</text>
+  <text x="711" y="673" class="body">Yes</text>
+  <line x1="475" y1="696" x2="823" y2="696" class="line"/>
+  <rect x="475" y="697" width="348" height="55" fill="#fff8ec"/>
+  <text x="486" y="719" class="body strong">O04</text>
+  <text x="486" y="739" class="small muted">Source row 3</text>
+  <text x="685" y="729" class="body mono muted" text-anchor="end">null</text>
+  <text x="711" y="719" class="label">No</text>
+  <text x="711" y="739" class="small muted">Missing</text>
+  <text x="474" y="781" class="label muted">Showing 4 of 4 inputs</text>
+  <text x="474" y="816" class="body">Search changes this table only.</text>
+  <text x="474" y="840" class="body muted">The finding still uses the same inputs.</text>
+  <text x="474" y="879" class="label accent">Open a row for all source fields</text>
+  <rect x="455" y="940" width="388" height="67" fill="#f7f9fc"/>
+  <line x1="455" y1="940" x2="843" y2="940" class="line"/>
+  <text x="474" y="968" class="body strong">Evidence for Regions</text>
+  <text x="474" y="991" class="small muted">East selection · Active = true · 12 source</text>
+
+  <text x="882" y="178" font-size="20" class="strong">Meaning stays attached</text>
+  <rect x="882" y="200" width="366" height="3" fill="#2563eb"/>
+  <text x="882" y="241" class="small strong accent">01 / TWO CLAIM SCOPES</text>
+  <text x="882" y="269" class="body">The author’s note names its population.</text>
+  <text x="882" y="292" class="body">The live value follows Regions only.</text>
+  <text x="882" y="315" class="body">Their evidence links remain distinct.</text>
+  <text x="882" y="370" class="small strong accent">02 / COMPLETE INPUTS</text>
+  <text x="882" y="398" class="body">Four selected orders are still four rows.</text>
+  <text x="882" y="421" class="body">Three numeric values determine $200.</text>
+  <text x="882" y="444" class="body">O04 remains visible with its exclusion.</text>
+  <text x="882" y="499" class="small strong accent">03 / TOUCH AND KEYBOARD</text>
+  <text x="882" y="527" class="body">A visible header action opens objects.</text>
+  <text x="882" y="550" class="body">A prose link opens its finding directly.</text>
+  <text x="882" y="573" class="body">No Inspect button is added to a mark.</text>
+  <text x="882" y="628" class="small strong accent">04 / SAME ANALYTICAL STATE</text>
+  <text x="882" y="656" class="body">Evidence search and paging stay local.</text>
+  <text x="882" y="679" class="body">Input revisions invalidate stale records.</text>
+  <text x="882" y="702" class="body">Back restores focus and reading position.</text>
+  <text x="882" y="757" class="small strong accent">05 / EXISTING BUILDING BLOCKS</text>
+  <text x="882" y="785" class="body">Reuse chart panels and trace plans.</text>
+  <text x="882" y="808" class="body">Reuse 50-row contributor pagination.</text>
+  <text x="882" y="831" class="body">Keep desktop chart rectangles unchanged.</text>
+  <rect x="882" y="881" width="366" height="126" rx="6" fill="#e9eef7"/>
+  <text x="898" y="907" class="small strong muted">SCHEMATIC, NOT A RENDERER TEST</text>
+  <text x="898" y="935" class="body">The values are independently checked.</text>
+  <text x="898" y="958" class="body">Layout, touch, keyboard, and focus still</text>
+  <text x="898" y="981" class="body">require the plan’s real-browser checks.</text>
+  <text x="32" y="1052" class="small muted">explorEDA narrow analytical reading · Design companion · baseline d3920a2 · 2 November 2026</text>
+</svg>
