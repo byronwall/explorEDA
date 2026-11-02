@@ -1,0 +1,22 @@
+[
+  {
+    "Revenue": 100,
+    "Cost": 40,
+    "Region": "West"
+  },
+  {
+    "Revenue": 200,
+    "Cost": 80,
+    "Region": "East"
+  },
+  {
+    "Revenue": 150,
+    "Cost": 60,
+    "Region": "West"
+  },
+  {
+    "Revenue": 120,
+    "Cost": 20,
+    "Region": "West"
+  }
+]

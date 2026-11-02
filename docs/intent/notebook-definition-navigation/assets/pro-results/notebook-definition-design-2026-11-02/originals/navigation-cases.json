@@ -1,0 +1,838 @@
+{
+  "format": "notebook-definition-navigation-acceptance-v1",
+  "status": "PROPOSED_ACCEPTANCE_NOT_EXECUTED",
+  "baseline": "d3920a285f3755a8324998775deb131747e959f5",
+  "scope": "Declarative acceptance inputs and exact expected outcomes for the proposed navigation capability. This file is not a production implementation, browser trace, or assertion that these controls already exist.",
+  "mainFixture": "six-block.eda.md",
+  "mainFixtureSourceDuringDesign": "work/compiler-six-block.eda.md",
+  "identityContract": {
+    "memory": "createNotebookMemory(\"notebook-nav-six-block\")",
+    "componentProp": "memory: MutableRefObject<NotebookMemory>",
+    "migration": "Replace lastValid in one coordinated migration; do not keep an ordinal compatibility adapter.",
+    "documentKey": "notebook-nav-six-block",
+    "initialRevision": "r0",
+    "fenceIds": [
+      "metric",
+      "revenue",
+      "gross",
+      "net",
+      "unused",
+      "composition"
+    ],
+    "sheetIdsAtR0": [
+      "results",
+      "definitions"
+    ],
+    "sourceTargetExample": {
+      "revision": "r0",
+      "blockId": "net",
+      "kind": "calculation",
+      "name": "net"
+    },
+    "sourceCoordinates": "Offsets and line/column ranges are valid only in their stated accepted revision; recalculate them after edits.",
+    "anonymousCompositionLabel": "revision-scoped label occurrence 1 under explicit unit @orders inside explicit composition @net-shape; no stable label ID is asserted",
+    "duplicateAuthoredBlockId": "Both conflicting occurrences lose authored identity; give each a distinct revision-scoped identity and refuse ambiguous fallback/return relocation.",
+    "symbolNameRule": "A namespace/name is a lookup key. It does not prove historical identity after an unknown external rename or deletion."
+  },
+  "dataAtR0": [
+    {
+      "Revenue": 100,
+      "Cost": 40,
+      "Region": "West"
+    },
+    {
+      "Revenue": 200,
+      "Cost": 80,
+      "Region": "East"
+    },
+    {
+      "Revenue": 150,
+      "Cost": 60,
+      "Region": "West"
+    },
+    {
+      "Revenue": 120,
+      "Cost": 20,
+      "Region": "West"
+    }
+  ],
+  "arithmeticOracle": {
+    "grossByRow": [
+      60,
+      120,
+      90,
+      100
+    ],
+    "netByRow": [
+      30,
+      60,
+      45,
+      50
+    ],
+    "unusedByRow": [
+      80,
+      160,
+      120,
+      40
+    ],
+    "westGross": 250,
+    "westNet": 125,
+    "allNet": 185,
+    "findingWestNetText": "125.00",
+    "qualification": "Arithmetic expectations are fixture oracles. The proposed UI cases below were not executed."
+  },
+  "testHarnessConventions": {
+    "semanticFocusTargets": "Names below identify proposed semantic actions/anchors, not existing CSS selectors.",
+    "geometry": "When a case specifies a pixel offset, inject that anchor geometry in the navigation test harness. It is an input and expected restoration target, not a measured browser result.",
+    "defaultSourceMode": "Source read-only: no onTextChange. Chart settings may still change on this page.",
+    "defaultSheetMode": "Uncontrolled unless a case explicitly supplies sheet.",
+    "defaultLayout": "column",
+    "nativeKeys": "Do not intercept browser Alt+ArrowLeft. Do not add a global shortcut."
+  },
+  "cases": [
+    {
+      "id": "NAV-01",
+      "name": "Chart to a later definition on another sheet, then return",
+      "given": {
+        "sheet": "results",
+        "origin": "chart @net-total Definitions action",
+        "originViewportTopPx": 144,
+        "returnDepth": 0
+      },
+      "actions": [
+        "Open Definitions for @net-total",
+        "Choose calculation net",
+        "Activate Go to source",
+        "After target mount, activate Return to Net in West"
+      ],
+      "expected": {
+        "preview": {
+          "sheet": "results",
+          "documentScrollCalls": 0,
+          "returnDepth": 0,
+          "targetSource": "calc net = gross * 0.5"
+        },
+        "sourceNavigation": {
+          "sheet": "definitions",
+          "blockId": "net",
+          "sourceKind": "current",
+          "focus": "definition heading for calculation net",
+          "returnDepth": 1
+        },
+        "return": {
+          "sheet": "results",
+          "focus": "chart @net-total Definitions action",
+          "originViewportTopPx": 144,
+          "returnDepth": 0
+        },
+        "sheetRequests": [
+          "definitions",
+          "results"
+        ],
+        "dataOrFilterMutations": 0
+      },
+      "protects": [
+        "first use before definition",
+        "cross-sheet source ownership",
+        "logical return after origin DOM unmount"
+      ]
+    },
+    {
+      "id": "NAV-02",
+      "name": "Inspector drill-down does not create page history",
+      "given": {
+        "sheet": "results",
+        "origin": "chart @net-total Definitions action",
+        "returnDepth": 0
+      },
+      "actions": [
+        "Open net preview",
+        "Choose input gross",
+        "Choose input alias revenue",
+        "Choose input raw field Revenue",
+        "Activate inspector Back",
+        "Press Escape"
+      ],
+      "expected": {
+        "inspectorTargetsInOrder": [
+          "calculation net",
+          "calculation gross",
+          "alias revenue",
+          "raw field Revenue",
+          "alias revenue"
+        ],
+        "rawFieldHasNotebookDeclaration": false,
+        "sheet": "results",
+        "documentScrollCalls": 0,
+        "returnDepthAtEveryStep": 0,
+        "finalFocus": "chart @net-total Definitions action",
+        "inspectorOpen": false
+      }
+    },
+    {
+      "id": "NAV-03",
+      "name": "Two real source moves unwind in reverse order",
+      "given": {
+        "sheet": "results",
+        "returnDepth": 0
+      },
+      "actions": [
+        "Go from @net-total to calculation net",
+        "Go from calculation net to calculation gross",
+        "Activate Return",
+        "Activate Return"
+      ],
+      "expected": {
+        "committedDestinations": [
+          "definitions / net / calculation net",
+          "definitions / gross / calculation gross"
+        ],
+        "depthAfterMoves": [
+          1,
+          2
+        ],
+        "returnTargets": [
+          "definitions / net / calculation net",
+          "results / metric / chart @net-total Definitions action"
+        ],
+        "depthAfterReturns": [
+          1,
+          0
+        ],
+        "browserHistoryWrites": 0
+      }
+    },
+    {
+      "id": "NAV-04",
+      "name": "Known local declaration rename preserves its occurrence, not old uses",
+      "given": {
+        "sheet": "definitions",
+        "openInspectorTarget": "calculation net",
+        "revision": "r0"
+      },
+      "edit": {
+        "kind": "known local replacement",
+        "blockId": "net",
+        "before": "calc net = gross * 0.5",
+        "after": "calc net_v2 = gross * 0.5",
+        "acceptedRevision": "r1",
+        "rewriteConsumers": false
+      },
+      "expected": {
+        "blockId": "net",
+        "inspectorTargetAfterAcceptedEdit": "calculation net_v2",
+        "occurrenceRemap": "known declaration edit",
+        "oldNameLookup": "missing",
+        "oldConsumers": "Their authored references still name net; preserve compiler unresolved-reference diagnostics and do not silently bind them to net_v2.",
+        "sourceTargetRevision": "r1",
+        "automaticRefactorEdits": 0,
+        "oldRangeUsedForSelection": false
+      }
+    },
+    {
+      "id": "NAV-05",
+      "name": "Return after origin chart was deleted",
+      "given": {
+        "currentSheet": "definitions",
+        "currentTarget": "calculation net",
+        "returnOrigin": "results / metric / chart @net-total Definitions action",
+        "returnDepth": 1
+      },
+      "edit": {
+        "kind": "known local replacement",
+        "blockId": "metric",
+        "removeLinesStartingWith": [
+          "metric @net-total",
+          "finding @west-net"
+        ],
+        "acceptedRevision": "r1"
+      },
+      "actions": [
+        "Activate Return"
+      ],
+      "expected": {
+        "sheet": "results",
+        "focus": "West summary section heading on Results",
+        "returnDepth": 0,
+        "announcement": "The original chart was removed. Returned to West summary in Results.",
+        "focusByOldBlockOrdinal": false,
+        "focusDetachedElement": false
+      }
+    },
+    {
+      "id": "NAV-06",
+      "name": "Unknown external rename is not inferred from location",
+      "given": {
+        "revision": "r0",
+        "openInspectorTarget": "calculation net",
+        "pendingNavigation": null
+      },
+      "edit": {
+        "kind": "arbitrary whole-text replacement",
+        "before": "calc net = gross * 0.5",
+        "after": "calc retained = gross * 0.5",
+        "acceptedRevision": "r1",
+        "knownEditMap": false
+      },
+      "expected": {
+        "blockId": "net",
+        "oldDeclarationTarget": "missing",
+        "automaticDestination": null,
+        "currentPreviewMessage": "net is no longer defined.",
+        "offeredCurrentBlockSource": true,
+        "oldRangeUsedForSelection": false,
+        "returnDepthAdded": 0,
+        "note": "The explicit block ID preserves the block. It does not prove that retained is a rename of net."
+      }
+    },
+    {
+      "id": "NAV-07",
+      "name": "Duplicate headings are distinct within and across notebook instances",
+      "given": {
+        "documentInstances": [
+          "instance-A",
+          "instance-B"
+        ],
+        "addedSecondTopLevelHeading": "# Definitions",
+        "secondSheetSlug": "definitions-2",
+        "subheadingsInFirstDefinitionsSheet": [
+          "## Net",
+          "## Net"
+        ],
+        "injectedHeadingOccurrenceKeys": [
+          "heading-1",
+          "heading-2"
+        ]
+      },
+      "actions": [
+        "Choose the second Net entry in instance-A outline"
+      ],
+      "expected": {
+        "targetInstance": "instance-A",
+        "targetSheet": "definitions",
+        "targetHeadingOccurrence": "heading-2",
+        "domTargetsDistinctAcrossAllInstances": true,
+        "headingLabels": [
+          "Net (1)",
+          "Net (2)"
+        ],
+        "topLevelSheetSlugs": [
+          "results",
+          "definitions",
+          "definitions-2"
+        ],
+        "useBareSlugAsIdentity": false
+      }
+    },
+    {
+      "id": "NAV-08",
+      "name": "Explicit block identity survives an external move and invalid edit",
+      "given": {
+        "memoryContains": {
+          "net": "calc net = gross * 0.5"
+        },
+        "revision": "r0"
+      },
+      "edit": {
+        "kind": "arbitrary whole-text replacement",
+        "moves": [
+          "Move eda fence id=net before fence id=revenue"
+        ],
+        "blockId": "net",
+        "newBody": "calc net = \"unterminated",
+        "acceptedRevision": "r1"
+      },
+      "expected": {
+        "retainedIdentity": "authored block net",
+        "fallbackBody": "calc net = gross * 0.5",
+        "fallbackOwner": "net",
+        "fallbackOwnerByOrdinal": false,
+        "sourcePreviewKind": "last-valid",
+        "capturedSnippetUsed": true,
+        "syntheticCompiledLineUsedAsFileLine": false,
+        "returnDepthAddedByEdit": 0
+      }
+    },
+    {
+      "id": "NAV-09",
+      "name": "A unique unchanged unkeyed block can move safely",
+      "given": {
+        "removeFenceMetadataFrom": "net",
+        "knownSessionBlockKey": "session-net-1",
+        "oldBody": "calc net = gross * 0.5",
+        "oldBodyOccurrenceCount": 1
+      },
+      "edit": {
+        "kind": "arbitrary whole-text replacement",
+        "move": "Move the unchanged unkeyed net block after unused",
+        "newBodyOccurrenceCount": 1
+      },
+      "expected": {
+        "retainedSessionBlockKey": "session-net-1",
+        "matchBasis": "unique exact unchanged block body",
+        "newIndexUsedAsIdentity": false,
+        "currentSourceRangeRecomputed": true,
+        "navigationTarget": "calculation net in its new location"
+      }
+    },
+    {
+      "id": "NAV-10",
+      "name": "Ambiguous unkeyed blocks and duplicate authored IDs do not inherit provenance",
+      "variants": [
+        {
+          "given": "Two old unkeyed blocks have identical bodies; one new unkeyed block has that body after external replacement.",
+          "expected": {
+            "retainedOldSessionIdentity": null,
+            "reusedOldFallback": false,
+            "relocation": "unavailable",
+            "reason": "ambiguous old occurrence"
+          }
+        },
+        {
+          "given": "Two current fences declare id=net.",
+          "expected": {
+            "authoredIdAvailableForEither": false,
+            "revisionScopedOccurrences": 2,
+            "silentlySuffixedAuthoredIds": false,
+            "fallbackFromOtherOccurrence": false,
+            "otherwiseValidDslOutputsSuppressedByNavigationWarning": false
+          }
+        }
+      ],
+      "expected": {
+        "oldOrdinalFallback": false,
+        "userCanReadCurrentSource": true
+      }
+    },
+    {
+      "id": "NAV-11",
+      "name": "Parse-invalid block without history has no effective definition",
+      "given": {
+        "memory": "fresh createNotebookMemory(\"invalid-without-history\")",
+        "blockId": "net",
+        "body": "calc net = \"unterminated"
+      },
+      "actions": [
+        "Open source for unresolved net reference"
+      ],
+      "expected": {
+        "netEffectiveDefinition": null,
+        "sourcePreviewKind": "invalid-current",
+        "sourcePreviewText": "calc net = \"unterminated",
+        "unresolvedReferenceVisible": true,
+        "inventedEffectiveEdges": 0,
+        "historicalSnippetShown": false,
+        "GoToUnrelatedDefinitionEnabled": false
+      }
+    },
+    {
+      "id": "NAV-12",
+      "name": "Last-valid source recomputes against current data",
+      "given": {
+        "acceptedR0Block": {
+          "id": "net",
+          "body": "calc net = gross * 0.5"
+        },
+        "r1BlockBody": "calc net = \"unterminated",
+        "r1FirstDataRow": {
+          "Revenue": 140,
+          "Cost": 40,
+          "Region": "West"
+        },
+        "otherRows": "unchanged from dataAtR0"
+      },
+      "expected": {
+        "definitionSourceKind": "last-valid",
+        "definitionSnippet": "calc net = gross * 0.5",
+        "definitionSourceRevision": "r0",
+        "dataRevision": "r1-data",
+        "netByRow": [
+          50,
+          60,
+          45,
+          50
+        ],
+        "westNet": 145,
+        "allNet": 205,
+        "findingWestNetText": "145.00",
+        "historicalValue125DisplayedAsCurrent": false,
+        "syntheticCompiledLineUsedAsFileLine": false,
+        "editActionLabel": "Edit current source",
+        "editTargetBody": "calc net = \"unterminated"
+      }
+    },
+    {
+      "id": "NAV-13",
+      "name": "Navigation flushes the pending 300 ms draft before resolving a range",
+      "given": {
+        "revision": "r0",
+        "activeEditor": "metric block source",
+        "draftChange": "Insert a comment line before metric @net-total",
+        "draftAtMs": 0,
+        "settleDelayMs": 300
+      },
+      "actions": [
+        {
+          "atMs": 150,
+          "event": "Activate Go to calculation net"
+        },
+        {
+          "atMs": 200,
+          "event": "Host supplies exactly the requested text as r1"
+        }
+      ],
+      "expected": {
+        "onTextChangeCalls": 1,
+        "flushAtMs": 150,
+        "scheduledDebounceCancelled": true,
+        "editorUnmountBeforeTextAcknowledgment": false,
+        "destinationResolutionRevision": "r1",
+        "oldRangeUsedForSelection": false,
+        "netFileLineDelta": 1,
+        "navigateBeforeAcknowledgment": false,
+        "eventualSheet": "definitions",
+        "eventualFocus": "definition heading for calculation net",
+        "earliestNavigationMs": 200
+      }
+    },
+    {
+      "id": "NAV-14",
+      "name": "Unaccepted or transformed source text does not cause a stale jump",
+      "given": {
+        "pendingDraft": true,
+        "requestedRevision": "r1",
+        "navigationTarget": "calculation net"
+      },
+      "variants": [
+        {
+          "hostResponse": "Does not supply requested text",
+          "expected": {
+            "editorRemainsMounted": true,
+            "draftPreserved": true,
+            "sheetRequests": 0,
+            "documentScrollCalls": 0,
+            "returnDepthAdded": 0,
+            "pendingNavigationCanBeCancelled": true
+          }
+        },
+        {
+          "hostResponse": "Supplies different text without a recognized edit map",
+          "expected": {
+            "pendingNavigation": "cancelled",
+            "revealOldRange": false,
+            "currentSourceCanBeReopened": true,
+            "returnDepthAdded": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "NAV-15",
+      "name": "Controlled sheet acknowledgment is required before movement",
+      "given": {
+        "sheetProp": "results",
+        "onSheetChange": "records callback only until explicitly acknowledged",
+        "target": "definitions / net / calculation net"
+      },
+      "actions": [
+        "Activate Go to source",
+        "Host later changes sheet prop to definitions",
+        "Destination target registers after render"
+      ],
+      "expected": {
+        "callbackArguments": [
+          "definitions"
+        ],
+        "beforeAck": {
+          "renderedSheet": "results",
+          "documentScrollCalls": 0,
+          "focusCallsToDestination": 0,
+          "returnDepth": 0
+        },
+        "afterAckAndMount": {
+          "renderedSheet": "definitions",
+          "destinationFocusCalls": 1,
+          "overlayInvokerAutoFocusSuppressed": true,
+          "destinationFocusAfterOverlayFocusTrapReleased": true,
+          "returnDepth": 1
+        },
+        "localOverrideOfControlledSheet": false
+      }
+    },
+    {
+      "id": "NAV-16",
+      "name": "Declined or fixed controlled sheet retains a useful source preview",
+      "variants": [
+        {
+          "given": {
+            "sheetProp": "results",
+            "onSheetChange": "callback ignores request"
+          },
+          "expected": {
+            "callbackArguments": [
+              "definitions"
+            ],
+            "renderedSheet": "results",
+            "documentScrollCalls": 0,
+            "returnDepth": 0,
+            "sourceSnippetVisible": "calc net = gross * 0.5",
+            "cancelAvailable": true
+          }
+        },
+        {
+          "given": {
+            "sheetProp": "results",
+            "onSheetChange": null
+          },
+          "expected": {
+            "callbackCalls": 0,
+            "renderedSheet": "results",
+            "documentScrollCalls": 0,
+            "returnDepth": 0,
+            "sourceSnippetVisible": "calc net = gross * 0.5",
+            "pageJumpEnabled": false
+          }
+        }
+      ],
+      "expected": {
+        "fakeNavigationSuccess": false,
+        "forcedLocalSheet": false,
+        "timeoutDrivenJump": false
+      }
+    },
+    {
+      "id": "NAV-17",
+      "name": "Latest navigation request wins before a controlled acknowledgment",
+      "given": {
+        "sheetProp": "results",
+        "onSheetChange": "delayed acknowledgment"
+      },
+      "actions": [
+        "Request Go to net on definitions",
+        "Before acknowledgment, request Go to gross on definitions",
+        "Host acknowledges definitions and both target wrappers register"
+      ],
+      "expected": {
+        "uniqueOutstandingSheetCallbackArguments": [
+          "definitions"
+        ],
+        "finalTarget": "calculation gross",
+        "focusNetCalls": 0,
+        "focusGrossCalls": 1,
+        "returnDepth": 1,
+        "returnOrigin": "results / metric / chart @net-total Definitions action",
+        "staleRequestAppliedAfterLatest": false
+      }
+    },
+    {
+      "id": "NAV-18",
+      "name": "An on-page metric edit changes measurement provenance but not finding measurement",
+      "given": {
+        "onTextChange": null,
+        "authoredMetric": "metric @net-total sum(net) where.Region=West",
+        "finding": "finding @west-net sum net chart=@net-total digits=2"
+      },
+      "actions": [
+        "Change @net-total measured field to gross through chart settings",
+        "Open Definitions for current output"
+      ],
+      "expected": {
+        "sourceTextChanged": false,
+        "currentMetricField": "gross",
+        "currentMetricValue": 250,
+        "authoredMetricField": "net",
+        "authoredMetricOracle": 125,
+        "currentOutputLabel": "Changed on this page",
+        "currentMeasureInput": "calculation gross",
+        "sourceMeasureInput": "calculation net",
+        "findingMeasureField": "net",
+        "findingValue": 125,
+        "findingText": "125.00",
+        "metricPopulation": "population:net-total:eligible",
+        "findingPopulation": "population:net-total:selected",
+        "sharedAncestorPopulation": "population:net-total:eligible",
+        "populationIdsEqualBecauseNoSelection": true,
+        "populationFilter": "Region = West",
+        "findingDependsOnChartAggregateValue": false,
+        "chartToFindingLinkRole": "chart reference / population owner, not measure-value dataflow",
+        "findingIncludedAsGrossOnlyMeasurementConsumer": false
+      }
+    },
+    {
+      "id": "NAV-19",
+      "name": "Sections preserve source occurrences; editable source stays in one column",
+      "given": {
+        "layout": "sections",
+        "notebookContainerWidthPx": 1280,
+        "sourceOccurrence": "Results / West summary / {{west-net}}"
+      },
+      "variants": [
+        {
+          "onTextChange": null,
+          "expected": {
+            "layout": "sections",
+            "notesColumnPx": 300,
+            "notesGapPx": 40,
+            "sourceOccurrenceIdentityPreserved": true,
+            "readOnlySourceSnippetAvailable": true,
+            "editSourceActionShown": false
+          }
+        },
+        {
+          "onTextChange": "accepts local edits",
+          "expected": {
+            "layout": "column",
+            "sourceOccurrenceIdentityPreserved": true,
+            "editSourceActionShown": true,
+            "editActionFocus": "actual source textarea with range in accepted revision"
+          }
+        }
+      ],
+      "expected": {
+        "joinProseStringsThenGuessOffsets": false,
+        "noTextCallbackMeansChartSettingsImmutable": false
+      }
+    },
+    {
+      "id": "NAV-20",
+      "name": "Keyboard and focus preserve existing chart and browser actions",
+      "steps": [
+        {
+          "event": "Tab to Definitions for @net-total, then Enter",
+          "expected": "Open inspector; focus its labeled heading; add no return-history entry."
+        },
+        {
+          "event": "Tab to input gross, then Space",
+          "expected": "Preview calculation gross; page does not scroll; button activation does not select chart marks."
+        },
+        {
+          "event": "Press Escape in the preview inspector",
+          "expected": "Close inspector and focus original Definitions action if it still exists; no hover tooltip opens from focus restoration."
+        },
+        {
+          "event": "In a separate flow, invoke Edit source, complete its source jump, then press Escape in the document textarea with no pending draft",
+          "expected": "The successful Edit source jump already closed the inspector. Close the document editor and focus its block Edit source action; do not reopen an inspector or discard edits."
+        },
+        {
+          "event": "Focus sheet tab, then ArrowRight, Home, End",
+          "expected": "Preserve current tab movement and roving tabIndex; controlled selection still requires host acknowledgment."
+        },
+        {
+          "event": "Send Alt+ArrowLeft outside source editor",
+          "expected": "Navigation code does not preventDefault or modify page-return history."
+        },
+        {
+          "event": "Plain click chart mark, then Alt-click chart mark",
+          "expected": "Existing selection and value-trace actions remain unchanged."
+        }
+      ],
+      "expected": {
+        "newGlobalShortcut": null,
+        "unlabeledIconActions": 0,
+        "nestedInteractiveFindingControls": 0
+      }
+    },
+    {
+      "id": "NAV-21",
+      "name": "Finding substitutions inside links remain a single interactive element",
+      "prose": "Standalone {{west-net}}. [The value is {{west-net}}](#finding:west-net). Literal `{{west-net}}`, \\{{west-net}}, [external](https://example.com/?q={{west-net}}).",
+      "expected": {
+        "standaloneDefinitionActions": 1,
+        "recordsLinks": 1,
+        "definitionButtonsInsideRecordsLink": 0,
+        "recordsLinkAction": "open current records for west-net",
+        "recordsHeaderDefinitionAction": "open definition preview for west-net",
+        "literalCodeText": "{{west-net}}",
+        "literalEscapedText": "{{west-net}}",
+        "findingUsesInLinkDestination": 0,
+        "externalLinkTarget": "_blank",
+        "valueUpdateReplacesWholeProseDom": false,
+        "focusedExistingRecordsLinkSurvivesValueUpdate": true
+      }
+    },
+    {
+      "id": "NAV-22",
+      "name": "1280 px layout contract",
+      "given": {
+        "viewportWidthPx": 1280,
+        "notebookContainerWidthPx": 1280,
+        "layout": "sections",
+        "onTextChange": null,
+        "inspectorOpen": true
+      },
+      "expected": {
+        "readingLayout": "sections",
+        "notesColumnPx": 300,
+        "notesGapPx": 40,
+        "inspectorDefaultWidthPx": 360,
+        "inspectorMode": "temporary nonmodal right overlay",
+        "inspectorResizesChartGrid": false,
+        "inspectorCanWiden": true,
+        "maximumWideInspectorWidthPx": 640,
+        "minimumChartStripPx": 128,
+        "singleRightEdgeInspectionSurface": true,
+        "pageHorizontalOverflowPx": 0,
+        "defaultControlHeightPx": 32,
+        "compactControlHeightPx": 28,
+        "closeReturnsFocus": true
+      },
+      "qualification": "Proposed exact CSS contract to test in a browser. This design run did not measure it."
+    },
+    {
+      "id": "NAV-23",
+      "name": "783 px layout contract",
+      "given": {
+        "viewportWidthPx": 783,
+        "notebookContainerWidthPx": 783,
+        "layout": "sections",
+        "onTextChange": null,
+        "inspectorOpen": true
+      },
+      "expected": {
+        "readingLayout": "column",
+        "inspectorDefaultWidthPx": 360,
+        "inspectorMode": "temporary nonmodal right overlay",
+        "inspectorResizesChartGrid": false,
+        "singleRightEdgeInspectionSurface": true,
+        "pageHorizontalOverflowPx": 0,
+        "tabRowWraps": false,
+        "tabRowMayScrollHorizontally": true,
+        "primaryActionsRemainVisibleWhileBodyScrolls": true,
+        "closeReturnsFocus": true
+      },
+      "qualification": "Proposed exact CSS contract to test in a browser. This design run did not measure it."
+    },
+    {
+      "id": "NAV-24",
+      "name": "390 px layout and return after resize",
+      "given": {
+        "viewportWidthPx": 390,
+        "notebookContainerWidthPx": 390,
+        "layout": "sections",
+        "onTextChange": null,
+        "inspectorOpen": true,
+        "originCapturedAtWidthPx": 1280,
+        "origin": "chart @net-total Definitions action"
+      },
+      "expected": {
+        "readingLayout": "column",
+        "inspectorOuterWidthPx": 390,
+        "inspectorMode": "full-width modal sheet",
+        "focusTrappedWhileOpen": true,
+        "backgroundScrollLockedWhileOpen": true,
+        "pageHorizontalOverflowPx": 0,
+        "longSourceLinesScrollInsideCodeRegion": true,
+        "primaryActionsRemainVisibleWhileBodyScrolls": true,
+        "goToSourceClosesSheetOnlyAfterTargetReady": true,
+        "successfulJumpSuppressesInvokerAutoFocus": true,
+        "destinationFocusAfterTrapInertAndScrollLockReleased": true,
+        "returnUsesLogicalOrigin": true,
+        "returnRestoresObsoleteAbsoluteScrollY": false,
+        "returnOffsetClampedToVisibleViewport": true,
+        "finalFocus": "chart @net-total Definitions action",
+        "closeReturnsFocus": true
+      },
+      "qualification": "Proposed exact CSS and interaction contract to test in a browser. This design run did not measure it."
+    }
+  ]
+}

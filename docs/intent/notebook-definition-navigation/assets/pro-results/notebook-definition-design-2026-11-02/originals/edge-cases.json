@@ -1,0 +1,1521 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Proposed acceptance assertions for notebook definition navigation. No navigation implementation exists in this artifact.",
+  "baseline": "d3920a285f3755a8324998775deb131747e959f5",
+  "orientation": "provider-to-consumer",
+  "edgeSemantics": "effectiveValueEdges and population edges participate in value-impact reachability. navigationBindings, alias mapping, containment, shadowed declarations and attempted occurrences do not unless explicitly projected into an authored-use navigation view. All graph edges describe static potential influence, not a claim every edit changes a numeric value.",
+  "defaultRows": [
+    {
+      "Revenue": 100,
+      "Cost": 40,
+      "Region": "West"
+    },
+    {
+      "Revenue": 200,
+      "Cost": 80,
+      "Region": "East"
+    },
+    {
+      "Revenue": 150,
+      "Cost": 60,
+      "Region": "West"
+    },
+    {
+      "Revenue": 120,
+      "Cost": 20,
+      "Region": "West"
+    }
+  ],
+  "baseSourceFile": "six-block.eda.md",
+  "defaultLastValidByZeroBasedBlockIndex": {},
+  "diagnosticAssertionPolicy": "diagnosticMatches lists stable assertions, not a complete ordered diagnostic snapshot. message is exact; messageContains is a required substring. Status/edge assertions refer to the final accepted settings.",
+  "executionStatement": "Unless an executedChecks entry explicitly says otherwise, expected results are source-derived and arithmetic-derived acceptance proposals, not measured full-compiler outcomes.",
+  "cases": [
+    {
+      "id": "NDN-EC01",
+      "title": "Later valid alias replaces earlier alias",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\na=Revenue\n```\n```eda\na=Cost\n```\n```eda\ncalc doubled = a * 2\n```\n```eda\nmetric @m sum(doubled)\n```\n",
+      "expected": {
+        "acceptedProviders": [
+          "raw:Revenue",
+          "raw:Cost",
+          "raw:Region",
+          "alias:a@B2",
+          "calc:doubled"
+        ],
+        "inactiveProviders": [
+          {
+            "id": "alias:a@B1",
+            "reason": "shadowed-by-later-valid-alias"
+          }
+        ],
+        "effectiveValueEdges": [
+          {
+            "from": "raw:Cost",
+            "to": "calc:doubled",
+            "role": "formula"
+          },
+          {
+            "from": "calc:doubled",
+            "to": "chart:m",
+            "role": "measure"
+          }
+        ],
+        "aliasOccurrences": [
+          {
+            "consumer": "calc:doubled",
+            "written": "a",
+            "provider": "alias:a@B2",
+            "canonicalField": "Cost"
+          }
+        ],
+        "navigationBindings": [
+          {
+            "from": "raw:Cost",
+            "to": "alias:a@B2",
+            "role": "alias-target"
+          }
+        ],
+        "calculatedValues": {
+          "doubled": [
+            80,
+            160,
+            120,
+            40
+          ]
+        },
+        "outputValues": {
+          "chart:m": 400
+        },
+        "diagnosticMatches": [
+          {
+            "severity": "warning",
+            "effect": "contract",
+            "message": "a is already an alias for Revenue. This line replaces it."
+          }
+        ]
+      }
+    },
+    {
+      "id": "NDN-EC02",
+      "title": "Alias can shadow a raw-field spelling",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\nRevenue=Cost\n```\n```eda\ncalc doubled = Revenue * 2\n```\n```eda\nmetric @m sum(doubled)\n```\n",
+      "expected": {
+        "acceptedProviders": [
+          "raw:Revenue",
+          "raw:Cost",
+          "alias:Revenue",
+          "calc:doubled"
+        ],
+        "effectiveValueEdges": [
+          {
+            "from": "raw:Cost",
+            "to": "calc:doubled",
+            "role": "formula"
+          },
+          {
+            "from": "calc:doubled",
+            "to": "chart:m",
+            "role": "measure"
+          }
+        ],
+        "forbiddenValueEdges": [
+          {
+            "from": "raw:Revenue",
+            "to": "calc:doubled",
+            "role": "formula"
+          }
+        ],
+        "aliasOccurrences": [
+          {
+            "consumer": "calc:doubled",
+            "written": "Revenue",
+            "provider": "alias:Revenue",
+            "canonicalField": "Cost"
+          }
+        ],
+        "outputValues": {
+          "chart:m": 400
+        },
+        "diagnosticMatches": []
+      }
+    },
+    {
+      "id": "NDN-EC03",
+      "title": "Calculation collision does not hide the raw field from chart resolution",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\ncalc Revenue = Cost * 2\n```\n```eda\nmetric @m sum(Revenue)\n```\n",
+      "expected": {
+        "acceptedProviders": [
+          "raw:Revenue",
+          "raw:Cost",
+          "raw:Region"
+        ],
+        "blockedProviders": [
+          "calc:Revenue"
+        ],
+        "effectiveValueEdges": [
+          {
+            "from": "raw:Revenue",
+            "to": "chart:m",
+            "role": "measure"
+          }
+        ],
+        "acceptedCharts": [
+          "m"
+        ],
+        "outputValues": {
+          "chart:m": 570
+        },
+        "diagnosticMatches": [
+          {
+            "severity": "error",
+            "effect": "calculation-skipped",
+            "message": "Revenue already names a source field, so this calculation was skipped."
+          }
+        ]
+      }
+    },
+    {
+      "id": "NDN-EC04",
+      "title": "Bracketed references are exact native names; strings have no field reads",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "variants": [
+        {
+          "id": "native",
+          "sourceText": "```eda\nrevenue=Revenue\n```\n```eda\ncalc doubled = [\"Revenue\"] * 2\n```\n",
+          "expected": {
+            "acceptedProviders": [
+              "calc:doubled"
+            ],
+            "effectiveValueEdges": [
+              {
+                "from": "raw:Revenue",
+                "to": "calc:doubled",
+                "role": "formula"
+              }
+            ],
+            "calculatedValues": {
+              "doubled": [
+                200,
+                400,
+                300,
+                240
+              ]
+            }
+          }
+        },
+        {
+          "id": "alias-bracket",
+          "sourceText": "```eda\nrevenue=Revenue\n```\n```eda\ncalc doubled = [\"revenue\"] * 2\n```\n",
+          "expected": {
+            "unresolvedOccurrences": [
+              {
+                "consumer": "calc:doubled",
+                "written": "revenue",
+                "syntax": "bracket-reference",
+                "reason": "unknown-native-field"
+              }
+            ],
+            "forbiddenValueEdges": [
+              {
+                "from": "alias:revenue",
+                "to": "calc:doubled",
+                "role": "formula"
+              },
+              {
+                "from": "raw:Revenue",
+                "to": "calc:doubled",
+                "role": "formula"
+              }
+            ],
+            "diagnosticMatches": [
+              {
+                "severity": "error",
+                "effect": "calculation-skipped",
+                "message": "The calculations could not run: Unknown field: revenue"
+              }
+            ],
+            "acceptedCalculationNamesAsSet": []
+          }
+        },
+        {
+          "id": "literal",
+          "sourceText": "```eda\ncalc label = \"Revenue\"\n```\n",
+          "expected": {
+            "acceptedProviders": [
+              "calc:label"
+            ],
+            "effectiveValueEdges": [],
+            "calculatedValues": {
+              "label": [
+                "Revenue",
+                "Revenue",
+                "Revenue",
+                "Revenue"
+              ]
+            }
+          }
+        }
+      ],
+      "executedChecks": {
+        "scope": "Exact original rewriteFormula and validateExpression function bodies executed in work/check-compiler-variants.mjs; parser-shaped literal hand supplied, parseExpression/full compiler not executed.",
+        "bareAliasRewrite": "Revenue * 2",
+        "bracketAliasRewrite": "[\"revenue\"] * 2",
+        "isolatedValidationError": "Unknown field: revenue"
+      }
+    },
+    {
+      "id": "NDN-EC05",
+      "title": "Cycle and its dependent calculations are blocked",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\ncalc a = b + 1\n```\n```eda\ncalc b = a + 1\n```\n```eda\ncalc c = a * 2\n```\n```eda\nmetric @m sum(c)\n```\n",
+      "expected": {
+        "blockedProviders": [
+          "calc:a",
+          "calc:b",
+          "calc:c"
+        ],
+        "acceptedCharts": [],
+        "effectiveValueEdges": [],
+        "attemptedFormulaEdges": [
+          {
+            "from": "calc:b",
+            "to": "calc:a",
+            "role": "formula"
+          },
+          {
+            "from": "calc:a",
+            "to": "calc:b",
+            "role": "formula"
+          },
+          {
+            "from": "calc:a",
+            "to": "calc:c",
+            "role": "formula"
+          }
+        ],
+        "diagnosticMatches": [
+          {
+            "severity": "error",
+            "effect": "calculation-skipped",
+            "message": "calc a is part of a loop (a \u2192 b \u2192 a), so it was skipped."
+          },
+          {
+            "severity": "error",
+            "effect": "calculation-skipped",
+            "message": "calc b is part of a loop (a \u2192 b \u2192 a), so it was skipped."
+          },
+          {
+            "severity": "error",
+            "effect": "calculation-skipped",
+            "message": "calc c uses calc a, which was skipped, so it was skipped too."
+          }
+        ],
+        "acceptedCalculationNamesAsSet": []
+      }
+    },
+    {
+      "id": "NDN-EC06",
+      "title": "Duplicate calculation has no effective first-wins provider",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\ncalc net = Revenue - Cost\n```\n```eda\ncalc net = Cost\n```\n```eda\nmetric @m sum(net)\n```\n",
+      "expected": {
+        "blockedProviders": [
+          "calc:net@B1",
+          "calc:net@B2"
+        ],
+        "acceptedCharts": [],
+        "effectiveValueEdges": [],
+        "diagnosticMatches": [
+          {
+            "severity": "warning",
+            "line": 2,
+            "message": "net is also calculated on line 5; this one is used."
+          },
+          {
+            "severity": "error",
+            "line": 5,
+            "effect": "calculation-skipped",
+            "message": "net is calculated twice. Only the first one is used."
+          }
+        ],
+        "note": "Messages contradict actual skippedCalcs filtering. Test final settings; do not infer first-wins binding from the words.",
+        "acceptedCalculationNamesAsSet": []
+      }
+    },
+    {
+      "id": "NDN-EC07",
+      "title": "Duplicate chart keeps first accepted output and its population",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\nmetric @same sum(Revenue)\n```\n```eda\nmetric @same sum(Cost)\n```\n```eda\nfinding @f sum Cost chart=@same\n```\n",
+      "expected": {
+        "acceptedCharts": [
+          "same"
+        ],
+        "blockedCharts": [
+          "same@B2"
+        ],
+        "acceptedProviders": [
+          "finding:f"
+        ],
+        "effectiveValueEdges": [
+          {
+            "from": "raw:Revenue",
+            "to": "chart:same",
+            "role": "measure"
+          },
+          {
+            "from": "raw:Cost",
+            "to": "finding:f",
+            "role": "measure"
+          },
+          {
+            "from": "sourceRows",
+            "to": "population:same:eligible",
+            "role": "rows"
+          },
+          {
+            "from": "population:same:eligible",
+            "to": "population:same:selected",
+            "role": "eligible-rows"
+          },
+          {
+            "from": "population:same:selected",
+            "to": "finding:f",
+            "role": "population"
+          }
+        ],
+        "navigationBindings": [
+          {
+            "from": "chart:same",
+            "to": "finding:f",
+            "role": "follows-population"
+          }
+        ],
+        "forbiddenValueEdges": [
+          {
+            "from": "chart:same",
+            "to": "finding:f",
+            "role": "aggregate-value"
+          }
+        ],
+        "outputValues": {
+          "chart:same": 570,
+          "finding:f": 200
+        },
+        "diagnosticMatches": [
+          {
+            "severity": "error",
+            "effect": "chart-skipped",
+            "message": "@same names two charts, so this one was skipped."
+          }
+        ]
+      }
+    },
+    {
+      "id": "NDN-EC08",
+      "title": "Duplicate finding keeps first accepted finding",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\nfinding @f sum Revenue\n```\n```eda\nfinding @f sum Cost\n```\nValue: {{f}}.\n",
+      "expected": {
+        "acceptedProviders": [
+          "finding:f@B1"
+        ],
+        "blockedProviders": [
+          "finding:f@B2"
+        ],
+        "effectiveValueEdges": [
+          {
+            "from": "raw:Revenue",
+            "to": "finding:f@B1",
+            "role": "measure"
+          },
+          {
+            "from": "sourceRows",
+            "to": "finding:f@B1",
+            "role": "population"
+          },
+          {
+            "from": "finding:f@B1",
+            "to": "prose:value",
+            "role": "finding-value"
+          }
+        ],
+        "forbiddenValueEdges": [
+          {
+            "from": "raw:Cost",
+            "to": "finding:f@B1",
+            "role": "measure"
+          }
+        ],
+        "outputValues": {
+          "finding:f": 570
+        },
+        "diagnosticMatches": [
+          {
+            "severity": "error",
+            "effect": "setting-ignored",
+            "message": "@f names two findings, so this one was skipped."
+          }
+        ]
+      }
+    },
+    {
+      "id": "NDN-EC09",
+      "title": "Count has population input and no fabricated measure",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\nmetric @n count where.Region=West\nfinding @n count chart=@n\n```\n",
+      "expected": {
+        "acceptedCharts": [
+          "n"
+        ],
+        "acceptedProviders": [
+          "finding:n"
+        ],
+        "effectiveValueEdges": [
+          {
+            "from": "sourceRows",
+            "to": "population:n:eligible",
+            "role": "rows"
+          },
+          {
+            "from": "raw:Region",
+            "to": "population:n:eligible",
+            "role": "local-filter"
+          },
+          {
+            "from": "population:n:eligible",
+            "to": "population:n:selected",
+            "role": "eligible-rows"
+          },
+          {
+            "from": "population:n:eligible",
+            "to": "chart:n",
+            "role": "population"
+          },
+          {
+            "from": "population:n:selected",
+            "to": "finding:n",
+            "role": "population"
+          }
+        ],
+        "measureField": null,
+        "forbiddenMeasureProviders": [
+          "raw:Revenue",
+          "raw:Cost"
+        ],
+        "navigationBindings": [
+          {
+            "from": "chart:n",
+            "to": "finding:n",
+            "role": "follows-population"
+          }
+        ],
+        "outputValues": {
+          "chart:n": 3,
+          "finding:n": 3
+        },
+        "diagnosticMatches": []
+      }
+    },
+    {
+      "id": "NDN-EC10",
+      "title": "Required filter failure differs from ignored optional setting",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "variants": [
+        {
+          "id": "invalid-filter",
+          "sourceText": "```eda\nmetric @m sum(Revenue) where.Missing=West\n```\n",
+          "expected": {
+            "acceptedCharts": [],
+            "blockedCharts": [
+              "m"
+            ],
+            "effectiveValueEdges": [],
+            "attemptedOccurrences": [
+              {
+                "consumer": "chart:m",
+                "role": "local-filter",
+                "written": "Missing",
+                "state": "unresolved"
+              }
+            ],
+            "diagnosticMatches": [
+              {
+                "severity": "error",
+                "effect": "chart-skipped",
+                "messageContains": "Missing is not a field, alias, or calculation"
+              }
+            ]
+          }
+        },
+        {
+          "id": "optional-color-and-constant-size",
+          "sourceText": "```eda\nscatter @s x=Revenue y=Cost color=Missing size=4 title=\"Revenue\"\n```\n",
+          "expected": {
+            "acceptedCharts": [
+              "s"
+            ],
+            "effectiveValueEdges": [
+              {
+                "from": "raw:Revenue",
+                "to": "chart:s",
+                "role": "x-field"
+              },
+              {
+                "from": "raw:Cost",
+                "to": "chart:s",
+                "role": "y-field"
+              }
+            ],
+            "ignoredOccurrences": [
+              {
+                "consumer": "chart:s",
+                "role": "color-field",
+                "written": "Missing"
+              }
+            ],
+            "noFieldOccurrencesFor": [
+              "size=4",
+              "title=\"Revenue\""
+            ],
+            "diagnosticMatches": [
+              {
+                "severity": "warning",
+                "effect": "setting-ignored",
+                "messageContains": "Missing is not a field, alias, or calculation"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "NDN-EC11",
+      "title": "Semantic formula failure with only net block memory",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "baseSourceFile": "six-block.eda.md",
+      "edit": {
+        "kind": "replace-exact-once",
+        "before": "calc net = gross * 0.5",
+        "after": "calc net = gross *"
+      },
+      "lastValidByZeroBasedBlockIndex": {
+        "3": "calc net = gross * 0.5"
+      },
+      "expected": {
+        "blockStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "frozen",
+          "ok",
+          "ok"
+        ],
+        "acceptedChartsAsSet": [
+          "net-total",
+          "net-shape"
+        ],
+        "effectiveOrigins": {
+          "calc:net": "last-valid:B4",
+          "chart:net-total": "current:B1",
+          "finding:west-net": "current:B1"
+        },
+        "effectiveValueEdgesInclude": [
+          {
+            "from": "calc:gross",
+            "to": "calc:net",
+            "role": "formula"
+          }
+        ],
+        "outputValues": {
+          "chart:net-total": 125,
+          "finding:west-net": 125
+        },
+        "currentFormulaProducesEffectiveEdges": false,
+        "editableLocation": "current B4; last-valid formula is a separate read-only snapshot",
+        "note": "With all memory, first global semantic failure marks B1 and B4 before freezing; do not assert only the originating block freezes.",
+        "acceptedCalculationNamesAsSet": [
+          "gross",
+          "net",
+          "unused"
+        ]
+      }
+    },
+    {
+      "id": "NDN-EC12",
+      "title": "Semantic formula failure with all-block memory also freezes consumers",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "baseSourceFile": "six-block.eda.md",
+      "edit": {
+        "kind": "replace-exact-once",
+        "before": "calc net = gross * 0.5",
+        "after": "calc net = gross *"
+      },
+      "lastValidByZeroBasedBlockIndex": {
+        "0": "metric @net-total sum(net) where.Region=West title=\"Net in West\"\nfinding @west-net sum net chart=@net-total digits=2",
+        "1": "revenue:num=Revenue",
+        "2": "calc gross = revenue - Cost",
+        "3": "calc net = gross * 0.5",
+        "4": "calc unused = Cost * 2",
+        "5": "composition @net-shape width=640 height=380 {\n  scale numeric @revenue-scale Revenue\n  scale numeric @net-scale net\n  measure @net-measure sum(net) name=\"Net total\"\n  unit @orders \"Orders\" at=48,48 size=480x280 {\n    label value=net-measure\n    point @orders-points \"Orders\" x=revenue-scale y=net-scale sizeField=gross\n  }\n}"
+      },
+      "expected": {
+        "blockStatuses": [
+          "frozen",
+          "ok",
+          "ok",
+          "frozen",
+          "ok",
+          "ok"
+        ],
+        "acceptedChartsAsSet": [
+          "net-total",
+          "net-shape"
+        ],
+        "effectiveOrigins": {
+          "calc:net": "last-valid:B4",
+          "chart:net-total": "last-valid:B1",
+          "finding:west-net": "last-valid:B1"
+        },
+        "effectiveValueEdgesInclude": [
+          {
+            "from": "calc:gross",
+            "to": "calc:net",
+            "role": "formula"
+          }
+        ],
+        "outputValues": {
+          "chart:net-total": 125,
+          "finding:west-net": 125
+        },
+        "currentFormulaProducesEffectiveEdges": false,
+        "editableLocation": "current B4; last-valid formula is a separate read-only snapshot",
+        "note": "With all memory, first global semantic failure marks B1 and B4 before freezing; do not assert only the originating block freezes.",
+        "acceptedCalculationNamesAsSet": [
+          "gross",
+          "net",
+          "unused"
+        ]
+      }
+    },
+    {
+      "id": "NDN-EC13",
+      "title": "No stand-in leaves unresolved consumers; composition may remain structurally accepted",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "baseSourceFile": "six-block.eda.md",
+      "edit": {
+        "kind": "replace-exact-once",
+        "before": "calc net = gross * 0.5",
+        "after": "calc net = gross *"
+      },
+      "lastValidByZeroBasedBlockIndex": {},
+      "expected": {
+        "blockStatuses": [
+          "invalid",
+          "ok",
+          "ok",
+          "invalid",
+          "ok",
+          "ok"
+        ],
+        "blockedProviders": [
+          "calc:net"
+        ],
+        "acceptedCharts": [
+          "net-shape"
+        ],
+        "blockedCharts": [
+          "net-total"
+        ],
+        "blockedFindings": [
+          "west-net"
+        ],
+        "compositionBindings": [
+          {
+            "part": "net-shape/net-scale",
+            "field": "net",
+            "state": "unresolved"
+          },
+          {
+            "part": "net-shape/net-measure",
+            "field": "net",
+            "state": "unresolved"
+          },
+          {
+            "part": "net-shape/orders/orders-points",
+            "field": "gross",
+            "state": "resolved"
+          }
+        ],
+        "note": "Existing composition lowerer does not validate data-field existence; its retained structural chart is not proof that every field binding works.",
+        "acceptedCalculationNamesAsSet": [
+          "gross",
+          "unused"
+        ]
+      }
+    },
+    {
+      "id": "NDN-EC14",
+      "title": "Own parse error prefreezes only the broken block even with all memory",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "baseSourceFile": "six-block.eda.md",
+      "edit": {
+        "kind": "replace-exact-once",
+        "before": "calc net = gross * 0.5",
+        "after": "calc net = gross * 0.5\nmetric @temp count {"
+      },
+      "lastValidByZeroBasedBlockIndex": {
+        "0": "metric @net-total sum(net) where.Region=West title=\"Net in West\"\nfinding @west-net sum net chart=@net-total digits=2",
+        "1": "revenue:num=Revenue",
+        "2": "calc gross = revenue - Cost",
+        "3": "calc net = gross * 0.5",
+        "4": "calc unused = Cost * 2",
+        "5": "composition @net-shape width=640 height=380 {\n  scale numeric @revenue-scale Revenue\n  scale numeric @net-scale net\n  measure @net-measure sum(net) name=\"Net total\"\n  unit @orders \"Orders\" at=48,48 size=480x280 {\n    label value=net-measure\n    point @orders-points \"Orders\" x=revenue-scale y=net-scale sizeField=gross\n  }\n}"
+      },
+      "expected": {
+        "blockStatuses": [
+          "ok",
+          "ok",
+          "ok",
+          "frozen",
+          "ok",
+          "ok"
+        ],
+        "effectiveOrigins": {
+          "calc:net": "last-valid:B4",
+          "chart:net-total": "current:B1",
+          "finding:west-net": "current:B1"
+        },
+        "blockedCharts": [
+          "temp"
+        ],
+        "outputValues": {
+          "chart:net-total": 125,
+          "finding:west-net": 125
+        },
+        "ownParseDiagnostic": {
+          "message": "metric on line 2 has no closing }.",
+          "lineWithinBlock": 2,
+          "column": 1,
+          "length": 6
+        },
+        "note": "This problem exists in blockProblems before the global build, so the stand-in is substituted before consumers compile."
+      },
+      "executedChecks": {
+        "scope": "Original parseDocument executed on the replacement block body; full compileNotebook not executed.",
+        "problems": [
+          {
+            "message": "metric on line 2 has no closing }.",
+            "span": {
+              "line": 2,
+              "column": 1,
+              "length": 6
+            },
+            "suggestion": "Add } after line 2."
+          }
+        ]
+      }
+    },
+    {
+      "id": "NDN-EC15",
+      "title": "Composition exact field strings and local scopes",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "variants": [
+        {
+          "id": "no-alias-normalization",
+          "sourceText": "```eda\nrevenue=Revenue\n```\n```eda\ncomposition @shape {\n  scale numeric @s revenue\n  unit @u \"Orders\" at=32,32 size=400x240 {\n    point @p \"Orders\" x=s\n  }\n}\n```\n",
+          "expected": {
+            "acceptedCharts": [
+              "shape"
+            ],
+            "savedScaleField": "revenue",
+            "unresolvedOccurrences": [
+              {
+                "consumer": "composition:shape/scale:s",
+                "written": "revenue",
+                "reason": "no-native-field-or-calculation-with-this-exact-name"
+              }
+            ],
+            "forbiddenValueEdges": [
+              {
+                "from": "alias:revenue",
+                "to": "composition:shape/scale:s",
+                "role": "scale-field"
+              },
+              {
+                "from": "raw:Revenue",
+                "to": "composition:shape/scale:s",
+                "role": "scale-field"
+              }
+            ],
+            "navigationOnlyCandidate": "alias:revenue may be offered as a diagnostic suggestion, not recorded as the effective binding."
+          }
+        },
+        {
+          "id": "same-spelling-distinct-scope",
+          "sourceText": "```eda\ncalc net = Revenue - Cost\n```\n```eda\ncomposition @shape {\n  scale numeric @net net\n  unit @u \"Orders\" at=32,32 size=400x240 {\n    point @p \"Orders\" x=net\n  }\n}\n```\n",
+          "expected": {
+            "acceptedProviders": [
+              "calc:net",
+              "composition:shape/scale:net"
+            ],
+            "acceptedCharts": [
+              "shape"
+            ],
+            "effectiveValueEdges": [
+              {
+                "from": "raw:Revenue",
+                "to": "calc:net",
+                "role": "formula"
+              },
+              {
+                "from": "raw:Cost",
+                "to": "calc:net",
+                "role": "formula"
+              },
+              {
+                "from": "calc:net",
+                "to": "composition:shape/scale:net",
+                "role": "scale-field"
+              },
+              {
+                "from": "composition:shape/scale:net",
+                "to": "composition:shape/unit:u/mark:p",
+                "role": "x-scale"
+              }
+            ],
+            "forbiddenValueEdges": [
+              {
+                "from": "calc:net",
+                "to": "composition:shape/unit:u/mark:p",
+                "role": "x-field"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "NDN-EC16",
+      "title": "Invalid composition part is omitted without inventing active edges",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\ncomposition @shape {\n  scale numeric @sx Revenue\n  unit @u \"Orders\" at=32,32 size=400x240 {\n    point @good \"Good\" x=sx\n    point @bad \"Bad\" x=missing\n  }\n}\n```\n",
+      "expected": {
+        "acceptedCharts": [
+          "shape"
+        ],
+        "retainedPartIds": [
+          "shape/scale:sx",
+          "shape/unit:u",
+          "shape/unit:u/mark:good"
+        ],
+        "omittedPartIds": [
+          "shape/unit:u/mark:bad"
+        ],
+        "effectiveValueEdges": [
+          {
+            "from": "raw:Revenue",
+            "to": "composition:shape/scale:sx",
+            "role": "scale-field"
+          },
+          {
+            "from": "composition:shape/scale:sx",
+            "to": "composition:shape/unit:u/mark:good",
+            "role": "x-scale"
+          }
+        ],
+        "attemptedOccurrences": [
+          {
+            "consumer": "composition:shape/unit:u/mark:bad",
+            "role": "x-scale",
+            "written": "missing",
+            "state": "unresolved"
+          }
+        ],
+        "diagnosticMatches": [
+          {
+            "severity": "warning",
+            "effect": "setting-ignored",
+            "message": "missing is not a scale in this composition, so point \"Bad\" was left out."
+          }
+        ]
+      }
+    },
+    {
+      "id": "NDN-EC17",
+      "title": "Table without explicit columns consumes inferred current fields",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\ncalc net = Revenue - Cost\n```\n```eda\ntable @all\n```\n",
+      "expected": {
+        "acceptedCharts": [
+          "all"
+        ],
+        "tableColumnFieldsAsSet": [
+          "Revenue",
+          "Cost",
+          "Region",
+          "net"
+        ],
+        "effectiveValueEdges": [
+          {
+            "from": "raw:Revenue",
+            "to": "chart:all",
+            "role": "inferred-table-column"
+          },
+          {
+            "from": "raw:Cost",
+            "to": "chart:all",
+            "role": "inferred-table-column"
+          },
+          {
+            "from": "raw:Region",
+            "to": "chart:all",
+            "role": "inferred-table-column"
+          },
+          {
+            "from": "calc:net",
+            "to": "chart:all",
+            "role": "inferred-table-column"
+          }
+        ],
+        "fieldOccurrenceLocation": "table declaration span; no invented source token for omitted per-field column names",
+        "note": "Assert the set here; exact source field ordering belongs to buildFieldProfiles and is not inferred from this packet.",
+        "acceptedCalculationNamesAsSet": [
+          "net"
+        ]
+      }
+    },
+    {
+      "id": "NDN-EC18",
+      "title": "Empty input rows provide no raw-field schema",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "rows": [],
+      "sourceText": "```eda\nrevenue=Revenue\n```\n```eda\ncalc gross = revenue - Cost\n```\n```eda\nmetric @n count\nfinding @n count\n```\n",
+      "expected": {
+        "knownRawFields": [],
+        "blockedProviders": [
+          "alias:revenue",
+          "calc:gross"
+        ],
+        "acceptedCharts": [
+          "n"
+        ],
+        "acceptedProviders": [
+          "finding:n"
+        ],
+        "effectiveValueEdges": [
+          {
+            "from": "sourceRows",
+            "to": "chart:n",
+            "role": "population"
+          },
+          {
+            "from": "sourceRows",
+            "to": "finding:n",
+            "role": "population"
+          }
+        ],
+        "outputValues": {
+          "finding:n": 0
+        },
+        "metricDisplayNotAsserted": "MetricCardPlan empty-state display is distinct from evaluateFinding count=0; do not claim the chart displays zero without a component check.",
+        "diagnosticMatches": [
+          {
+            "severity": "error",
+            "effect": "contract",
+            "message": "Revenue is not a field in the source rows, so revenue is unavailable."
+          }
+        ],
+        "syntheticFieldException": "__ID remains a compiler-resolvable synthetic field; it is not evidence for a host Revenue/Cost schema."
+      }
+    },
+    {
+      "id": "NDN-EC19",
+      "title": "Chart aggregation edit does not change a finding using the same chart population",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "baseSourceFile": "six-block.eda.md",
+      "edit": {
+        "kind": "replace-exact-once",
+        "before": "metric @net-total sum(net) where.Region=West title=\"Net in West\"",
+        "after": "metric @net-total sum(gross) where.Region=West title=\"Net in West\""
+      },
+      "expected": {
+        "outputValues": {
+          "chart:net-total": 250,
+          "finding:west-net": 125
+        },
+        "removedValueEdges": [
+          {
+            "from": "calc:net",
+            "to": "chart:net-total",
+            "role": "measure"
+          }
+        ],
+        "addedValueEdges": [
+          {
+            "from": "calc:gross",
+            "to": "chart:net-total",
+            "role": "measure"
+          }
+        ],
+        "unchangedValueEdges": [
+          {
+            "from": "raw:Region",
+            "to": "population:net-total:eligible",
+            "role": "local-filter"
+          },
+          {
+            "from": "sourceRows",
+            "to": "population:net-total:eligible",
+            "role": "rows"
+          },
+          {
+            "from": "population:net-total:eligible",
+            "to": "population:net-total:selected",
+            "role": "eligible-rows"
+          },
+          {
+            "from": "population:net-total:eligible",
+            "to": "chart:net-total",
+            "role": "population"
+          },
+          {
+            "from": "population:net-total:selected",
+            "to": "finding:west-net",
+            "role": "population"
+          },
+          {
+            "from": "calc:net",
+            "to": "finding:west-net",
+            "role": "measure"
+          }
+        ],
+        "navigationBindings": [
+          {
+            "from": "chart:net-total",
+            "to": "finding:west-net",
+            "role": "follows-population"
+          }
+        ],
+        "forbiddenValueEdges": [
+          {
+            "from": "chart:net-total",
+            "to": "finding:west-net",
+            "role": "aggregate-value"
+          }
+        ],
+        "note": "There is no dependency on chart aggregate output. If an edited chart setting changes a registry selection predicate, only the selected population port carries that influence."
+      }
+    },
+    {
+      "id": "NDN-EC20",
+      "title": "Eligible, selected, finding-local, and unbound populations remain distinct",
+      "evidence": "source-derived expected assertions; not executed through the full notebook/compiler/render pipeline",
+      "sourceText": "```eda\ncalc gross = Revenue - Cost\ncalc net = gross * 0.5\n```\n```eda\nfilter Revenue=100..150\nmetric @scope sum(gross) where.Region=West select.Cost=40..60\n```\n```eda\nfinding @selected sum net chart=@scope digits=2\nfinding @eligible sum net chart=@scope population=eligible digits=2\nfinding @own sum net chart=@scope where.Cost=..40 digits=2\nfinding @all sum net digits=2\n```\n",
+      "expected": {
+        "populationIds": {
+          "sourceRows": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "workspace": [
+            0,
+            2,
+            3
+          ],
+          "population:scope:eligible": [
+            0,
+            2,
+            3
+          ],
+          "population:scope:selected": [
+            0,
+            2
+          ],
+          "population:own": [
+            0
+          ]
+        },
+        "outputValues": {
+          "chart:scope": 250,
+          "finding:selected": 75,
+          "finding:eligible": 125,
+          "finding:own": 30,
+          "finding:all": 185
+        },
+        "effectiveValueEdges": [
+          {
+            "from": "sourceRows",
+            "to": "population:workspace",
+            "role": "rows"
+          },
+          {
+            "from": "raw:Revenue",
+            "to": "population:workspace",
+            "role": "workspace-filter"
+          },
+          {
+            "from": "population:workspace",
+            "to": "population:scope:eligible",
+            "role": "rows"
+          },
+          {
+            "from": "raw:Region",
+            "to": "population:scope:eligible",
+            "role": "local-filter"
+          },
+          {
+            "from": "population:scope:eligible",
+            "to": "population:scope:selected",
+            "role": "eligible-rows"
+          },
+          {
+            "from": "raw:Cost",
+            "to": "population:scope:selected",
+            "role": "selection-filter"
+          },
+          {
+            "from": "population:scope:eligible",
+            "to": "chart:scope",
+            "role": "population"
+          },
+          {
+            "from": "calc:gross",
+            "to": "chart:scope",
+            "role": "measure"
+          },
+          {
+            "from": "population:scope:selected",
+            "to": "finding:selected",
+            "role": "population"
+          },
+          {
+            "from": "calc:net",
+            "to": "finding:selected",
+            "role": "measure"
+          },
+          {
+            "from": "population:scope:eligible",
+            "to": "finding:eligible",
+            "role": "population"
+          },
+          {
+            "from": "calc:net",
+            "to": "finding:eligible",
+            "role": "measure"
+          },
+          {
+            "from": "population:scope:selected",
+            "to": "population:own",
+            "role": "rows"
+          },
+          {
+            "from": "raw:Cost",
+            "to": "population:own",
+            "role": "finding-filter"
+          },
+          {
+            "from": "population:own",
+            "to": "finding:own",
+            "role": "population"
+          },
+          {
+            "from": "calc:net",
+            "to": "finding:own",
+            "role": "measure"
+          },
+          {
+            "from": "sourceRows",
+            "to": "finding:all",
+            "role": "population"
+          },
+          {
+            "from": "calc:net",
+            "to": "finding:all",
+            "role": "measure"
+          }
+        ],
+        "forbiddenValueEdges": [
+          {
+            "from": "population:scope:selected",
+            "to": "finding:eligible",
+            "role": "population"
+          },
+          {
+            "from": "population:workspace",
+            "to": "finding:all",
+            "role": "population"
+          },
+          {
+            "from": "chart:scope",
+            "to": "finding:selected",
+            "role": "aggregate-value"
+          }
+        ],
+        "navigationBindings": [
+          {
+            "from": "chart:scope",
+            "to": "finding:selected",
+            "role": "follows-selected-population"
+          },
+          {
+            "from": "chart:scope",
+            "to": "finding:eligible",
+            "role": "follows-eligible-population"
+          },
+          {
+            "from": "chart:scope",
+            "to": "finding:own",
+            "role": "follows-selected-population"
+          }
+        ],
+        "note": "Selection inputs must come from the owning registry getFilterFunction contract/current settings, including any chart settings it reads; do not infer that every chart measure changes selection. Other charts selections do not feed these findings. In notebook mode the MetricCard renderer consumes eligible rows, because localSelections leaves chart dimensions unfiltered. Its gross sum is 250, although the selected finding uses only rows 0 and 2."
+      }
+    }
+  ],
+  "edgeAssertionPolicy": "Edge/provider arrays are explicit required assertions in a local projection, not exhaustive global graph dumps; forbidden edges must be absent. Lists ending AsSet compare without order. The separate main notebook fixture should supply the complete graph.",
+  "executedSyntaxChecks": {
+    "scope": "Unmodified parseNotebook and parseDocument executed for all concrete edge-case sources. Unmodified exact-ref lowerComposition and isCompositionDefinition executed for every composition declaration. Full compileNotebook, semantic calculation parser, calculation engine, chart/finding evaluation, navigation, and React rendering were not executed by this check.",
+    "cases": [
+      {
+        "id": "NDN-EC01",
+        "variant": null,
+        "blockCount": 4,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC02",
+        "variant": null,
+        "blockCount": 3,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC03",
+        "variant": null,
+        "blockCount": 2,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC04",
+        "variant": "native",
+        "blockCount": 2,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC04",
+        "variant": "alias-bracket",
+        "blockCount": 2,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC04",
+        "variant": "literal",
+        "blockCount": 1,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC05",
+        "variant": null,
+        "blockCount": 4,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC06",
+        "variant": null,
+        "blockCount": 3,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC07",
+        "variant": null,
+        "blockCount": 3,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC08",
+        "variant": null,
+        "blockCount": 2,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC09",
+        "variant": null,
+        "blockCount": 1,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC10",
+        "variant": "invalid-filter",
+        "blockCount": 1,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC10",
+        "variant": "optional-color-and-constant-size",
+        "blockCount": 1,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC11",
+        "variant": null,
+        "blockCount": 6,
+        "parseProblems": [],
+        "compositionChecks": [
+          {
+            "id": "net-shape",
+            "valid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC12",
+        "variant": null,
+        "blockCount": 6,
+        "parseProblems": [],
+        "compositionChecks": [
+          {
+            "id": "net-shape",
+            "valid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC13",
+        "variant": null,
+        "blockCount": 6,
+        "parseProblems": [],
+        "compositionChecks": [
+          {
+            "id": "net-shape",
+            "valid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC14",
+        "variant": null,
+        "blockCount": 6,
+        "parseProblems": [
+          "metric on line 2 has no closing }."
+        ],
+        "compositionChecks": [
+          {
+            "id": "net-shape",
+            "valid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC15",
+        "variant": "no-alias-normalization",
+        "blockCount": 2,
+        "parseProblems": [],
+        "compositionChecks": [
+          {
+            "id": "shape",
+            "valid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC15",
+        "variant": "same-spelling-distinct-scope",
+        "blockCount": 2,
+        "parseProblems": [],
+        "compositionChecks": [
+          {
+            "id": "shape",
+            "valid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC16",
+        "variant": null,
+        "blockCount": 1,
+        "parseProblems": [],
+        "compositionChecks": [
+          {
+            "id": "shape",
+            "valid": true,
+            "problems": [
+              "missing is not a scale in this composition, so point \"Bad\" was left out."
+            ]
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC17",
+        "variant": null,
+        "blockCount": 2,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC18",
+        "variant": null,
+        "blockCount": 3,
+        "parseProblems": [],
+        "compositionChecks": []
+      },
+      {
+        "id": "NDN-EC19",
+        "variant": null,
+        "blockCount": 6,
+        "parseProblems": [],
+        "compositionChecks": [
+          {
+            "id": "net-shape",
+            "valid": true,
+            "problems": []
+          }
+        ]
+      },
+      {
+        "id": "NDN-EC20",
+        "variant": null,
+        "blockCount": 3,
+        "parseProblems": [],
+        "compositionChecks": []
+      }
+    ]
+  },
+  "metricPopulationEvidence": {
+    "classification": "source-inspected behavior; no React/browser execution",
+    "baseline": "d3920a285f3755a8324998775deb131747e959f5",
+    "paths": [
+      "packages/explorEDA/src/components/notebook/ExplorEdaNotebook.tsx",
+      "packages/explorEDA/src/components/charts/MetricCard/MetricCard.tsx",
+      "packages/explorEDA/src/hooks/CrossfilterWrapper.ts",
+      "packages/explorEDA/src/components/notebook/NotebookFindings.tsx",
+      "packages/explorEDA/src/lib/notebook/findings.ts"
+    ],
+    "reason": "Notebook sets localSelections. CrossfilterWrapper.updateChartFilters clears chart dimensions in that mode. MetricCard reads getChartFilteredRowIds, so its aggregate uses eligible rows; findings then explicitly apply the owning selection unless population=eligible. EC20 chart gross=250 and selected finding net=75."
+  },
+  "proposedKeyedFallbackNote": "lastValidByZeroBasedBlockIndex records exact baseline compiler input only. In M2 tests translate B1..B6 to fence IDs metric/revenue/gross/net/unused/composition; do not reintroduce ordinal fallback in the proposed memory API."
+}

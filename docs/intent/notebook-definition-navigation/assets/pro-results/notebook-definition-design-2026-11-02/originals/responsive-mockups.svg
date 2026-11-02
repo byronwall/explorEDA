@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1770" viewBox="0 0 1440 1770" role="img" aria-label="Proposed notebook definition navigation at 1280, 783 and 390 CSS pixels">
+<defs><filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#182331" flood-opacity="0.10"/></filter><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8" fill="none" stroke="#68798d" stroke-width="1.5"/></marker></defs>
+<rect x="0" y="0" width="1440" height="1770" rx="0" fill="#f3f6f9" stroke="#f3f6f9" />
+<text x="80" y="48" font-family="DejaVu Sans" font-size="28" font-weight="600" fill="#182331" text-anchor="start">Notebook definition navigation</text>
+<text x="80" y="76" font-family="DejaVu Sans" font-size="13" font-weight="400" fill="#5e6c7c" text-anchor="start">Original design mockups · proposed behavior · light theme · not application screenshots</text>
+<text x="80" y="113" font-family="DejaVu Sans" font-size="15" font-weight="600" fill="#182331" text-anchor="start">1280 px</text>
+<text x="180" y="113" font-family="DejaVu Sans" font-size="13" font-weight="400" fill="#5e6c7c" text-anchor="start">Sections layout with temporary inspector; figures retain their size.</text>
+<rect x="80" y="132" width="1280" height="730" rx="12" fill="#ffffff" stroke="#d8dfe7" />
+<text x="104" y="166" font-family="DejaVu Sans" font-size="13" font-weight="600" fill="#182331" text-anchor="start">Analysis notebook</text>
+<rect x="1232" y="149" width="104" height="28" rx="5" fill="#ffffff" stroke="#d8dfe7" />
+<text x="1242" y="168" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#5e6c7c" text-anchor="start">Definitions</text>
+<line x1="80" y1="186" x2="1360" y2="186" stroke="#d8dfe7" stroke-width="1" />
+<rect x="104" y="206" width="98" height="28" rx="5" fill="#edf3ff" stroke="#2855b4" />
+<text x="114" y="225" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#2855b4" text-anchor="start">Results</text>
+<rect x="210" y="206" width="120" height="28" rx="5" fill="#ffffff" stroke="#d8dfe7" />
+<text x="220" y="225" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#5e6c7c" text-anchor="start">Definitions</text>
+<text x="104" y="288" font-family="DejaVu Sans" font-size="22" font-weight="600" fill="#182331" text-anchor="start">West summary</text>
+<text x="104" y="326" font-family="DejaVu Sans" font-size="14" font-weight="400" fill="#182331" text-anchor="start">Net in West is</text>
+<text x="210" y="326" font-family="DejaVu Sans" font-size="14" font-weight="600" fill="#2855b4" text-anchor="start">125.00</text>
+<text x="104" y="357" font-family="DejaVu Sans" font-size="13" font-weight="500" fill="#2855b4" text-anchor="start">Show records</text>
+<text x="104" y="403" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Definitions can appear after</text>
+<text x="104" y="423" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">the outputs that use them.</text>
+<rect x="444" y="265" width="888" height="174" rx="8" fill="#ffffff" stroke="#d8dfe7" />
+<text x="464" y="295" font-family="DejaVu Sans" font-size="15" font-weight="600" fill="#182331" text-anchor="start">Net in West</text>
+<text x="464" y="363" font-family="DejaVu Sans" font-size="48" font-weight="600" fill="#182331" text-anchor="start">125</text>
+<text x="464" y="397" font-family="DejaVu Sans" font-size="13" font-weight="400" fill="#5e6c7c" text-anchor="start">sum(net) · Region: West</text>
+<rect x="444" y="463" width="888" height="244" rx="8" fill="#fafcfe" stroke="#d8dfe7" />
+<text x="464" y="494" font-family="DejaVu Sans" font-size="15" font-weight="600" fill="#182331" text-anchor="start">Read the formula without leaving the chart</text>
+<text x="464" y="528" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Uses</text>
+<rect x="512" y="509" width="56" height="28" rx="5" fill="#edf3ff" stroke="#2855b4" />
+<text x="522" y="528" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#2855b4" text-anchor="start">net</text>
+<text x="464" y="574" font-family="DejaVu Sans" font-size="13" font-weight="500" fill="#2855b4" text-anchor="start">net  →  gross  →  revenue  →  Revenue</text>
+<text x="464" y="618" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Page position stays unchanged while previewing.</text>
+<text x="464" y="642" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Go to source creates a Return entry.</text>
+<rect x="984" y="204" width="360" height="590" rx="10" fill="#ffffff" stroke="#d8dfe7" filter="url(#shadow)"/>
+<text x="1004" y="234" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#5e6c7c" text-anchor="start">Definitions</text>
+<text x="1314" y="235" font-family="DejaVu Sans" font-size="22" font-weight="400" fill="#5e6c7c" text-anchor="start">×</text>
+<text x="1004" y="266" font-family="DejaVu Sans" font-size="24" font-weight="600" fill="#182331" text-anchor="start">net</text>
+<text x="1004" y="290" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Definitions / Net</text>
+<rect x="1004" y="310" width="72" height="28" rx="5" fill="#edf3ff" stroke="#2855b4" />
+<text x="1014" y="329" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#2855b4" text-anchor="start">Uses</text>
+<rect x="1084" y="310" width="90" height="28" rx="5" fill="#ffffff" stroke="#d8dfe7" />
+<text x="1094" y="329" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#5e6c7c" text-anchor="start">Used by</text>
+<text x="1004" y="367" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#5e6c7c" text-anchor="start">Current source</text>
+<rect x="1004" y="379" width="320" height="52" rx="5" fill="#f6f8fb" stroke="#d8dfe7" />
+<text x="1016" y="403" font-family="DejaVu Sans Mono" font-size="12" font-weight="400" fill="#182331" text-anchor="start">calc net = gross * 0.5</text>
+<text x="1004" y="457" font-family="DejaVu Sans" font-size="11" font-weight="600" fill="#5e6c7c" text-anchor="start">INPUT</text>
+<line x1="1004" y1="469" x2="1324" y2="469" stroke="#d8dfe7" stroke-width="1" />
+<text x="1004" y="496" font-family="DejaVu Sans" font-size="15" font-weight="600" fill="#2855b4" text-anchor="start">gross</text>
+<text x="1004" y="517" font-family="DejaVu Sans" font-size="11" font-weight="400" fill="#5e6c7c" text-anchor="start">Calculation · Definitions / Gross</text>
+<text x="1316" y="500" font-family="DejaVu Sans" font-size="22" font-weight="400" fill="#2855b4" text-anchor="start">›</text>
+<line x1="1004" y1="534" x2="1324" y2="534" stroke="#d8dfe7" stroke-width="1" />
+<text x="1004" y="561" font-family="DejaVu Sans" font-size="13" font-weight="600" fill="#182331" text-anchor="start">4 direct consumers</text>
+<text x="1004" y="582" font-family="DejaVu Sans" font-size="11" font-weight="400" fill="#5e6c7c" text-anchor="start">3 displayed outputs downstream</text>
+<text x="1004" y="616" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#2855b4" text-anchor="start">Show paths</text>
+<line x1="1004" y1="728" x2="1324" y2="728" stroke="#d8dfe7" stroke-width="1" />
+<rect x="1004" y="744" width="320" height="32" rx="5" fill="#2855b4" stroke="#2855b4" />
+<text x="1164.0" y="765" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Go to source</text>
+<text x="104" y="834" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Plain chart clicks select. Alt-click traces values. Definitions opens source relationships.</text>
+<text x="80" y="914" font-family="DejaVu Sans" font-size="15" font-weight="600" fill="#182331" text-anchor="start">783 px</text>
+<text x="175" y="914" font-family="DejaVu Sans" font-size="13" font-weight="400" fill="#5e6c7c" text-anchor="start">Reading column; bounded nonmodal overlay.</text>
+<rect x="80" y="934" width="783" height="706" rx="12" fill="#ffffff" stroke="#d8dfe7" />
+<text x="104" y="969" font-family="DejaVu Sans" font-size="13" font-weight="600" fill="#182331" text-anchor="start">Analysis notebook</text>
+<line x1="80" y1="988" x2="863" y2="988" stroke="#d8dfe7" stroke-width="1" />
+<rect x="104" y="1007" width="98" height="28" rx="5" fill="#edf3ff" stroke="#2855b4" />
+<text x="114" y="1026" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#2855b4" text-anchor="start">Results</text>
+<rect x="210" y="1007" width="120" height="28" rx="5" fill="#ffffff" stroke="#d8dfe7" />
+<text x="220" y="1026" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#5e6c7c" text-anchor="start">Definitions</text>
+<text x="104" y="1081" font-family="DejaVu Sans" font-size="22" font-weight="600" fill="#182331" text-anchor="start">West summary</text>
+<text x="104" y="1116" font-family="DejaVu Sans" font-size="14" font-weight="400" fill="#182331" text-anchor="start">Net in West is 125.00.</text>
+<text x="104" y="1144" font-family="DejaVu Sans" font-size="13" font-weight="500" fill="#2855b4" text-anchor="start">Show records</text>
+<rect x="104" y="1174" width="735" height="180" rx="8" fill="#ffffff" stroke="#d8dfe7" />
+<text x="124" y="1206" font-family="DejaVu Sans" font-size="15" font-weight="600" fill="#182331" text-anchor="start">Net in West</text>
+<text x="124" y="1274" font-family="DejaVu Sans" font-size="46" font-weight="600" fill="#182331" text-anchor="start">125</text>
+<text x="124" y="1313" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">sum(net) · Region: West</text>
+<text x="104" y="1410" font-family="DejaVu Sans" font-size="13" font-weight="400" fill="#5e6c7c" text-anchor="start">The document keeps</text>
+<text x="104" y="1431" font-family="DejaVu Sans" font-size="13" font-weight="400" fill="#5e6c7c" text-anchor="start">its existing width.</text>
+<text x="104" y="1477" font-family="DejaVu Sans" font-size="13" font-weight="500" fill="#182331" text-anchor="start">Escape closes</text>
+<text x="104" y="1498" font-family="DejaVu Sans" font-size="13" font-weight="400" fill="#5e6c7c" text-anchor="start">the inspector and</text>
+<text x="104" y="1519" font-family="DejaVu Sans" font-size="13" font-weight="400" fill="#5e6c7c" text-anchor="start">restores its invoker.</text>
+<rect x="487" y="1007" width="360" height="590" rx="10" fill="#ffffff" stroke="#d8dfe7" filter="url(#shadow)"/>
+<text x="507" y="1037" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#5e6c7c" text-anchor="start">Definitions</text>
+<text x="817" y="1038" font-family="DejaVu Sans" font-size="22" font-weight="400" fill="#5e6c7c" text-anchor="start">×</text>
+<text x="507" y="1069" font-family="DejaVu Sans" font-size="24" font-weight="600" fill="#182331" text-anchor="start">net</text>
+<text x="507" y="1093" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Definitions / Net</text>
+<rect x="507" y="1113" width="72" height="28" rx="5" fill="#edf3ff" stroke="#2855b4" />
+<text x="517" y="1132" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#2855b4" text-anchor="start">Uses</text>
+<rect x="587" y="1113" width="90" height="28" rx="5" fill="#ffffff" stroke="#d8dfe7" />
+<text x="597" y="1132" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#5e6c7c" text-anchor="start">Used by</text>
+<text x="507" y="1170" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#5e6c7c" text-anchor="start">Current source</text>
+<rect x="507" y="1182" width="320" height="52" rx="5" fill="#f6f8fb" stroke="#d8dfe7" />
+<text x="519" y="1206" font-family="DejaVu Sans Mono" font-size="12" font-weight="400" fill="#182331" text-anchor="start">calc net = gross * 0.5</text>
+<text x="507" y="1260" font-family="DejaVu Sans" font-size="11" font-weight="600" fill="#5e6c7c" text-anchor="start">INPUT</text>
+<line x1="507" y1="1272" x2="827" y2="1272" stroke="#d8dfe7" stroke-width="1" />
+<text x="507" y="1299" font-family="DejaVu Sans" font-size="15" font-weight="600" fill="#2855b4" text-anchor="start">gross</text>
+<text x="507" y="1320" font-family="DejaVu Sans" font-size="11" font-weight="400" fill="#5e6c7c" text-anchor="start">Calculation · Definitions / Gross</text>
+<text x="819" y="1303" font-family="DejaVu Sans" font-size="22" font-weight="400" fill="#2855b4" text-anchor="start">›</text>
+<line x1="507" y1="1337" x2="827" y2="1337" stroke="#d8dfe7" stroke-width="1" />
+<text x="507" y="1364" font-family="DejaVu Sans" font-size="13" font-weight="600" fill="#182331" text-anchor="start">4 direct consumers</text>
+<text x="507" y="1385" font-family="DejaVu Sans" font-size="11" font-weight="400" fill="#5e6c7c" text-anchor="start">3 displayed outputs downstream</text>
+<text x="507" y="1419" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#2855b4" text-anchor="start">Show paths</text>
+<line x1="507" y1="1531" x2="827" y2="1531" stroke="#d8dfe7" stroke-width="1" />
+<rect x="507" y="1547" width="320" height="32" rx="5" fill="#2855b4" stroke="#2855b4" />
+<text x="667.0" y="1568" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Go to source</text>
+<text x="970" y="914" font-family="DejaVu Sans" font-size="15" font-weight="600" fill="#182331" text-anchor="start">390 px</text>
+<text x="1065" y="914" font-family="DejaVu Sans" font-size="13" font-weight="400" fill="#5e6c7c" text-anchor="start">Full-width sheet</text>
+<rect x="970" y="934" width="390" height="706" rx="0" fill="#ffffff" stroke="#d8dfe7" />
+<text x="990" y="964" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#5e6c7c" text-anchor="start">Definitions</text>
+<text x="1330" y="965" font-family="DejaVu Sans" font-size="22" font-weight="400" fill="#5e6c7c" text-anchor="start">×</text>
+<text x="990" y="996" font-family="DejaVu Sans" font-size="24" font-weight="600" fill="#182331" text-anchor="start">net</text>
+<text x="990" y="1020" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Definitions / Net</text>
+<rect x="990" y="1040" width="72" height="28" rx="5" fill="#edf3ff" stroke="#2855b4" />
+<text x="1000" y="1059" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#2855b4" text-anchor="start">Uses</text>
+<rect x="1070" y="1040" width="90" height="28" rx="5" fill="#ffffff" stroke="#d8dfe7" />
+<text x="1080" y="1059" font-family="DejaVu Sans" font-size="12" font-weight="500" fill="#5e6c7c" text-anchor="start">Used by</text>
+<text x="990" y="1097" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#5e6c7c" text-anchor="start">Current source</text>
+<rect x="990" y="1109" width="350" height="52" rx="5" fill="#f6f8fb" stroke="#d8dfe7" />
+<text x="1002" y="1133" font-family="DejaVu Sans Mono" font-size="12" font-weight="400" fill="#182331" text-anchor="start">calc net = gross * 0.5</text>
+<text x="990" y="1187" font-family="DejaVu Sans" font-size="11" font-weight="600" fill="#5e6c7c" text-anchor="start">INPUT</text>
+<line x1="990" y1="1199" x2="1340" y2="1199" stroke="#d8dfe7" stroke-width="1" />
+<text x="990" y="1226" font-family="DejaVu Sans" font-size="15" font-weight="600" fill="#2855b4" text-anchor="start">gross</text>
+<text x="990" y="1247" font-family="DejaVu Sans" font-size="11" font-weight="400" fill="#5e6c7c" text-anchor="start">Calculation · Definitions / Gross</text>
+<text x="1332" y="1230" font-family="DejaVu Sans" font-size="22" font-weight="400" fill="#2855b4" text-anchor="start">›</text>
+<line x1="990" y1="1264" x2="1340" y2="1264" stroke="#d8dfe7" stroke-width="1" />
+<text x="990" y="1291" font-family="DejaVu Sans" font-size="13" font-weight="600" fill="#182331" text-anchor="start">4 direct consumers</text>
+<text x="990" y="1312" font-family="DejaVu Sans" font-size="11" font-weight="400" fill="#5e6c7c" text-anchor="start">3 displayed outputs downstream</text>
+<text x="990" y="1346" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#2855b4" text-anchor="start">Show paths</text>
+<line x1="990" y1="1574" x2="1340" y2="1574" stroke="#d8dfe7" stroke-width="1" />
+<rect x="990" y="1590" width="350" height="32" rx="5" fill="#2855b4" stroke="#2855b4" />
+<text x="1165.0" y="1611" font-family="DejaVu Sans" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Go to source</text>
+<text x="990" y="1399" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Focus stays inside this sheet.</text>
+<text x="990" y="1424" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">The background does not scroll.</text>
+<text x="990" y="1467" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Close returns to the chart action.</text>
+<text x="80" y="1684" font-family="DejaVu Sans" font-size="16" font-weight="600" fill="#182331" text-anchor="start">Source jump and Return</text>
+<text x="80" y="1713" font-family="DejaVu Sans" font-size="14" font-weight="500" fill="#2855b4" text-anchor="start">Preview  →  Go to source  →  await host / target  →  focus declaration  →  Return to reading</text>
+<text x="80" y="1742" font-family="DejaVu Sans" font-size="12" font-weight="400" fill="#5e6c7c" text-anchor="start">Only a completed jump changes return history. A missing or ambiguous target never redirects to a neighboring block.</text>
+</svg>
