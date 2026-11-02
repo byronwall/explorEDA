@@ -1,6 +1,6 @@
 # Narrow analytical reading Design
 
-Phase: integrated; PR pending. Follow-ups: 0/1.
+Phase: complete. Follow-ups: 0/1.
 
 Repository: https://github.com/byronwall/explorEDA
 Baseline: `d3920a285f3755a8324998775deb131747e959f5`.
@@ -38,3 +38,11 @@ Pro finished in29m39s. No follow-up. Existing ZIP downloaded from the recorded c
 Current main unchanged. Decisive checks and local corrections are in intent decisions.md. BuildNAR01–16, Explore17–18, Defer19, Avoid20. Plan and summary written at recorded targets; R063/catalogue updated without rank change. Local probe18tests plus existing14tests pass, including native compiler, all15 numerical populations, owner-local notebook values, linked eligibility5/4 and six exact placements. Initial probe wrongly expected no compiler diagnostics; corrected to two deliberate Wholesale warnings. Probe moved to ignoredtmp. Browser/provider/focus/paging/feature acceptance remains unperformed.
 
 Integration checks: docs3files74tests pass with existing React act warnings. Authored Prettier,74 local links, whitespace, and12 ZIP/disk byte comparisons pass. An initial formatting invocation included .prettierignore, which has no parser; the corrected authored-Markdown check passes. Full pnpm check and changeset skipped for docs only. No original program executed.
+
+## Complete
+
+Verified OPEN https://github.com/byronwall/explorEDA/pull/591, main ← codex/narrow-reading-design-2026-11-02. Saved body and all21 PR files verified, including12 byte-exact originals. Integration1aa2bb2f pushed. Documentation label applied; codex/codex-automation unavailable. PR body follows the pr-description skill.
+
+Temporary collector deletion confirmed deleteStatus=deleted. Parent supported view and saved configuration confirm ACTIVE every six hours GPT6.1SolMedium. All32 native/baseline tests and74 docs tests pass; authored formatting,74 links, whitespace and ZIP/disk/Git inventories pass. No implementation, merge, deploy or paid service. Stop for review.
+
+Completed 2026-11-02T10:01:00.708501+00:00.
