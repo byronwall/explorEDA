@@ -2,6 +2,7 @@
   "name": "data-viz",
   "private": true,
   "version": "0.0.1",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "pgm:view": "pgm viewer --data-dir ./pgm/data",

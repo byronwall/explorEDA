@@ -608,3 +608,7 @@ import { createAnalysisWorker } from "exploreda/analysis";
 While a query runs, the charts keep the last finished result and the scope
 line says it is updating. A result that finishes after a newer request is
 dropped, so rows, counts, and inputs on screen always match.
+
+## License
+
+[MIT](LICENSE) © Byron Wall
