@@ -31,6 +31,7 @@ export function RecoverRows({ population }: { population: string }) {
           variant="outline"
           size="sm"
           className="eda-recover-rows"
+          aria-label="Recover rows"
           tooltip="See which filter to remove to bring rows back. Nothing changes until you apply."
         >
           <RotateCcw aria-hidden="true" />
