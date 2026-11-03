@@ -41,6 +41,21 @@ Clear removes the selector. Toggling off the last selected pattern also clears i
 A declared field absent from individual rows remains a known field with missing values.
 A missing schema field is unavailable, rather than a new all-missing cohort.
 
+## Product decisions — November 2, 2026
+
+Byron reviewed an [interactive mockup](assets/joint-missingness-mockup.html) and confirmed this scope.
+The mockup uses made-up order data. Its inline record list stands in for the trace drawer.
+
+- Ship exact patterns only. Inclusive patterns stay deferred.
+- Add a new chart type only. Summary does not change.
+- A new chart starts with every field that has a missing value, up to 12, sorted by missing count.
+  With fewer than two such fields, start with the first two fields and show the empty-pattern state.
+- Draw a missing-count bar for each chosen field above its dot column. Use the same scope `B` as the pattern shares.
+- Show the top 20 patterns, then pages. Records open in the existing trace drawer.
+- In a notebook, show Keep and Reset only when the live selection differs from the kept selector.
+  Show an "unkept changes" badge in that state.
+- M2 keeps both group comparison and chosen-input counts.
+
 ## M1 — Exact patterns, records, and kept notebooks
 
 **Outcome:** choose fields, select patterns, inspect all matching rows, keep the selector, and reopen correct notebook findings.
