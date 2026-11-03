@@ -2480,7 +2480,9 @@ export function compileDocument(
     for (const [key, pair] of [...pairs]) {
       if (
         chart.type === "joint-missingness" &&
-        parsePath(key)?.segments[0] === "patterns"
+        ["patterns", "inputSelection"].includes(
+          parsePath(key)?.segments[0] ?? ""
+        )
       ) {
         pairs.delete(key);
         patternPairs.push([key, pair]);
@@ -2553,7 +2555,36 @@ export function compileDocument(
       }
     }
 
-    if (patternPairs.length && chart.type === "joint-missingness") {
+    const inputPair = patternPairs.find(([key]) => key === "inputSelection");
+    if (inputPair && chart.type === "joint-missingness") {
+      const side = single(inputPair[1].value);
+      const problem =
+        patternPairs.length > 1
+          ? "A chart selects patterns or input rows, not both"
+          : side !== "admitted" && side !== "excluded"
+            ? `${side} is not admitted or excluded`
+            : !chart.eligibility?.fields.length
+              ? "inputSelection needs eligibility.fields[] first"
+              : undefined;
+      if (problem) {
+        report(
+          "error",
+          "chart-skipped",
+          inputPair[1].span,
+          `${problem}, so ${subject} was skipped rather than drawn with more rows.`,
+          { subject }
+        );
+        return undefined;
+      }
+      chart.filters = [
+        ...chart.filters.filter((item) => item.type !== "missingness-inputs"),
+        {
+          type: "missingness-inputs",
+          field: "__ID",
+          side: side as "admitted" | "excluded",
+        },
+      ];
+    } else if (patternPairs.length && chart.type === "joint-missingness") {
       const filter = lowerPatterns(patternPairs, chart.fields, subject);
       if (filter === undefined) {
         return undefined;

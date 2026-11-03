@@ -25,13 +25,35 @@ export function JointMissingnessSettingsPanel({
 
   // A changed field set changes what every pattern means, so the selection
   // clears with it.
-  const setFields = (fields: string[]) =>
+  // The input rule stays while its fields are all still chosen.
+  const setFields = (fields: string[]) => {
+    const keepsRule = settings.eligibility?.fields.every((field) =>
+      fields.includes(field)
+    );
     onSettingsChange({
       ...settings,
       fields,
+      eligibility: keepsRule ? settings.eligibility : undefined,
       filters: settings.filters.filter(
-        (filter) => filter.type !== "missingness-pattern"
+        (filter) =>
+          filter.type !== "missingness-pattern" &&
+          (keepsRule || filter.type !== "missingness-inputs")
       ),
+    });
+  };
+  const rule = settings.eligibility ?? {
+    fields: [],
+    requirement: "present" as const,
+  };
+  const setRule = (next: typeof rule) =>
+    onSettingsChange({
+      ...settings,
+      eligibility: next.fields.length ? next : undefined,
+      filters: next.fields.length
+        ? settings.filters
+        : settings.filters.filter(
+            (filter) => filter.type !== "missingness-inputs"
+          ),
     });
 
   return (
@@ -94,6 +116,51 @@ export function JointMissingnessSettingsPanel({
           onChange={(field) => field && setFields([...settings.fields, field])}
         />
       )}
+      <div className="space-y-1 pt-1">
+        <h5 className="text-sm font-medium">Inputs a later step needs</h5>
+        <div className="flex flex-wrap gap-x-3 gap-y-1">
+          {settings.fields.map((field) => (
+            <label key={field} className="flex items-center gap-1 text-sm">
+              <input
+                type="checkbox"
+                checked={rule.fields.includes(field)}
+                onChange={(event) =>
+                  setRule({
+                    ...rule,
+                    fields: event.target.checked
+                      ? settings.fields.filter(
+                          (item) => item === field || rule.fields.includes(item)
+                        )
+                      : rule.fields.filter((item) => item !== field),
+                  })
+                }
+              />
+              {getFieldLabel(field)}
+            </label>
+          ))}
+        </div>
+        <label className="flex items-center gap-2 text-sm">
+          Usable rows
+          <select
+            className="h-8 min-w-0 rounded-md border border-input bg-background px-2 text-sm"
+            value={rule.requirement}
+            disabled={!rule.fields.length}
+            onChange={(event) =>
+              setRule({
+                ...rule,
+                requirement: event.target.value as "present" | "finite",
+              })
+            }
+          >
+            <option value="present">Have values</option>
+            <option value="finite">Have finite numbers</option>
+          </select>
+        </label>
+        <p className="text-xs text-muted-foreground">
+          The chart counts the rows that have every checked input, and lets you
+          select them or the rows they leave out.
+        </p>
+      </div>
       <div className="space-y-1 pt-1">
         <h5 className="text-sm font-medium">Compare groups</h5>
         <div className="flex min-w-0 items-center gap-1">

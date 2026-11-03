@@ -1,5 +1,5 @@
 import { categoryKey, categoryLabel } from "@/lib/categories";
-import { isMissingValue } from "@/lib/valueParsing";
+import { finiteNumber, isMissingValue } from "@/lib/valueParsing";
 import type { IdType } from "@/providers/lib/dataLayerState";
 import type { datum } from "@/types/ChartTypes";
 
@@ -211,4 +211,31 @@ export function countByGroup(
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
   return counts;
+}
+
+/** Which rows can feed a step that needs these inputs. */
+export interface InputRule {
+  /** Required fields, a subset of the chart's fields. */
+  fields: string[];
+  /** Present: none missing. Finite: each also reads as a finite number. */
+  requirement: "present" | "finite";
+}
+
+/** Tests whether a row meets the rule; with no fields, every row does. */
+export function inputTest(
+  rule: InputRule,
+  columns: Columns
+): (id: IdType) => boolean {
+  const lists = rule.fields.map((field) => columns[field] ?? {});
+  return rule.requirement === "finite"
+    ? (id) =>
+        lists.every((list) => {
+          const value = list[id];
+          return (
+            !isMissingValue(value) &&
+            typeof value !== "boolean" &&
+            finiteNumber(value) !== undefined
+          );
+        })
+    : (id) => lists.every((list) => !isMissingValue(list[id]));
 }

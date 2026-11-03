@@ -242,6 +242,15 @@ function isPatternFilter(
   chart: Record<string, unknown>
 ): boolean {
   if (
+    isRecord(value) &&
+    value.type === "missingness-inputs" &&
+    value.field === "__ID"
+  )
+    return (
+      (value.side === "admitted" || value.side === "excluded") &&
+      isRecord(chart.eligibility)
+    );
+  if (
     !isRecord(value) ||
     value.type !== "missingness-pattern" ||
     value.field !== "__ID" ||
@@ -834,8 +843,22 @@ function isChart(value: unknown): boolean {
         new Set(value.fields).size === value.fields.length &&
         (value.groupField === undefined ||
           typeof value.groupField === "string") &&
+        (value.eligibility === undefined ||
+          (isRecord(value.eligibility) &&
+            (value.eligibility.requirement === "present" ||
+              value.eligibility.requirement === "finite") &&
+            Array.isArray(value.eligibility.fields) &&
+            value.eligibility.fields.every(
+              (field) =>
+                typeof field === "string" &&
+                (value.fields as unknown[]).includes(field)
+            ))) &&
+        // One own selection: patterns or input rows, not both.
         (value.filters as unknown[]).filter(
-          (filter) => isRecord(filter) && filter.type === "missingness-pattern"
+          (filter) =>
+            isRecord(filter) &&
+            (filter.type === "missingness-pattern" ||
+              filter.type === "missingness-inputs")
         ).length <= 1
       );
     case "donut":

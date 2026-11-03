@@ -158,6 +158,8 @@ export const CHART_SETTINGS: Readonly<
   },
   "joint-missingness": {
     field: "Not used. The chart reads its fields from `fields`.",
+    eligibility:
+      "Optional rule for usable rows: `fields` lists the inputs a later step needs, from the chart's fields, and `requirement` is present (every input has a value) or finite (every input is also a finite number).",
     groupField:
       "Optional group field. Each of its eight largest groups gets a column with every pattern's share of that group; the rest share one column.",
     fields:

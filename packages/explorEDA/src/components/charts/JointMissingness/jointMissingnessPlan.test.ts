@@ -4,6 +4,7 @@ import { jointMissingnessDefinition } from "./definition";
 import {
   countByGroup,
   defaultMissingnessFields,
+  inputTest,
   planGroups,
   patternMatcher,
   planPatterns,
@@ -211,5 +212,17 @@ describe("planGroups", () => {
       total: 3,
     });
     expect(groups.columns.reduce((sum, c) => sum + c.total, 0)).toBe(12);
+  });
+});
+
+describe("inputTest", () => {
+  it("separates present values from finite numbers", () => {
+    // The plan's fixture keeps w = "Infinity" in r12: present, not finite.
+    const cols = { ...columns, w: { ...columns.w, 11: "Infinity" } };
+    const rule = { fields: ["x", "y", "w"] };
+    const present = inputTest({ ...rule, requirement: "present" }, cols);
+    const finite = inputTest({ ...rule, requirement: "finite" }, cols);
+    expect(names(ids.filter(present))).toEqual(["r01", "r07", "r10", "r12"]);
+    expect(names(ids.filter(finite))).toEqual(["r01", "r07", "r10"]);
   });
 });

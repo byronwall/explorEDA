@@ -20,6 +20,7 @@ export function applyFilter(
 ): boolean {
   switch (filter.type) {
     case "missingness-pattern":
+    case "missingness-inputs":
       // It tests whole rows, so only its owning chart applies it.
       return false;
     case "spec-status":

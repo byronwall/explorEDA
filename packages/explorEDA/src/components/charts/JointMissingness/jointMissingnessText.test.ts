@@ -63,4 +63,25 @@ describe("joint missingness text", () => {
       start.settings.charts[0]!.filters
     );
   });
+
+  it("reads and writes an input selection with its rule", () => {
+    const start = compile(
+      "eligibility.fields[]=x,y\neligibility.requirement=finite\ninputSelection=excluded"
+    );
+    expect(start.diagnostics).toEqual([]);
+    expect(start.settings.charts[0]!.filters).toEqual([
+      { type: "missingness-inputs", field: "__ID", side: "excluded" },
+    ]);
+    const { text, omitted } = exportDocument(start.settings, { rows });
+    expect(omitted).toEqual([]);
+    expect(text).toContain("inputSelection=excluded");
+    expect(compileDocument(text, { rows }).settings.charts[0]!.filters).toEqual(
+      start.settings.charts[0]!.filters
+    );
+    expect(compile("inputSelection=admitted").settings.charts).toEqual([]);
+    expect(
+      compile("eligibility.fields[]=x\ninputSelection=admitted\npatterns[]=")
+        .settings.charts
+    ).toEqual([]);
+  });
 });

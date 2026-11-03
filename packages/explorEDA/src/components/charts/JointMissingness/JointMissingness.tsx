@@ -18,12 +18,17 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import { useGetLiveIds } from "../useGetLiveData";
-import { patternSelection, type JointMissingnessSettings } from "./definition";
+import {
+  inputSelection,
+  patternSelection,
+  type JointMissingnessSettings,
+} from "./definition";
 import type { JointMissingnessTrace } from "./JointMissingnessTraceBody";
 import {
   MIN_MISSINGNESS_FIELDS,
   PATTERN_PAGE_SIZE,
   countByGroup,
+  inputTest,
   planGroups,
   missingPatternLabel,
   patternKey,
@@ -86,21 +91,56 @@ export function JointMissingness({
   }, [groupField, liveIds, getColumnData, nonce]);
 
   const selection = patternSelection(settings);
+  const inputs = inputSelection(settings);
   const selectedKeys = new Set(selection?.patterns.map(patternKey));
+
+  // Rows a later step can use: present, or also finite numbers.
+  const rule = settings.eligibility;
+  const usable = useMemo(() => {
+    void nonce;
+    if (!rule?.fields.length) return undefined;
+    const columns = Object.fromEntries(
+      rule.fields.map((field) => [field, getColumnData(field)])
+    );
+    const present = inputTest({ ...rule, requirement: "present" }, columns);
+    const admitted = inputTest(rule, columns);
+    return {
+      present: liveIds.filter(present).length,
+      admitted: liveIds.filter(admitted).length,
+    };
+  }, [rule, liveIds, getColumnData, nonce]);
+  const selectInputs = (side: "admitted" | "excluded") => {
+    const filters = settings.filters.filter(
+      (filter) => filter !== selection && filter !== inputs
+    );
+    // Clicking the selected side again clears it.
+    if (inputs?.side !== side)
+      filters.push({ type: "missingness-inputs", field: "__ID", side });
+    updateChart(settings.id, { filters });
+  };
   // In a notebook, Keep and Reset show only while the live selection
   // differs from the one the text saves.
   const notebook = useNotebookKeep();
   const kept =
     notebook && patternSelection({ filters: notebook.kept(settings.id) });
-  const meaning = (filter: typeof selection) =>
-    filter ? filter.patterns.map(patternKey).sort().join("|") : undefined;
+  const keptInputs =
+    notebook && inputSelection({ filters: notebook.kept(settings.id) });
+  const meaning = (
+    patterns: typeof selection,
+    rows: typeof inputs | null | undefined
+  ) =>
+    patterns ? patterns.patterns.map(patternKey).sort().join("|") : rows?.side;
   const unkept =
-    Boolean(notebook) && meaning(selection) !== meaning(kept ?? undefined);
+    Boolean(notebook) &&
+    meaning(selection, inputs) !== meaning(kept ?? undefined, keptInputs);
   const resetToKept = () =>
     updateChart(settings.id, {
       filters: [
-        ...settings.filters.filter((filter) => filter !== selection),
+        ...settings.filters.filter(
+          (filter) => filter !== selection && filter !== inputs
+        ),
         ...(kept ? [kept] : []),
+        ...(keptInputs ? [keptInputs] : []),
       ],
     });
   const label = (missing: readonly string[]) =>
@@ -112,7 +152,10 @@ export function JointMissingness({
       pattern.missing,
       add
     );
-    const filters = settings.filters.filter((filter) => filter !== selection);
+    // A pattern selection replaces an input selection.
+    const filters = settings.filters.filter(
+      (filter) => filter !== selection && filter !== inputs
+    );
     if (patterns.length)
       filters.push({ type: "missingness-pattern", field: "__ID", patterns });
     updateChart(settings.id, { filters });
@@ -240,6 +283,9 @@ export function JointMissingness({
     .filter((_, index) => Math.floor(index / PATTERN_PAGE_SIZE) !== current)
     .reduce((sum, pattern) => sum + pattern.ids.length, 0);
   const statusParts = [
+    inputs &&
+      usable &&
+      `${inputs.side === "admitted" ? "Usable" : "Excluded"} rows selected · ${(inputs.side === "admitted" ? usable.admitted : plan.total - usable.admitted).toLocaleString()} of ${plan.total.toLocaleString()}`,
     selection &&
       `${selection.patterns.length} ${selection.patterns.length === 1 ? "pattern" : "patterns"} selected · ${selectedRows.toLocaleString()} of ${plan.total.toLocaleString()} rows (${sharePercent(selectedRows, plan.total)})`,
     gapText,
@@ -248,6 +294,7 @@ export function JointMissingness({
   ];
   const statusHint =
     !selection &&
+    !inputs &&
     !facetIds &&
     width >= STATUS_HINT_MIN_WIDTH &&
     "Click a pattern to select its rows · Shift-click to add";
@@ -289,6 +336,39 @@ export function JointMissingness({
           >
             Keep selection
           </Button>
+        </div>
+      )}
+      {usable && rule && (
+        <div className="eda-missingness-inputs">
+          <span className="min-w-0 truncate">
+            Inputs: {rule.fields.map(getFieldLabel).join(", ")} ·{" "}
+            {rule.requirement === "finite" ? "finite numbers" : "have values"}
+          </span>
+          <button
+            type="button"
+            aria-pressed={inputs?.side === "admitted"}
+            onClick={() => selectInputs("admitted")}
+          >
+            Usable{" "}
+            <b className="tabular-nums">{usable.admitted.toLocaleString()}</b> (
+            {sharePercent(usable.admitted, plan.total)})
+          </button>
+          <button
+            type="button"
+            aria-pressed={inputs?.side === "excluded"}
+            onClick={() => selectInputs("excluded")}
+          >
+            Excluded{" "}
+            <b className="tabular-nums">
+              {(plan.total - usable.admitted).toLocaleString()}
+            </b>
+          </button>
+          {usable.present > usable.admitted && (
+            <span className="text-muted-foreground">
+              {(usable.present - usable.admitted).toLocaleString()} have values
+              that are not numbers
+            </span>
+          )}
         </div>
       )}
       <div

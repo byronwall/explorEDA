@@ -34,6 +34,15 @@ Set **Compare groups** in chart settings, or `groupField=` in text, to add one c
 - The eight largest groups get their own column. The rest share one column, and rows with no group value form a **(missing)** group. Every row still counts once.
 - With a selection, a **Selected** row gives the selection's share of each group, and the status line gives the gap between the highest and lowest group in percentage points. The gap describes these rows; it does not say why they differ.
 
+## Rows usable for chosen inputs
+
+Check the inputs a later step needs under **Inputs a later step needs** in chart settings, such as both dates and the rating for a delivery-time model. The chart then counts the **Usable** rows, where every checked input has a value, and the **Excluded** rest.
+
+- Choose **Have finite numbers** to also leave out values that are present but are not numbers, such as `"5 stars"` or `Infinity`. The chart says how many rows that removes.
+- Click **Usable** or **Excluded** to select those rows. It replaces any pattern selection, and a pattern click replaces it in turn.
+- The selection saves the rule, not the rows: in text it reads `eligibility.fields[]=Shipped,Delivered,Rating`, `eligibility.requirement=present`, and `inputSelection=admitted` or `inputSelection=excluded`.
+- Removing a checked input's field from the chart removes the rule and its selection.
+
 ## In dashboard text and notebooks
 
 The selection reads as `patterns` lines inside the chart's block. Each `patterns.N[]=` line lists one pattern's missing fields:

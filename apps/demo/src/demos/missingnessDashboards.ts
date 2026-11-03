@@ -37,6 +37,11 @@ const orderGaps: Chart = {
   subtitle: "Exact missing patterns across fulfilment and feedback fields",
   fields: ["Shipped", "Tracking", "Delivered", "Rating", "Review", "Phone"],
   groupField: "Channel",
+  // A delivery-time model needs both dates and a rating.
+  eligibility: {
+    fields: ["Shipped", "Delivered", "Rating"],
+    requirement: "present",
+  },
   layout: layout(0, 0, 8, 8),
 };
 

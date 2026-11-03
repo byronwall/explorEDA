@@ -100,6 +100,10 @@ export function formatFilterLabel(
       return filter.patterns.length === 1
         ? `Missing exactly: ${missingPatternLabel(filter.patterns[0]!, format.name)}`
         : `${filter.patterns.length} missing patterns`;
+    case "missingness-inputs":
+      return filter.side === "admitted"
+        ? "Rows usable for chosen inputs"
+        : "Rows excluded by chosen inputs";
     default:
       return assertNever(filter);
   }
@@ -129,6 +133,7 @@ export function isActiveFilter(filter: Filter) {
       return filter.value.length > 0;
     case "spec-status":
     case "missingness-pattern":
+    case "missingness-inputs":
       return true;
     default:
       return assertNever(filter);

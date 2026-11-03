@@ -617,6 +617,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "annotations",
     "colorField",
     "colorScaleId",
+    "eligibility",
     "facet",
     "field",
     "fields",
