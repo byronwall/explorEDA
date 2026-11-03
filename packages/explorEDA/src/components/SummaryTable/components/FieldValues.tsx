@@ -927,7 +927,7 @@ export function FieldValues({
                   {" "}
                   <button
                     type="button"
-                    className="font-medium underline-offset-2 hover:underline"
+                    className="font-medium text-foreground underline-offset-2 hover:underline"
                     onClick={onReviewFailed}
                   >
                     Review them

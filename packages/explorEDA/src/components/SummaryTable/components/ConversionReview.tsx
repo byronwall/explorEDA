@@ -89,11 +89,12 @@ export function ConversionReview({
         type="single"
         variant="outline"
         size="sm"
+        aria-label="Rows to review"
         value={filter}
         onValueChange={(value) => {
           if (value) onFilterChange(value as ReviewFilter);
         }}
-        className="w-full"
+        className="eda-review-filters w-full"
       >
         {FILTERS.map((item) => {
           const count = countOf(preview, item.id);
@@ -102,7 +103,7 @@ export function ConversionReview({
               <ToggleGroupItem
                 value={item.id}
                 aria-label={`${item.label}: ${count}`}
-                className="min-w-0 flex-1 shrink basis-0 gap-1 px-1 text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
+                className="min-w-0 flex-auto gap-1 px-1.5 text-xs aria-checked:bg-primary/10 aria-checked:font-semibold aria-checked:text-primary"
               >
                 <span className="truncate">{item.label}</span>
                 <span
@@ -132,12 +133,13 @@ export function ConversionReview({
         </p>
       ) : (
         <div className="min-h-0 flex-1 overflow-auto rounded-md border">
-          <table className="w-full text-xs">
+          {/* Columns size to their values; spare width stays at the right. */}
+          <table className="text-xs">
             <thead className="sticky top-0 bg-popover">
               <tr className="border-b text-left text-muted-foreground">
                 <th className="px-2 py-1.5 text-right font-medium">Row</th>
                 <th className="px-2 py-1.5 font-medium">Written</th>
-                {filter !== "failed" && (
+                {(filter === "ambiguous" || filter === "changed") && (
                   <th className="px-2 py-1.5 text-right font-medium">
                     Reads as
                   </th>
@@ -147,14 +149,17 @@ export function ConversionReview({
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.row} className="border-b last:border-0">
+                <tr
+                  key={row.row}
+                  className="border-b transition-colors duration-150 last:border-0 hover:bg-muted/40"
+                >
                   <td className="px-2 py-1 text-right text-muted-foreground tabular-nums">
                     {row.row + 1}
                   </td>
                   <td className="px-2 py-1 font-mono whitespace-pre">
                     {String(row.raw)}
                   </td>
-                  {filter !== "failed" && (
+                  {(filter === "ambiguous" || filter === "changed") && (
                     <td className="px-2 py-1 text-right font-mono tabular-nums">
                       {String(row.value)}
                     </td>

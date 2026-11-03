@@ -37,8 +37,10 @@ import { bestNumberInput } from "./NumberInputChoice";
 
 type Tab = "values" | "read" | "display";
 
-/** The narrowest room beside an anchor that still fits the inspector. */
-const SIDE_ROOM = 560;
+/** The inspector's widest size; the popover also keeps 24 px of the viewport. */
+const WIDTH = 760;
+/** The popover's collision padding plus its gap from the anchor. */
+const EDGE = 16;
 
 /** Compare settings, treating blank text and unset values as the same. */
 function sameSettings(left: FieldSettings, right: FieldSettings) {
@@ -83,7 +85,9 @@ function sideWithRoom(
   if (!anchor || (side !== "left" && side !== "right")) return side;
   const rect = anchor.getBoundingClientRect();
   const room = side === "left" ? rect.left : window.innerWidth - rect.right;
-  return room >= SIDE_ROOM ? side : "bottom";
+  return room >= Math.min(WIDTH, window.innerWidth - 24) + EDGE
+    ? side
+    : "bottom";
 }
 
 export function FieldInspector({
@@ -330,32 +334,41 @@ export function FieldInspector({
                   <span className="sr-only">Inspect field: </span>
                   {label}
                 </h2>
-                <p className="flex min-w-0 items-center gap-x-1.5 text-xs text-muted-foreground">
-                  <span className="shrink-0">
-                    {isCalculated
-                      ? `Calculated ${typeName.toLowerCase()}`
-                      : typeName}
-                  </span>
-                  {field !== label && (
-                    <span className="min-w-0 truncate">
-                      · <code>{field}</code>
+                {settingsError ? (
+                  <p role="alert" className="truncate text-xs text-destructive">
+                    {settingsError}
+                  </p>
+                ) : (
+                  <p className="flex min-w-0 items-center gap-x-1.5 text-xs text-muted-foreground">
+                    <span className="shrink-0">
+                      {isCalculated
+                        ? `Calculated ${typeName.toLowerCase()}`
+                        : typeName}
                     </span>
-                  )}
-                  {appliedFailures > 0 && (
-                    <button
-                      type="button"
-                      className="shrink-0 text-destructive transition-colors duration-150 hover:underline"
-                      onClick={reviewFailed}
-                    >
-                      · {appliedFailures.toLocaleString()} failed
-                    </button>
-                  )}
-                  {applied.description && (
-                    <span className="min-w-0 truncate">
-                      · {applied.description}
-                    </span>
-                  )}
-                </p>
+                    {field !== label && (
+                      <span className="min-w-0 truncate">
+                        · <code>{field}</code>
+                      </span>
+                    )}
+                    {appliedFailures > 0 && (
+                      <span className="shrink-0">
+                        ·{" "}
+                        <button
+                          type="button"
+                          className="text-destructive underline-offset-2 hover:underline"
+                          onClick={reviewFailed}
+                        >
+                          {appliedFailures.toLocaleString()} failed
+                        </button>
+                      </span>
+                    )}
+                    {applied.description && (
+                      <span className="min-w-0 truncate">
+                        · {applied.description}
+                      </span>
+                    )}
+                  </p>
+                )}
               </div>
               <div className="flex shrink-0 items-center gap-1.5">
                 <Button
@@ -368,6 +381,8 @@ export function FieldInspector({
                 </Button>
                 <Button
                   size="sm"
+                  // Neutral until there is something to apply.
+                  variant={changed ? "default" : "outline"}
                   disabled={!changed || Boolean(settingsError)}
                   tooltip="Apply field settings (⌘Enter)"
                   aria-label="Apply field settings"
@@ -387,11 +402,6 @@ export function FieldInspector({
                 </Button>
               </div>
             </div>
-            {settingsError && (
-              <p role="alert" className="text-xs text-destructive">
-                {settingsError}
-              </p>
-            )}
             <TabsList className="h-8">
               <TabsTrigger value="values" className="px-3 text-xs">
                 Values
@@ -425,7 +435,7 @@ export function FieldInspector({
             {!isCalculated && preview && (
               <TabsContent
                 value="read"
-                className="grid gap-4 min-[680px]:grid-cols-[minmax(0,350px)_minmax(0,1fr)]"
+                className="grid gap-4 min-[680px]:grid-cols-[minmax(0,370px)_minmax(0,1fr)]"
               >
                 <FieldReadAs
                   draft={draft}
@@ -437,6 +447,10 @@ export function FieldInspector({
                 />
                 <div className="flex max-h-80 min-h-0 flex-col min-[680px]:h-[420px] min-[680px]:max-h-none">
                   <p className="mb-1.5 text-xs text-muted-foreground">
+                    <span className="tabular-nums">
+                      {preview.totalCount.toLocaleString()}
+                    </span>{" "}
+                    rows:{" "}
                     <span className="font-medium text-foreground tabular-nums">
                       {preview.validCount.toLocaleString()}
                     </span>{" "}
@@ -454,7 +468,7 @@ export function FieldInspector({
                     >
                       {preview.failedCount.toLocaleString()}
                     </span>{" "}
-                    failed of {preview.totalCount.toLocaleString()} rows
+                    failed
                   </p>
                   <ConversionReview
                     preview={preview}

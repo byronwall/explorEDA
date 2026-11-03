@@ -98,10 +98,9 @@ export function NumberInputChoice({ settings, counts, onChange }: Props) {
                 </td>
                 <td
                   className={cn(
-                    "py-0.5 text-right tabular-nums",
-                    count.failedCount > 0
-                      ? "text-destructive"
-                      : "text-muted-foreground"
+                    "py-0.5 text-right tabular-nums text-muted-foreground",
+                    // Only the chosen convention's failures are the user's.
+                    checked && count.failedCount > 0 && "text-destructive"
                   )}
                 >
                   {count.failedCount.toLocaleString()}
@@ -115,7 +114,7 @@ export function NumberInputChoice({ settings, counts, onChange }: Props) {
         {options.map((option) => (
           <label
             key={option.key}
-            className="flex cursor-pointer items-center gap-2 py-0.5"
+            className="flex cursor-pointer flex-wrap items-center gap-x-2 py-0.5"
           >
             <input
               type="checkbox"
@@ -137,9 +136,7 @@ export function NumberInputChoice({ settings, counts, onChange }: Props) {
               }
             />
             <span className="font-medium">{option.label}</span>
-            <span className="truncate text-muted-foreground">
-              {option.example}
-            </span>
+            <span className="text-muted-foreground">{option.example}</span>
           </label>
         ))}
         {settings.currencyInput && (
@@ -147,7 +144,7 @@ export function NumberInputChoice({ settings, counts, onChange }: Props) {
             <span className="text-muted-foreground">Currency code</span>
             <Input
               aria-label="Currency code"
-              className="h-7 w-16 font-mono text-xs"
+              className="w-16 font-mono"
               value={currency}
               maxLength={3}
               onChange={(event) =>

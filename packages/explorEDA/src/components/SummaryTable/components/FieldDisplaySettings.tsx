@@ -167,7 +167,7 @@ export function FieldDisplaySettings({
         id="field-unit"
         aria-label="Unit suffix"
         value={draft.unit ?? ""}
-        placeholder="kg, ms"
+        placeholder={type === "numeric" ? "kg, ms" : "Shown after each value"}
         onChange={(event) => onChange({ unit: event.target.value })}
       />
       {samples.length > 0 && (

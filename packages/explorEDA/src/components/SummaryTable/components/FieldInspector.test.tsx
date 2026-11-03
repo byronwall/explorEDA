@@ -67,7 +67,7 @@ describe("FieldInspector", () => {
       screen.getByRole("button", { name: "Apply field settings" })
     );
     expect(
-      await screen.findByRole("button", { name: "· 1 failed" })
+      await screen.findByRole("button", { name: "1 failed" })
     ).toBeInTheDocument();
   });
 
