@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import {
   numberInputLabel,
   type ConversionPreview,
@@ -12,6 +13,13 @@ type Props = {
   onChange: (next: Partial<FieldSettings>) => void;
 };
 
+/** The convention that reads the most values, first on a tie. */
+export function bestNumberInput(counts: Props["counts"]) {
+  return counts.reduce((best, count) =>
+    count.validCount > best.validCount ? count : best
+  );
+}
+
 /**
  * Pick how a numeric field's text writes decimals and digit groups, and
  * whether it carries percent signs, accounting parentheses, or a currency.
@@ -20,6 +28,7 @@ type Props = {
  */
 export function NumberInputChoice({ settings, counts, onChange }: Props) {
   const currency = settings.currency ?? "USD";
+  const best = bestNumberInput(counts);
   const options = [
     {
       key: "percentInput",
@@ -38,33 +47,32 @@ export function NumberInputChoice({ settings, counts, onChange }: Props) {
     },
   ] as const;
   return (
-    <fieldset className="space-y-1.5">
-      <legend className="text-sm leading-none font-medium">Number input</legend>
-      <p className="text-xs text-muted-foreground">
-        How this field writes decimals and digit groups. Counts cover every row.
-      </p>
-      <table className="text-xs">
+    <fieldset className="space-y-1">
+      <ActionTooltip content="How this field writes decimals and digit groups. Counts cover every row, with the options below as set.">
+        <legend className="text-xs font-semibold">Number input</legend>
+      </ActionTooltip>
+      <table className="w-full text-xs">
         <thead>
           <tr className="border-b text-left text-muted-foreground">
-            <th className="py-1 pr-4 font-medium">Written as</th>
-            <th className="py-1 pr-4 text-right font-medium">Valid</th>
-            <th className="py-1 text-right font-medium">Failed</th>
+            <th className="py-1 font-medium">Written as</th>
+            <th className="w-16 py-1 text-right font-medium">Reads</th>
+            <th className="w-16 py-1 text-right font-medium">Fails</th>
           </tr>
         </thead>
         <tbody>
           {counts.map((count) => {
-            const label = numberInputLabel(count.input);
             const checked = count.input === settings.numberInput;
+            const isBest = count === best && count.validCount > 0;
             return (
               <tr
                 key={count.input ?? "plain"}
                 className={cn(
-                  "cursor-pointer border-b last:border-0 hover:bg-muted/50",
-                  checked && "bg-muted"
+                  "cursor-pointer border-b transition-colors duration-150 last:border-0 hover:bg-muted/60",
+                  checked && "bg-primary/10"
                 )}
                 onClick={() => onChange({ numberInput: count.input })}
               >
-                <td className="py-1 pr-4">
+                <td className="py-0.5">
                   <label className="flex cursor-pointer items-center gap-2 font-mono">
                     <input
                       type="radio"
@@ -72,28 +80,43 @@ export function NumberInputChoice({ settings, counts, onChange }: Props) {
                       checked={checked}
                       onChange={() => onChange({ numberInput: count.input })}
                     />
-                    {label}
+                    {numberInputLabel(count.input)}
+                    {isBest && (
+                      <span className="font-sans text-[11px] text-muted-foreground">
+                        reads the most
+                      </span>
+                    )}
                   </label>
-                </td>
-                <td className="py-1 pr-4 text-right tabular-nums">
-                  {count.validCount}
                 </td>
                 <td
                   className={cn(
-                    "py-1 text-right tabular-nums",
-                    count.failedCount > 0 && "text-destructive"
+                    "py-0.5 text-right tabular-nums",
+                    isBest && "font-semibold"
                   )}
                 >
-                  {count.failedCount}
+                  {count.validCount.toLocaleString()}
+                </td>
+                <td
+                  className={cn(
+                    "py-0.5 text-right tabular-nums",
+                    count.failedCount > 0
+                      ? "text-destructive"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {count.failedCount.toLocaleString()}
                 </td>
               </tr>
             );
           })}
         </tbody>
       </table>
-      <div className="space-y-1 pt-1 text-xs">
+      <div className="space-y-0.5 pt-1 text-xs">
         {options.map((option) => (
-          <label key={option.key} className="flex items-center gap-2">
+          <label
+            key={option.key}
+            className="flex cursor-pointer items-center gap-2 py-0.5"
+          >
             <input
               type="checkbox"
               checked={Boolean(settings[option.key])}
@@ -114,7 +137,9 @@ export function NumberInputChoice({ settings, counts, onChange }: Props) {
               }
             />
             <span className="font-medium">{option.label}</span>
-            <span className="text-muted-foreground">{option.example}</span>
+            <span className="truncate text-muted-foreground">
+              {option.example}
+            </span>
           </label>
         ))}
         {settings.currencyInput && (

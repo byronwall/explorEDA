@@ -33,31 +33,41 @@ const savedData = (
 });
 
 describe("FieldInspector", () => {
-  it("previews failed conversions and applies a type override", async () => {
+  it("reads text as numbers in the convention that fits, beside its review", async () => {
     Element.prototype.scrollIntoView = vi.fn();
     render(
       <DataLayerProvider
-        data={[{ revenue: "12.5" }, { revenue: "bad" }]}
+        data={[{ amount: "1.234,50" }, { amount: "2.000" }, { amount: "bad" }]}
         charts={[]}
       >
-        <FieldInspector field="revenue" open onOpenChange={vi.fn()} />
+        <FieldInspector field="amount" open onOpenChange={vi.fn()} />
       </DataLayerProvider>
     );
 
-    fireEvent.mouseDown(screen.getByRole("tab", { name: "Type" }), {
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "Read as" }), {
       button: 0,
       ctrlKey: false,
     });
-    fireEvent.click(screen.getByRole("combobox", { name: "Type override" }));
-    fireEvent.click(await screen.findByRole("option", { name: "numeric" }));
+    fireEvent.click(screen.getByRole("radio", { name: "Number" }));
+
+    // Becoming a number starts on the convention that reads the most values.
+    expect(screen.getByRole("radio", { name: /^1\.234,5/ })).toBeChecked();
+    const review = screen.getByRole("region", { name: "Conversion review" });
+    expect(
+      within(review).getByRole("radio", { name: "Failed: 1" })
+    ).toBeChecked();
+    expect(within(review).getByText("bad")).toBeInTheDocument();
+    fireEvent.click(
+      within(review).getByRole("radio", { name: "Ambiguous: 1" })
+    );
+    expect(within(review).getByText("2.000")).toBeInTheDocument();
+    expect(within(review).getByText("2 as 1234.5")).toBeInTheDocument();
+
     fireEvent.click(
       screen.getByRole("button", { name: "Apply field settings" })
     );
-
-    expect(await screen.findByText(/Effective:/)).toHaveTextContent("numeric");
-    expect(screen.getByText(/1 failed/)).toBeInTheDocument();
     expect(
-      screen.getByText(/Invalid values become missing/)
+      await screen.findByRole("button", { name: "· 1 failed" })
     ).toBeInTheDocument();
   });
 
@@ -71,8 +81,8 @@ describe("FieldInspector", () => {
       screen.getByRole("heading", { name: "Inspect field: weight" })
     ).toBeInTheDocument();
     const apply = () =>
-      screen.queryByRole("button", { name: "Apply field settings" });
-    expect(apply()).not.toBeInTheDocument();
+      screen.getByRole("button", { name: "Apply field settings" });
+    expect(apply()).toBeDisabled();
 
     fireEvent.mouseDown(screen.getByRole("tab", { name: "Display" }), {
       button: 0,
@@ -80,10 +90,10 @@ describe("FieldInspector", () => {
     });
     const label = screen.getByLabelText("Display label");
     fireEvent.change(label, { target: { value: "Weight" } });
-    expect(apply()).toBeInTheDocument();
+    expect(apply()).toBeEnabled();
 
     fireEvent.change(label, { target: { value: "" } });
-    expect(apply()).not.toBeInTheDocument();
+    expect(apply()).toBeDisabled();
   });
 });
 

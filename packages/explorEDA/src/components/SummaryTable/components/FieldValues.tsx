@@ -834,6 +834,7 @@ export function FieldValues({
   format,
   formatCategory = categoryLabel,
   failedCount = 0,
+  onReviewFailed,
   compact = false,
 }: {
   distribution: FieldDistribution;
@@ -843,6 +844,8 @@ export function FieldValues({
     value: CategoryDistribution["categories"][number]["value"]
   ) => string;
   failedCount?: number;
+  /** Opens the list of failed values, when the caller has one. */
+  onReviewFailed?: () => void;
   /** Show only the chart, without the counts and statistics tables. */
   compact?: boolean;
 }) {
@@ -918,8 +921,19 @@ export function FieldValues({
             <p className="eda-dist-note" data-tone="destructive">
               {count(failedCount)}{" "}
               {failedCount === 1 ? "value fails" : "values fail"} conversion and
-              {failedCount === 1 ? " counts" : " count"} as missing. The Preview
-              tab lists each failed row.
+              {failedCount === 1 ? " counts" : " count"} as missing.
+              {onReviewFailed && (
+                <>
+                  {" "}
+                  <button
+                    type="button"
+                    className="font-medium underline-offset-2 hover:underline"
+                    onClick={onReviewFailed}
+                  >
+                    Review them
+                  </button>
+                </>
+              )}
             </p>
           )}
           {distribution.kind === "numeric" && distribution.summary && (

@@ -9,14 +9,14 @@ A spreadsheet or ledger export often writes numbers as text: `1,234.50`, `1.234,
   caption="Supplier invoices whose amounts arrive as text such as 1.234,50. Amount reads them with the 1.234,5 number input. Net also reads the € sign and credit notes such as (€ 426,40), which chart as negative amounts."
 />
 
-Open [the full example](/examples/supplier-invoices), then inspect **Amount**, **Discount**, or **Net** and open the **Type** tab to see each choice and its counts.
+Open [the full example](/examples/supplier-invoices), then inspect **Amount**, **Discount**, or **Net** and open the **Read as** tab to see each choice, its counts, and its review.
 
 ## Choose a number input
 
 1. Inspect the field: press its settings button in the field list, or Command-click it on a chart axis.
-2. On the **Type** tab, set **Type override** to `numeric`.
+2. On the **Read as** tab, set **Type** to **Number**. The number input that reads the most values is picked for you, as a draft.
 3. Under **Number input**, pick how the field's text is written. Each choice shows how many of the field's values it reads and how many fail, counted over every row, so the right one usually stands out.
-4. Check the **Preview** tab, then press **Apply field settings**.
+4. Check the review beside the controls, then press **Apply**.
 
 | Number input  | Decimal | Digit groups  | Example            |
 | ------------- | ------- | ------------- | ------------------ |
@@ -38,7 +38,7 @@ Open [the full example](/examples/supplier-invoices), then inspect **Amount**, *
 - A value can start with `+` or `-`, start with the decimal (`.5`), and end with an exponent (`1,2e3` under `1.234,5`). Leading zeros drop: `0012` reads as 12.
 - Spaces at the start and end are ignored. Letters fail, and so do percent signs, currency signs, and parentheses unless their option below is on.
 - Numbers that arrive as numbers, such as from JSON or a database, stay as they are. Booleans fail.
-- [Null tokens](/docs/fields) and blank text become missing before the number input reads a value.
+- **Missing text**, such as `NA` or `n/a`, and blank text become missing before the number input reads a value.
 
 ## Percents, negatives, and currency
 
@@ -54,13 +54,16 @@ A value that fails becomes missing, so charts, filters, and [calculations](/docs
 
 ## Review before you apply
 
-The **Type** tab counts valid, missing, and failed values for the draft. The **Preview** tab lists:
+The **Read as** tab shows the review beside the controls, so each change shows its effect at once. A line counts the values read, missing, and failed out of every row. Under it, four filters list the rows of each kind:
 
-- Values that read as a different number under another number input first. In the example, `1.400` is 1400 under `1.234,5` but 1.4 under `1234.5`; the **Another input reads** column shows the other meaning, so you can confirm the choice.
-- Then values whose text changes when read, such as `2.312,42` becoming 2312.42.
-- Every failed row with its reason, such as `Separators do not match 1.234,5` or `Has characters that are not part of a number`.
+- **Failed:** every value the setting cannot read, with its reason, such as `Separators do not match 1.234,5` or `Has characters that are not part of a number`.
+- **Ambiguous:** text another number input reads as a different number. In the example, `1.400` is 1400 under `1.234,5` but 1.4 under `1234.5`; the **Also reads** column shows the other meaning, so you can confirm the choice.
+- **Changed:** text whose value is written differently once read, such as `2.312,42` as 2312.42.
+- **Same:** values that read exactly as written.
 
-Applying a new number input rebuilds the field's values and clears filters on that field. Nothing changes until you apply.
+The review opens on the first filter with rows. When a field already has failed values, its header shows how many; click the count, or **Review them** on the **Values** tab, to list them.
+
+Applying a new number input rebuilds the field's values and clears filters on that field. Nothing changes until you press **Apply** or <kbd>Cmd</kbd>+<kbd>Enter</kbd>; **Discard** returns to the applied settings.
 
 ## Keep the choice
 

@@ -627,7 +627,7 @@ The compact display shows canonical field names through display labels (aliases)
 
 The CSV export includes more detail than the compact view: counts, missing values, numerical statistics, and common values. Headers and cells escape embedded quotes.
 
-The field inspector shows inferred and effective types, counts, raw/runtime examples, conversion failures, and editable labels, descriptions, formats, units, precision, currencies, date presets, null tokens, and type overrides. Applying a type-related setting rebuilds effective values and clears filters for that field. Summary has no independent filter dimension, inline histograms, calendar heatmaps, or missing-value matrix.
+The field inspector has three tabs. Values shows the distribution, counts, and statistics. Read as sets the type, number input (conventions, percent, accounting, currency), date order, and missing text, beside a review of failed, ambiguous, changed, and unchanged rows. Display sets the label, description, format, decimals, currency, and unit, with a preview of formatted values. Apply and Discard sit in the header, and the header counts failed values. Applying a type-related setting rebuilds effective values and clears filters for that field. Summary has no independent filter dimension, inline histograms, calendar heatmaps, or missing-value matrix.
 
 Numeric views share one eligibility rule ([value parsing](../packages/explorEDA/src/lib/valueParsing.ts)). Blank strings count as missing. Nonfinite values stay in a numeric field but are excluded from measurements, and field details show the excluded count. The gap analysis records the repair as R18.
 

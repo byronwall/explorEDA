@@ -1407,6 +1407,8 @@
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .eda-settings button[role="combobox"],
 .eda-settings [data-slot="select-trigger"],
+.eda-inspector
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .eda-add-chart-fields
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .eda-add-chart-fields button[role="combobox"],
@@ -1416,6 +1418,7 @@
   font-size: 12px;
 }
 .eda-settings [data-slot="toggle-group-item"],
+.eda-inspector [data-slot="toggle-group-item"],
 .eda-add-chart-fields [data-slot="toggle-group-item"] {
   height: 26px;
   min-width: 0;
@@ -1451,6 +1454,10 @@
   grid-template-columns: 100px minmax(0, 1fr);
   align-items: center;
   gap: 6px 10px;
+}
+/* Short labels, such as the field inspector's, beside wider controls. */
+.eda-setting-grid.eda-setting-grid-narrow {
+  grid-template-columns: 76px minmax(0, 1fr);
 }
 @media (prefers-reduced-motion: reduce) {
   .eda-panel *,

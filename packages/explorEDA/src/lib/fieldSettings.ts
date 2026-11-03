@@ -61,10 +61,17 @@ export interface ConversionPreview {
   validCount: number;
   missingCount: number;
   failedCount: number;
-  examples: ConversionExample[];
   failures: ConversionFailure[];
+  /**
+   * Rows to review, up to REVIEW_LIMIT of each kind: text another number
+   * input reads as a different number, text whose value changes when read
+   * (1,234.50 to 1234.5), and values that read as they are written.
+   */
+  review: Record<ReviewKind, ConversionExample[]>;
   /** Text values that read as a different number in another convention. */
   ambiguousCount: number;
+  changedCount: number;
+  unchangedCount: number;
   /** Valid and failed counts for each number input convention. */
   numberInputs?: Array<{
     input: NumberInput | undefined;
@@ -72,6 +79,11 @@ export interface ConversionPreview {
     failedCount: number;
   }>;
 }
+
+export type ReviewKind = "ambiguous" | "changed" | "unchanged";
+
+/** The most rows of one kind a preview keeps for review. */
+export const REVIEW_LIMIT = 200;
 
 export interface ConversionExample {
   row: number;
@@ -461,9 +473,11 @@ export function buildConversionPreview(
   const converts = convertsValues(settings);
   const numeric = effectiveType === "numeric";
   const failures: ConversionFailure[] = [];
-  const ambiguous: ConversionExample[] = [];
-  const reformatted: ConversionExample[] = [];
-  const plain: ConversionExample[] = [];
+  const review: ConversionPreview["review"] = {
+    ambiguous: [],
+    changed: [],
+    unchanged: [],
+  };
   const readings = NUMBER_CONVENTIONS.map((input) => ({
     input,
     settings: { ...settings, type: "numeric", numberInput: input } as const,
@@ -472,7 +486,11 @@ export function buildConversionPreview(
   }));
   let validCount = 0;
   let missingCount = 0;
-  let ambiguousCount = 0;
+  const counts: Record<ReviewKind, number> = {
+    ambiguous: 0,
+    changed: 0,
+    unchanged: 0,
+  };
 
   rows.forEach((row, rowIndex) => {
     const raw = row[field];
@@ -508,19 +526,17 @@ export function buildConversionPreview(
       });
     }
 
-    if (raw == null && !result.error) return;
-    const example = { row: rowIndex, raw, value: result.value, alternate };
-    if (alternate) {
-      ambiguousCount += 1;
-      if (ambiguous.length < 8) ambiguous.push(example);
-    } else if (
-      typeof raw === "string" &&
-      typeof result.value === "number" &&
-      raw.trim() !== String(result.value)
-    ) {
-      if (reformatted.length < 8) reformatted.push(example);
-    } else if (plain.length < 8) {
-      plain.push(example);
+    if (result.error || raw == null || result.value == null) return;
+    const kind: ReviewKind = alternate
+      ? "ambiguous"
+      : typeof raw === "string" &&
+          typeof result.value === "number" &&
+          raw.trim() !== String(result.value)
+        ? "changed"
+        : "unchanged";
+    counts[kind] += 1;
+    if (review[kind].length < REVIEW_LIMIT) {
+      review[kind].push({ row: rowIndex, raw, value: result.value, alternate });
     }
   });
 
@@ -532,11 +548,11 @@ export function buildConversionPreview(
     validCount,
     missingCount,
     failedCount: failures.length,
-    // Rows that read differently in another convention, or whose text
-    // changes, come first: they are the ones to check.
-    examples: [...ambiguous, ...reformatted, ...plain].slice(0, 8),
     failures,
-    ambiguousCount,
+    review,
+    ambiguousCount: counts.ambiguous,
+    changedCount: counts.changed,
+    unchangedCount: counts.unchanged,
     numberInputs: numeric
       ? readings.map(({ input, validCount, failedCount }) => ({
           input,

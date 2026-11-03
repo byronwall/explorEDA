@@ -126,7 +126,7 @@ describe("number input review", () => {
       ambiguousCount: 1,
     });
     expect(preview.failures[0]).toMatchObject({ row: 3, raw: "bad" });
-    expect(preview.examples[0]).toMatchObject({
+    expect(preview.review.ambiguous[0]).toMatchObject({
       raw: "1,234",
       value: 1234,
       alternate: "1.234 as 1234,5",
