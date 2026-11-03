@@ -28,6 +28,7 @@ import { DonutTraceBody } from "../Donut/DonutTraceBody";
 import { FunnelTraceBody } from "../Funnel/FunnelTraceBody";
 import { RetentionTraceBody } from "../Retention/RetentionTraceBody";
 import { TimelineTraceBody } from "../Timeline/TimelineTraceBody";
+import { JointMissingnessTraceBody } from "../JointMissingness/JointMissingnessTraceBody";
 import { useChartTrace, useChartTraceApi } from "./ChartTraceScope";
 import {
   FacetTraceBody,
@@ -88,6 +89,8 @@ function TraceBody({ trace }: { trace: ChartTrace }) {
       return <RetentionTraceBody trace={trace} />;
     case "timeline-interval":
       return <TimelineTraceBody trace={trace} />;
+    case "missingness-pattern":
+      return <JointMissingnessTraceBody trace={trace} />;
     case "bar":
       return <BarTraceBody trace={trace} />;
     case "spec-status":

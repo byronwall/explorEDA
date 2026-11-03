@@ -84,7 +84,10 @@ const CHART_GROUPS: Array<{ label: string; keys: string[] }> = [
     keys: ["row", "bar", "pivot", "heatmap", "hierarchy"],
   },
   { label: "Change and share", keys: ["waterfall", "donut"] },
-  { label: "Distribution", keys: ["histogram", "boxplot", "ecdf"] },
+  {
+    label: "Distribution",
+    keys: ["histogram", "boxplot", "ecdf", "joint-missingness"],
+  },
   {
     label: "Relationships",
     keys: ["scatter", "scatter-matrix", "3d-scatter", "parallel-coordinates"],

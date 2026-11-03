@@ -146,6 +146,12 @@ const TRACE_COPY = {
       "Alt-click a step to see how it was counted, who dropped off, and the events that counted.",
     ariaLabel: "Funnel trace inspector",
   },
+  "joint-missingness": {
+    heading: "Missing pattern trace",
+    emptyText:
+      "Alt-click a pattern to see its rows and the raw value behind each missing cell.",
+    ariaLabel: "Missing pattern trace inspector",
+  },
   timeline: {
     heading: "Timeline trace",
     emptyText:

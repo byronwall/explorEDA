@@ -19,6 +19,9 @@ export function applyFilter(
   spec?: SpecLimits
 ): boolean {
   switch (filter.type) {
+    case "missingness-pattern":
+      // It tests whole rows, so only its owning chart applies it.
+      return false;
     case "spec-status":
       return inSpecRegion(value, filter.region, spec);
     case "value":

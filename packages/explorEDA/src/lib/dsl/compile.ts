@@ -321,6 +321,7 @@ const DEFAULT_SIZES: Record<string, { w: number; h: number }> = {
   funnel: { w: 6, h: 4 },
   retention: { w: 7, h: 6 },
   timeline: { w: 12, h: 6 },
+  "joint-missingness": { w: 8, h: 8 },
   "data-table": { w: 12, h: 5 },
   summary: { w: 12, h: 5 },
 };

@@ -10,6 +10,8 @@ export function traceRowIds(trace: ChartTrace): number[] | undefined {
       return trace.plan.contributors.map((item) => item.sourceId);
     case "timeline-interval":
       return [trace.interval.id];
+    case "missingness-pattern":
+      return trace.ids;
     case "retention-cell":
       return trace.cell.rows;
     case "funnel-step":

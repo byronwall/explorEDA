@@ -67,6 +67,8 @@ export function chartFilterFields(
         return [{ field: settings.field, valuesOnly: true }];
       case "timeline":
         return [{ field: settings.startField }, { field: settings.endField }];
+      case "joint-missingness":
+        return settings.fields.map((field) => ({ field }));
       case "retention":
         return [{ field: settings.entityField, valuesOnly: true }];
       case "boxplot":
