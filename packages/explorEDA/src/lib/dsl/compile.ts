@@ -48,6 +48,7 @@ import {
 } from "@/lib/notebook/findings";
 import { parseDateText } from "@/lib/valueParsing";
 import { parsePath, setPath } from "./paths";
+import { canonicalPattern } from "@/components/charts/JointMissingness/jointMissingnessPlan";
 import { settingWords } from "./schema";
 import { parseLayout, placeLayout, type LayoutProblem } from "./layout";
 import { lowerComposition, type CompositionProblem } from "./composition";
@@ -1875,6 +1876,77 @@ export function compileDocument(
     });
   }
 
+  /**
+   * A joint-missingness selection from its `patterns` paths: `patterns[]=`
+   * alone selects nothing, `patterns.0[]=` is all present, and
+   * `patterns=unset` clears it (null). Anything it can't read skips the
+   * chart (undefined), so text never turns into an unselected chart.
+   */
+  function lowerPatterns(
+    entries: [string, DslPair][],
+    fields: string[],
+    subject: string
+  ): Filter | null | undefined {
+    let target: { patterns?: unknown } = {};
+    const skip = (span: DslSpan, why: string) => {
+      report(
+        "error",
+        "chart-skipped",
+        span,
+        `${why}, so ${subject} was skipped rather than drawn with more rows.`,
+        {
+          subject,
+          suggestion: "Write patterns.0[]=field,field for each pattern.",
+        }
+      );
+      return undefined;
+    };
+    for (const [key, pair] of entries) {
+      const path = parsePath(key);
+      if (!path) return skip(pair.span, `${key} is not a pattern path`);
+      const items = [];
+      for (const item of pair.value.items) {
+        if (item.text === "" || (!item.quoted && item.text === "unset")) {
+          items.push(item);
+          continue;
+        }
+        const native = resolveField(item.text, pair.span, subject);
+        if (!native) return undefined;
+        items.push({ text: native, quoted: true });
+      }
+      target = setPath(target, path, { raw: pair.value.raw, items });
+    }
+    const { patterns } = target;
+    const span = entries[0]![1].span;
+    if (patterns === undefined) return null;
+    if (!Array.isArray(patterns)) {
+      return skip(span, "patterns must be a list of field lists");
+    }
+    const chosen = new Set(fields);
+    const lists: string[][] = [];
+    for (let index = 0; index < patterns.length; index++) {
+      const pattern: unknown = patterns[index];
+      if (
+        !Array.isArray(pattern) ||
+        !pattern.every((field) => typeof field === "string")
+      ) {
+        return skip(span, `patterns.${index} is not a list of fields`);
+      }
+      const outside = pattern.find((field) => !chosen.has(field));
+      if (outside !== undefined) {
+        return skip(
+          span,
+          `${outside} in patterns.${index} is not one of the chart's fields`
+        );
+      }
+      lists.push(canonicalPattern(pattern));
+    }
+    const unique = [
+      ...new Map(lists.map((list) => [list.join("\u001f"), list])).values(),
+    ];
+    return { type: "missingness-pattern", field: "__ID", patterns: unique };
+  }
+
   /** Swaps alias names for native field names in a field-valued path. */
   function resolveValueFields(
     key: string,
@@ -2402,6 +2474,18 @@ export function compileDocument(
     >();
     const localFilters: Filter[] = [];
     const linked: Filter[] = [];
+    // patterns.0[]=x,y is a joint-missingness chart's selection. It needs the
+    // chart's fields, so it lowers after the other settings.
+    const patternPairs: [string, DslPair][] = [];
+    for (const [key, pair] of [...pairs]) {
+      if (
+        chart.type === "joint-missingness" &&
+        parsePath(key)?.segments[0] === "patterns"
+      ) {
+        pairs.delete(key);
+        patternPairs.push([key, pair]);
+      }
+    }
     for (const [key, pair] of [...pairs]) {
       const target = key.startsWith("where.")
         ? localFilters
@@ -2466,6 +2550,19 @@ export function compileDocument(
         );
       } else if (result !== "ok" && result !== "ok-reported") {
         report("warning", "setting-default", pair.span, result, { subject });
+      }
+    }
+
+    if (patternPairs.length && chart.type === "joint-missingness") {
+      const filter = lowerPatterns(patternPairs, chart.fields, subject);
+      if (filter === undefined) {
+        return undefined;
+      }
+      chart.filters = chart.filters.filter(
+        (item) => item.type !== "missingness-pattern"
+      );
+      if (filter) {
+        chart.filters.push(filter);
       }
     }
 

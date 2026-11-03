@@ -8869,3 +8869,19 @@ td[data-null] {
   color: var(--color-warning);
   font-family: var(--font-mono, ui-monospace, monospace);
 }
+.eda-missingness-keep {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 0 12px 4px;
+}
+.eda-missingness-unkept {
+  margin-right: auto;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+}

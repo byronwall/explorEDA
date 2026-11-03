@@ -25,3 +25,19 @@ Summary shows one missing count per field. Two fields can each be missing in 25%
 - The selection saves as the patterns, not as row numbers, so a corrected or added row moves in or out of it.
 - Changing the chart's fields clears the selection, since each pattern means something else.
 - Alt-click a pattern to list its rows, 50 at a time, with the raw value behind each missing cell.
+
+## In dashboard text and notebooks
+
+The selection reads as `patterns` lines inside the chart's block. Each `patterns.N[]=` line lists one pattern's missing fields:
+
+```text
+chart joint-missingness @gaps fields[]=Shipped,Tracking,Delivered,Rating {
+  patterns[]=
+  patterns.0[]=Tracking,Delivered
+  patterns.1[]=Shipped,Tracking,Delivered
+}
+```
+
+- No `patterns` line means no selection. `patterns[]=` alone selects no rows, and `patterns.0[]=` with nothing after it is the all-present pattern.
+- A pattern must name only the chart's fields. Text that names another field, or skips a number, skips the chart with an error, so it never draws with more rows than written.
+- In a notebook, clicks stay on the page. When the selection differs from the text, the chart shows **Unkept changes** with **Keep selection** and **Reset to kept**. Keep writes the `patterns` lines into the notebook, so it reopens with the same patterns and recounts them on the current rows. Reset puts back the kept selection.

@@ -1,6 +1,9 @@
 import { useId, useMemo, useState } from "react";
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { useNotebookKeep } from "@/components/notebook/NotebookKeep";
+import { Button } from "@/components/ui/button";
 import { useDataLayer } from "@/providers/DataLayerProvider";
+import type { SavedChartSettings } from "@/types/SavedDataTypes";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import {
@@ -73,6 +76,22 @@ export function JointMissingness({
 
   const selection = patternSelection(settings);
   const selectedKeys = new Set(selection?.patterns.map(patternKey));
+  // In a notebook, Keep and Reset show only while the live selection
+  // differs from the one the text saves.
+  const notebook = useNotebookKeep();
+  const kept =
+    notebook && patternSelection({ filters: notebook.kept(settings.id) });
+  const meaning = (filter: typeof selection) =>
+    filter ? filter.patterns.map(patternKey).sort().join("|") : undefined;
+  const unkept =
+    Boolean(notebook) && meaning(selection) !== meaning(kept ?? undefined);
+  const resetToKept = () =>
+    updateChart(settings.id, {
+      filters: [
+        ...settings.filters.filter((filter) => filter !== selection),
+        ...(kept ? [kept] : []),
+      ],
+    });
   const label = (missing: readonly string[]) =>
     missingPatternLabel(missing, getFieldLabel);
 
@@ -198,6 +217,26 @@ export function JointMissingness({
       className="eda-missingness relative flex flex-col"
       style={{ width, height }}
     >
+      {unkept && (
+        <div className="eda-missingness-keep" data-export="omit">
+          <span className="eda-missingness-unkept">Unkept changes</span>
+          <Button
+            size="sm"
+            variant="outline"
+            tooltip="Put back the selection the notebook's text saves."
+            onClick={resetToKept}
+          >
+            Reset to kept
+          </Button>
+          <Button
+            size="sm"
+            tooltip="Write this selection into the notebook's text, so it reopens with the same patterns."
+            onClick={() => notebook!.keep(settings as SavedChartSettings)}
+          >
+            Keep selection
+          </Button>
+        </div>
+      )}
       <div
         className="min-h-0 flex-1 overflow-auto px-3"
         style={{ marginBottom: STATUS_LINE_HEIGHT + 6 }}
