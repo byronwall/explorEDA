@@ -220,3 +220,7 @@ before calling the release complete.
 
 explorEDA was inspired by [DC.js](https://dc-js.github.io/dc.js/) and
 [Crossfilter](https://github.com/crossfilter/crossfilter).
+
+## License
+
+[MIT](LICENSE) © Byron Wall
