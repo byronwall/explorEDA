@@ -1,0 +1,4095 @@
+{
+  "schemaVersion": 1,
+  "baseline": "d3920a285f3755a8324998775deb131747e959f5",
+  "title": "Exact empty-selection recovery fixtures",
+  "notes": [
+    "These are manually authored design fixtures, not exported application state.",
+    "recordId is a stable human-readable fixture field. Internal __ID is each row zero-based source index, as initializeData assigns.",
+    "Expected memberships list recordId in source order. Every expectation includes an exact count.",
+    "Only {$fixtureValue:undefined|NaN|Infinity|-Infinity|-0} encodes non-JSON JavaScript datum values; it is fixture transport, not product saved JSON.",
+    "Target context:<chart> omits that owner selection, applies workspace/other linked selections and that chart localFilters.",
+    "Target selected:<chart> further applies its owner selection, including in notebook localSelections mode.",
+    "Target rows includes workspace intersection then Rows filters/search. Target table:<chart> includes table context then own filters/search.",
+    "Default removable unit is one stored Filter occurrence; numeric/date intervals and value OR-sets stay intact. Complete chart-selection clearing is an explicit grouped action whose N restrictions are shown.",
+    "reasonProbe defines proposed classification contracts; no chart renderer or live UI is exercised."
+  ],
+  "fixtures": [
+    {
+      "id": "ESR-F01",
+      "title": "Conflicting same-field owners preserve ownership",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "A",
+            "region": "West",
+            "channel": "Web"
+          },
+          {
+            "recordId": "B",
+            "region": "West",
+            "channel": "Store"
+          },
+          {
+            "recordId": "C",
+            "region": "East",
+            "channel": "Web"
+          },
+          {
+            "recordId": "D",
+            "region": "East",
+            "channel": "Store"
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "region",
+            "values": [
+              "West"
+            ]
+          }
+        ],
+        "charts": [
+          {
+            "id": "east",
+            "type": "bar",
+            "field": "region",
+            "filters": [
+              {
+                "type": "value",
+                "field": "region",
+                "values": [
+                  "East"
+                ]
+              }
+            ]
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove workspace Region West",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "C",
+              "D"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Remove chart East selection",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "east"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "A",
+              "B"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "populationChecks": {
+        "context:east": {
+          "ids": [
+            "A",
+            "B"
+          ],
+          "count": 2
+        },
+        "selected:east": {
+          "ids": [],
+          "count": 0
+        }
+      },
+      "behavior": [
+        "Preview and Cancel change no state. Apply removes only the chosen owner.",
+        "The chart context already has A,B; selected rows are empty."
+      ]
+    },
+    {
+      "id": "ESR-F02",
+      "title": "One chart owns two coupled brush clauses",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "B0",
+            "x": 1,
+            "y": 1,
+            "group": "a"
+          },
+          {
+            "recordId": "B1",
+            "x": 1,
+            "y": 2,
+            "group": "b"
+          },
+          {
+            "recordId": "B2",
+            "x": 2,
+            "y": 1,
+            "group": "b"
+          },
+          {
+            "recordId": "B3",
+            "x": 2,
+            "y": 2,
+            "group": "a"
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "group",
+            "values": [
+              "b"
+            ]
+          }
+        ],
+        "charts": [
+          {
+            "id": "brush",
+            "type": "data-table",
+            "field": "",
+            "columns": [
+              {
+                "id": "recordId",
+                "field": "recordId"
+              }
+            ],
+            "filters": [
+              {
+                "type": "range",
+                "field": "x",
+                "min": 1,
+                "max": 1
+              },
+              {
+                "type": "range",
+                "field": "y",
+                "min": 1,
+                "max": 1
+              }
+            ],
+            "globalSearch": "",
+            "sortDirection": "asc"
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove entire brush selection",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "brush"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "B1",
+              "B2"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Remove workspace group",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "group"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "B0"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Remove X restriction only",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "brush",
+              "index": 0
+            }
+          ],
+          "expected": {
+            "ids": [
+              "B2"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Remove Y restriction only",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "brush",
+              "index": 1
+            }
+          ],
+          "expected": {
+            "ids": [
+              "B1"
+            ],
+            "count": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ESR-F03",
+      "title": "Inclusive UTC date-only limits and offset crossing",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "D0",
+            "day": "2025-12-31T23:59:59.999Z"
+          },
+          {
+            "recordId": "D1",
+            "day": "2026-01-01T00:00:00Z"
+          },
+          {
+            "recordId": "D2",
+            "day": "2026-01-01T23:59:59.999Z"
+          },
+          {
+            "recordId": "D3",
+            "day": "2026-01-02T00:00:00Z"
+          },
+          {
+            "recordId": "D4",
+            "day": "2026-01-02T00:30:00+02:00"
+          },
+          {
+            "recordId": "D5",
+            "day": "2026-02-30"
+          },
+          {
+            "recordId": "D6",
+            "day": null
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "date-range",
+            "field": "day",
+            "min": "2026-01-01",
+            "max": "2026-01-01"
+          }
+        ],
+        "charts": [
+          {
+            "id": "outside-day",
+            "type": "data-table",
+            "field": "",
+            "columns": [
+              {
+                "id": "recordId",
+                "field": "recordId"
+              }
+            ],
+            "filters": [
+              {
+                "type": "value",
+                "field": "recordId",
+                "values": [
+                  "D0",
+                  "D3"
+                ]
+              }
+            ],
+            "globalSearch": "",
+            "sortDirection": "asc"
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove date filter",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "day"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "D0",
+              "D3"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Remove outside-day selection",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "outside-day"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "D1",
+              "D2",
+              "D4"
+            ],
+            "count": 3
+          }
+        }
+      ],
+      "predicateChecks": [
+        {
+          "field": "day",
+          "filter": {
+            "type": "date-range",
+            "field": "day",
+            "min": "2026-01-01",
+            "max": "2026-01-01"
+          },
+          "expected": {
+            "ids": [
+              "D1",
+              "D2",
+              "D4"
+            ],
+            "count": 3
+          }
+        },
+        {
+          "field": "day",
+          "filter": {
+            "type": "date-range",
+            "field": "day",
+            "min": "2026-01-01",
+            "max": "2026-01-01T00:00:00Z"
+          },
+          "expected": {
+            "ids": [
+              "D1"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "field": "day",
+          "filter": {
+            "type": "date-range",
+            "field": "day",
+            "max": "2026-02-30"
+          },
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "ESR-F04",
+      "title": "Missing bucket, typed categories, and nonfinite values",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "M0",
+            "value": null
+          },
+          {
+            "recordId": "M1",
+            "value": {
+              "$fixtureValue": "undefined"
+            }
+          },
+          {
+            "recordId": "M2",
+            "value": ""
+          },
+          {
+            "recordId": "M3",
+            "value": "  "
+          },
+          {
+            "recordId": "M4",
+            "value": 0
+          },
+          {
+            "recordId": "M5",
+            "value": "0"
+          },
+          {
+            "recordId": "M6",
+            "value": false
+          },
+          {
+            "recordId": "M7",
+            "value": "false"
+          },
+          {
+            "recordId": "M8",
+            "value": "(missing)"
+          },
+          {
+            "recordId": "M9",
+            "value": {
+              "$fixtureValue": "NaN"
+            }
+          },
+          {
+            "recordId": "M10",
+            "value": {
+              "$fixtureValue": "Infinity"
+            }
+          },
+          {
+            "recordId": "M11",
+            "value": {
+              "$fixtureValue": "-Infinity"
+            }
+          },
+          {
+            "recordId": "M12",
+            "value": {
+              "$fixtureValue": "-0"
+            }
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "value",
+            "values": [
+              null
+            ]
+          }
+        ],
+        "charts": [
+          {
+            "id": "numeric",
+            "type": "data-table",
+            "field": "",
+            "columns": [
+              {
+                "id": "recordId",
+                "field": "recordId"
+              }
+            ],
+            "filters": [
+              {
+                "type": "range",
+                "field": "value",
+                "min": 0
+              }
+            ],
+            "globalSearch": "",
+            "sortDirection": "asc"
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove numeric restriction",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "numeric"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "M0",
+              "M1",
+              "M2",
+              "M3"
+            ],
+            "count": 4
+          }
+        },
+        {
+          "label": "Remove missing restriction",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "value"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "M4",
+              "M5",
+              "M12"
+            ],
+            "count": 3
+          }
+        }
+      ],
+      "predicateChecks": [
+        {
+          "field": "value",
+          "filter": {
+            "type": "value",
+            "field": "value",
+            "values": [
+              null
+            ]
+          },
+          "expected": {
+            "ids": [
+              "M0",
+              "M1",
+              "M2",
+              "M3"
+            ],
+            "count": 4
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "value",
+            "field": "value",
+            "values": [
+              0
+            ]
+          },
+          "expected": {
+            "ids": [
+              "M4",
+              "M12"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "value",
+            "field": "value",
+            "values": [
+              "0"
+            ]
+          },
+          "expected": {
+            "ids": [
+              "M5"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "value",
+            "field": "value",
+            "values": [
+              false
+            ]
+          },
+          "expected": {
+            "ids": [
+              "M6"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "value",
+            "field": "value",
+            "values": [
+              "false"
+            ]
+          },
+          "expected": {
+            "ids": [
+              "M7"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "value",
+            "field": "value",
+            "values": [
+              "(missing)"
+            ]
+          },
+          "expected": {
+            "ids": [
+              "M8"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "value",
+            "field": "value",
+            "values": [
+              {
+                "$fixtureValue": "NaN"
+              }
+            ]
+          },
+          "expected": {
+            "ids": [
+              "M9"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "value",
+            "field": "value",
+            "values": [
+              {
+                "$fixtureValue": "Infinity"
+              }
+            ]
+          },
+          "expected": {
+            "ids": [
+              "M10"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "value",
+            "field": "value",
+            "values": [
+              {
+                "$fixtureValue": "-Infinity"
+              }
+            ]
+          },
+          "expected": {
+            "ids": [
+              "M11"
+            ],
+            "count": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "ESR-F05",
+      "title": "Exclusive numeric edges retain exact interval semantics",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "E0",
+            "value": 9
+          },
+          {
+            "recordId": "E1",
+            "value": 10
+          },
+          {
+            "recordId": "E2",
+            "value": "10"
+          },
+          {
+            "recordId": "E3",
+            "value": 15
+          },
+          {
+            "recordId": "E4",
+            "value": 20
+          },
+          {
+            "recordId": "E5",
+            "value": "0x1A"
+          },
+          {
+            "recordId": "E6",
+            "value": true
+          },
+          {
+            "recordId": "E7",
+            "value": null
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "range",
+            "field": "value",
+            "min": 10,
+            "max": 20,
+            "maxExclusive": true
+          }
+        ],
+        "charts": [
+          {
+            "id": "twenty",
+            "type": "data-table",
+            "field": "",
+            "columns": [
+              {
+                "id": "recordId",
+                "field": "recordId"
+              }
+            ],
+            "filters": [
+              {
+                "type": "value",
+                "field": "value",
+                "values": [
+                  20
+                ]
+              }
+            ],
+            "globalSearch": "",
+            "sortDirection": "asc"
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove half-open range",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "value"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "E4"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Remove exact twenty",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "twenty"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "count": 3
+          }
+        }
+      ],
+      "predicateChecks": [
+        {
+          "field": "value",
+          "filter": {
+            "type": "range",
+            "field": "value",
+            "min": 10,
+            "max": 20,
+            "maxExclusive": true
+          },
+          "expected": {
+            "ids": [
+              "E1",
+              "E2",
+              "E3"
+            ],
+            "count": 3
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "range",
+            "field": "value",
+            "min": 10,
+            "max": 20,
+            "minExclusive": true
+          },
+          "expected": {
+            "ids": [
+              "E3",
+              "E4"
+            ],
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "ESR-F06",
+      "title": "Rows-only text search does not empty the workspace",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "R1",
+            "region": "West",
+            "note": "alpha"
+          },
+          {
+            "recordId": "R2",
+            "region": "West",
+            "note": "beta"
+          },
+          {
+            "recordId": "R3",
+            "region": "East",
+            "note": "alpha"
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "region",
+            "values": [
+              "West"
+            ]
+          }
+        ],
+        "charts": [],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": "gamma"
+        },
+        "localSelections": false
+      },
+      "target": "rows",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove Rows search",
+          "remove": [
+            {
+              "kind": "rows-search"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "R1",
+              "R2"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Remove workspace filter but keep Rows search",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        }
+      ],
+      "populationChecks": {
+        "workspace": {
+          "ids": [
+            "R1",
+            "R2"
+          ],
+          "count": 2
+        }
+      },
+      "behavior": [
+        "Applying the Rows search removal must leave global IDs unchanged."
+      ]
+    },
+    {
+      "id": "ESR-F07",
+      "title": "Hidden raw and derived columns participate in table search",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "R1",
+            "region": "West",
+            "note": "alpha"
+          },
+          {
+            "recordId": "R2",
+            "region": "West",
+            "note": "beta"
+          },
+          {
+            "recordId": "R3",
+            "region": "East",
+            "note": "alpha"
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "region",
+            "values": [
+              "West"
+            ]
+          }
+        ],
+        "charts": [
+          {
+            "id": "table",
+            "type": "data-table",
+            "field": "",
+            "columns": [
+              {
+                "id": "region",
+                "field": "region"
+              }
+            ],
+            "filters": [],
+            "globalSearch": "gamma",
+            "sortDirection": "asc"
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false,
+        "derivedColumns": {
+          "code": [
+            "hidden-zeta",
+            "hidden-theta",
+            "hidden-zeta"
+          ]
+        }
+      },
+      "target": "table:table",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove only table search",
+          "remove": [
+            {
+              "kind": "table-search",
+              "chartId": "table"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "R1",
+              "R2"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "populationChecks": {
+        "workspace": {
+          "ids": [
+            "R1",
+            "R2"
+          ],
+          "count": 2
+        },
+        "context:table": {
+          "ids": [
+            "R1",
+            "R2"
+          ],
+          "count": 2
+        }
+      },
+      "variants": [
+        {
+          "label": "Search hidden source column case-insensitively",
+          "replace": {
+            "charts": [
+              {
+                "id": "table",
+                "type": "data-table",
+                "field": "",
+                "columns": [
+                  {
+                    "id": "region",
+                    "field": "region"
+                  }
+                ],
+                "filters": [],
+                "globalSearch": "ALPHA",
+                "sortDirection": "asc"
+              }
+            ]
+          },
+          "expected": {
+            "ids": [
+              "R1"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Search hidden derived column",
+          "replace": {
+            "charts": [
+              {
+                "id": "table",
+                "type": "data-table",
+                "field": "",
+                "columns": [
+                  {
+                    "id": "region",
+                    "field": "region"
+                  }
+                ],
+                "filters": [],
+                "globalSearch": "zeta",
+                "sortDirection": "asc"
+              }
+            ]
+          },
+          "expected": {
+            "ids": [
+              "R1"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Whitespace search is literal, not empty",
+          "replace": {
+            "charts": [
+              {
+                "id": "table",
+                "type": "data-table",
+                "field": "",
+                "columns": [
+                  {
+                    "id": "region",
+                    "field": "region"
+                  }
+                ],
+                "filters": [],
+                "globalSearch": " ",
+                "sortDirection": "asc"
+              }
+            ]
+          },
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "ESR-F08",
+      "title": "Rows field restriction is local and distinct from search",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "R1",
+            "region": "West",
+            "note": "alpha"
+          },
+          {
+            "recordId": "R2",
+            "region": "West",
+            "note": "beta"
+          },
+          {
+            "recordId": "R3",
+            "region": "East",
+            "note": "alpha"
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "region",
+            "values": [
+              "West"
+            ]
+          }
+        ],
+        "charts": [],
+        "rowsSettings": {
+          "filters": [
+            {
+              "type": "value",
+              "field": "region",
+              "values": [
+                "East"
+              ]
+            }
+          ],
+          "globalSearch": "alpha"
+        },
+        "localSelections": false
+      },
+      "target": "rows",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove Rows Region East",
+          "remove": [
+            {
+              "kind": "rows-filter",
+              "index": 0
+            }
+          ],
+          "expected": {
+            "ids": [
+              "R1"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Remove Rows search",
+          "remove": [
+            {
+              "kind": "rows-search"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Remove workspace Region West",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "R3"
+            ],
+            "count": 1
+          }
+        }
+      ],
+      "populationChecks": {
+        "workspace": {
+          "ids": [
+            "R1",
+            "R2"
+          ],
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "ESR-F09",
+      "title": "Chart-local population restriction has no global effect",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "L1",
+            "region": "West",
+            "channel": "Web"
+          },
+          {
+            "recordId": "L2",
+            "region": "West",
+            "channel": "Store"
+          },
+          {
+            "recordId": "L3",
+            "region": "East",
+            "channel": "Store"
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "region",
+            "values": [
+              "East"
+            ]
+          }
+        ],
+        "charts": [
+          {
+            "id": "web",
+            "type": "bar",
+            "field": "channel",
+            "filters": [],
+            "localFilters": [
+              {
+                "type": "value",
+                "field": "channel",
+                "values": [
+                  "Web"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "other",
+            "type": "bar",
+            "field": "region",
+            "filters": [],
+            "localFilters": [
+              {
+                "type": "value",
+                "field": "region",
+                "values": [
+                  "West"
+                ]
+              }
+            ]
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "context:web",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove local Web restriction",
+          "remove": [
+            {
+              "kind": "chart-local-filter",
+              "chartId": "web",
+              "index": 0
+            }
+          ],
+          "expected": {
+            "ids": [
+              "L3"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Remove workspace East restriction",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "L1"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Unrelated local restriction removal has no effect",
+          "remove": [
+            {
+              "kind": "chart-local-filter",
+              "chartId": "other",
+              "index": 0
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        }
+      ],
+      "populationChecks": {
+        "workspace": {
+          "ids": [
+            "L3"
+          ],
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "ESR-F10",
+      "title": "Two independent conflicts require a pair; every single fails",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "A",
+            "region": "West",
+            "channel": "Web"
+          },
+          {
+            "recordId": "B",
+            "region": "West",
+            "channel": "Store"
+          },
+          {
+            "recordId": "C",
+            "region": "East",
+            "channel": "Web"
+          },
+          {
+            "recordId": "D",
+            "region": "East",
+            "channel": "Store"
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "region",
+            "values": [
+              "West"
+            ]
+          }
+        ],
+        "charts": [
+          {
+            "id": "east",
+            "type": "bar",
+            "field": "region",
+            "filters": [
+              {
+                "type": "value",
+                "field": "region",
+                "values": [
+                  "East"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "web",
+            "type": "bar",
+            "field": "channel",
+            "filters": [
+              {
+                "type": "value",
+                "field": "channel",
+                "values": [
+                  "Web"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "store",
+            "type": "bar",
+            "field": "channel",
+            "filters": [
+              {
+                "type": "value",
+                "field": "channel",
+                "values": [
+                  "Store"
+                ]
+              }
+            ]
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Single: West",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Single: East",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "east"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Single: Web",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "web"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Single: Store",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "store"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Pair: West and Web",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            },
+            {
+              "kind": "chart-selection",
+              "chartId": "web"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "D"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Pair: West and Store",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            },
+            {
+              "kind": "chart-selection",
+              "chartId": "store"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "C"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Pair: East and Web",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "east"
+            },
+            {
+              "kind": "chart-selection",
+              "chartId": "web"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "B"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Pair: East and Store",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "east"
+            },
+            {
+              "kind": "chart-selection",
+              "chartId": "store"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "A"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Pair: both Region restrictions",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            },
+            {
+              "kind": "chart-selection",
+              "chartId": "east"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Pair: both Channel restrictions",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "web"
+            },
+            {
+              "kind": "chart-selection",
+              "chartId": "store"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        }
+      ],
+      "behavior": [
+        "A bounded pair search must return exact memberships and say which candidate set it searched.",
+        "Do not infer no recovery exists from zero single-removal gains."
+      ]
+    },
+    {
+      "id": "ESR-F11",
+      "title": "Specification selection reads owner limits; limits survive removal",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "S0",
+            "value": 9
+          },
+          {
+            "recordId": "S1",
+            "value": 10
+          },
+          {
+            "recordId": "S2",
+            "value": 20
+          },
+          {
+            "recordId": "S3",
+            "value": 21
+          },
+          {
+            "recordId": "S4",
+            "value": null
+          },
+          {
+            "recordId": "S5",
+            "value": "bad"
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "range",
+            "field": "value",
+            "min": 10,
+            "max": 20
+          }
+        ],
+        "charts": [
+          {
+            "id": "spec",
+            "type": "bar",
+            "field": "value",
+            "filters": [
+              {
+                "type": "spec-status",
+                "field": "value",
+                "region": "outside"
+              }
+            ],
+            "histogram": {
+              "binning": {
+                "mode": "auto"
+              },
+              "spec": {
+                "lower": 10,
+                "upper": 20
+              }
+            }
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove spec selection only",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "spec"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "S1",
+              "S2"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Remove workspace range",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "value"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "S0",
+              "S3"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "predicateChecks": [
+        {
+          "field": "value",
+          "filter": {
+            "type": "spec-status",
+            "field": "value",
+            "region": "outside"
+          },
+          "spec": {
+            "lower": 10,
+            "upper": 20
+          },
+          "expected": {
+            "ids": [
+              "S0",
+              "S3"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "spec-status",
+            "field": "value",
+            "region": "within"
+          },
+          "spec": {
+            "lower": 10,
+            "upper": 20
+          },
+          "expected": {
+            "ids": [
+              "S1",
+              "S2"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "spec-status",
+            "field": "value",
+            "region": "within"
+          },
+          "spec": {
+            "lower": 0,
+            "upper": 30
+          },
+          "expected": {
+            "ids": [
+              "S0",
+              "S1",
+              "S2",
+              "S3"
+            ],
+            "count": 4
+          }
+        }
+      ],
+      "variants": [
+        {
+          "label": "After upper spec changes to21, old preview is stale",
+          "replace": {
+            "workspaceFilters": [],
+            "charts": [
+              {
+                "id": "spec",
+                "type": "bar",
+                "field": "value",
+                "filters": [
+                  {
+                    "type": "spec-status",
+                    "field": "value",
+                    "region": "outside"
+                  }
+                ],
+                "histogram": {
+                  "binning": {
+                    "mode": "auto"
+                  },
+                  "spec": {
+                    "lower": 10,
+                    "upper": 21
+                  }
+                }
+              }
+            ]
+          },
+          "expected": {
+            "ids": [
+              "S0"
+            ],
+            "count": 1
+          }
+        }
+      ],
+      "behavior": [
+        "Spec limits, binning and chart layout survive Apply and Undo.",
+        "A spec-limit change invalidates every earlier preview using the owner."
+      ]
+    },
+    {
+      "id": "ESR-F12",
+      "title": "Current derived values, not raw rows, determine recovery",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "K1",
+            "units": 2
+          },
+          {
+            "recordId": "K2",
+            "units": 3
+          },
+          {
+            "recordId": "K3",
+            "units": 4
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "range",
+            "field": "adjusted",
+            "min": 35
+          }
+        ],
+        "charts": [
+          {
+            "id": "small",
+            "type": "data-table",
+            "field": "",
+            "columns": [
+              {
+                "id": "recordId",
+                "field": "recordId"
+              }
+            ],
+            "filters": [
+              {
+                "type": "range",
+                "field": "units",
+                "max": 3
+              }
+            ],
+            "globalSearch": "",
+            "sortDirection": "asc"
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false,
+        "derivedColumns": {
+          "adjusted": [
+            20,
+            30,
+            40
+          ]
+        }
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove adjusted restriction",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "adjusted"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "K1",
+              "K2"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Remove units restriction",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "small"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "K3"
+            ],
+            "count": 1
+          }
+        }
+      ],
+      "variants": [
+        {
+          "label": "Derived formula/settings revision changes values",
+          "replace": {
+            "derivedColumns": {
+              "adjusted": [
+                40,
+                60,
+                80
+              ]
+            }
+          },
+          "expected": {
+            "ids": [
+              "K1",
+              "K2"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "behavior": [
+        "A derived-value revision invalidates the empty diagnosis and all earlier previews.",
+        "No second formula engine may reinterpret the values."
+      ]
+    },
+    {
+      "id": "ESR-F13",
+      "title": "Notebook chart selections remain local",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "N1",
+            "region": "West",
+            "channel": "Web"
+          },
+          {
+            "recordId": "N2",
+            "region": "West",
+            "channel": "Store"
+          },
+          {
+            "recordId": "N3",
+            "region": "East",
+            "channel": "Web"
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "region",
+            "values": [
+              "West"
+            ]
+          }
+        ],
+        "charts": [
+          {
+            "id": "east",
+            "type": "bar",
+            "field": "region",
+            "filters": [
+              {
+                "type": "value",
+                "field": "region",
+                "values": [
+                  "East"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "web",
+            "type": "bar",
+            "field": "channel",
+            "filters": [
+              {
+                "type": "value",
+                "field": "channel",
+                "values": [
+                  "Web"
+                ]
+              }
+            ]
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": true
+      },
+      "target": "selected:east",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove East chart local selection",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "east"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "N1",
+              "N2"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Remove workspace West",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "N3"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Removing another chart selection cannot recover East",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "web"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        }
+      ],
+      "populationChecks": {
+        "workspace": {
+          "ids": [
+            "N1",
+            "N2"
+          ],
+          "count": 2
+        },
+        "context:east": {
+          "ids": [
+            "N1",
+            "N2"
+          ],
+          "count": 2
+        },
+        "context:web": {
+          "ids": [
+            "N1",
+            "N2"
+          ],
+          "count": 2
+        },
+        "selected:web": {
+          "ids": [
+            "N1"
+          ],
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "ESR-F14",
+      "title": "Empty source is not a filter conflict",
+      "snapshot": {
+        "rows": [],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "region",
+            "values": [
+              "West"
+            ]
+          }
+        ],
+        "charts": [],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Removing a filter cannot invent source rows",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        }
+      ],
+      "reasonProbe": {
+        "kind": "source"
+      },
+      "expectedReason": "empty-source"
+    },
+    {
+      "id": "ESR-F15",
+      "title": "Rows exist but no finite coordinate pairs are plottable",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "P1",
+            "x": null,
+            "y": 1
+          },
+          {
+            "recordId": "P2",
+            "x": "bad",
+            "y": 2
+          }
+        ],
+        "workspaceFilters": [],
+        "charts": [],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [
+          "P1",
+          "P2"
+        ],
+        "count": 2
+      },
+      "previews": [],
+      "reasonProbe": {
+        "kind": "finite-xy",
+        "fields": [
+          "x",
+          "y"
+        ],
+        "configured": true
+      },
+      "expectedReason": "no-plottable-values",
+      "expectedPlottable": {
+        "ids": [],
+        "count": 0
+      },
+      "behavior": [
+        "No selection-removal action should be offered as a cure for invalid X values.",
+        "Eligibility probe is a proposed classification contract, not a tested chart renderer."
+      ]
+    },
+    {
+      "id": "ESR-F16",
+      "title": "Chart missing required field is a setup state",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "P1",
+            "x": null,
+            "y": 1
+          },
+          {
+            "recordId": "P2",
+            "x": "bad",
+            "y": 2
+          }
+        ],
+        "workspaceFilters": [],
+        "charts": [],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [
+          "P1",
+          "P2"
+        ],
+        "count": 2
+      },
+      "previews": [],
+      "reasonProbe": {
+        "kind": "finite-xy",
+        "fields": [
+          "x",
+          ""
+        ],
+        "configured": false
+      },
+      "expectedReason": "setup-required",
+      "expectedPlottable": {
+        "ids": [],
+        "count": 0
+      }
+    },
+    {
+      "id": "ESR-F17",
+      "title": "Intentional empty selection remains untouched until Apply",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "I1",
+            "value": 1
+          },
+          {
+            "recordId": "I2",
+            "value": 2
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "value",
+            "values": []
+          }
+        ],
+        "charts": [],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Explicitly remove intentional empty selection",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "value"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "I1",
+              "I2"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "behavior": [
+        "Dismissal leaves the empty array and exact empty membership intact.",
+        "No automatic widening, no repeated modal prompt, no coercing values:[] to no filter."
+      ]
+    },
+    {
+      "id": "ESR-F18",
+      "title": "Aggregate last-range fallback can make removal non-monotonic",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "G0",
+            "group": "A",
+            "amount": 5
+          },
+          {
+            "recordId": "G1",
+            "group": "A",
+            "amount": 15
+          },
+          {
+            "recordId": "G2",
+            "group": "A",
+            "amount": 25
+          },
+          {
+            "recordId": "G3",
+            "group": "B",
+            "amount": 15
+          }
+        ],
+        "workspaceFilters": [],
+        "charts": [
+          {
+            "id": "aggregate",
+            "type": "bar",
+            "field": "group",
+            "filters": [
+              {
+                "type": "value",
+                "field": "group",
+                "values": [
+                  "A"
+                ]
+              },
+              {
+                "type": "range",
+                "field": "amount",
+                "min": 0,
+                "max": 10
+              },
+              {
+                "type": "range",
+                "field": "amount",
+                "min": 10,
+                "max": 20
+              }
+            ],
+            "aggregateId": "fixture-aggregate"
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [
+          "G1"
+        ],
+        "count": 1
+      },
+      "previews": [
+        {
+          "label": "Remove last range exposes older disjoint range",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "aggregate",
+              "index": 2
+            }
+          ],
+          "expected": {
+            "ids": [
+              "G0"
+            ],
+            "count": 1
+          },
+          "expectedAdded": [
+            "G0"
+          ],
+          "expectedRemoved": [
+            "G1"
+          ],
+          "expectedMonotone": false,
+          "unitPolicy": "Do not label this clause edit a relaxation."
+        },
+        {
+          "label": "Remove older masked range",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "aggregate",
+              "index": 1
+            }
+          ],
+          "expected": {
+            "ids": [
+              "G1"
+            ],
+            "count": 1
+          },
+          "expectedAdded": [],
+          "expectedRemoved": [],
+          "expectedMonotone": true,
+          "expectedNoOp": true
+        },
+        {
+          "label": "Remove entire chart selection",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "aggregate"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "G0",
+              "G1",
+              "G2",
+              "G3"
+            ],
+            "count": 4
+          },
+          "expectedAdded": [
+            "G0",
+            "G2",
+            "G3"
+          ],
+          "expectedRemoved": [],
+          "expectedMonotone": true
+        }
+      ],
+      "behavior": [
+        "Recompile the exact owner settings for every clause candidate.",
+        "A failure mask for raw filter clauses is unsound here.",
+        "Subset containment must hold before calling a change a relaxation."
+      ]
+    },
+    {
+      "id": "ESR-F19",
+      "title": "Simple bar ignores off-field selection clauses",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "O1",
+            "region": "West",
+            "channel": "Web"
+          },
+          {
+            "recordId": "O2",
+            "region": "East",
+            "channel": "Store"
+          }
+        ],
+        "workspaceFilters": [],
+        "charts": [
+          {
+            "id": "simple",
+            "type": "bar",
+            "field": "region",
+            "filters": [
+              {
+                "type": "value",
+                "field": "region",
+                "values": [
+                  "West"
+                ]
+              },
+              {
+                "type": "value",
+                "field": "channel",
+                "values": [
+                  "Store"
+                ]
+              }
+            ]
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [
+          "O1"
+        ],
+        "count": 1
+      },
+      "previews": [
+        {
+          "label": "Remove masked off-field clause",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "simple",
+              "index": 1
+            }
+          ],
+          "expected": {
+            "ids": [
+              "O1"
+            ],
+            "count": 1
+          },
+          "expectedNoOp": true
+        },
+        {
+          "label": "Remove effective Region clause",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "simple",
+              "index": 0
+            }
+          ],
+          "expected": {
+            "ids": [
+              "O1",
+              "O2"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "behavior": [
+        "Do not display ignored stored clauses as effective restrictions.",
+        "The effective owner predicate is authoritative."
+      ]
+    },
+    {
+      "id": "ESR-F20",
+      "title": "Invalid date bound fails rather than becoming unbounded",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "D0",
+            "day": "2025-12-31T23:59:59.999Z"
+          },
+          {
+            "recordId": "D1",
+            "day": "2026-01-01T00:00:00Z"
+          },
+          {
+            "recordId": "D2",
+            "day": "2026-01-01T23:59:59.999Z"
+          },
+          {
+            "recordId": "D3",
+            "day": "2026-01-02T00:00:00Z"
+          },
+          {
+            "recordId": "D4",
+            "day": "2026-01-02T00:30:00+02:00"
+          },
+          {
+            "recordId": "D5",
+            "day": "2026-02-30"
+          },
+          {
+            "recordId": "D6",
+            "day": null
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "date-range",
+            "field": "day",
+            "min": "2026-01-01",
+            "max": "2026-02-30"
+          }
+        ],
+        "charts": [],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Explicit removal recovers all source rows, including invalid/missing dates",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "day"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "D0",
+              "D1",
+              "D2",
+              "D3",
+              "D4",
+              "D5",
+              "D6"
+            ],
+            "count": 7
+          }
+        }
+      ],
+      "behavior": [
+        "Offer a field-control edit for the invalid bound; never silently replace it."
+      ]
+    },
+    {
+      "id": "ESR-F21",
+      "title": "Three conflicts exceed the bounded-pair search",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "H1",
+            "a": 1,
+            "b": 1,
+            "c": 1
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "a",
+            "values": [
+              0
+            ]
+          },
+          {
+            "type": "value",
+            "field": "b",
+            "values": [
+              0
+            ]
+          },
+          {
+            "type": "value",
+            "field": "c",
+            "values": [
+              0
+            ]
+          }
+        ],
+        "charts": [],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Single a",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "a"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Single b",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "b"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Single c",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "c"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Pair a,b",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "a"
+            },
+            {
+              "kind": "workspace-filter",
+              "field": "b"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Pair a,c",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "a"
+            },
+            {
+              "kind": "workspace-filter",
+              "field": "c"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "Pair b,c",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "b"
+            },
+            {
+              "kind": "workspace-filter",
+              "field": "c"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        },
+        {
+          "label": "User-chosen triple, outside automatic pair search",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "a"
+            },
+            {
+              "kind": "workspace-filter",
+              "field": "b"
+            },
+            {
+              "kind": "workspace-filter",
+              "field": "c"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "H1"
+            ],
+            "count": 1
+          },
+          "unitPolicy": "Diagnostic; automatic search is intentionally bounded to pairs."
+        }
+      ],
+      "behavior": [
+        "After bounded search show no restoring single or pair found, not no recovery exists."
+      ]
+    },
+    {
+      "id": "ESR-F22",
+      "title": "Missing referenced field uses actual undefined-value semantics",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "U1",
+            "present": 1
+          },
+          {
+            "recordId": "U2",
+            "present": 2
+          }
+        ],
+        "workspaceFilters": [],
+        "charts": [
+          {
+            "id": "missing",
+            "type": "bar",
+            "field": "present",
+            "filters": [],
+            "localFilters": [
+              {
+                "type": "range",
+                "field": "absent",
+                "min": 0
+              }
+            ]
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "context:missing",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove absent-field numeric local restriction",
+          "remove": [
+            {
+              "kind": "chart-local-filter",
+              "chartId": "missing",
+              "index": 0
+            }
+          ],
+          "expected": {
+            "ids": [
+              "U1",
+              "U2"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "variants": [
+        {
+          "label": "Absent-field missing bucket matches undefined in current source",
+          "replace": {
+            "charts": [
+              {
+                "id": "missing",
+                "type": "bar",
+                "field": "present",
+                "filters": [],
+                "localFilters": [
+                  {
+                    "type": "value",
+                    "field": "absent",
+                    "values": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "expected": {
+            "ids": [
+              "U1",
+              "U2"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "behavior": [
+        "Do not infer every absent-field predicate is false.",
+        "A product-level unavailable-field block is a distinct capability decision, not existing predicate semantics."
+      ]
+    },
+    {
+      "id": "ESR-F23",
+      "title": "Finite numeric timestamps and zone-less date-times are UTC",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "T0",
+            "day": 1767225600000
+          },
+          {
+            "recordId": "T1",
+            "day": "2026-01-01T23:30:00"
+          },
+          {
+            "recordId": "T2",
+            "day": "Depot 2"
+          },
+          {
+            "recordId": "T3",
+            "day": "01/02/2026"
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "date-range",
+            "field": "day",
+            "min": "2026-01-01",
+            "max": "2026-01-01"
+          }
+        ],
+        "charts": [],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [
+          "T0",
+          "T1"
+        ],
+        "count": 2
+      },
+      "previews": [
+        {
+          "label": "Remove day restriction",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "day"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "T0",
+              "T1",
+              "T2",
+              "T3"
+            ],
+            "count": 4
+          }
+        }
+      ]
+    },
+    {
+      "id": "ESR-F24",
+      "title": "Table filters are linked but table search is local",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "A",
+            "region": "West",
+            "channel": "Web"
+          },
+          {
+            "recordId": "B",
+            "region": "West",
+            "channel": "Store"
+          },
+          {
+            "recordId": "C",
+            "region": "East",
+            "channel": "Web"
+          },
+          {
+            "recordId": "D",
+            "region": "East",
+            "channel": "Store"
+          }
+        ],
+        "workspaceFilters": [],
+        "charts": [
+          {
+            "id": "west",
+            "type": "data-table",
+            "field": "",
+            "columns": [
+              {
+                "id": "recordId",
+                "field": "recordId"
+              }
+            ],
+            "filters": [
+              {
+                "type": "value",
+                "field": "region",
+                "values": [
+                  "West"
+                ]
+              }
+            ],
+            "globalSearch": "Store",
+            "sortDirection": "asc"
+          },
+          {
+            "id": "web",
+            "type": "bar",
+            "field": "channel",
+            "filters": [
+              {
+                "type": "value",
+                "field": "channel",
+                "values": [
+                  "Web"
+                ]
+              }
+            ]
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "table:west",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove local table search",
+          "remove": [
+            {
+              "kind": "table-search",
+              "chartId": "west"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "A"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Remove other chart Web selection",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "web"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "B"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Remove table Region selection but retain search",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "west"
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        }
+      ],
+      "populationChecks": {
+        "workspace": {
+          "ids": [
+            "A"
+          ],
+          "count": 1
+        },
+        "context:west": {
+          "ids": [
+            "A",
+            "C"
+          ],
+          "count": 2
+        },
+        "selected:west": {
+          "ids": [
+            "A"
+          ],
+          "count": 1
+        },
+        "context:web": {
+          "ids": [
+            "A",
+            "B"
+          ],
+          "count": 2
+        }
+      }
+    },
+    {
+      "id": "ESR-F25",
+      "title": "Empty target containment is vacuous: check the full owner predicate",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "G0",
+            "group": "A",
+            "amount": 5
+          },
+          {
+            "recordId": "G1",
+            "group": "A",
+            "amount": 15
+          },
+          {
+            "recordId": "G2",
+            "group": "A",
+            "amount": 25
+          },
+          {
+            "recordId": "G3",
+            "group": "B",
+            "amount": 15
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "group",
+            "values": [
+              "B"
+            ]
+          }
+        ],
+        "charts": [
+          {
+            "id": "aggregate",
+            "type": "bar",
+            "field": "group",
+            "filters": [
+              {
+                "type": "value",
+                "field": "group",
+                "values": [
+                  "A"
+                ]
+              },
+              {
+                "type": "range",
+                "field": "amount",
+                "min": 0,
+                "max": 10
+              },
+              {
+                "type": "range",
+                "field": "amount",
+                "min": 10,
+                "max": 20
+              }
+            ],
+            "aggregateId": "fixture-aggregate"
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Last-range removal leaves target empty but shrinks owner elsewhere",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "aggregate",
+              "index": 2
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          },
+          "expectedAdded": [],
+          "expectedRemoved": [],
+          "expectedMonotone": false,
+          "expectedNoOp": true,
+          "unitPolicy": "No target gain; non-monotone owner transition must not be recommended."
+        },
+        {
+          "label": "Explicitly clear all 3 chart restrictions",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "aggregate"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "G3"
+            ],
+            "count": 1
+          },
+          "unitPolicy": "Group action must state it removes 3 stored restrictions."
+        }
+      ]
+    },
+    {
+      "id": "ESR-F26",
+      "title": "Notebook selected, eligible, unbound findings and numeric empty states",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "n1",
+            "region": "West",
+            "channel": "Web",
+            "score": 10
+          },
+          {
+            "recordId": "n2",
+            "region": "West",
+            "channel": "Store",
+            "score": 20
+          },
+          {
+            "recordId": "n3",
+            "region": "East",
+            "channel": "Web",
+            "score": 30
+          },
+          {
+            "recordId": "n4",
+            "region": "East",
+            "channel": "Store",
+            "score": 40
+          },
+          {
+            "recordId": "n5",
+            "region": "West",
+            "channel": "Web",
+            "score": null
+          },
+          {
+            "recordId": "n6",
+            "region": "East",
+            "channel": "Web",
+            "score": 50
+          }
+        ],
+        "workspaceFilters": [
+          {
+            "type": "value",
+            "field": "region",
+            "values": [
+              "West"
+            ]
+          }
+        ],
+        "charts": [
+          {
+            "id": "A",
+            "type": "bar",
+            "field": "region",
+            "filters": [
+              {
+                "type": "value",
+                "field": "region",
+                "values": [
+                  "East"
+                ]
+              }
+            ],
+            "localFilters": [
+              {
+                "type": "value",
+                "field": "channel",
+                "values": [
+                  "Web"
+                ]
+              }
+            ]
+          },
+          {
+            "id": "B",
+            "type": "bar",
+            "field": "channel",
+            "filters": [
+              {
+                "type": "value",
+                "field": "channel",
+                "values": [
+                  "Store"
+                ]
+              }
+            ]
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": true
+      },
+      "target": "selected:A",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove A selection",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "A",
+              "index": 0
+            }
+          ],
+          "expected": {
+            "ids": [
+              "n1",
+              "n5"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Remove workspace Region",
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "n3",
+              "n6"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Remove A local Channel only",
+          "remove": [
+            {
+              "kind": "chart-local-filter",
+              "chartId": "A",
+              "index": 0
+            }
+          ],
+          "expected": {
+            "ids": [],
+            "count": 0
+          }
+        }
+      ],
+      "populationChecks": {
+        "workspace": {
+          "ids": [
+            "n1",
+            "n2",
+            "n5"
+          ],
+          "count": 3
+        },
+        "context:A": {
+          "ids": [
+            "n1",
+            "n5"
+          ],
+          "count": 2
+        },
+        "selected:B": {
+          "ids": [
+            "n2"
+          ],
+          "count": 1
+        }
+      },
+      "findingChecks": [
+        {
+          "label": "Selected count is valid zero",
+          "definition": {
+            "aggregation": "count",
+            "chart": "A"
+          },
+          "expected": {
+            "ids": [],
+            "count": 0,
+            "value": 0
+          }
+        },
+        {
+          "label": "Selected average has no rows",
+          "definition": {
+            "aggregation": "average",
+            "field": "score",
+            "chart": "A"
+          },
+          "expected": {
+            "ids": [],
+            "count": 0,
+            "unavailable": "empty"
+          }
+        },
+        {
+          "label": "Eligible ignores local selection",
+          "definition": {
+            "aggregation": "count",
+            "chart": "A",
+            "population": "eligible"
+          },
+          "expected": {
+            "ids": [
+              "n1",
+              "n5"
+            ],
+            "count": 2,
+            "value": 2
+          }
+        },
+        {
+          "label": "Unbound count ignores workspace",
+          "definition": {
+            "aggregation": "count"
+          },
+          "expected": {
+            "ids": [
+              "n1",
+              "n2",
+              "n3",
+              "n4",
+              "n5",
+              "n6"
+            ],
+            "count": 6,
+            "value": 6
+          }
+        },
+        {
+          "label": "After A selection removal: count2",
+          "definition": {
+            "aggregation": "count",
+            "chart": "A"
+          },
+          "expected": {
+            "ids": [
+              "n1",
+              "n5"
+            ],
+            "count": 2,
+            "value": 2
+          },
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "A",
+              "index": 0
+            }
+          ]
+        },
+        {
+          "label": "After A selection removal: mean10 with null excluded",
+          "definition": {
+            "aggregation": "average",
+            "field": "score",
+            "chart": "A"
+          },
+          "expected": {
+            "ids": [
+              "n1",
+              "n5"
+            ],
+            "count": 2,
+            "value": 10
+          },
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "A",
+              "index": 0
+            }
+          ],
+          "expectedContributors": [
+            "n1"
+          ]
+        },
+        {
+          "label": "After workspace removal: mean40",
+          "definition": {
+            "aggregation": "average",
+            "field": "score",
+            "chart": "A"
+          },
+          "expected": {
+            "ids": [
+              "n3",
+              "n6"
+            ],
+            "count": 2,
+            "value": 40
+          },
+          "remove": [
+            {
+              "kind": "workspace-filter",
+              "field": "region"
+            }
+          ],
+          "expectedContributors": [
+            "n3",
+            "n6"
+          ]
+        },
+        {
+          "label": "After A clear: finding-only score >=40 still empty",
+          "definition": {
+            "aggregation": "count",
+            "chart": "A",
+            "filters": [
+              {
+                "type": "range",
+                "field": "score",
+                "min": 40
+              }
+            ]
+          },
+          "expected": {
+            "ids": [],
+            "count": 0,
+            "value": 0
+          },
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "A",
+              "index": 0
+            }
+          ]
+        },
+        {
+          "label": "Eligible finding with missing-score condition has rows but no numeric values",
+          "definition": {
+            "aggregation": "average",
+            "field": "score",
+            "chart": "A",
+            "population": "eligible",
+            "filters": [
+              {
+                "type": "value",
+                "field": "score",
+                "values": [
+                  null
+                ]
+              }
+            ]
+          },
+          "expected": {
+            "ids": [
+              "n5"
+            ],
+            "count": 1,
+            "unavailable": "invalid"
+          },
+          "expectedContributors": []
+        }
+      ],
+      "behavior": [
+        "Finding reductions here are a small independent oracle for count/average scope and exclusions, not a complete findings runtime.",
+        "Intentional zero is valid; dismissing recovery never changes notebook text or state."
+      ]
+    },
+    {
+      "id": "ESR-F27",
+      "title": "One histogram owns a bin range and specification status on the same field",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "S0",
+            "value": 9
+          },
+          {
+            "recordId": "S1",
+            "value": 10
+          },
+          {
+            "recordId": "S2",
+            "value": 20
+          },
+          {
+            "recordId": "S3",
+            "value": 21
+          },
+          {
+            "recordId": "S4",
+            "value": null
+          },
+          {
+            "recordId": "S5",
+            "value": "bad"
+          }
+        ],
+        "workspaceFilters": [],
+        "charts": [
+          {
+            "id": "histogram",
+            "type": "bar",
+            "field": "value",
+            "filters": [
+              {
+                "type": "range",
+                "field": "value",
+                "min": 10,
+                "max": 20
+              },
+              {
+                "type": "spec-status",
+                "field": "value",
+                "region": "outside"
+              }
+            ],
+            "histogram": {
+              "binning": {
+                "mode": "auto"
+              },
+              "spec": {
+                "lower": 10,
+                "upper": 20
+              }
+            }
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove only bin range; keep outside-spec selection",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "histogram",
+              "index": 0
+            }
+          ],
+          "expected": {
+            "ids": [
+              "S0",
+              "S3"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Remove only outside-spec selection; keep bin range",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "histogram",
+              "index": 1
+            }
+          ],
+          "expected": {
+            "ids": [
+              "S1",
+              "S2"
+            ],
+            "count": 2
+          }
+        },
+        {
+          "label": "Explicit group: clear 2 histogram restrictions",
+          "remove": [
+            {
+              "kind": "chart-selection",
+              "chartId": "histogram"
+            }
+          ],
+          "expected": {
+            "ids": [
+              "S0",
+              "S1",
+              "S2",
+              "S3",
+              "S4",
+              "S5"
+            ],
+            "count": 6
+          }
+        }
+      ],
+      "populationChecks": {
+        "context:histogram": {
+          "ids": [
+            "S0",
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5"
+          ],
+          "count": 6
+        },
+        "selected:histogram": {
+          "ids": [],
+          "count": 0
+        }
+      },
+      "behavior": [
+        "The two same-field occurrences are distinct units; each one preserves its sibling.",
+        "All actions preserve histogram.spec and binning.",
+        "The chart can still have context rows while its selected set is empty."
+      ]
+    },
+    {
+      "id": "ESR-F28",
+      "title": "Stored boundless and empty-string restrictions remain effective",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "Q0",
+            "value": 0
+          },
+          {
+            "recordId": "Q1",
+            "value": "0"
+          },
+          {
+            "recordId": "Q2",
+            "value": "2026-01-01"
+          },
+          {
+            "recordId": "Q3",
+            "value": null
+          },
+          {
+            "recordId": "Q4",
+            "value": true
+          },
+          {
+            "recordId": "Q5",
+            "value": ""
+          },
+          {
+            "recordId": "Q6",
+            "value": "bad"
+          },
+          {
+            "recordId": "Q7",
+            "value": 1
+          }
+        ],
+        "workspaceFilters": [],
+        "charts": [
+          {
+            "id": "hidden-restrictions",
+            "type": "data-table",
+            "field": "",
+            "columns": [
+              {
+                "id": "recordId",
+                "field": "recordId"
+              }
+            ],
+            "filters": [
+              {
+                "type": "range",
+                "field": "value"
+              },
+              {
+                "type": "date-range",
+                "field": "value"
+              },
+              {
+                "type": "text",
+                "field": "value",
+                "operator": "contains",
+                "value": ""
+              }
+            ],
+            "globalSearch": "",
+            "sortDirection": "asc"
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [],
+        "count": 0
+      },
+      "previews": [
+        {
+          "label": "Remove boundless numeric range; retain valid-date and string conditions",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "hidden-restrictions",
+              "index": 0
+            }
+          ],
+          "expected": {
+            "ids": [
+              "Q2"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Remove boundless date range; retain finite-numeric and string conditions",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "hidden-restrictions",
+              "index": 1
+            }
+          ],
+          "expected": {
+            "ids": [
+              "Q1"
+            ],
+            "count": 1
+          }
+        },
+        {
+          "label": "Remove empty text contains; retain finite-numeric and valid-date conditions",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "hidden-restrictions",
+              "index": 2
+            }
+          ],
+          "expected": {
+            "ids": [
+              "Q0",
+              "Q7"
+            ],
+            "count": 2
+          }
+        }
+      ],
+      "predicateChecks": [
+        {
+          "field": "value",
+          "filter": {
+            "type": "range",
+            "field": "value"
+          },
+          "expected": {
+            "ids": [
+              "Q0",
+              "Q1",
+              "Q7"
+            ],
+            "count": 3
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "date-range",
+            "field": "value"
+          },
+          "expected": {
+            "ids": [
+              "Q0",
+              "Q2",
+              "Q7"
+            ],
+            "count": 3
+          }
+        },
+        {
+          "field": "value",
+          "filter": {
+            "type": "text",
+            "field": "value",
+            "operator": "contains",
+            "value": ""
+          },
+          "expected": {
+            "ids": [
+              "Q1",
+              "Q2",
+              "Q5",
+              "Q6"
+            ],
+            "count": 4
+          }
+        }
+      ],
+      "behavior": [
+        "Recovery inventory must inspect stored restrictions and effective semantics; display-only active-filter heuristics cannot define its inventory.",
+        "A boundless numeric range still requires finite numeric values. A boundless date range still requires a valid timestamp. Text contains an empty string still requires a string.",
+        "Numeric zero and one are valid millisecond timestamps; string zero is not a date in the baseline parser."
+      ]
+    },
+    {
+      "id": "ESR-F29",
+      "title": "A valid range pair must survive an individually non-monotone removal",
+      "snapshot": {
+        "rows": [
+          {
+            "recordId": "G0",
+            "group": "A",
+            "amount": 5
+          },
+          {
+            "recordId": "G1",
+            "group": "A",
+            "amount": 15
+          },
+          {
+            "recordId": "G2",
+            "group": "A",
+            "amount": 25
+          },
+          {
+            "recordId": "G3",
+            "group": "B",
+            "amount": 15
+          }
+        ],
+        "workspaceFilters": [],
+        "charts": [
+          {
+            "id": "aggregate",
+            "type": "bar",
+            "field": "group",
+            "filters": [
+              {
+                "type": "value",
+                "field": "group",
+                "values": [
+                  "A"
+                ]
+              },
+              {
+                "type": "range",
+                "field": "amount",
+                "min": 0,
+                "max": 10
+              },
+              {
+                "type": "range",
+                "field": "amount",
+                "min": 10,
+                "max": 20
+              }
+            ],
+            "aggregateId": "fixture-aggregate"
+          }
+        ],
+        "rowsSettings": {
+          "filters": [],
+          "globalSearch": ""
+        },
+        "localSelections": false
+      },
+      "target": "workspace",
+      "expected": {
+        "ids": [
+          "G1"
+        ],
+        "count": 1
+      },
+      "previews": [
+        {
+          "label": "Remove older range alone",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "aggregate",
+              "index": 1
+            }
+          ],
+          "expected": {
+            "ids": [
+              "G1"
+            ],
+            "count": 1
+          },
+          "expectedMonotone": true,
+          "expectedNoOp": true
+        },
+        {
+          "label": "Remove latest range alone exposes the older range",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "aggregate",
+              "index": 2
+            }
+          ],
+          "expected": {
+            "ids": [
+              "G0"
+            ],
+            "count": 1
+          },
+          "expectedAdded": [
+            "G0"
+          ],
+          "expectedRemoved": [
+            "G1"
+          ],
+          "expectedMonotone": false
+        },
+        {
+          "label": "Remove both ranges together; preserve category A",
+          "remove": [
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "aggregate",
+              "index": 1
+            },
+            {
+              "kind": "chart-filter-clause",
+              "chartId": "aggregate",
+              "index": 2
+            }
+          ],
+          "expected": {
+            "ids": [
+              "G0",
+              "G1",
+              "G2"
+            ],
+            "count": 3
+          },
+          "expectedAdded": [
+            "G0",
+            "G2"
+          ],
+          "expectedRemoved": [],
+          "expectedMonotone": true
+        }
+      ],
+      "behavior": [
+        "The pair is evaluated against one clone with both original-index occurrences removed together.",
+        "Pair search must not discard a unit merely because its single-removal transition is non-monotone.",
+        "The joint transition is a valid relaxation and preserves the category restriction; clearing the whole chart would incorrectly admit G3."
+      ]
+    }
+  ]
+}
