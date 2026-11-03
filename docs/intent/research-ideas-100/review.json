@@ -176,7 +176,7 @@
   {
     "id": "R030",
     "disposition": "investigate",
-    "reason": "Compare explicit numeric input presets with preprocessing guidance for decimal separators, grouping characters, and signed accounting text. Start with the bounded experiment; keep the current design if the rejection signal applies.",
+    "reason": "October 26 Design complete: implement saved numeric conventions, full conversion review, and durable refresh, followed by percent/accounting and ordered query preparation. See numeric-preparation/implementation-plan.md. No outside-demand gate.",
     "destination": "ideas/R030-locale-numeric-conversion.md"
   },
   {
