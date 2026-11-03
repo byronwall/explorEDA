@@ -37,6 +37,7 @@ import {
   productRetentionDashboard,
   roomBookingsDashboard,
 } from "@/demos/journeyDashboards";
+import { emptySelectionDashboard } from "@/demos/emptySelection";
 import type { SavedDataStructure } from "exploreda";
 
 /**
@@ -704,6 +705,20 @@ export const liveExamples = {
     shotAlt:
       "A scatter plot that opens with a rectangular brush already drawn.",
     steps: [{ expectChip: "Time" }, { expectRows: 164 }],
+  },
+  "recover-rows": {
+    label: "Live workspace filtered to no rows",
+    data: SHOP,
+    savedData: emptySelectionDashboard,
+    exampleId: "empty-selection",
+    shotAlt:
+      "Two row charts with no rows, and the Recover rows panel listing each filter with the rows it brings back.",
+    steps: [
+      { expectRows: 0 },
+      { click: "Recover rows" },
+      { expectPopover: "+168 rows" },
+      { expectPopover: "+166 rows" },
+    ],
   },
   workspace: {
     label: "Live workspace tour",

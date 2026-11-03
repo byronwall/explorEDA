@@ -9,6 +9,21 @@ A chart's selection is its filter. Click a bar, row, cell, or flow, or drag acro
 - A chart's local filter limits only the rows that chart draws. It never filters other charts.
 - A workspace filter, added with **Filter** in the filter bar, narrows every chart without a chart of its own. It saves with the view.
 
+## Recover rows
+
+Filters from different charts can rule each other out, such as a Home selection in one chart and a workspace filter for Outdoors. The row count then reads 0, and **Recover rows** appears beside it.
+
+- **Recover rows** lists each active filter with the number of rows that come back if you remove only that filter.
+- Choose a filter to see the first rows it brings back. The filter's own field is the first column.
+- **Apply** removes that one filter and keeps the rest. Undo puts it back.
+- **Keep empty** closes the panel and changes nothing.
+- "still 0" means another filter also rules those rows out. Remove more than one filter from the filter bar.
+
+<LiveExample
+  id="recover-rows"
+  caption="A Home selection and an Outdoors workspace filter leave no rows. Recover rows shows what each removal brings back."
+/>
+
 ## Saved filters
 
 Filters save with the chart, so a dashboard can open with a selection already in place.

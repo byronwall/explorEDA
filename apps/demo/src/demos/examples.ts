@@ -129,6 +129,7 @@ import { beijingAnalysis } from "./analyses/beijing";
 import { earthquakesAnalysis } from "./analyses/earthquakes";
 import { flightsAnalysis } from "./analyses/flights";
 import { shopText } from "./analyses/shop";
+import { emptySelectionDashboard } from "./emptySelection";
 import { wineText } from "./analyses/wine";
 import { engineeringHistogramsDashboard } from "./engineeringHistograms";
 import {
@@ -1467,6 +1468,17 @@ export const examples: ExampleData[] = [
     data: "/datasets/elections.csv",
     savedData: electionsHeatmapDashboard,
     counterpart: { id: "elections", label: "The authored composition" },
+  },
+  {
+    id: "empty-selection",
+    title: "Which filter emptied the order book?",
+    description:
+      "A Home selection in one chart and an Outdoors workspace filter rule each other out, so no orders remain. Recover rows shows the exact orders each removal brings back before you apply it.",
+    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
+    shows: ["Recover rows", "Workspace filters", "Click to filter"],
+    icon: ShoppingCart,
+    data: "/datasets/shop-operations.csv",
+    savedData: emptySelectionDashboard,
   },
 ];
 

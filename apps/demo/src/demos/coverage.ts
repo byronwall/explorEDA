@@ -510,6 +510,15 @@ export const coverageFeatures = [
     status: "supported",
   },
   {
+    id: "interaction:recover-rows",
+    label: "Recover rows",
+    family: "Interaction",
+    description:
+      "When filters leave no rows, preview the exact rows each removal brings back, then apply one.",
+    required: true,
+    status: "supported",
+  },
+  {
     id: "interaction:saved-filter-state",
     label: "Saved filter state",
     family: "Interaction",
@@ -1717,6 +1726,16 @@ export const exampleCoverage = [
         "accessibility:naming":
           "Dashboard regions and filtering controls have accessible names.",
       },
+    },
+  },
+  {
+    exampleId: "empty-selection",
+    intent:
+      "Open on an empty result and use Recover rows to bring one category back.",
+    features: {
+      "chart:row": "shown",
+      "interaction:recover-rows": "shown",
+      "interaction:active-filter": "shown",
     },
   },
 ] as const satisfies readonly ExampleCoverage[];

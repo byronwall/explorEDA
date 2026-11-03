@@ -20,6 +20,7 @@ import {
 } from "./ui/popover";
 import { WorkspaceFilterEditor } from "./WorkspaceFilterEditor";
 import { ActionTooltip } from "./ui/tooltip";
+import { RecoverRows } from "./recovery/RecoverRows";
 
 export type FieldFormatting = {
   name: (field: string) => string;
@@ -450,6 +451,12 @@ export function ActiveFilterStatus({
           <span className="sr-only"> after workspace and chart filters.</span>
         </p>
       </ActionTooltip>
+      {view !== "rows" &&
+        remainingRows === 0 &&
+        data.length > 0 &&
+        (workspaceFilters.some(isActiveFilter) || activeFilters.length > 0) && (
+          <RecoverRows population="Workspace" />
+        )}
       <Popover
         open={editor !== undefined}
         onOpenChange={(open) => !open && setEditor(undefined)}

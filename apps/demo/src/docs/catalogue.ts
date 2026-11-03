@@ -620,8 +620,12 @@ export const catalogue: readonly DocsPage[] = [
     lede: "Select marks to filter every chart, read the active filters, and save a dashboard with a selection in place.",
     summary:
       "Click or drag to filter every chart, then clear or save the selection.",
-    highlights: ["Cross-filter", "Clear", "Saved filters"],
-    covers: ["flow:filter", "interaction:saved-filter-state"],
+    highlights: ["Cross-filter", "Clear", "Recover rows", "Saved filters"],
+    covers: [
+      "flow:filter",
+      "interaction:recover-rows",
+      "interaction:saved-filter-state",
+    ],
     examples: ["lorenz-3d"],
     related: ["workspace", "bar", "rendering"],
   },

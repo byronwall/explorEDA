@@ -2158,6 +2158,81 @@ html {
 .eda-filter-chip-owner {
   color: var(--muted-foreground);
 }
+.eda-filter-status .eda-recover-rows {
+  flex-shrink: 0;
+  width: auto;
+  height: 26px;
+  gap: 4px;
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--primary);
+  border: 1px solid color-mix(in oklab, var(--primary) 45%, transparent);
+}
+.eda-recover-rows svg {
+  width: 13px;
+  height: 13px;
+}
+.eda-recover-option {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.eda-recover-option:hover {
+  background: var(--accent);
+}
+.eda-recover-option.is-checked {
+  background: var(--accent);
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+.eda-recover-option.is-disabled {
+  color: var(--muted-foreground);
+  cursor: default;
+}
+.eda-recover-option.is-disabled:hover {
+  background: none;
+}
+.eda-recover-option:has(input:focus-visible) {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.eda-recover-count {
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  padding: 1px 7px;
+  border-radius: 999px;
+  color: var(--foreground);
+  background: var(--secondary);
+}
+.eda-recover-count.is-none {
+  font-weight: 500;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+.eda-recover-table th {
+  padding: 4px 6px;
+  font-weight: 500;
+  text-align: left;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+.eda-recover-table td {
+  padding: 4px 6px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+.eda-recover-table tr:last-child td {
+  border-bottom: 0;
+}
+.eda-recover-table td.is-removed {
+  font-weight: 600;
+}
 .eda-workspace-filter-mark {
   display: inline-flex;
   flex-shrink: 0;
