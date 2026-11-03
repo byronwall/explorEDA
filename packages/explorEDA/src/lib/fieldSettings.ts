@@ -36,6 +36,12 @@ export interface FieldSettings {
   datePreset?: DatePreset;
   /** How a numeric field's text writes decimals and digit groups. */
   numberInput?: NumberInput;
+  /** Text values end in %, and 12% reads as 0.12. */
+  percentInput?: boolean;
+  /** Text in parentheses, such as (1,234.50), reads as negative. */
+  accountingInput?: boolean;
+  /** Text can carry the `currency` code's sign, such as $5.00 or USD 5.00. */
+  currencyInput?: boolean;
   nullTokens?: string[];
 }
 
@@ -124,9 +130,15 @@ export function getFieldSettingsError(
     if (!isNumberInput(settings.numberInput)) {
       return "Choose a valid number input.";
     }
-    if (settings.type !== "numeric") {
-      return "Number input needs the numeric type.";
-    }
+  }
+  if (
+    (settings.numberInput !== undefined ||
+      settings.percentInput ||
+      settings.accountingInput ||
+      settings.currencyInput) &&
+    settings.type !== "numeric"
+  ) {
+    return "Number input needs the numeric type.";
   }
   if (
     settings.nullTokens !== undefined &&
@@ -157,8 +169,14 @@ export function convertFieldValue(
     case "categorical":
       return { value: raw };
     case "numeric": {
-      if (settings.numberInput && typeof raw === "string") {
-        return parseNumberInput(text, settings.numberInput);
+      if (typeof raw === "string" && readsNumberText(settings)) {
+        return parseNumberInput(text, settings.numberInput, {
+          percent: settings.percentInput,
+          accounting: settings.accountingInput,
+          currency: settings.currencyInput
+            ? (settings.currency ?? "USD")
+            : undefined,
+        });
       }
       const value = parseNumber(raw);
       return Number.isFinite(value)
@@ -391,12 +409,22 @@ export function applyFieldSettings<T extends Record<string, datum>>(
   });
 }
 
+/** True when a numeric field reads its text with a number input. */
+function readsNumberText(settings: FieldSettings) {
+  return Boolean(
+    settings.numberInput ||
+      settings.percentInput ||
+      settings.accountingInput ||
+      settings.currencyInput
+  );
+}
+
 /** True when these settings change a field's runtime values. */
 export function convertsValues(settings: FieldSettings = {}) {
   return (
     settings.type !== undefined ||
     Boolean(settings.datePreset) ||
-    Boolean(settings.numberInput) ||
+    readsNumberText(settings) ||
     Boolean(settings.nullTokens?.length)
   );
 }
@@ -407,6 +435,10 @@ export function sameConversion(left: FieldSettings, right: FieldSettings) {
     left.type === right.type &&
     left.datePreset === right.datePreset &&
     left.numberInput === right.numberInput &&
+    Boolean(left.percentInput) === Boolean(right.percentInput) &&
+    Boolean(left.accountingInput) === Boolean(right.accountingInput) &&
+    Boolean(left.currencyInput) === Boolean(right.currencyInput) &&
+    (!left.currencyInput || left.currency === right.currency) &&
     JSON.stringify(left.nullTokens?.filter(Boolean) ?? []) ===
       JSON.stringify(right.nullTokens?.filter(Boolean) ?? [])
   );

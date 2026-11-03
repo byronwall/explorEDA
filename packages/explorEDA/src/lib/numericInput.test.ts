@@ -33,11 +33,58 @@ describe("parseNumberInput", () => {
     ["comma-plain", "1.234,5", "Separators do not match 1234,5"],
     ["dot-comma", "1.", "Not a number written as 1,234.5"],
     ["dot-comma", "bad", "Has characters that are not part of a number"],
-    ["dot-comma", "$5.00", "Has characters that are not part of a number"],
+    ["dot-comma", "$5.00", "Has a currency sign; turn on currency input"],
+    ["dot-comma", "12%", "Has a percent sign; turn on percent input"],
+    ["dot-comma", "(12)", "Parentheses need accounting negatives"],
+    ["indian-dot", "123,456", "Separators do not match 12,34,567.8"],
     ["dot-comma", "1e309", "Too large for a number"],
     ["dot-comma", "1e-400", "Too small for a number"],
   ] as const)("%s rejects %j", (input, text, error) => {
     expect(parseNumberInput(text, input)).toEqual({ value: undefined, error });
+  });
+
+  it.each([
+    ["dot-space", "1 234 567.25", {}, 1234567.25],
+    ["indian-dot", "12,34,567.89", {}, 1234567.89],
+    ["dot-comma", "12%", { percent: true }, 0.12],
+    ["dot-comma", "0.12%", { percent: true }, 0.0012],
+    ["dot-comma", "1,200%", { percent: true }, 12],
+    ["dot-comma", "5e-322%", { percent: true }, Number.MIN_VALUE],
+    ["dot-comma", "(1,234.50)", { accounting: true }, -1234.5],
+    ["dot-comma", "(12%)", { accounting: true, percent: true }, -0.12],
+    ["dot-comma", "$1,234.50", { currency: "USD" }, 1234.5],
+    ["dot-comma", "-$5", { currency: "USD" }, -5],
+    ["dot-comma", "USD 5.00", { currency: "USD" }, 5],
+    ["dot-comma", "($250.00)", { currency: "USD", accounting: true }, -250],
+    ["comma-dot", "€ 1.234,50", { currency: "EUR" }, 1234.5],
+    ["comma-dot", "1.234,50 €", { currency: "EUR" }, 1234.5],
+    ["dot-comma", "CA$12", { currency: "CAD" }, 12],
+    ["dot-comma", "$12", { currency: "CAD" }, 12],
+  ] as const)("%s with %j and %j reads %d", (input, text, options, value) => {
+    expect(parseNumberInput(text, input, options)).toEqual({ value });
+  });
+
+  it.each([
+    ["12", { percent: true }, "Missing a percent sign"],
+    ["12 %", { percent: true }, "Separators do not match 1,234.5"],
+    ["12%%", { percent: true }, "Has characters that are not part of a number"],
+    [
+      "(-12)",
+      { accounting: true },
+      "Accounting negatives take no sign or spaces inside",
+    ],
+    [
+      "( 12)",
+      { accounting: true },
+      "Accounting negatives take no sign or spaces inside",
+    ],
+    ["£5", { currency: "USD" }, "Currency does not match USD"],
+    ["EUR 5", { currency: "USD" }, "Currency does not match USD"],
+  ] as const)("rejects %j with %j", (text, options, error) => {
+    expect(parseNumberInput(text, "dot-comma", options)).toEqual({
+      value: undefined,
+      error,
+    });
   });
 
   it("keeps native numbers and null tokens ahead of the convention", () => {
@@ -49,6 +96,10 @@ describe("parseNumberInput", () => {
     expect(convertFieldValue(1.5, "numeric", settings)).toEqual({
       value: 1.5,
     });
+    // A native number is never scaled as a percent.
+    expect(
+      convertFieldValue(12, "numeric", { ...settings, percentInput: true })
+    ).toEqual({ value: 12 });
     expect(convertFieldValue("NA", "numeric", settings)).toEqual({
       value: undefined,
     });
@@ -86,6 +137,8 @@ describe("number input review", () => {
       { input: "dot-comma", validCount: 3, failedCount: 1 },
       { input: "comma-dot", validCount: 2, failedCount: 2 },
       { input: "comma-space", validCount: 2, failedCount: 2 },
+      { input: "dot-space", validCount: 1, failedCount: 3 },
+      { input: "indian-dot", validCount: 3, failedCount: 1 },
     ]);
   });
 });

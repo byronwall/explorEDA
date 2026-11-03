@@ -1,15 +1,15 @@
 ## Read formatted numbers
 
-A spreadsheet or ledger export often writes numbers as text: `1,234.50`, `1.234,50`, or `1 234,50`. Without help, a field like that loads as categories, so it cannot go on a numeric axis or into a sum. **Number input** tells the field how its text writes decimals and digit groups, and turns each value into a number.
+A spreadsheet or ledger export often writes numbers as text: `1,234.50`, `1.234,50`, `12%`, `$5.00`, or `(1,234.50)` for a negative. Without help, a field like that loads as categories, so it cannot go on a numeric axis or into a sum. **Number input** tells the field how its text writes decimals, digit groups, percents, negatives, and currency, and turns each value into a number.
 
 ## Try it
 
 <LiveExample
   id="number-input"
-  caption="Supplier invoices whose amounts arrive as text such as 1.234,50. The Amount field reads them with the 1.234,5 number input and shows them in euros."
+  caption="Supplier invoices whose amounts arrive as text such as 1.234,50. Amount reads them with the 1.234,5 number input. Net also reads the € sign and credit notes such as (€ 426,40), which chart as negative amounts."
 />
 
-Open [the full example](/examples/supplier-invoices), then inspect **Amount** and open the **Type** tab to see the choice and its counts.
+Open [the full example](/examples/supplier-invoices), then inspect **Amount**, **Discount**, or **Net** and open the **Type** tab to see each choice and its counts.
 
 ## Choose a number input
 
@@ -18,25 +18,37 @@ Open [the full example](/examples/supplier-invoices), then inspect **Amount** an
 3. Under **Number input**, pick how the field's text is written. Each choice shows how many of the field's values it reads and how many fail, counted over every row, so the right one usually stands out.
 4. Check the **Preview** tab, then press **Apply field settings**.
 
-| Number input | Decimal | Digit groups | Example            |
-| ------------ | ------- | ------------ | ------------------ |
-| `1234.5`     | dot     | none         | `-1234.5`, `1.2e3` |
-| `1234,5`     | comma   | none         | `1234,5`           |
-| `1,234.5`    | dot     | comma        | `1,234,567.25`     |
-| `1.234,5`    | comma   | dot          | `1.234.567,25`     |
-| `1 234,5`    | comma   | space        | `1 234 567,25`     |
+| Number input  | Decimal | Digit groups  | Example            |
+| ------------- | ------- | ------------- | ------------------ |
+| `1234.5`      | dot     | none          | `-1234.5`, `1.2e3` |
+| `1234,5`      | comma   | none          | `1234,5`           |
+| `1,234.5`     | dot     | comma         | `1,234,567.25`     |
+| `1.234,5`     | comma   | dot           | `1.234.567,25`     |
+| `1 234,5`     | comma   | space         | `1 234 567,25`     |
+| `1 234.5`     | dot     | space         | `1 234 567.25`     |
+| `12,34,567.8` | dot     | comma, Indian | `12,34,567.89`     |
 
 `1234.5` is the default. It reads plain numbers, as an unconfigured numeric field always has.
 
 ## What reads and what fails
 
 - One choice applies to the whole field. `1,234` never reads as 1234 in one row and 1.234 in another.
-- Digit groups are optional, but when a value has them they must be in threes after the first group: `1,234,567` reads under `1,234.5`; `12,34,567` fails.
+- Digit groups are optional, but when a value has them they must be in threes after the first group: `1,234,567` reads under `1,234.5`; `12,34,567` fails. Indian grouping is pairs before a last group of three: `12,34,567` reads under `12,34,567.8`; `123,456` fails.
 - A space group can be a regular, nonbreaking, or narrow nonbreaking space, the same one throughout a value.
 - A value can start with `+` or `-`, start with the decimal (`.5`), and end with an exponent (`1,2e3` under `1.234,5`). Leading zeros drop: `0012` reads as 12.
-- Spaces at the start and end are ignored. Letters, currency symbols, percent signs, and parentheses fail.
+- Spaces at the start and end are ignored. Letters fail, and so do percent signs, currency signs, and parentheses unless their option below is on.
 - Numbers that arrive as numbers, such as from JSON or a database, stay as they are. Booleans fail.
 - [Null tokens](/docs/fields) and blank text become missing before the number input reads a value.
+
+## Percents, negatives, and currency
+
+Three options under the conventions read more of a value. Each works with any convention, and the counts beside the conventions include them.
+
+- **Percent:** every text value ends in `%`, and the number is divided by 100 by moving the decimal point: `12%` reads as 0.12, `0,5%` as 0.005 under `1.234,5`. Text without `%` fails, and so does `12 %` or `12%%`. A number that arrives as a number is not divided. Set the display format to percent to show 0.12 as 12%.
+- **Accounting negatives:** a value in one pair of parentheses is negative: `(1,234.50)` reads as −1234.5. A sign or space inside the parentheses fails. Without this option, parentheses fail.
+- **Currency sign:** a value can carry the field's currency, set in **Currency code**, at its start or end: for USD, `$5.00`, `-$5`, `5.00 $`, or `USD 5.00`. Another currency's sign, such as `£5` or `EUR 5`, fails. The sign is tied to the code you pick: under CAD, `$12` reads as 12 Canadian dollars. Turning it on also shows the field as currency, when it had no display format.
+
+From the outside in, a value reads its parentheses, then its currency sign, then its percent sign: `($1,234.50)` and `(12%)` both read.
 
 A value that fails becomes missing, so charts, filters, and [calculations](/docs/calculated-fields) skip it. The field's raw text stays as it was, so you can change the choice later.
 
@@ -58,4 +70,8 @@ The number input is a field setting. It is saved with the workspace, kept when t
 field Amount as=num numberInput=comma-dot nullTokens[]="n/a" format=currency currency=EUR
 ```
 
-The values are `comma-plain`, `dot-comma`, `comma-dot`, and `comma-space`. Leave the key out for plain numbers.
+The values are `comma-plain`, `dot-comma`, `comma-dot`, `comma-space`, `dot-space`, and `indian-dot`. Leave the key out for plain numbers. The options write `percentInput=true`, `accountingInput=true`, and `currencyInput=true`:
+
+```text
+field Net as=num numberInput=comma-dot accountingInput=true currencyInput=true currency=EUR format=currency
+```

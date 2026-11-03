@@ -737,7 +737,7 @@ export const exampleCoverage = [
   {
     exampleId: "supplier-invoices",
     intent:
-      "Read amounts written as 1.234,50 as numbers with one number input, and review the values that fail.",
+      "Read amounts written as 1.234,50, percents written as 2,5%, and credit notes written as (€ 426,40) as numbers, and review the values that fail.",
     features: {
       "chart:bar": "shown",
       "chart:row": "shown",

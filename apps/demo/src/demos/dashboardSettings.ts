@@ -1865,7 +1865,8 @@ export const categoryMappingsDashboard: SavedDataStructure = {
 
 /**
  * Supplier invoices exported from a European ledger: amounts are text such
- * as 1.234,50. The Amount field reads them with the 1.234,5 number input.
+ * as 1.234,50. Amount reads them with the 1.234,5 number input; Discount
+ * reads 2,5% as a percent; Net reads € signs and (€ 426,40) credit notes.
  */
 export const supplierInvoicesDashboard: SavedDataStructure = {
   ...dashboard("Supplier invoices", [
@@ -1882,11 +1883,25 @@ export const supplierInvoicesDashboard: SavedDataStructure = {
       "Supplier",
       layout(6, 0, 6, 5)
     ),
+    histogram(
+      "invoices-net",
+      "Net after discount",
+      "Net",
+      layout(0, 5, 6, 5),
+      "Net (EUR)"
+    ),
+    histogram(
+      "invoices-discount",
+      "Discounts",
+      "Discount",
+      layout(6, 5, 6, 5),
+      "Discount"
+    ),
     table(
       "invoices-records",
       "Invoices",
-      ["Invoice", "Supplier", "Month", "Amount", "Lines"],
-      layout(0, 5, 12, 4)
+      ["Invoice", "Supplier", "Month", "Amount", "Discount", "Net"],
+      layout(0, 10, 12, 4)
     ),
   ]),
   fieldSettings: {
@@ -1896,6 +1911,22 @@ export const supplierInvoicesDashboard: SavedDataStructure = {
       nullTokens: ["n/a"],
       format: "currency",
       currency: "EUR",
+      precision: 2,
+    },
+    Discount: {
+      type: "numeric",
+      numberInput: "comma-plain",
+      percentInput: true,
+      format: "percent",
+      precision: 1,
+    },
+    Net: {
+      type: "numeric",
+      numberInput: "comma-dot",
+      accountingInput: true,
+      currencyInput: true,
+      currency: "EUR",
+      format: "currency",
       precision: 2,
     },
   },

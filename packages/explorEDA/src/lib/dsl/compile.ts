@@ -579,6 +579,22 @@ export function compileDocument(
           continue;
         }
         next.numberInput = value;
+      } else if (
+        pair.key === "percentInput" ||
+        pair.key === "accountingInput" ||
+        pair.key === "currencyInput"
+      ) {
+        if (value !== "true" && value !== "false") {
+          report(
+            "warning",
+            "setting-default",
+            pair.span,
+            `${pair.key} takes true or false, so ${subject} keeps the default.`,
+            { subject }
+          );
+          continue;
+        }
+        next[pair.key] = value === "true";
       } else if (pair.key === "format") {
         next.format = value as FieldFormat;
         if (!FORMATS.includes(value as FieldFormat)) {

@@ -273,6 +273,9 @@ function isFieldSettings(value: unknown): boolean {
         value.datePreset as string
       )) &&
     (value.numberInput === undefined || isNumberInput(value.numberInput)) &&
+    ["percentInput", "accountingInput", "currencyInput"].every(
+      (key) => value[key] === undefined || typeof value[key] === "boolean"
+    ) &&
     (value.nullTokens === undefined ||
       (Array.isArray(value.nullTokens) &&
         value.nullTokens.every((token) => typeof token === "string")));

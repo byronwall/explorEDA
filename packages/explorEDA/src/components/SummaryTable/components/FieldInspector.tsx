@@ -440,15 +440,17 @@ export function FieldInspector({
                           value === "auto"
                             ? undefined
                             : (value as FieldSettings["type"]);
-                        return {
-                          ...current,
-                          type,
-                          // A number input only reads numeric fields.
-                          numberInput:
-                            type === "numeric"
-                              ? current.numberInput
-                              : undefined,
-                        };
+                        // A number input only reads numeric fields.
+                        return type === "numeric"
+                          ? { ...current, type }
+                          : {
+                              ...current,
+                              type,
+                              numberInput: undefined,
+                              percentInput: undefined,
+                              accountingInput: undefined,
+                              currencyInput: undefined,
+                            };
                       })
                     }
                   >
@@ -470,9 +472,9 @@ export function FieldInspector({
                 draft.type === "numeric" &&
                 preview?.numberInputs && (
                   <NumberInputChoice
-                    value={draft.numberInput}
+                    settings={draft}
                     counts={preview.numberInputs}
-                    onChange={(numberInput) => update({ numberInput })}
+                    onChange={update}
                   />
                 )}
               {!isCalculated && draft.type === "datetime" && (
