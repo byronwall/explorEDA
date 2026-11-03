@@ -3,7 +3,7 @@ import { getChartDefinition } from "@/charts/registry";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import type { ChartSettings, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
-import { countRows, findRecoveryOptions } from "./recoverRows";
+import { countRows, findConflict, findRecoveryOptions } from "./recoverRows";
 
 const rows: Record<string, datum>[] = [
   { id: "A", region: "West", channel: "Web", amount: 5 },
@@ -151,5 +151,35 @@ describe("findRecoveryOptions", () => {
         fieldGetter
       )
     ).toBe(1);
+  });
+
+  it("names two filters on one field that share no values", () => {
+    const west = {
+      type: "value" as const,
+      field: "region",
+      values: ["West"],
+    } satisfies Filter;
+    const east = {
+      type: "value",
+      field: "region",
+      values: ["East"],
+    } satisfies Filter;
+    const web = {
+      type: "value",
+      field: "channel",
+      values: ["Web"],
+    } satisfies Filter;
+    const conflict = findConflict([
+      { kind: "workspace", field: "channel", filter: web },
+      { kind: "workspace", field: "region", filter: west },
+      { kind: "chart", chartId: "c", index: 0, filter: east },
+    ]);
+    expect(conflict?.map((item) => item.kind)).toEqual(["workspace", "chart"]);
+    expect(
+      findConflict([
+        { kind: "workspace", field: "region", filter: west },
+        { kind: "rows-search", text: "East" },
+      ])
+    ).toBeUndefined();
   });
 });

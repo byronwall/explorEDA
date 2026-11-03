@@ -2,13 +2,15 @@ import { useMemo, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import {
   countRows,
+  findConflict,
   findRecoveryOptions,
   type RecoveryOption,
   type Restriction,
   type RowsRestrictions,
 } from "@/lib/recovery/recoverRows";
 import type { DataTableRow } from "../charts/DataTable/filteredRows";
-import { useDataLayer } from "@/providers/DataLayerProvider";
+import { useDataLayer, type IdType } from "@/providers/DataLayerProvider";
+import type { datum } from "@/types/FilterTypes";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -22,6 +24,7 @@ import {
 /** Records shown for the chosen option; the count covers all of them. */
 const PREVIEW_ROWS = 5;
 const PREVIEW_COLUMNS = 4;
+const PREVIEW_VALUES = 3;
 
 /**
  * The Rows view's own filters and search, reading rows as its table does:
@@ -180,57 +183,116 @@ function RecoverRowsPanel({
     rowsView,
     rows,
   ]);
-  const best = options.reduce<RecoveryOption | undefined>(
-    (top, option) =>
-      option.ids.length > (top?.ids.length ?? 0) ? option : top,
-    undefined
-  );
-  const [chosenKey, setChosenKey] = useState(best?.key);
+  // Most rows back first; removals that bring nothing back sit below.
+  const ranked = [...options].sort((a, b) => b.ids.length - a.ids.length);
+  const live = ranked.filter((option) => option.ids.length > 0);
+  const dead = ranked.filter((option) => option.ids.length === 0);
+  const [chosenKey, setChosenKey] = useState(live[0]?.key);
+  const [hoverKey, setHoverKey] = useState<string>();
   // A choice that no longer exists, after an edit elsewhere, falls back.
-  const chosen =
-    options.find((option) => option.key === chosenKey && option.ids.length) ??
-    best;
+  const chosen = live.find((option) => option.key === chosenKey) ?? live[0];
+  const previewed = live.find((option) => option.key === hoverKey) ?? chosen;
+  const label = useRestrictionLabel();
+  const apply = useApplyRestriction();
+  const conflict = findConflict(options.map((option) => option.restriction));
+  const applyChosen = () => {
+    if (!chosen) return;
+    apply(chosen.restriction);
+    onClose();
+  };
+  const describe = (restriction: Restriction) => {
+    const { owner, label: text } = label(restriction);
+    return (
+      <>
+        <span className="font-medium text-foreground">{text}</span> ({owner})
+      </>
+    );
+  };
 
   return (
-    <div className="flex max-h-[min(70vh,560px)] flex-col">
-      <header className="border-b border-border px-3.5 pt-3 pb-2">
-        <h2 className="text-sm font-semibold">Recover rows</h2>
-        <p className="text-xs text-muted-foreground">
-          No rows pass every filter. Remove one to bring rows back. Nothing
-          changes until you apply.
+    <div
+      className="eda-recover-panel"
+      onKeyDown={(event) => {
+        if (
+          event.key !== "Enter" ||
+          !(event.target instanceof HTMLInputElement)
+        )
+          return;
+        event.preventDefault();
+        applyChosen();
+      }}
+    >
+      <header className="eda-recover-head">
+        <h2>
+          No rows match all {options.length}{" "}
+          {options.length === 1 ? "filter" : "filters"}
+        </h2>
+        <p>
+          {conflict ? (
+            <>
+              {describe(conflict[0])} and {describe(conflict[1])} share no rows.
+            </>
+          ) : (
+            "Remove one filter to bring rows back. Nothing changes until you apply."
+          )}
         </p>
       </header>
       <div className="min-h-0 overflow-y-auto">
-        <fieldset>
-          <legend className="sr-only">Restriction to remove</legend>
-          {options.map((option) => (
+        <fieldset onPointerLeave={() => setHoverKey(undefined)}>
+          <legend className="sr-only">Filter to remove</legend>
+          {live.map((option) => (
             <OptionRow
               key={option.key}
               option={option}
+              total={data.length}
               checked={option.key === chosen?.key}
+              previewed={option.key === previewed?.key}
               onChoose={() => setChosenKey(option.key)}
+              onHover={() => setHoverKey(option.key)}
+            />
+          ))}
+          {dead.length > 0 && (
+            <p className="eda-recover-group">
+              {live.length
+                ? "Still no rows when removed alone"
+                : "Removing any one filter still leaves no rows"}
+            </p>
+          )}
+          {dead.map((option) => (
+            <OptionRow
+              key={option.key}
+              option={option}
+              total={data.length}
+              checked={false}
+              previewed={false}
             />
           ))}
         </fieldset>
-        {chosen ? (
-          <Preview option={chosen} population={population} />
+        {previewed ? (
+          <Preview option={previewed} population={population} />
         ) : (
-          <p className="px-3.5 py-3 text-xs text-muted-foreground">
-            Removing any one filter still leaves no rows. Remove several from
-            the filter bar, or clear them all.
+          <p className="eda-recover-empty">
+            Remove several filters from the filter bar, or clear them all.
           </p>
         )}
       </div>
-      <footer className="flex items-center gap-2 border-t border-border bg-muted/40 px-3.5 py-2.5">
-        <span className="mr-auto text-xs text-muted-foreground">
-          {chosen
-            ? `Removes 1 filter and keeps ${options.length - 1}. Undo restores it.`
-            : `${options.length} active ${options.length === 1 ? "filter" : "filters"}`}
+      <footer className="eda-recover-foot">
+        <span className="eda-recover-keys" aria-hidden="true">
+          <kbd>↑</kbd>
+          <kbd>↓</kbd> choose <kbd>Enter</kbd> apply
         </span>
         <Button type="button" variant="ghost" size="sm" onClick={onClose}>
           Keep empty
         </Button>
-        <ApplyButton option={chosen} onApplied={onClose} />
+        <Button
+          type="button"
+          size="sm"
+          disabled={!chosen}
+          onClick={applyChosen}
+          tooltip="Remove this one filter and keep the rest. Undo puts it back."
+        >
+          {chosen ? `Remove ${label(chosen.restriction).label}` : "Apply"}
+        </Button>
       </footer>
     </div>
   );
@@ -241,53 +303,48 @@ function useRestrictionLabel() {
   const formatting = useFieldFormatting();
   return (restriction: Restriction) => {
     if (restriction.kind === "rows-search") {
-      return { owner: "Rows · search", label: `“${restriction.text}”` };
+      return { owner: "Rows search", label: `“${restriction.text}”` };
     }
     const label = formatFilterLabel(restriction.filter, formatting);
     if (restriction.kind === "rows-filter") {
-      return { owner: "Rows · filter", label };
+      return { owner: "Rows filter", label };
     }
     if (restriction.kind === "workspace") {
       return { owner: "Workspace", label };
     }
     const chart = charts.find((item) => item.id === restriction.chartId);
-    return {
-      owner: `${chart?.title || chart?.type || "Chart"} · chart selection`,
-      label,
-    };
+    return { owner: chart?.title || chart?.type || "Chart", label };
   };
 }
 
 function OptionRow({
   option,
+  total,
   checked,
+  previewed,
   onChoose,
+  onHover,
 }: {
   option: RecoveryOption;
+  total: number;
   checked: boolean;
-  onChoose: () => void;
+  previewed: boolean;
+  onChoose?: () => void;
+  onHover?: () => void;
 }) {
   const { owner, label } = useRestrictionLabel()(option.restriction);
   const count = option.ids.length;
   const disabled = count === 0;
-  const pill = !option.relaxes ? (
-    <ActionTooltip content="Removing this filter also changes which rows its chart keeps, so it can't be previewed as a removal.">
-      <span tabIndex={0} className="eda-recover-count is-none">
-        Not exact
-      </span>
-    </ActionTooltip>
-  ) : (
-    <span className={cn("eda-recover-count", disabled && "is-none")}>
-      {disabled ? "still 0" : `+${count.toLocaleString()} rows`}
-    </span>
-  );
+  const share = total ? count / total : 0;
   return (
     <label
       className={cn(
         "eda-recover-option",
         checked && "is-checked",
+        previewed && !checked && "is-previewed",
         disabled && "is-disabled"
       )}
+      onPointerEnter={onHover}
     >
       <input
         type="radio"
@@ -297,15 +354,45 @@ function OptionRow({
         disabled={disabled}
         onChange={onChoose}
       />
-      <span className="min-w-0">
-        <span className="block truncate text-[11px] text-muted-foreground">
-          {owner}
-        </span>
-        <span className="block truncate text-sm">{label}</span>
+      <span className="eda-recover-option-text">
+        <span className="eda-recover-option-label">{label}</span>
+        <span className="eda-recover-option-owner">{owner}</span>
       </span>
-      {pill}
+      {option.relaxes ? (
+        <>
+          {!disabled && (
+            <span className="eda-recover-bar" aria-hidden="true">
+              <span style={{ width: `${Math.max(share * 100, 3)}%` }} />
+            </span>
+          )}
+          <span className="eda-recover-count">
+            {disabled ? "0" : `+${count.toLocaleString()}`}
+            <span className="sr-only"> rows</span>
+          </span>
+        </>
+      ) : (
+        <ActionTooltip content="Removing this filter also changes which rows its chart keeps, so it can't be previewed as a removal.">
+          <span tabIndex={0} className="eda-recover-count col-span-2">
+            Not exact
+          </span>
+        </ActionTooltip>
+      )}
     </label>
   );
+}
+
+/** The most common values of a field among the rows, largest first. */
+function topValues(
+  ids: readonly IdType[],
+  values: Record<IdType, datum>,
+  format: (value: datum) => string
+) {
+  const counts = new Map<string, number>();
+  for (const id of ids) {
+    const key = format(values[id]);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return [...counts].sort((a, b) => b[1] - a[1]);
 }
 
 function Preview({
@@ -317,13 +404,13 @@ function Preview({
 }) {
   const workspaceFilters = useDataLayer((state) => state.workspaceFilters);
   const charts = useDataLayer((state) => state.charts);
+  const rowsFilters = useDataLayer((state) => state.rowsSettings.filters);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   // The removed filter's field first, then the other filtered fields, so
   // each row shows why it passes.
-  const rowsFilters = useDataLayer((state) => state.rowsSettings.filters);
   const removed =
     option.restriction.kind === "rows-search"
       ? undefined
@@ -348,19 +435,41 @@ function Preview({
   }));
   const ids = option.ids.slice(0, PREVIEW_ROWS);
   const count = option.ids.length;
+  // What the removed field holds among the rows that come back.
+  const mix = removed
+    ? topValues(option.ids, getColumnData(removed), (value) =>
+        formatFieldValue(removed, value)
+      )
+    : [];
   return (
-    <section className="px-3.5 py-2.5" aria-label="Rows that come back">
-      <div className="mb-1.5 flex items-baseline justify-between gap-2">
-        <h3 className="text-[13px] font-semibold">
+    <section className="eda-recover-preview" aria-label="Rows that come back">
+      <div className="eda-recover-preview-head">
+        <h3>
           {count.toLocaleString()} {count === 1 ? "row comes" : "rows come"}{" "}
           back
         </h3>
-        <span className="text-xs text-muted-foreground">
-          {population}
-          {count > ids.length ? ` · first ${ids.length} shown` : ""}
-        </span>
+        <span>{population}</span>
       </div>
-      <div className="overflow-x-auto">
+      {removed && (
+        <p className="eda-recover-mix">
+          <span className="text-muted-foreground">
+            {getFieldLabel(removed)}:
+          </span>{" "}
+          {mix.slice(0, PREVIEW_VALUES).map(([value, n], index) => (
+            <span key={value}>
+              {index > 0 && <span className="text-muted-foreground"> · </span>}
+              {value} <span className="tabular-nums">{n.toLocaleString()}</span>
+            </span>
+          ))}
+          {mix.length > PREVIEW_VALUES && (
+            <span className="text-muted-foreground">
+              {" "}
+              · {mix.length - PREVIEW_VALUES} more
+            </span>
+          )}
+        </p>
+      )}
+      <div className="eda-recover-sample">
         <table className="eda-recover-table w-full text-xs tabular-nums">
           <thead>
             <tr>
@@ -386,28 +495,25 @@ function Preview({
             ))}
           </tbody>
         </table>
+        {count > ids.length && (
+          <p className="eda-recover-more">
+            First {ids.length} of {count.toLocaleString()}
+          </p>
+        )}
       </div>
     </section>
   );
 }
 
-function ApplyButton({
-  option,
-  onApplied,
-}: {
-  option: RecoveryOption | undefined;
-  onApplied: () => void;
-}) {
+/** Removes one restriction as a single held change: one undo step. */
+function useApplyRestriction() {
   const holdStateChanges = useDataLayer((state) => state.holdStateChanges);
   const setWorkspaceFilter = useDataLayer((state) => state.setWorkspaceFilter);
   const updateChart = useDataLayer((state) => state.updateChart);
   const charts = useDataLayer((state) => state.charts);
   const rowsSettings = useDataLayer((state) => state.rowsSettings);
   const updateRowsSettings = useDataLayer((state) => state.updateRowsSettings);
-  const apply = () => {
-    if (!option) return;
-    const { restriction } = option;
-    // One held change reaches the host as one undo step.
+  return (restriction: Restriction) => {
     const release = holdStateChanges();
     try {
       if (restriction.kind === "workspace") {
@@ -416,6 +522,7 @@ function ApplyButton({
         updateRowsSettings({ globalSearch: "" });
       } else if (restriction.kind === "rows-filter") {
         const { filters } = rowsSettings;
+        // Skip a filter that changed since the panel read it.
         if (filters[restriction.index] === restriction.filter) {
           updateRowsSettings({
             filters: filters.filter((_, i) => i !== restriction.index),
@@ -432,17 +539,5 @@ function ApplyButton({
     } finally {
       release();
     }
-    onApplied();
   };
-  return (
-    <Button
-      type="button"
-      size="sm"
-      disabled={!option}
-      onClick={apply}
-      tooltip="Remove this filter. Undo puts it back."
-    >
-      Apply
-    </Button>
-  );
 }

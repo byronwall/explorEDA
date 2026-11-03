@@ -2172,21 +2172,41 @@ html {
   width: 13px;
   height: 13px;
 }
+.eda-recover-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: min(72vh, 600px);
+}
+.eda-recover-head {
+  padding: 10px 14px 9px;
+  border-bottom: 1px solid var(--border);
+}
+.eda-recover-head h2 {
+  font-size: 13px;
+  font-weight: 600;
+}
+.eda-recover-head p {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
 .eda-recover-option {
   display: grid;
-  grid-template-columns: 14px minmax(0, 1fr) auto;
+  grid-template-columns: 14px minmax(0, 1fr) 56px 52px;
   align-items: center;
   gap: 10px;
-  padding: 7px 14px;
-  border-bottom: 1px solid var(--border);
+  height: 34px;
+  padding: 0 14px;
   cursor: pointer;
+  transition: background-color 140ms ease-out;
 }
-.eda-recover-option:hover {
-  background: var(--accent);
+.eda-recover-option:hover,
+.eda-recover-option.is-previewed {
+  background: color-mix(in oklab, var(--accent) 55%, transparent);
 }
 .eda-recover-option.is-checked {
   background: var(--accent);
-  box-shadow: inset 3px 0 0 var(--primary);
 }
 .eda-recover-option.is-disabled {
   color: var(--muted-foreground);
@@ -2195,27 +2215,97 @@ html {
 .eda-recover-option.is-disabled:hover {
   background: none;
 }
+.eda-recover-option.is-disabled .eda-recover-option-text {
+  grid-column: span 2;
+}
 .eda-recover-option:has(input:focus-visible) {
   outline: 2px solid var(--ring);
   outline-offset: -2px;
 }
-.eda-recover-count {
+.eda-recover-option-text {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  white-space: nowrap;
+}
+.eda-recover-option-label {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+}
+.eda-recover-option-owner {
+  flex: 0 10 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 11px;
+  color: var(--muted-foreground);
+}
+.eda-recover-bar {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--border);
+}
+.eda-recover-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: color-mix(in oklab, var(--primary) 75%, transparent);
+}
+.eda-recover-count {
+  font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+  text-align: right;
   white-space: nowrap;
-  padding: 1px 7px;
-  border-radius: 999px;
-  color: var(--foreground);
-  background: var(--secondary);
 }
-.eda-recover-count.is-none {
-  font-weight: 500;
+.is-disabled .eda-recover-count {
+  font-weight: 400;
+}
+.eda-recover-group {
+  padding: 8px 14px 2px;
+  font-size: 11px;
   color: var(--muted-foreground);
-  background: transparent;
+  border-top: 1px solid var(--border);
+}
+.eda-recover-preview {
+  padding: 10px 14px 8px;
+  border-top: 1px solid var(--border);
+}
+.eda-recover-preview-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.eda-recover-preview-head h3 {
+  font-size: 13px;
+  font-weight: 600;
+}
+.eda-recover-preview-head span {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.eda-recover-mix {
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* Room for five rows, so switching options never resizes the panel. */
+.eda-recover-sample {
+  height: 172px;
+  margin-top: 6px;
+  overflow-x: auto;
 }
 .eda-recover-table th {
-  padding: 4px 6px;
+  height: 24px;
+  padding: 0 6px;
   font-weight: 500;
   text-align: left;
   color: var(--muted-foreground);
@@ -2223,15 +2313,64 @@ html {
   border-bottom: 1px solid var(--border);
 }
 .eda-recover-table td {
-  padding: 4px 6px;
+  height: 24px;
+  padding: 0 6px;
   white-space: nowrap;
-  border-bottom: 1px solid var(--border);
-}
-.eda-recover-table tr:last-child td {
-  border-bottom: 0;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
 }
 .eda-recover-table td.is-removed {
   font-weight: 600;
+}
+.eda-recover-more {
+  padding: 4px 6px 0;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.eda-recover-empty {
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  border-top: 1px solid var(--border);
+}
+.eda-recover-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--border);
+}
+.eda-recover-keys {
+  margin-right: auto;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.eda-recover-keys kbd {
+  display: inline-block;
+  min-width: 16px;
+  padding: 0 3px;
+  margin-right: 2px;
+  font: inherit;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+@media (max-width: 520px) {
+  .eda-recover-option {
+    grid-template-columns: 14px minmax(0, 1fr) 52px;
+  }
+  .eda-recover-option.is-disabled .eda-recover-option-text {
+    grid-column: auto;
+  }
+  .eda-recover-bar {
+    display: none;
+  }
+  .eda-recover-keys {
+    display: none;
+  }
+  .eda-recover-foot {
+    justify-content: flex-end;
+  }
 }
 .eda-workspace-filter-mark {
   display: inline-flex;

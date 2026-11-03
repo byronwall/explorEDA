@@ -223,3 +223,42 @@ export function findRecoveryOptions({
     });
   });
 }
+
+function filterOf(restriction: Restriction) {
+  return restriction.kind === "rows-search" ? undefined : restriction.filter;
+}
+
+/** Whether no single value can pass both filters on the same field. */
+function excludes(a: Filter, b: Filter) {
+  if (a.field !== b.field) return false;
+  if (a.type === "value" && b.type === "value") {
+    const kept = new Set(a.values.map(String));
+    return !b.values.some((value) => kept.has(String(value)));
+  }
+  if (a.type === "range" && b.type === "range") {
+    return (
+      (a.max !== undefined && b.min !== undefined && a.max < b.min) ||
+      (b.max !== undefined && a.min !== undefined && b.max < a.min)
+    );
+  }
+  return false;
+}
+
+/**
+ * The first pair of restrictions that rule each other out on one field,
+ * such as Region: West in the workspace and Region: East in a chart. It
+ * names the cause when the cause is that plain.
+ */
+export function findConflict(
+  restrictions: readonly Restriction[]
+): [Restriction, Restriction] | undefined {
+  for (let i = 0; i < restrictions.length; i++) {
+    const a = filterOf(restrictions[i]!);
+    if (!a) continue;
+    for (let j = i + 1; j < restrictions.length; j++) {
+      const b = filterOf(restrictions[j]!);
+      if (b && excludes(a, b)) return [restrictions[i]!, restrictions[j]!];
+    }
+  }
+  return undefined;
+}
