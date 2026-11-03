@@ -19,16 +19,7 @@ export function getFilteredRows(
   const search = settings.globalSearch.toLowerCase();
 
   const filtered = rows.filter((row) => {
-    if (
-      search &&
-      !Object.entries(row).some(
-        ([field, value]) =>
-          field !== "__ID" &&
-          value !== null &&
-          value !== undefined &&
-          String(value).toLowerCase().includes(search)
-      )
-    ) {
+    if (search && !rowMatchesSearch(row, search)) {
       return false;
     }
 
@@ -44,6 +35,20 @@ export function getFilteredRows(
     });
   }
   return filtered;
+}
+
+/**
+ * Whether any of a row's values, hidden and calculated fields included,
+ * contains the search text. `search` is already lowercase.
+ */
+export function rowMatchesSearch(row: DataTableRow, search: string) {
+  return Object.entries(row).some(
+    ([field, value]) =>
+      field !== "__ID" &&
+      value !== null &&
+      value !== undefined &&
+      String(value).toLowerCase().includes(search)
+  );
 }
 
 // Helper function to compare values with natural sort

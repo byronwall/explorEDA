@@ -1729,6 +1729,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "empty-rows",
+    intent:
+      "Open Rows on an empty table and use Recover rows to clear the search or the Rows filter.",
+    features: {
+      "chart:row": "shown",
+      "interaction:recover-rows": "shown",
+      "table:filtering": "shown",
+    },
+  },
+  {
     exampleId: "empty-selection",
     intent:
       "Open on an empty result and use Recover rows to bring one category back.",

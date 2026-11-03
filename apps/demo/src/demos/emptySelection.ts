@@ -24,3 +24,30 @@ export const emptySelectionDashboard: SavedDataStructure = {
     { type: "value", field: "Category", values: ["Outdoors"] },
   ],
 };
+
+/**
+ * Outdoors orders in Rows, filtered to Store and searched for Wholesale.
+ * The Rows filter and the search rule each other out; removing the
+ * workspace filter alone still leaves none.
+ */
+export const emptyRowsDashboard: SavedDataStructure = {
+  ...emptySelectionDashboard,
+  charts: emptySelectionDashboard.charts.map((chart) => ({
+    ...chart,
+    filters: [],
+  })),
+  rowsSettings: {
+    columns: [
+      "Order Date",
+      "Region",
+      "Channel",
+      "Category",
+      "Product",
+      "Customer Segment",
+      "Revenue",
+    ].map((field) => ({ id: field, field })),
+    sortDirection: "asc",
+    filters: [{ type: "value", field: "Channel", values: ["Store"] }],
+    globalSearch: "Wholesale",
+  },
+};

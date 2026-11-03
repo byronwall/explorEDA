@@ -1,27 +1,98 @@
 import { useMemo, useState } from "react";
 import { RotateCcw } from "lucide-react";
 import {
+  countRows,
   findRecoveryOptions,
   type RecoveryOption,
   type Restriction,
+  type RowsRestrictions,
 } from "@/lib/recovery/recoverRows";
+import type { DataTableRow } from "../charts/DataTable/filteredRows";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { ActionTooltip } from "../ui/tooltip";
-import { formatFilterLabel, useFieldFormatting } from "../ActiveFilterStatus";
+import {
+  formatFilterLabel,
+  isActiveFilter,
+  useFieldFormatting,
+} from "../ActiveFilterStatus";
 
 /** Records shown for the chosen option; the count covers all of them. */
 const PREVIEW_ROWS = 5;
 const PREVIEW_COLUMNS = 4;
 
 /**
- * Offered when the workspace filters down to no rows. It lists each active
- * restriction with the exact rows that come back if only it is removed, and
- * changes nothing until Apply.
+ * The Rows view's own filters and search, reading rows as its table does:
+ * source values plus calculated fields.
  */
-export function RecoverRows({ population }: { population: string }) {
+export function useRowsRestrictions(): RowsRestrictions {
+  const data = useDataLayer((state) => state.data);
+  const rowsSettings = useDataLayer((state) => state.rowsSettings);
+  const calculations = useDataLayer((state) => state.calculations);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const nonce = useDataLayer((state) => state.nonce);
+  return useMemo(() => {
+    void nonce;
+    const byId = new Map(data.map((row) => [row.__ID, row]));
+    const calculated = calculations.map(
+      (calc) =>
+        [calc.resultColumnName, getColumnData(calc.resultColumnName)] as const
+    );
+    return {
+      filters: rowsSettings.filters,
+      search: rowsSettings.globalSearch,
+      row: (id) => {
+        const row = byId.get(id) as DataTableRow | undefined;
+        if (!row || !calculated.length) return row;
+        return {
+          ...row,
+          ...Object.fromEntries(
+            calculated.map(([name, values]) => [name, values[id]])
+          ),
+        };
+      },
+    };
+  }, [data, rowsSettings, calculations, getColumnData, nonce]);
+}
+
+/**
+ * Recover rows for the Rows table, shown when its own result is empty: the
+ * workspace's rows, then its filters and search.
+ */
+export function RowsRecovery() {
+  const crossfilter = useDataLayer((state) => state.crossfilterWrapper);
+  const liveItems = useDataLayer((state) => state.liveItems);
+  const total = useDataLayer((state) => state.data.length);
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const rows = useRowsRestrictions();
+  const restricted = useDataLayer(
+    (state) =>
+      state.workspaceFilters.some(isActiveFilter) ||
+      state.charts.some((chart) => chart.filters.some(isActiveFilter)) ||
+      state.rowsSettings.filters.some(isActiveFilter) ||
+      state.rowsSettings.globalSearch !== ""
+  );
+  const empty = useMemo(() => {
+    void liveItems;
+    if (!restricted || total === 0) return false;
+    return (
+      countRows(crossfilter.getFilteredRowIds(), rows, (field) =>
+        getColumnData(field)
+      ) === 0
+    );
+  }, [crossfilter, liveItems, rows, getColumnData, restricted, total]);
+  return empty ? <RecoverRows rowsView /> : null;
+}
+
+/**
+ * Offered when filters leave no rows: in the workspace, or with `rowsView`,
+ * in the Rows table. It lists each active restriction with the exact rows
+ * that come back if only it is removed, and changes nothing until Apply.
+ */
+export function RecoverRows({ rowsView = false }: { rowsView?: boolean }) {
+  const population = rowsView ? "Rows view" : "Workspace rows";
   const [open, setOpen] = useState(false);
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -64,6 +135,7 @@ export function RecoverRows({ population }: { population: string }) {
         {open && (
           <RecoverRowsPanel
             population={population}
+            rowsView={rowsView}
             onClose={() => setOpen(false)}
           />
         )}
@@ -74,11 +146,14 @@ export function RecoverRows({ population }: { population: string }) {
 
 function RecoverRowsPanel({
   population,
+  rowsView,
   onClose,
 }: {
   population: string;
+  rowsView: boolean;
   onClose: () => void;
 }) {
+  const rows = useRowsRestrictions();
   const data = useDataLayer((state) => state.data);
   const charts = useDataLayer((state) => state.charts);
   const workspaceFilters = useDataLayer((state) => state.workspaceFilters);
@@ -93,8 +168,18 @@ function RecoverRowsPanel({
       workspaceFilters,
       fieldGetter: (field) => getColumnData(field),
       localSelections: localSelections ?? false,
+      rows: rowsView ? rows : undefined,
     });
-  }, [data, charts, workspaceFilters, getColumnData, localSelections, nonce]);
+  }, [
+    data,
+    charts,
+    workspaceFilters,
+    getColumnData,
+    localSelections,
+    nonce,
+    rowsView,
+    rows,
+  ]);
   const best = options.reduce<RecoveryOption | undefined>(
     (top, option) =>
       option.ids.length > (top?.ids.length ?? 0) ? option : top,
@@ -155,7 +240,13 @@ function useRestrictionLabel() {
   const charts = useDataLayer((state) => state.charts);
   const formatting = useFieldFormatting();
   return (restriction: Restriction) => {
+    if (restriction.kind === "rows-search") {
+      return { owner: "Rows · search", label: `“${restriction.text}”` };
+    }
     const label = formatFilterLabel(restriction.filter, formatting);
+    if (restriction.kind === "rows-filter") {
+      return { owner: "Rows · filter", label };
+    }
     if (restriction.kind === "workspace") {
       return { owner: "Workspace", label };
     }
@@ -232,12 +323,23 @@ function Preview({
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   // The removed filter's field first, then the other filtered fields, so
   // each row shows why it passes.
-  const removed = option.restriction.filter.field;
+  const rowsFilters = useDataLayer((state) => state.rowsSettings.filters);
+  const removed =
+    option.restriction.kind === "rows-search"
+      ? undefined
+      : option.restriction.filter.field;
   const filtered = [
     ...workspaceFilters.map((filter) => filter.field),
     ...charts.flatMap((chart) => chart.filters.map((filter) => filter.field)),
+    ...rowsFilters.map((filter) => filter.field),
   ];
-  const fields = [...new Set([removed, ...filtered, ...getColumnNames()])]
+  const fields = [
+    ...new Set([
+      ...(removed ? [removed] : []),
+      ...filtered,
+      ...getColumnNames(),
+    ]),
+  ]
     .filter((field) => field !== "__ID")
     .slice(0, PREVIEW_COLUMNS);
   const columns = fields.map((field) => ({
@@ -254,7 +356,7 @@ function Preview({
           back
         </h3>
         <span className="text-xs text-muted-foreground">
-          {population} rows
+          {population}
           {count > ids.length ? ` · first ${ids.length} shown` : ""}
         </span>
       </div>
@@ -300,6 +402,8 @@ function ApplyButton({
   const setWorkspaceFilter = useDataLayer((state) => state.setWorkspaceFilter);
   const updateChart = useDataLayer((state) => state.updateChart);
   const charts = useDataLayer((state) => state.charts);
+  const rowsSettings = useDataLayer((state) => state.rowsSettings);
+  const updateRowsSettings = useDataLayer((state) => state.updateRowsSettings);
   const apply = () => {
     if (!option) return;
     const { restriction } = option;
@@ -308,6 +412,15 @@ function ApplyButton({
     try {
       if (restriction.kind === "workspace") {
         setWorkspaceFilter(restriction.field);
+      } else if (restriction.kind === "rows-search") {
+        updateRowsSettings({ globalSearch: "" });
+      } else if (restriction.kind === "rows-filter") {
+        const { filters } = rowsSettings;
+        if (filters[restriction.index] === restriction.filter) {
+          updateRowsSettings({
+            filters: filters.filter((_, i) => i !== restriction.index),
+          });
+        }
       } else {
         const chart = charts.find((item) => item.id === restriction.chartId);
         if (chart?.filters[restriction.index] === restriction.filter) {

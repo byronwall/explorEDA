@@ -128,6 +128,7 @@ describe("example coverage manifest", () => {
       "scatter-trace",
       "calculated-orders",
       "shop-10000",
+      "empty-rows",
       "empty-selection",
     ]);
     expect(getFeatureGapCount("scale:log")).toBe(0);

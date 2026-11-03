@@ -129,7 +129,7 @@ import { beijingAnalysis } from "./analyses/beijing";
 import { earthquakesAnalysis } from "./analyses/earthquakes";
 import { flightsAnalysis } from "./analyses/flights";
 import { shopText } from "./analyses/shop";
-import { emptySelectionDashboard } from "./emptySelection";
+import { emptyRowsDashboard, emptySelectionDashboard } from "./emptySelection";
 import { wineText } from "./analyses/wine";
 import { engineeringHistogramsDashboard } from "./engineeringHistograms";
 import {
@@ -1479,6 +1479,17 @@ export const examples: ExampleData[] = [
     icon: ShoppingCart,
     data: "/datasets/shop-operations.csv",
     savedData: emptySelectionDashboard,
+  },
+  {
+    id: "empty-rows",
+    title: "Which Rows filter emptied the table?",
+    description:
+      "Outdoors orders in Rows, filtered to the Store channel and searched for Wholesale. The filter and the search rule each other out. Recover rows shows what clearing each one brings back.",
+    dataset: { rows: "500 orders", fields: 15, source: "Synthetic" },
+    shows: ["Recover rows", "Rows search", "Rows filters"],
+    icon: ShoppingCart,
+    data: "/datasets/shop-operations.csv",
+    savedData: emptyRowsDashboard,
   },
 ];
 

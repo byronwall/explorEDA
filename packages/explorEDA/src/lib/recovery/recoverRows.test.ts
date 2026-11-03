@@ -3,7 +3,7 @@ import { getChartDefinition } from "@/charts/registry";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import type { ChartSettings, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
-import { findRecoveryOptions } from "./recoverRows";
+import { countRows, findRecoveryOptions } from "./recoverRows";
 
 const rows: Record<string, datum>[] = [
   { id: "A", region: "West", channel: "Web", amount: 5 },
@@ -96,6 +96,32 @@ describe("findRecoveryOptions", () => {
     expect(options.every((option) => option.ids.length === 0)).toBe(true);
   });
 
+  it("counts the Rows table: removing search, a Rows filter, or a workspace filter", () => {
+    // A calculated field only the Rows table resolves.
+    const label = (id: number) => `${rows[id]?.region}-${rows[id]?.channel}`;
+    const options = findRecoveryOptions({
+      ids,
+      charts: [],
+      workspaceFilters: [{ type: "value", field: "region", values: ["West"] }],
+      fieldGetter,
+      rows: {
+        filters: [{ type: "value", field: "channel", values: ["Store"] }],
+        search: "WEST-WEB",
+        row: (id) => ({
+          __ID: id,
+          ...rows[id as number],
+          label: label(id as number),
+        }),
+      },
+    });
+    expect(returned(options)).toEqual({
+      // The search matches only A, which the Store filter rules out.
+      "workspace:region": [],
+      "rows:0": ["A"],
+      "rows:search": ["B"],
+    });
+  });
+
   it("ignores chart selections when selections stay local", () => {
     const options = findRecoveryOptions({
       ids,
@@ -111,5 +137,19 @@ describe("findRecoveryOptions", () => {
     expect(returned(options)).toEqual({
       "workspace:region": ["A", "B", "C", "D"],
     });
+  });
+
+  it("counts Rows after the workspace's own rows", () => {
+    expect(
+      countRows(
+        [0, 1],
+        {
+          filters: [],
+          search: "store",
+          row: (id) => ({ __ID: id, ...rows[id as number] }),
+        },
+        fieldGetter
+      )
+    ).toBe(1);
   });
 });

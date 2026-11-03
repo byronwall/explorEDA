@@ -1,6 +1,10 @@
 import { getChartDefinition } from "@/charts/registry";
 import { isActiveFilter } from "@/components/ActiveFilterStatus";
 import { applyFilter } from "@/hooks/applyFilter";
+import {
+  rowMatchesSearch,
+  type DataTableRow,
+} from "@/components/charts/DataTable/filteredRows";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import type { datum, Filter } from "@/types/FilterTypes";
@@ -8,7 +12,9 @@ import type { datum, Filter } from "@/types/FilterTypes";
 /** One stored filter that a user can remove to bring rows back. */
 export type Restriction =
   | { kind: "workspace"; field: string; filter: Filter }
-  | { kind: "chart"; chartId: string; index: number; filter: Filter };
+  | { kind: "chart"; chartId: string; index: number; filter: Filter }
+  | { kind: "rows-filter"; index: number; filter: Filter }
+  | { kind: "rows-search"; text: string };
 
 export type RecoveryOption = {
   key: string;
@@ -33,9 +39,69 @@ type Owner = {
 };
 
 export function restrictionKey(restriction: Restriction) {
-  return restriction.kind === "workspace"
-    ? `workspace:${restriction.field}`
-    : `chart:${restriction.chartId}:${restriction.index}`;
+  switch (restriction.kind) {
+    case "workspace":
+      return `workspace:${restriction.field}`;
+    case "chart":
+      return `chart:${restriction.chartId}:${restriction.index}`;
+    case "rows-filter":
+      return `rows:${restriction.index}`;
+    case "rows-search":
+      return "rows:search";
+  }
+}
+
+/** The Rows view's own filters and search, applied after the workspace's. */
+export type RowsRestrictions = {
+  filters: readonly Filter[];
+  search: string;
+  /** The row as the Rows table reads it, with calculated fields. */
+  row: (id: IdType) => DataTableRow | undefined;
+};
+
+/** Each Rows filter, and the search, narrows on its own. */
+function rowsOwners(rows: RowsRestrictions, fieldGetter: FieldGetter) {
+  const owners: Owner[] = rows.filters.map((filter, index) => {
+    const values = fieldGetter(filter.field);
+    return {
+      test: (id) => applyFilter(values[id], filter),
+      restrictions: isActiveFilter(filter)
+        ? [
+            {
+              restriction: { kind: "rows-filter", index, filter },
+              relaxed: always,
+            },
+          ]
+        : [],
+    };
+  });
+  const search = rows.search.toLowerCase();
+  if (search) {
+    owners.push({
+      test: (id) => {
+        const row = rows.row(id);
+        return row !== undefined && rowMatchesSearch(row, search);
+      },
+      restrictions: [
+        {
+          restriction: { kind: "rows-search", text: rows.search },
+          relaxed: always,
+        },
+      ],
+    });
+  }
+  return owners;
+}
+
+/** How many rows the Rows table shows: the workspace's, then its own. */
+export function countRows(
+  workspaceIds: readonly IdType[],
+  rows: RowsRestrictions,
+  fieldGetter: FieldGetter
+) {
+  const owners = rowsOwners(rows, fieldGetter);
+  return workspaceIds.filter((id) => owners.every((owner) => owner.test(id)))
+    .length;
 }
 
 const always = () => true;
@@ -110,19 +176,20 @@ export function findRecoveryOptions({
   workspaceFilters,
   fieldGetter,
   localSelections = false,
+  rows,
 }: {
   ids: readonly IdType[];
   charts: readonly ChartSettings[];
   workspaceFilters: readonly Filter[];
   fieldGetter: FieldGetter;
   localSelections?: boolean;
+  /** Counts the Rows table's result instead of the workspace's. */
+  rows?: RowsRestrictions;
 }): RecoveryOption[] {
-  const owners = workspaceOwners(
-    charts,
-    workspaceFilters,
-    fieldGetter,
-    localSelections
-  );
+  const owners = [
+    ...workspaceOwners(charts, workspaceFilters, fieldGetter, localSelections),
+    ...(rows ? rowsOwners(rows, fieldGetter) : []),
+  ];
   // A row can come back only if exactly one owner rejects it now.
   const onlyFailure = new Map<Owner, IdType[]>();
   const passing: IdType[] = [];
