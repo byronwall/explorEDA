@@ -10,6 +10,28 @@ Source baseline: `9d64a021e35d312887b1bc848e307f42b6c3091f`, still origin/main o
 [Pro conversation](https://chatgpt.com/c/6adf55b2-0884-83e9-947e-c0913a71d939).
 Keep React, TypeScript, and pnpm. No dependency on the other open preparation research PRs.
 
+## Build scope (November 2, 2026)
+
+Byron chose a lean build of M1 and M2. M3 is deferred. The sections below stay as the full design reference.
+
+Build in M1:
+
+- The parser and the five M1 presets, with one convention per field and validated grouping.
+- A Number input control in field settings, with a review of changed, failed, and missing values and their reasons.
+- Persistence in field settings, saved analyses, and Dashboard text tokens. The choice survives refresh and reopen.
+- Clearing filters on the changed field. Docs page and one example.
+
+Build in M2:
+
+- Percent mode, accounting negatives, and the dot-space and indian-dot presets.
+- Currency input: accept one symbol or code that matches the field's `currency` setting, such as `$` for USD, `€` for EUR, or `USD 5.00`. A mismatched symbol fails with a reason. `$` never guesses a currency. Currency stays a display unit on a numeric field; there is no separate currency type.
+
+Not built now:
+
+- The strict numeric limits: 20 significant digits, the 4096-character limit, exact rounding flags, and unsafe-integer rejection.
+- Multi-view export conflict blocking, notebook field writeback, inactive recipes for absent fields, and transitive predicate clearing through calculations.
+- M3, the ordered project-query preparation step.
+
 ## Shared contract
 
 Add `numericInput?: { preset, mode, accounting }` to `FieldSettings` in `src/lib/fieldSettings.ts`.
