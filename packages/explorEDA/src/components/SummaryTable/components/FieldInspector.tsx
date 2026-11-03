@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertCircle, Settings2, X } from "lucide-react";
+import { Settings2, X } from "lucide-react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useFieldDistribution } from "@/hooks/useFieldDistribution";
 import {
@@ -7,18 +7,16 @@ import {
   typeIcons,
   typeLabels,
 } from "@/components/FieldMetadata";
+import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import type { datum } from "@/types/ChartTypes";
 import {
   buildConversionPreview,
   formatFieldValue,
   getFieldSettingsError,
-  type DatePreset,
-  type FieldFormat,
+  sameConversion,
   type FieldSettings,
 } from "@/lib/fieldSettings";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverAnchor,
@@ -27,24 +25,22 @@ import {
 } from "@/components/ui/popover";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { FieldValues } from "./FieldValues";
+import { FieldReadAs } from "./FieldReadAs";
+import { FieldDisplaySettings } from "./FieldDisplaySettings";
+import {
+  ConversionReview,
+  firstReviewFilter,
+  type ReviewFilter,
+} from "./ConversionReview";
+import { bestNumberInput } from "./NumberInputChoice";
 
-const dataTypes = ["numeric", "categorical", "datetime", "boolean"] as const;
-const formats = [
-  "auto",
-  "number",
-  "currency",
-  "percent",
-  "date",
-  "datetime",
-] as const;
+type Tab = "values" | "read" | "display";
+
+/** The inspector's widest size; the popover also keeps 24 px of the viewport. */
+const WIDTH = 760;
+/** The popover's collision padding plus its gap from the anchor. */
+const EDGE = 16;
 
 /** Compare settings, treating blank text and unset values as the same. */
 function sameSettings(left: FieldSettings, right: FieldSettings) {
@@ -77,6 +73,23 @@ type Props = {
   side?: "top" | "right" | "bottom" | "left";
 };
 
+/**
+ * A side with room for the inspector. Beside an anchor with too little room,
+ * such as a field list row on a tablet, it opens below instead, so its title
+ * and tabs never sit off screen.
+ */
+function sideWithRoom(
+  side: NonNullable<Props["side"]>,
+  anchor: Element | null | undefined
+) {
+  if (!anchor || (side !== "left" && side !== "right")) return side;
+  const rect = anchor.getBoundingClientRect();
+  const room = side === "left" ? rect.left : window.innerWidth - rect.right;
+  return room >= Math.min(WIDTH, window.innerWidth - 24) + EDGE
+    ? side
+    : "bottom";
+}
+
 export function FieldInspector({
   field,
   children,
@@ -97,7 +110,8 @@ export function FieldInspector({
   const calculations = useDataLayer((state) => state.calculations);
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
   const [draft, setDraft] = useState<FieldSettings>({});
-  const [showAllFailures, setShowAllFailures] = useState(false);
+  const [tab, setTab] = useState<Tab>("values");
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>("failed");
   const [localOpen, setLocalOpen] = useState(false);
   const isOpen = open ?? localOpen;
   const setOpen = onOpenChange ?? setLocalOpen;
@@ -105,7 +119,6 @@ export function FieldInspector({
   useEffect(() => {
     if (isOpen && field) {
       setDraft((fieldSettings ?? {})[field] ?? {});
-      setShowAllFailures(false);
     }
   }, [isOpen, field, fieldSettings]);
 
@@ -157,18 +170,34 @@ export function FieldInspector({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isOpen, field, isCalculated, getFieldConversionPreview, fieldSettings]
   );
+
+  // Open each field on its values, and its review on what needs a look.
+  useEffect(() => {
+    if (!isOpen || !field) return;
+    setTab("values");
+    setReviewFilter(
+      firstReviewFilter(
+        getFieldConversionPreview(field, (fieldSettings ?? {})[field])
+      )
+    );
+    // Only a new field or a new opening resets the view.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, field]);
+
+  const placement = useMemo(
+    () => sideWithRoom(side, anchor),
+    // Placement is decided when the inspector opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [side, anchor, isOpen]
+  );
+
+  if (!field) return null;
   const settingsError = getFieldSettingsError(draft);
   const changed = !sameSettings(draft, applied);
   const typeName = typeLabels[distributionType ?? "categorical"];
   const TypeIcon = typeIcons[distributionType ?? "categorical"];
-  const conversionChanged =
-    !isCalculated &&
-    (draft.type !== applied.type ||
-      draft.datePreset !== applied.datePreset ||
-      JSON.stringify(draft.nullTokens ?? []) !==
-        JSON.stringify(applied.nullTokens ?? []));
-
-  if (!field) return null;
+  const conversionChanged = !isCalculated && !sameConversion(draft, applied);
+  const label = getFieldLabel(field);
   // Values tab previews the draft display settings before they are applied.
   const formatDistributionValue = (value: number) => {
     if (distribution?.kind !== "date") {
@@ -183,15 +212,68 @@ export function FieldInspector({
       ? `${iso.slice(0, 10)} ${iso.slice(11, 16)}`
       : iso.slice(0, 10);
   };
+  const samples: Array<{ label: string; value: datum }> =
+    distribution?.kind === "numeric" && distribution.summary
+      ? [
+          { label: "Minimum", value: distribution.summary.all.min },
+          { label: "Median", value: distribution.summary.all.median },
+          { label: "Maximum", value: distribution.summary.all.max },
+        ]
+      : distribution?.kind === "date" && distribution.range
+        ? [
+            {
+              label: "First",
+              value: new Date(distribution.range.all.first).toISOString(),
+            },
+            {
+              label: "Last",
+              value: new Date(distribution.range.all.last).toISOString(),
+            },
+          ]
+        : [];
   const update = (next: Partial<FieldSettings>) =>
     setDraft((current) => ({ ...current, ...next }));
+  const changeType = (type: DataType | undefined) => {
+    const next: FieldSettings =
+      type === "numeric"
+        ? { ...draft, type }
+        : {
+            ...draft,
+            type,
+            // A number input only reads numeric fields.
+            numberInput: undefined,
+            percentInput: undefined,
+            accountingInput: undefined,
+            currencyInput: undefined,
+          };
+    // A field becoming numeric starts on the convention that reads the most
+    // of its values, as a draft to review before Apply.
+    if (type === "numeric" && draft.type !== "numeric" && !draft.numberInput) {
+      const counts = getFieldConversionPreview(field, next).numberInputs;
+      const best = counts && bestNumberInput(counts);
+      if (best?.input && best.validCount > (counts?.[0]?.validCount ?? 0)) {
+        next.numberInput = best.input;
+      }
+    }
+    setDraft(next);
+    setReviewFilter(firstReviewFilter(getFieldConversionPreview(field, next)));
+  };
+  const apply = () => {
+    if (!changed || settingsError) return;
+    updateFieldSettings(field, draft);
+    setOpen(false);
+  };
+  const reviewFailed = () => {
+    setTab("read");
+    setReviewFilter("failed");
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={setOpen} modal={false}>
       {anchor ? (
         <PopoverAnchor virtualRef={{ current: anchor }} />
       ) : (
-        <ActionTooltip content={`Inspect ${getFieldLabel(field)}`}>
+        <ActionTooltip content={`Inspect ${label}`}>
           <PopoverTrigger asChild>
             {children ?? (
               <Button
@@ -206,18 +288,24 @@ export function FieldInspector({
         </ActionTooltip>
       )}
       <PopoverContent
-        aria-label={`Inspect field: ${getFieldLabel(field)}`}
+        aria-label={`Inspect field: ${label}`}
         align="start"
-        side={side}
+        side={placement}
         collisionPadding={12}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+            event.preventDefault();
+            apply();
+          }
+        }}
         onOpenAutoFocus={(event) => {
           // Start on the active tab, not the close button and its tooltip.
-          const tab = (
+          const active = (
             event.currentTarget as HTMLElement | null
           )?.querySelector<HTMLElement>('[role="tab"][data-state="active"]');
-          if (tab) {
+          if (active) {
             event.preventDefault();
-            tab.focus({ preventScroll: true });
+            active.focus({ preventScroll: true });
           }
         }}
         onCloseAutoFocus={(event) => {
@@ -226,66 +314,105 @@ export function FieldInspector({
             anchor.focus({ preventScroll: true });
           }
         }}
-        className="flex w-[min(760px,calc(100vw-24px))] max-h-[min(640px,var(--radix-popover-content-available-height))] flex-col overflow-hidden p-0"
+        className="eda-inspector flex w-[min(760px,calc(100vw-24px))] max-h-[min(640px,var(--radix-popover-content-available-height))] flex-col overflow-hidden p-0"
       >
         <Tabs
-          defaultValue="values"
+          value={tab}
+          onValueChange={(value) => setTab(value as Tab)}
           className="flex min-h-0 flex-1 flex-col gap-0"
         >
-          <div className="space-y-2.5 border-b border-border px-4 pt-3 pb-2.5">
-            <div className="flex min-w-0 items-start gap-2.5">
+          <div className="space-y-2 border-b border-border px-3 pt-2.5 pb-2">
+            <div className="flex min-w-0 items-center gap-2">
               <span
-                className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground"
                 aria-hidden="true"
               >
                 <TypeIcon className="h-4 w-4" />
               </span>
               <div className="min-w-0 flex-1">
-                <h2 className="truncate text-lg leading-tight font-semibold tracking-tight">
+                <h2 className="truncate text-base leading-tight font-semibold">
                   <span className="sr-only">Inspect field: </span>
-                  {getFieldLabel(field)}
+                  {label}
                 </h2>
-                <p className="flex min-w-0 flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
-                  <span className="font-medium text-foreground/80">
-                    {isCalculated
-                      ? `Calculated ${typeName.toLowerCase()}`
-                      : typeName}
-                  </span>
-                  {field !== getFieldLabel(field) && (
-                    <span className="min-w-0 truncate">
-                      Source name <code>{field}</code>
+                {settingsError ? (
+                  <p role="alert" className="truncate text-xs text-destructive">
+                    {settingsError}
+                  </p>
+                ) : (
+                  <p className="flex min-w-0 items-center gap-x-1.5 text-xs text-muted-foreground">
+                    <span className="shrink-0">
+                      {isCalculated
+                        ? `Calculated ${typeName.toLowerCase()}`
+                        : typeName}
                     </span>
-                  )}
-                  {applied.description && (
-                    <span className="min-w-0 truncate">
-                      {applied.description}
-                    </span>
-                  )}
-                </p>
+                    {field !== label && (
+                      <span className="min-w-0 truncate">
+                        · <code>{field}</code>
+                      </span>
+                    )}
+                    {appliedFailures > 0 && (
+                      <span className="shrink-0">
+                        ·{" "}
+                        <button
+                          type="button"
+                          className="text-destructive underline-offset-2 hover:underline"
+                          onClick={reviewFailed}
+                        >
+                          {appliedFailures.toLocaleString()} failed
+                        </button>
+                      </span>
+                    )}
+                    {applied.description && (
+                      <span className="min-w-0 truncate">
+                        · {applied.description}
+                      </span>
+                    )}
+                  </p>
+                )}
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="-mt-1 -mr-2 shrink-0"
-                aria-label="Close inspector"
-                tooltip="Close inspector"
-                onClick={() => setOpen(false)}
-              >
-                <X />
-              </Button>
+              <div className="flex shrink-0 items-center gap-1.5">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled={!changed}
+                  onClick={() => setDraft(applied)}
+                >
+                  Discard
+                </Button>
+                <Button
+                  size="sm"
+                  // Neutral until there is something to apply.
+                  variant={changed ? "default" : "outline"}
+                  disabled={!changed || Boolean(settingsError)}
+                  tooltip="Apply field settings (⌘Enter)"
+                  aria-label="Apply field settings"
+                  onClick={apply}
+                >
+                  Apply
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="-mr-1.5"
+                  aria-label="Close inspector"
+                  tooltip="Close inspector"
+                  onClick={() => setOpen(false)}
+                >
+                  <X />
+                </Button>
+              </div>
             </div>
-            <TabsList className="grid h-8 w-full grid-cols-4">
-              <TabsTrigger value="values" className="text-xs">
+            <TabsList className="h-8">
+              <TabsTrigger value="values" className="px-3 text-xs">
                 Values
               </TabsTrigger>
-              <TabsTrigger value="display" className="text-xs">
+              {!isCalculated && (
+                <TabsTrigger value="read" className="px-3 text-xs">
+                  Read as
+                </TabsTrigger>
+              )}
+              <TabsTrigger value="display" className="px-3 text-xs">
                 Display
-              </TabsTrigger>
-              <TabsTrigger value="type" className="text-xs">
-                Type
-              </TabsTrigger>
-              <TabsTrigger value="preview" className="text-xs">
-                Preview
               </TabsTrigger>
             </TabsList>
           </div>
@@ -294,9 +421,10 @@ export function FieldInspector({
               {distribution ? (
                 <FieldValues
                   distribution={distribution}
-                  fieldLabel={getFieldLabel(field)}
+                  fieldLabel={label}
                   format={formatDistributionValue}
                   failedCount={appliedFailures}
+                  onReviewFailed={isCalculated ? undefined : reviewFailed}
                 />
               ) : (
                 <p className="text-xs text-muted-foreground">
@@ -304,307 +432,68 @@ export function FieldInspector({
                 </p>
               )}
             </TabsContent>
-            <TabsContent value="display" className="max-w-[440px] space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="field-label">Display label</Label>
-                <Input
-                  id="field-label"
-                  value={draft.label ?? ""}
-                  placeholder={field}
-                  onChange={(event) => update({ label: event.target.value })}
+            {!isCalculated && preview && (
+              <TabsContent
+                value="read"
+                className="grid gap-4 min-[680px]:grid-cols-[minmax(0,370px)_minmax(0,1fr)]"
+              >
+                <FieldReadAs
+                  draft={draft}
+                  inferredType={preview.inferredType}
+                  preview={preview}
+                  conversionChanged={conversionChanged}
+                  onTypeChange={changeType}
+                  onChange={update}
                 />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="field-description">Description</Label>
-                <Input
-                  id="field-description"
-                  value={draft.description ?? ""}
-                  onChange={(event) =>
-                    update({ description: event.target.value })
-                  }
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label>Display format</Label>
-                  <Select
-                    value={draft.format ?? "auto"}
-                    onValueChange={(value) =>
-                      update({ format: value as FieldFormat })
-                    }
-                  >
-                    <SelectTrigger aria-label="Display format">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {formats.map((format) => (
-                        <SelectItem key={format} value={format}>
-                          {format}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="field-precision">Precision</Label>
-                  <Input
-                    id="field-precision"
-                    type="number"
-                    min={0}
-                    max={20}
-                    value={draft.precision ?? ""}
-                    onChange={(event) =>
-                      update({
-                        precision:
-                          event.target.value === ""
-                            ? undefined
-                            : Number(event.target.value),
-                      })
-                    }
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="field-unit">Unit suffix</Label>
-                  <Input
-                    id="field-unit"
-                    value={draft.unit ?? ""}
-                    placeholder="kg, ms, USD"
-                    onChange={(event) => update({ unit: event.target.value })}
-                  />
-                </div>
-                {draft.format === "currency" && (
-                  <div className="space-y-1.5">
-                    <Label htmlFor="field-currency">Currency code</Label>
-                    <Input
-                      id="field-currency"
-                      value={draft.currency ?? "USD"}
-                      maxLength={3}
-                      onChange={(event) =>
-                        update({ currency: event.target.value.toUpperCase() })
+                <div className="flex max-h-80 min-h-0 flex-col min-[680px]:h-[420px] min-[680px]:max-h-none">
+                  <p className="mb-1.5 text-xs text-muted-foreground">
+                    <span className="tabular-nums">
+                      {preview.totalCount.toLocaleString()}
+                    </span>{" "}
+                    rows:{" "}
+                    <span className="font-medium text-foreground tabular-nums">
+                      {preview.validCount.toLocaleString()}
+                    </span>{" "}
+                    read ·{" "}
+                    <span className="tabular-nums">
+                      {preview.missingCount.toLocaleString()}
+                    </span>{" "}
+                    missing ·{" "}
+                    <span
+                      className={
+                        preview.failedCount > 0
+                          ? "text-destructive tabular-nums"
+                          : "tabular-nums"
                       }
-                    />
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-            <TabsContent value="type" className="max-w-[440px] space-y-3">
-              {preview && (
-                <div className="flex flex-wrap gap-x-3 gap-y-1 rounded bg-muted/50 px-2 py-2 text-xs">
-                  <div className="flex flex-wrap gap-x-3 gap-y-1">
-                    <span>
-                      Inferred: <strong>{preview.inferredType}</strong>
-                    </span>
-                    <span>
-                      Effective: <strong>{preview.effectiveType}</strong>
-                    </span>
-                    <span>{preview.validCount} valid</span>
-                    <span>{preview.missingCount} missing</span>
-                    <span>{preview.failedCount} failed</span>
-                  </div>
-                  {preview.failedCount > 0 && (
-                    <div className="mt-2 text-destructive">
-                      Invalid values become missing. The Preview tab lists each
-                      failed row.
-                    </div>
-                  )}
-                </div>
-              )}
-              {isCalculated && (
-                <p className="text-xs text-muted-foreground">
-                  This is a calculated field. Its formula controls the runtime
-                  type. Use the formula editor for type changes; this inspector
-                  controls display settings and previews calculated values.
-                </p>
-              )}
-              {preview && (
-                <>
-                  {" "}
-                  <p className="mt-2 text-muted-foreground">
-                    Automatic inference currently treats this field as{" "}
-                    <strong>{preview.inferredType}</strong>. An override changes
-                    runtime values, filters, calculations, and chart positions.
+                    >
+                      {preview.failedCount.toLocaleString()}
+                    </span>{" "}
+                    failed
                   </p>
-                </>
-              )}
-              {!isCalculated && (
-                <div className="space-y-1.5">
-                  <Label>Type override</Label>
-                  <Select
-                    value={draft.type ?? "auto"}
-                    onValueChange={(value) =>
-                      update({
-                        type:
-                          value === "auto"
-                            ? undefined
-                            : (value as FieldSettings["type"]),
-                      })
-                    }
-                  >
-                    <SelectTrigger aria-label="Type override">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="auto">Automatic</SelectItem>
-                      {dataTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-              {!isCalculated && draft.type === "datetime" && (
-                <div className="space-y-1.5">
-                  <Label>Date input preset</Label>
-                  <Select
-                    value={draft.datePreset ?? "iso"}
-                    onValueChange={(value) =>
-                      update({ datePreset: value as DatePreset })
-                    }
-                  >
-                    <SelectTrigger aria-label="Date input preset">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="iso">ISO</SelectItem>
-                      <SelectItem value="month-day-year">
-                        Month / day / year
-                      </SelectItem>
-                      <SelectItem value="day-month-year">
-                        Day / month / year
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-              {!isCalculated && (
-                <div className="space-y-1.5">
-                  <Label htmlFor="field-null-tokens">Null tokens</Label>
-                  <Input
-                    id="field-null-tokens"
-                    value={draft.nullTokens?.join(", ") ?? ""}
-                    placeholder="NA, N/A, -"
-                    onChange={(event) =>
-                      update({
-                        nullTokens: event.target.value
-                          .split(",")
-                          .map((token) => token.trim())
-                          .filter(Boolean),
-                      })
-                    }
+                  <ConversionReview
+                    preview={preview}
+                    filter={reviewFilter}
+                    onFilterChange={setReviewFilter}
                   />
                 </div>
-              )}
-              {conversionChanged && (
-                <div className="flex gap-2 rounded-md border border-warning/40 bg-warning/10 p-3 text-xs">
-                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
-                  Applying a type, date preset, or null-token change clears
-                  filters for this field.
-                </div>
-              )}
-            </TabsContent>
-            <TabsContent value="preview" className="max-w-[560px]">
-              {preview && preview.examples.length > 0 && (
-                <div className="space-y-1.5">
-                  <h3 className="text-xs font-medium">Conversion preview</h3>
-                  <div className="overflow-x-auto rounded-md border">
-                    <table className="w-full text-xs">
-                      <thead>
-                        <tr className="border-b text-left">
-                          <th className="p-2">Row</th>
-                          <th className="p-2">Raw</th>
-                          <th className="p-2">Runtime</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {preview.examples.map((example) => (
-                          <tr
-                            key={example.row}
-                            className="border-b last:border-0"
-                          >
-                            <td className="p-2 tabular-nums">
-                              {example.row + 1}
-                            </td>
-                            <td className="p-2 font-mono">
-                              {String(example.raw)}
-                            </td>
-                            <td className="p-2">
-                              {String(example.value ?? "Missing")}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-              {preview && preview.failures.length > 0 && (
-                <div className="mt-4 space-y-1.5 text-xs">
-                  <h3 className="font-medium text-destructive">Failed rows</h3>
-                  <ul className="max-h-24 overflow-y-auto text-muted-foreground">
-                    {(showAllFailures
-                      ? preview.failures
-                      : preview.failures.slice(0, 12)
-                    ).map((failure) => (
-                      <li key={failure.row}>
-                        Row {failure.row + 1}: {String(failure.raw)} —{" "}
-                        {failure.reason}
-                      </li>
-                    ))}
-                  </ul>
-                  {preview.failures.length > 12 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowAllFailures((current) => !current)}
-                    >
-                      {showAllFailures
-                        ? "Show fewer failed rows"
-                        : `Show all ${preview.failures.length} failed rows`}
-                    </Button>
-                  )}
-                </div>
-              )}
-              {!preview?.examples.length && !preview?.failures.length && (
-                <p className="text-xs text-muted-foreground">
-                  No conversion issues or sample rows.
-                </p>
-              )}
+              </TabsContent>
+            )}
+            <TabsContent value="display" className="max-w-[480px]">
+              <FieldDisplaySettings
+                field={field}
+                draft={draft}
+                type={
+                  draft.type ??
+                  preview?.effectiveType ??
+                  distributionType ??
+                  "categorical"
+                }
+                samples={samples}
+                onChange={update}
+              />
             </TabsContent>
           </div>
         </Tabs>
-
-        {(changed || settingsError) && (
-          <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1.5 border-t border-border px-4 py-2">
-            {settingsError ? (
-              <p role="alert" className="mr-auto min-w-0 text-xs text-destructive">
-                {settingsError}
-              </p>
-            ) : (
-              <p className="mr-auto shrink-0 text-xs text-muted-foreground">
-                Unapplied changes
-              </p>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setDraft(applied)}
-            >
-              Discard changes
-            </Button>
-            <Button
-              size="sm"
-              disabled={Boolean(settingsError)}
-              onClick={() => {
-                updateFieldSettings(field, draft);
-                setOpen(false);
-              }}
-            >
-              Apply field settings
-            </Button>
-          </div>
-        )}
       </PopoverContent>
     </Popover>
   );

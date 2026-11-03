@@ -1407,6 +1407,8 @@
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .eda-settings button[role="combobox"],
 .eda-settings [data-slot="select-trigger"],
+.eda-inspector
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .eda-add-chart-fields
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .eda-add-chart-fields button[role="combobox"],
@@ -1416,6 +1418,7 @@
   font-size: 12px;
 }
 .eda-settings [data-slot="toggle-group-item"],
+.eda-inspector [data-slot="toggle-group-item"],
 .eda-add-chart-fields [data-slot="toggle-group-item"] {
   height: 26px;
   min-width: 0;
@@ -1451,6 +1454,36 @@
   grid-template-columns: 100px minmax(0, 1fr);
   align-items: center;
   gap: 6px 10px;
+}
+/* The field inspector. Native radios and checkboxes follow the theme, and
+   failure text uses a red that reads on a dark popover. */
+.dark .eda-inspector {
+  --destructive: hsl(0 72% 66%);
+  color-scheme: dark;
+}
+.eda-inspector input[type="number"]::-webkit-inner-spin-button,
+.eda-inspector input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+.eda-inspector input[type="number"] {
+  appearance: textfield;
+}
+/* Review filters sit two by two on a phone, so each label and count fits. */
+@media (width < 520px) {
+  .eda-review-filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+  .eda-review-filters > [data-slot="toggle-group-item"] {
+    border-left-width: 1px;
+    border-radius: 6px;
+  }
+}
+/* Short labels, such as the field inspector's, beside wider controls. */
+.eda-setting-grid.eda-setting-grid-narrow {
+  grid-template-columns: 76px minmax(0, 1fr);
 }
 @media (prefers-reduced-motion: reduce) {
   .eda-panel *,

@@ -1864,6 +1864,75 @@ export const categoryMappingsDashboard: SavedDataStructure = {
 };
 
 /**
+ * Supplier invoices exported from a European ledger: amounts are text such
+ * as 1.234,50. Amount reads them with the 1.234,5 number input; Discount
+ * reads 2,5% as a percent; Net reads € signs and (€ 426,40) credit notes.
+ */
+export const supplierInvoicesDashboard: SavedDataStructure = {
+  ...dashboard("Supplier invoices", [
+    histogram(
+      "invoices-amount",
+      "Invoice amounts",
+      "Amount",
+      layout(0, 0, 6, 5),
+      "Amount (EUR)"
+    ),
+    row(
+      "invoices-supplier",
+      "Invoices by supplier",
+      "Supplier",
+      layout(6, 0, 6, 5)
+    ),
+    histogram(
+      "invoices-net",
+      "Net after discount",
+      "Net",
+      layout(0, 5, 6, 5),
+      "Net (EUR)"
+    ),
+    histogram(
+      "invoices-discount",
+      "Discounts",
+      "Discount",
+      layout(6, 5, 6, 5),
+      "Discount"
+    ),
+    table(
+      "invoices-records",
+      "Invoices",
+      ["Invoice", "Supplier", "Month", "Amount", "Discount", "Net"],
+      layout(0, 10, 12, 4)
+    ),
+  ]),
+  fieldSettings: {
+    Amount: {
+      type: "numeric",
+      numberInput: "comma-dot",
+      nullTokens: ["n/a"],
+      format: "currency",
+      currency: "EUR",
+      precision: 2,
+    },
+    Discount: {
+      type: "numeric",
+      numberInput: "comma-plain",
+      percentInput: true,
+      format: "percent",
+      precision: 1,
+    },
+    Net: {
+      type: "numeric",
+      numberInput: "comma-dot",
+      accountingInput: true,
+      currencyInput: true,
+      currency: "EUR",
+      format: "currency",
+      precision: 2,
+    },
+  },
+};
+
+/**
  * Six years of correspondence: one strip of monthly squares per
  * correspondent, colored by a log ramp of messages, beside linked views of
  * the same rows.

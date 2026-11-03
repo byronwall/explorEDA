@@ -110,4 +110,44 @@ describe("field settings provider", () => {
     expect(applied.map((row: any) => row.x)).toEqual([0, 12.5]);
     expect(applied).toHaveLength(preview.validCount);
   });
+
+  it("keeps a number input through save, reopen, and new rows", async () => {
+    let latest: any;
+    let reported: any;
+    function Probe() {
+      latest = {
+        data: useDataLayer((state) => state.data),
+        update: useDataLayer((state) => state.updateFieldSettings),
+      };
+      return null;
+    }
+    const view = (rows: Array<Record<string, string>>, savedData?: any) => (
+      <DataLayerProvider
+        data={rows}
+        charts={[]}
+        savedData={savedData}
+        onStateChange={(state) => (reported = state)}
+      >
+        <Probe />
+      </DataLayerProvider>
+    );
+    const amounts = () => latest.data.map((row: any) => row.amount);
+
+    const { rerender, unmount } = render(
+      view([{ amount: "1.234,50" }, { amount: "12" }])
+    );
+    await act(async () =>
+      latest.update("amount", { type: "numeric", numberInput: "comma-dot" })
+    );
+    expect(amounts()).toEqual([1234.5, 12]);
+    expect(reported.fieldSettings.amount.numberInput).toBe("comma-dot");
+
+    // A refresh: new rows with the settings the host last saw.
+    rerender(view([{ amount: "2.000,25" }, { amount: "1,5" }], reported));
+    expect(amounts()).toEqual([2000.25, 1.5]);
+
+    unmount();
+    render(view([{ amount: "9.999" }], JSON.parse(JSON.stringify(reported))));
+    expect(amounts()).toEqual([9999]);
+  });
 });

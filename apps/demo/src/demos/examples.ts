@@ -16,6 +16,7 @@ import {
   scatterMatrixDashboard,
   rankCorrelationDashboard,
   categoryMappingsDashboard,
+  supplierInvoicesDashboard,
   rankPairsDashboard,
   scatterSurfaceDashboard,
   pointMapDashboard,
@@ -118,6 +119,7 @@ import {
   Plane,
   ScatterChart,
   ShoppingCart,
+  Receipt,
   Tags,
   Thermometer,
   ThermometerSun,
@@ -602,6 +604,17 @@ export const examples: ExampleData[] = [
     icon: Tags,
     data: "/datasets/support-tickets.csv",
     savedData: categoryMappingsDashboard,
+  },
+  {
+    id: "supplier-invoices",
+    title: "Invoices written 1.234,50",
+    description:
+      "A European ledger exports amounts as text: a dot groups thousands and a comma marks cents. Amount reads them with the 1.234,5 number input, Discount reads 2,5% as a percent, and Net reads € signs and credit notes in parentheses. Two typos and a dot-decimal amount stay visible as failed values.",
+    dataset: { rows: "160 invoices", fields: 8, source: "Synthetic" },
+    shows: ["Number input", "Percent and accounting", "Failed values"],
+    icon: Receipt,
+    data: "/datasets/supplier-invoices.csv",
+    savedData: supplierInvoicesDashboard,
   },
   {
     id: "rank-correlation-basics",

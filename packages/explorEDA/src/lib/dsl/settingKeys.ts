@@ -766,6 +766,10 @@ export const FIELD_SETTING_WORDS: Record<keyof FieldSettings, string> = {
   unit: "unit",
   currency: "currency",
   datePreset: "datePreset",
+  numberInput: "numberInput",
+  percentInput: "percentInput",
+  accountingInput: "accountingInput",
+  currencyInput: "currencyInput",
   nullTokens: "nullTokens[]",
 };
 

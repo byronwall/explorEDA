@@ -16,6 +16,7 @@ import { initializeData } from "@/providers/lib/dataLayerState";
 import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import type { AggregateSpec } from "@/lib/aggregates";
 import { getFieldSettingsError } from "@/lib/fieldSettings";
+import { isNumberInput } from "@/lib/numericInput";
 import type { FieldSettings } from "@/lib/fieldSettings";
 import { SAVED_MAX_ZOOM } from "@/components/charts/Map/streetCamera";
 import { BOUNDARY_PREFIX } from "@/lib/boundaries/registry";
@@ -271,6 +272,10 @@ function isFieldSettings(value: unknown): boolean {
       ["iso", "month-day-year", "day-month-year"].includes(
         value.datePreset as string
       )) &&
+    (value.numberInput === undefined || isNumberInput(value.numberInput)) &&
+    ["percentInput", "accountingInput", "currencyInput"].every(
+      (key) => value[key] === undefined || typeof value[key] === "boolean"
+    ) &&
     (value.nullTokens === undefined ||
       (Array.isArray(value.nullTokens) &&
         value.nullTokens.every((token) => typeof token === "string")));

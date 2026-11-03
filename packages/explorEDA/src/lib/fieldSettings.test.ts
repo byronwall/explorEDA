@@ -101,7 +101,10 @@ describe("field settings", () => {
     );
     expect(preview.validCount).toBe(2);
     expect(preview.failures).toHaveLength(0);
-    expect(preview.examples.map((example) => example.value)).toEqual([1, "1"]);
+    expect(preview.review.unchanged.map((example) => example.value)).toEqual([
+      1,
+      "1",
+    ]);
   });
 
   it("uses an explicit categorical profile for typed numeric runtime values", () => {

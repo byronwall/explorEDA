@@ -23,6 +23,7 @@ import {
   shopDashboard,
   timeSeriesDashboard,
   categoryMappingsDashboard,
+  supplierInvoicesDashboard,
 } from "@/demos/dashboardSettings";
 import { demoSettings as lorenzSettings } from "@/demos/lorenz";
 import { engineeringHistogramsDashboard } from "@/demos/engineeringHistograms";
@@ -766,6 +767,22 @@ export const liveExamples = {
       { expectRows: 240 },
       { expectText: "Country, mapped" },
       { expectText: "114" },
+    ],
+  },
+  "number-input": {
+    label: "Live number input",
+    data: "/datasets/supplier-invoices.csv",
+    savedData: focus(supplierInvoicesDashboard, {
+      "invoices-amount": [0, 0, 6, 5],
+      "invoices-net": [6, 0, 6, 5],
+    }),
+    exampleId: "supplier-invoices",
+    shotAlt:
+      "Histograms of invoice amounts and of net amounts after discount, in euros; credit notes show as negative net amounts.",
+    steps: [
+      { expectRows: 160 },
+      { expectText: "Amount (EUR)" },
+      { expectText: "Net (EUR)" },
     ],
   },
   calculations: {
