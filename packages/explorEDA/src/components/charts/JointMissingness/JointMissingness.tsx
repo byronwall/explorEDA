@@ -267,7 +267,6 @@ export function JointMissingness({
                 >
                   <td
                     className="eda-missingness-label"
-                    title={name}
                     style={{ maxWidth: labelWidth }}
                   >
                     {name}
