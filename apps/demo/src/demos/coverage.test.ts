@@ -69,6 +69,7 @@ describe("example coverage manifest", () => {
       "wine-chemistry",
       "scatter-regression",
       "category-mappings",
+      "supplier-invoices",
       "scatter-matrix",
       "bubble-scatter",
       "area-charts",

@@ -1864,6 +1864,44 @@ export const categoryMappingsDashboard: SavedDataStructure = {
 };
 
 /**
+ * Supplier invoices exported from a European ledger: amounts are text such
+ * as 1.234,50. The Amount field reads them with the 1.234,5 number input.
+ */
+export const supplierInvoicesDashboard: SavedDataStructure = {
+  ...dashboard("Supplier invoices", [
+    histogram(
+      "invoices-amount",
+      "Invoice amounts",
+      "Amount",
+      layout(0, 0, 6, 5),
+      "Amount (EUR)"
+    ),
+    row(
+      "invoices-supplier",
+      "Invoices by supplier",
+      "Supplier",
+      layout(6, 0, 6, 5)
+    ),
+    table(
+      "invoices-records",
+      "Invoices",
+      ["Invoice", "Supplier", "Month", "Amount", "Lines"],
+      layout(0, 5, 12, 4)
+    ),
+  ]),
+  fieldSettings: {
+    Amount: {
+      type: "numeric",
+      numberInput: "comma-dot",
+      nullTokens: ["n/a"],
+      format: "currency",
+      currency: "EUR",
+      precision: 2,
+    },
+  },
+};
+
+/**
  * Six years of correspondence: one strip of monthly squares per
  * correspondent, colored by a log ramp of messages, beside linked views of
  * the same rows.

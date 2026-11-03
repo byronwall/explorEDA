@@ -1,4 +1,4 @@
-import { convertFieldValue } from "@/lib/fieldSettings";
+import { convertFieldValue, convertsValues } from "@/lib/fieldSettings";
 import type { FieldProfile } from "@/lib/fieldProfiles";
 import type {
   CalculationManager,
@@ -136,11 +136,7 @@ export function resolveScatterTrace(
   }
   const conversionFor = (field: string, raw: datum) => {
     const fieldSetting = snapshot.fieldSettings[field] ?? {};
-    const applied = Boolean(
-      fieldSetting.type ||
-        fieldSetting.datePreset ||
-        fieldSetting.nullTokens?.length
-    );
+    const applied = convertsValues(fieldSetting);
     const type =
       fieldSetting.type ??
       profiles.find((item) => item.name === field)?.dataType;

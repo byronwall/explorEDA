@@ -12,6 +12,7 @@ import {
   buildConversionPreview,
   formatFieldValue,
   getFieldSettingsError,
+  sameConversion,
   type DatePreset,
   type FieldFormat,
   type FieldSettings,
@@ -35,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FieldValues } from "./FieldValues";
+import { NumberInputChoice } from "./NumberInputChoice";
 
 const dataTypes = ["numeric", "categorical", "datetime", "boolean"] as const;
 const formats = [
@@ -161,12 +163,7 @@ export function FieldInspector({
   const changed = !sameSettings(draft, applied);
   const typeName = typeLabels[distributionType ?? "categorical"];
   const TypeIcon = typeIcons[distributionType ?? "categorical"];
-  const conversionChanged =
-    !isCalculated &&
-    (draft.type !== applied.type ||
-      draft.datePreset !== applied.datePreset ||
-      JSON.stringify(draft.nullTokens ?? []) !==
-        JSON.stringify(applied.nullTokens ?? []));
+  const conversionChanged = !isCalculated && !sameConversion(draft, applied);
 
   if (!field) return null;
   // Values tab previews the draft display settings before they are applied.
@@ -407,6 +404,12 @@ export function FieldInspector({
                       failed row.
                     </div>
                   )}
+                  {preview.ambiguousCount > 0 && (
+                    <div className="mt-2 basis-full text-warning">
+                      {preview.ambiguousCount} values read as a different number
+                      in another number input. The Preview tab shows them first.
+                    </div>
+                  )}
                 </div>
               )}
               {isCalculated && (
@@ -432,11 +435,20 @@ export function FieldInspector({
                   <Select
                     value={draft.type ?? "auto"}
                     onValueChange={(value) =>
-                      update({
-                        type:
+                      setDraft((current) => {
+                        const type =
                           value === "auto"
                             ? undefined
-                            : (value as FieldSettings["type"]),
+                            : (value as FieldSettings["type"]);
+                        return {
+                          ...current,
+                          type,
+                          // A number input only reads numeric fields.
+                          numberInput:
+                            type === "numeric"
+                              ? current.numberInput
+                              : undefined,
+                        };
                       })
                     }
                   >
@@ -454,6 +466,15 @@ export function FieldInspector({
                   </Select>
                 </div>
               )}
+              {!isCalculated &&
+                draft.type === "numeric" &&
+                preview?.numberInputs && (
+                  <NumberInputChoice
+                    value={draft.numberInput}
+                    counts={preview.numberInputs}
+                    onChange={(numberInput) => update({ numberInput })}
+                  />
+                )}
               {!isCalculated && draft.type === "datetime" && (
                 <div className="space-y-1.5">
                   <Label>Date input preset</Label>
@@ -499,8 +520,8 @@ export function FieldInspector({
               {conversionChanged && (
                 <div className="flex gap-2 rounded-md border border-warning/40 bg-warning/10 p-3 text-xs">
                   <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
-                  Applying a type, date preset, or null-token change clears
-                  filters for this field.
+                  Applying a type, number input, date preset, or null-token
+                  change clears filters for this field.
                 </div>
               )}
             </TabsContent>
@@ -515,6 +536,9 @@ export function FieldInspector({
                           <th className="p-2">Row</th>
                           <th className="p-2">Raw</th>
                           <th className="p-2">Runtime</th>
+                          {preview.ambiguousCount > 0 && (
+                            <th className="p-2">Another input reads</th>
+                          )}
                         </tr>
                       </thead>
                       <tbody>
@@ -532,6 +556,11 @@ export function FieldInspector({
                             <td className="p-2">
                               {String(example.value ?? "Missing")}
                             </td>
+                            {preview.ambiguousCount > 0 && (
+                              <td className="p-2 text-warning">
+                                {example.alternate}
+                              </td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
@@ -578,7 +607,10 @@ export function FieldInspector({
         {(changed || settingsError) && (
           <div className="flex flex-wrap items-center justify-end gap-x-2 gap-y-1.5 border-t border-border px-4 py-2">
             {settingsError ? (
-              <p role="alert" className="mr-auto min-w-0 text-xs text-destructive">
+              <p
+                role="alert"
+                className="mr-auto min-w-0 text-xs text-destructive"
+              >
                 {settingsError}
               </p>
             ) : (

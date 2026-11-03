@@ -40,6 +40,7 @@ import {
   formatFieldValue as formatValue,
   getFieldSettingsError,
   getFieldLabel as resolveFieldLabel,
+  sameConversion,
 } from "@/lib/fieldSettings";
 import { ChartLayout, ChartSettings, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
@@ -785,11 +786,7 @@ const createDataLayerStore = <T extends DatumObject>(
           nextFieldSettingsMap[field] = nextFieldSettings;
         }
 
-        const typeChanged =
-          current.type !== nextFieldSettings.type ||
-          current.datePreset !== nextFieldSettings.datePreset ||
-          JSON.stringify(current.nullTokens?.filter(Boolean) ?? []) !==
-            JSON.stringify(nextFieldSettings.nullTokens?.filter(Boolean) ?? []);
+        const typeChanged = !sameConversion(current, nextFieldSettings);
         if (!typeChanged) {
           set((state) => ({
             fieldSettings: nextFieldSettingsMap,

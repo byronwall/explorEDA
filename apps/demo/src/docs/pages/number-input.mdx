@@ -1,0 +1,61 @@
+## Read formatted numbers
+
+A spreadsheet or ledger export often writes numbers as text: `1,234.50`, `1.234,50`, or `1 234,50`. Without help, a field like that loads as categories, so it cannot go on a numeric axis or into a sum. **Number input** tells the field how its text writes decimals and digit groups, and turns each value into a number.
+
+## Try it
+
+<LiveExample
+  id="number-input"
+  caption="Supplier invoices whose amounts arrive as text such as 1.234,50. The Amount field reads them with the 1.234,5 number input and shows them in euros."
+/>
+
+Open [the full example](/examples/supplier-invoices), then inspect **Amount** and open the **Type** tab to see the choice and its counts.
+
+## Choose a number input
+
+1. Inspect the field: press its settings button in the field list, or Command-click it on a chart axis.
+2. On the **Type** tab, set **Type override** to `numeric`.
+3. Under **Number input**, pick how the field's text is written. Each choice shows how many of the field's values it reads and how many fail, counted over every row, so the right one usually stands out.
+4. Check the **Preview** tab, then press **Apply field settings**.
+
+| Number input | Decimal | Digit groups | Example            |
+| ------------ | ------- | ------------ | ------------------ |
+| `1234.5`     | dot     | none         | `-1234.5`, `1.2e3` |
+| `1234,5`     | comma   | none         | `1234,5`           |
+| `1,234.5`    | dot     | comma        | `1,234,567.25`     |
+| `1.234,5`    | comma   | dot          | `1.234.567,25`     |
+| `1 234,5`    | comma   | space        | `1 234 567,25`     |
+
+`1234.5` is the default. It reads plain numbers, as an unconfigured numeric field always has.
+
+## What reads and what fails
+
+- One choice applies to the whole field. `1,234` never reads as 1234 in one row and 1.234 in another.
+- Digit groups are optional, but when a value has them they must be in threes after the first group: `1,234,567` reads under `1,234.5`; `12,34,567` fails.
+- A space group can be a regular, nonbreaking, or narrow nonbreaking space, the same one throughout a value.
+- A value can start with `+` or `-`, start with the decimal (`.5`), and end with an exponent (`1,2e3` under `1.234,5`). Leading zeros drop: `0012` reads as 12.
+- Spaces at the start and end are ignored. Letters, currency symbols, percent signs, and parentheses fail.
+- Numbers that arrive as numbers, such as from JSON or a database, stay as they are. Booleans fail.
+- [Null tokens](/docs/fields) and blank text become missing before the number input reads a value.
+
+A value that fails becomes missing, so charts, filters, and [calculations](/docs/calculated-fields) skip it. The field's raw text stays as it was, so you can change the choice later.
+
+## Review before you apply
+
+The **Type** tab counts valid, missing, and failed values for the draft. The **Preview** tab lists:
+
+- Values that read as a different number under another number input first. In the example, `1.400` is 1400 under `1.234,5` but 1.4 under `1234.5`; the **Another input reads** column shows the other meaning, so you can confirm the choice.
+- Then values whose text changes when read, such as `2.312,42` becoming 2312.42.
+- Every failed row with its reason, such as `Separators do not match 1.234,5` or `Has characters that are not part of a number`.
+
+Applying a new number input rebuilds the field's values and clears filters on that field. Nothing changes until you apply.
+
+## Keep the choice
+
+The number input is a field setting. It is saved with the workspace, kept when the host passes new rows with the saved settings, and written in [dashboard text](/docs/dashboard-text) as `numberInput=`:
+
+```text
+field Amount as=num numberInput=comma-dot nullTokens[]="n/a" format=currency currency=EUR
+```
+
+The values are `comma-plain`, `dot-comma`, `comma-dot`, and `comma-space`. Leave the key out for plain numbers.

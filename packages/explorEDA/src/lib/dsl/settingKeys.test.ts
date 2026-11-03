@@ -131,6 +131,8 @@ function dashboard(charts: SavedChartSettings[]): SavedDataStructure {
         precision: 1,
         unit: "k",
         currency: "EUR",
+        type: "numeric",
+        numberInput: "dot-comma",
       },
       Day: { type: "datetime", datePreset: "iso", nullTokens: ["n/a", "-"] },
     },

@@ -43,6 +43,7 @@ import {
   CircleAlert,
   Users,
   Database,
+  Hash,
   type LucideIcon,
   Merge,
 } from "lucide-react";
@@ -677,6 +678,18 @@ export const catalogue: readonly DocsPage[] = [
     covers: ["flow:category-mappings"],
     examples: ["category-mappings"],
     related: ["calculated-fields", "fields"],
+  },
+  {
+    topic: "number-input",
+    title: "Number input",
+    group: "tasks",
+    icon: Hash,
+    lede: "Read numbers written with digit groups or a decimal comma, such as 1,234.50 or 1.234,50, and review every value that fails.",
+    summary: "Turn formatted number text into numbers.",
+    highlights: ["Number input", "Failed values"],
+    covers: ["flow:number-input"],
+    examples: ["supplier-invoices"],
+    related: ["fields", "load-data", "calculated-fields"],
   },
   {
     topic: "dashboard-text",

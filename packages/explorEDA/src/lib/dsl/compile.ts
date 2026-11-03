@@ -3,6 +3,7 @@ import { defaultColorScaleForField } from "@/lib/colorScaleMath";
 import { categoryLabel } from "@/lib/categories";
 import { CalculationManager } from "@/lib/calculations/CalculationState";
 import { parseExpression } from "@/lib/calculations/parser/semantics";
+import { isNumberInput, NUMBER_INPUT_IDS } from "@/lib/numericInput";
 import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { buildFieldProfiles } from "@/lib/fieldProfiles";
 import {
@@ -563,6 +564,21 @@ export function compileDocument(
           continue;
         }
         next.datePreset = value as FieldSettings["datePreset"];
+      } else if (pair.key === "numberInput") {
+        if (!isNumberInput(value)) {
+          report(
+            "warning",
+            "setting-default",
+            pair.span,
+            `${value} is not a number input, so ${subject} reads plain numbers.`,
+            {
+              subject,
+              suggestion: `Use one of: ${NUMBER_INPUT_IDS.join(", ")}.`,
+            }
+          );
+          continue;
+        }
+        next.numberInput = value;
       } else if (pair.key === "format") {
         next.format = value as FieldFormat;
         if (!FORMATS.includes(value as FieldFormat)) {

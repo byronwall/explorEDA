@@ -5,10 +5,18 @@ import {
   parseNumber,
   timestampOf,
 } from "@/lib/valueParsing";
+import {
+  isNumberInput,
+  NUMBER_INPUT_IDS,
+  NUMBER_INPUTS,
+  parseNumberInput,
+  PLAIN_NUMBER_LABEL,
+  type NumberInput,
+} from "@/lib/numericInput";
 import type { datum } from "@/types/ChartTypes";
 import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
 
-export type { DatePreset };
+export type { DatePreset, NumberInput };
 export type FieldFormat =
   | "auto"
   | "number"
@@ -26,6 +34,8 @@ export interface FieldSettings {
   unit?: string;
   currency?: string;
   datePreset?: DatePreset;
+  /** How a numeric field's text writes decimals and digit groups. */
+  numberInput?: NumberInput;
   nullTokens?: string[];
 }
 
@@ -45,8 +55,24 @@ export interface ConversionPreview {
   validCount: number;
   missingCount: number;
   failedCount: number;
-  examples: Array<{ row: number; raw: datum; value: datum }>;
+  examples: ConversionExample[];
   failures: ConversionFailure[];
+  /** Text values that read as a different number in another convention. */
+  ambiguousCount: number;
+  /** Valid and failed counts for each number input convention. */
+  numberInputs?: Array<{
+    input: NumberInput | undefined;
+    validCount: number;
+    failedCount: number;
+  }>;
+}
+
+export interface ConversionExample {
+  row: number;
+  raw: datum;
+  value: datum;
+  /** The same text read in another convention, such as "1.234 as 1.234,5". */
+  alternate?: string;
 }
 
 const validTypes = new Set<DataType>([
@@ -94,6 +120,14 @@ export function getFieldSettingsError(
   ) {
     return "Choose a valid date input preset.";
   }
+  if (settings.numberInput !== undefined) {
+    if (!isNumberInput(settings.numberInput)) {
+      return "Choose a valid number input.";
+    }
+    if (settings.type !== "numeric") {
+      return "Number input needs the numeric type.";
+    }
+  }
   if (
     settings.nullTokens !== undefined &&
     settings.nullTokens.some((token) => typeof token !== "string")
@@ -123,6 +157,9 @@ export function convertFieldValue(
     case "categorical":
       return { value: raw };
     case "numeric": {
+      if (settings.numberInput && typeof raw === "string") {
+        return parseNumberInput(text, settings.numberInput);
+      }
       const value = parseNumber(raw);
       return Number.isFinite(value)
         ? { value }
@@ -337,11 +374,7 @@ export function applyFieldSettings<T extends Record<string, datum>>(
   return rows.map((row) => {
     const next = { ...row };
     Object.entries(fieldSettings).forEach(([field, settings]) => {
-      if (
-        !settings.type &&
-        !(settings.nullTokens && settings.nullTokens.length > 0) &&
-        !settings.datePreset
-      ) {
+      if (!convertsValues(settings)) {
         return;
       }
       const type = settings.type ?? inferredTypes[field];
@@ -358,6 +391,34 @@ export function applyFieldSettings<T extends Record<string, datum>>(
   });
 }
 
+/** True when these settings change a field's runtime values. */
+export function convertsValues(settings: FieldSettings = {}) {
+  return (
+    settings.type !== undefined ||
+    Boolean(settings.datePreset) ||
+    Boolean(settings.numberInput) ||
+    Boolean(settings.nullTokens?.length)
+  );
+}
+
+/** True when two settings read a field's values the same way. */
+export function sameConversion(left: FieldSettings, right: FieldSettings) {
+  return (
+    left.type === right.type &&
+    left.datePreset === right.datePreset &&
+    left.numberInput === right.numberInput &&
+    JSON.stringify(left.nullTokens?.filter(Boolean) ?? []) ===
+      JSON.stringify(right.nullTokens?.filter(Boolean) ?? [])
+  );
+}
+
+const NUMBER_CONVENTIONS = [undefined, ...NUMBER_INPUT_IDS] as const;
+
+/** How a convention reads in review text, such as "1,234.5". */
+export function numberInputLabel(input: NumberInput | undefined) {
+  return input ? NUMBER_INPUTS[input].label : PLAIN_NUMBER_LABEL;
+}
+
 export function buildConversionPreview(
   field: string,
   rows: Array<Record<string, datum>>,
@@ -365,17 +426,24 @@ export function buildConversionPreview(
   inferredType: DataType
 ): ConversionPreview {
   const effectiveType = settings.type ?? inferredType;
-  const examples: ConversionPreview["examples"] = [];
+  const converts = convertsValues(settings);
+  const numeric = effectiveType === "numeric";
   const failures: ConversionFailure[] = [];
+  const ambiguous: ConversionExample[] = [];
+  const reformatted: ConversionExample[] = [];
+  const plain: ConversionExample[] = [];
+  const readings = NUMBER_CONVENTIONS.map((input) => ({
+    input,
+    settings: { ...settings, type: "numeric", numberInput: input } as const,
+    validCount: 0,
+    failedCount: 0,
+  }));
   let validCount = 0;
   let missingCount = 0;
+  let ambiguousCount = 0;
 
   rows.forEach((row, rowIndex) => {
     const raw = row[field];
-    const converts =
-      settings.type !== undefined ||
-      Boolean(settings.datePreset) ||
-      Boolean(settings.nullTokens?.length);
     const result = converts
       ? convertFieldValue(raw, effectiveType, settings)
       : { value: raw };
@@ -386,8 +454,41 @@ export function buildConversionPreview(
     } else {
       validCount += 1;
     }
-    if (examples.length < 8 && (raw != null || result.error)) {
-      examples.push({ row: rowIndex, raw, value: result.value });
+
+    let alternate: string | undefined;
+    if (numeric) {
+      readings.forEach((reading) => {
+        const read = convertFieldValue(raw, "numeric", reading.settings);
+        if (read.error) {
+          reading.failedCount += 1;
+          return;
+        }
+        if (read.value == null) return;
+        reading.validCount += 1;
+        if (
+          !alternate &&
+          typeof raw === "string" &&
+          typeof result.value === "number" &&
+          read.value !== result.value
+        ) {
+          alternate = `${String(read.value)} as ${numberInputLabel(reading.input)}`;
+        }
+      });
+    }
+
+    if (raw == null && !result.error) return;
+    const example = { row: rowIndex, raw, value: result.value, alternate };
+    if (alternate) {
+      ambiguousCount += 1;
+      if (ambiguous.length < 8) ambiguous.push(example);
+    } else if (
+      typeof raw === "string" &&
+      typeof result.value === "number" &&
+      raw.trim() !== String(result.value)
+    ) {
+      if (reformatted.length < 8) reformatted.push(example);
+    } else if (plain.length < 8) {
+      plain.push(example);
     }
   });
 
@@ -399,8 +500,18 @@ export function buildConversionPreview(
     validCount,
     missingCount,
     failedCount: failures.length,
-    examples,
+    // Rows that read differently in another convention, or whose text
+    // changes, come first: they are the ones to check.
+    examples: [...ambiguous, ...reformatted, ...plain].slice(0, 8),
     failures,
+    ambiguousCount,
+    numberInputs: numeric
+      ? readings.map(({ input, validCount, failedCount }) => ({
+          input,
+          validCount,
+          failedCount,
+        }))
+      : undefined,
   };
 }
 

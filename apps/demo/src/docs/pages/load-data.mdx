@@ -59,7 +59,7 @@ explorEDA keeps the values your file gives it. Each column's type comes from eve
 
 A JSON file whose records sit under one key, such as `{ "data": [...] }`, opens those records. When a file can't be read, the message names the row or line, such as **Row 12 has 6 values, but the header names 5 fields.** A blank or repeated header gets a new name, such as `Column 3` or `name_2`, and the field list shows it.
 
-To read a column another way, open the field in **Fields** and change its type.
+To read a column another way, open the field in **Fields** and change its type. For numbers written as text with digit groups or a decimal comma, such as `1,234.50` or `1.234,50`, set its [number input](/docs/number-input).
 
 Files of up to a few hundred thousand rows open in seconds. A table of more than 500,000 rows asks before it opens, since it takes a while and a lot of the tab's memory.
 

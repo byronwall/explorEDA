@@ -1,0 +1,161 @@
+Invoice,Supplier,Country,Month,Amount,Lines
+INV-1001,Ferrer Envases,Spain,2026-01,"1.121,73",9
+INV-1002,Atelier Rousseau,France,2026-01,"863,54",4
+INV-1003,Van Dijk Logistiek,Netherlands,2026-01,"2.312,42",11
+INV-1004,Alpen Holz,Austria,2026-01,"1.520,88",7
+INV-1005,Brouwer Verpakking,Belgium,2026-01,"555,88",12
+INV-1006,Ferrer Envases,Spain,2026-01,1.400,5
+INV-1007,Kessler Stahl,Germany,2026-01,"6.589,96",6
+INV-1008,Brouwer Verpakking,Belgium,2026-01,"448,84",10
+INV-1009,Van Dijk Logistiek,Netherlands,2026-01,"1.630,61",12
+INV-1010,Alpen Holz,Austria,2026-01,"809,20",10
+INV-1011,Brouwer Verpakking,Belgium,2026-01,"937,75",2
+INV-1012,Ferrer Envases,Spain,2026-01,"1.707,25",1
+INV-1013,Kessler Stahl,Germany,2026-01,"4.747,52",12
+INV-1014,Atelier Rousseau,France,2026-01,"958,68",3
+INV-1015,Ferrer Envases,Spain,2026-01,"1.768,07",7
+INV-1016,Alpen Holz,Austria,2026-01,"786,12",12
+INV-1017,Brouwer Verpakking,Belgium,2026-01,"1.206,77",8
+INV-1018,Ferrer Envases,Spain,2026-01,n/a,4
+INV-1019,Kessler Stahl,Germany,2026-02,"3.728,01",1
+INV-1020,Atelier Rousseau,France,2026-02,"437,70",7
+INV-1021,Van Dijk Logistiek,Netherlands,2026-02,"3.673,20",11
+INV-1022,Ferrer Envases,Spain,2026-02,"1.059,81",6
+INV-1023,Brouwer Verpakking,Belgium,2026-02,"1.400,81",8
+INV-1024,Ferrer Envases,Spain,2026-02,"1.111,34",1
+INV-1025,Kessler Stahl,Germany,2026-02,"3.635,55",10
+INV-1026,Atelier Rousseau,France,2026-02,"1.345,39",8
+INV-1027,Van Dijk Logistiek,Netherlands,2026-02,"2.692,01",7
+INV-1028,Alpen Holz,Austria,2026-02,"1.546,23",6
+INV-1029,Van Dijk Logistiek,Netherlands,2026-02,1.900,10
+INV-1030,Ferrer Envases,Spain,2026-02,"1.033,26",9
+INV-1031,Kessler Stahl,Germany,2026-02,"3.692,02",7
+INV-1032,Atelier Rousseau,France,2026-02,"647,50",10
+INV-1033,Van Dijk Logistiek,Netherlands,2026-02,"851,11",3
+INV-1034,Alpen Holz,Austria,2026-02,"1.225,12",12
+INV-1035,Brouwer Verpakking,Belgium,2026-02,"445,37",1
+INV-1036,Van Dijk Logistiek,Netherlands,2026-02,"3.116,77",3
+INV-1037,Kessler Stahl,Germany,2026-03,"3.826,12",7
+INV-1038,Atelier Rousseau,France,2026-03,"1.368,23",3
+INV-1039,Van Dijk Logistiek,Netherlands,2026-03,"3.188,74",3
+INV-1040,Alpen Holz,Austria,2026-03,"3.622,40",2
+INV-1041,Brouwer Verpakking,Belgium,2026-03,"664,00",5
+INV-1042,Ferrer Envases,Spain,2026-03,"1.18O,40",4
+INV-1043,Ferrer Envases,Spain,2026-03,"1.870,36",6
+INV-1044,Atelier Rousseau,France,2026-03,"986,93",8
+INV-1045,Van Dijk Logistiek,Netherlands,2026-03,"2.691,78",3
+INV-1046,Alpen Holz,Austria,2026-03,"3.342,43",11
+INV-1047,Brouwer Verpakking,Belgium,2026-03,"327,77",7
+INV-1048,Ferrer Envases,Spain,2026-03,"1.120,02",5
+INV-1049,Kessler Stahl,Germany,2026-03,"3.649,79",6
+INV-1050,Ferrer Envases,Spain,2026-03,"1.622,77",11
+INV-1051,Van Dijk Logistiek,Netherlands,2026-03,"1.753,42",3
+INV-1052,Alpen Holz,Austria,2026-03,3.200,9
+INV-1053,Brouwer Verpakking,Belgium,2026-03,"384,20",5
+INV-1054,Ferrer Envases,Spain,2026-03,"1.294,12",5
+INV-1055,Kessler Stahl,Germany,2026-04,"3.517,19",6
+INV-1056,Atelier Rousseau,France,2026-04,"688,95",11
+INV-1057,Brouwer Verpakking,Belgium,2026-04,"662,95",5
+INV-1058,Alpen Holz,Austria,2026-04,"1.073,42",4
+INV-1059,Brouwer Verpakking,Belgium,2026-04,"1.204,08",3
+INV-1060,Ferrer Envases,Spain,2026-04,"581,96",11
+INV-1061,Kessler Stahl,Germany,2026-04,"1.812,17",3
+INV-1062,Atelier Rousseau,France,2026-04,"426,93",6
+INV-1063,Van Dijk Logistiek,Netherlands,2026-04,"1.251,94",5
+INV-1064,Van Dijk Logistiek,Netherlands,2026-04,"2.122,53",4
+INV-1065,Brouwer Verpakking,Belgium,2026-04,"475,80",3
+INV-1066,Ferrer Envases,Spain,2026-04,"1.494,89",4
+INV-1067,Kessler Stahl,Germany,2026-04,"2.119,62",10
+INV-1068,Atelier Rousseau,France,2026-04,"1.686,47",4
+INV-1069,Van Dijk Logistiek,Netherlands,2026-04,"3.023,26",12
+INV-1070,Alpen Holz,Austria,2026-04,"3.108,05",12
+INV-1071,Kessler Stahl,Germany,2026-04,"3.203,39",12
+INV-1072,Ferrer Envases,Spain,2026-04,"1.229,55",3
+INV-1073,Kessler Stahl,Germany,2026-05,"2.659,21",6
+INV-1074,Atelier Rousseau,France,2026-05,"839,33",7
+INV-1075,Van Dijk Logistiek,Netherlands,2026-05,1.200,10
+INV-1076,Alpen Holz,Austria,2026-05,"3.831,01",7
+INV-1077,Brouwer Verpakking,Belgium,2026-05,"1.308,20",7
+INV-1078,Van Dijk Logistiek,Netherlands,2026-05,"2.046,49",6
+INV-1079,Kessler Stahl,Germany,2026-05,"2.980,14",7
+INV-1080,Atelier Rousseau,France,2026-05,"824,04",7
+INV-1081,Van Dijk Logistiek,Netherlands,2026-05,"1.671,73",5
+INV-1082,Alpen Holz,Austria,2026-05,"828,15",5
+INV-1083,Brouwer Verpakking,Belgium,2026-05,"887,58",4
+INV-1084,Ferrer Envases,Spain,2026-05,"1.323,45",8
+INV-1085,Van Dijk Logistiek,Netherlands,2026-05,"1.892,02",2
+INV-1086,Atelier Rousseau,France,2026-05,"1.067,40",6
+INV-1087,Van Dijk Logistiek,Netherlands,2026-05,"1.788,86",10
+INV-1088,Alpen Holz,Austria,2026-05,"1.591,73",2
+INV-1089,Brouwer Verpakking,Belgium,2026-05,n/a,2
+INV-1090,Ferrer Envases,Spain,2026-06,"995,89",9
+INV-1091,Kessler Stahl,Germany,2026-06,"2.615,56",4
+INV-1092,Van Dijk Logistiek,Netherlands,2026-06,"2.552,80",9
+INV-1093,Van Dijk Logistiek,Netherlands,2026-06,"2.455,91",9
+INV-1094,Alpen Holz,Austria,2026-06,"2.491,23",11
+INV-1095,Brouwer Verpakking,Belgium,2026-06,"1.070,10",8
+INV-1096,Ferrer Envases,Spain,2026-06,"1.604,19",9
+INV-1097,Kessler Stahl,Germany,2026-06,"2.594,54",1
+INV-1098,Atelier Rousseau,France,2026-06,1.100,10
+INV-1099,Atelier Rousseau,France,2026-06,"1.216,95",3
+INV-1100,Alpen Holz,Austria,2026-06,"1.232,18",8
+INV-1101,Brouwer Verpakking,Belgium,2026-06,"1.034,00",1
+INV-1102,Ferrer Envases,Spain,2026-06,"1.276,45",9
+INV-1103,Kessler Stahl,Germany,2026-06,"2.627,26",6
+INV-1104,Atelier Rousseau,France,2026-06,"1.594,42",8
+INV-1105,Van Dijk Logistiek,Netherlands,2026-06,"1.917,08",6
+INV-1106,Alpen Holz,Austria,2026-06,"1.298,33",11
+INV-1107,Brouwer Verpakking,Belgium,2026-06,"1.000,27",9
+INV-1108,Ferrer Envases,Spain,2026-07,"874,67",2
+INV-1109,Kessler Stahl,Germany,2026-07,"3.158,27",10
+INV-1110,Atelier Rousseau,France,2026-07,"1.396,95",6
+INV-1111,Van Dijk Logistiek,Netherlands,2026-07,"2.836,46",4
+INV-1112,Alpen Holz,Austria,2026-07,"2.378,67",11
+INV-1113,Kessler Stahl,Germany,2026-07,"2.043,46",6
+INV-1114,Ferrer Envases,Spain,2026-07,"2.345,47",11
+INV-1115,Kessler Stahl,Germany,2026-07,"7.446,35",4
+INV-1116,Atelier Rousseau,France,2026-07,"459,72",3
+INV-1117,Van Dijk Logistiek,Netherlands,2026-07,"2.076,98",3
+INV-1118,Alpen Holz,Austria,2026-07,"2.023,20",3
+INV-1119,Brouwer Verpakking,Belgium,2026-07,"332,67",5
+INV-1120,Kessler Stahl,Germany,2026-07,"5.579,24",9
+INV-1121,Kessler Stahl,Germany,2026-07,735.50,7
+INV-1122,Atelier Rousseau,France,2026-07,"495,47",12
+INV-1123,Van Dijk Logistiek,Netherlands,2026-07,"4.242,87",12
+INV-1124,Alpen Holz,Austria,2026-07,"1.567,22",3
+INV-1125,Brouwer Verpakking,Belgium,2026-07,"1.104,42",3
+INV-1126,Ferrer Envases,Spain,2026-08,"3.000,59",2
+INV-1127,Kessler Stahl,Germany,2026-08,"10.753,95",9
+INV-1128,Atelier Rousseau,France,2026-08,"730,17",9
+INV-1129,Van Dijk Logistiek,Netherlands,2026-08,"1.219,73",9
+INV-1130,Alpen Holz,Austria,2026-08,"1.221,48",10
+INV-1131,Brouwer Verpakking,Belgium,2026-08,"899,79",2
+INV-1132,Ferrer Envases,Spain,2026-08,"1.044,83",3
+INV-1133,Kessler Stahl,Germany,2026-08,"1.963,72",2
+INV-1134,Van Dijk Logistiek,Netherlands,2026-08,"1.673,36",8
+INV-1135,Van Dijk Logistiek,Netherlands,2026-08,"1.369,83",2
+INV-1136,Alpen Holz,Austria,2026-08,"2.182,19",9
+INV-1137,Brouwer Verpakking,Belgium,2026-08,"340,14",1
+INV-1138,Ferrer Envases,Spain,2026-08,"1.108,28",4
+INV-1139,Kessler Stahl,Germany,2026-08,"7.315,85",7
+INV-1140,Atelier Rousseau,France,2026-08,"846,97",11
+INV-1141,Ferrer Envases,Spain,2026-08,"989,09",2
+INV-1142,Alpen Holz,Austria,2026-08,"950,60",5
+INV-1143,Brouwer Verpakking,Belgium,2026-08,"1.125,41",9
+INV-1144,Ferrer Envases,Spain,2026-09,1.400,5
+INV-1145,Kessler Stahl,Germany,2026-09,"6.578,49",12
+INV-1146,Atelier Rousseau,France,2026-09,"481,74",7
+INV-1147,Van Dijk Logistiek,Netherlands,2026-09,"2.343,20",7
+INV-1148,Ferrer Envases,Spain,2026-09,"1.063,12",11
+INV-1149,Brouwer Verpakking,Belgium,2026-09,"1.015,27",6
+INV-1150,Ferrer Envases,Spain,2026-09,"1.699,61",12
+INV-1151,Kessler Stahl,Germany,2026-09,"2.630,06",4
+INV-1152,Atelier Rousseau,France,2026-09,"936,24",8
+INV-1153,Van Dijk Logistiek,Netherlands,2026-09,"2.140,98",7
+INV-1154,Alpen Holz,Austria,2026-09,"1.612,98",12
+INV-1155,Kessler Stahl,Germany,2026-09,"5.321,10",1
+INV-1156,Ferrer Envases,Spain,2026-09,"2.955,08",1
+INV-1157,Kessler Stahl,Germany,2026-09,"7.008,43",7
+INV-1158,Atelier Rousseau,France,2026-09,"482,99",6
+INV-1159,Van Dijk Logistiek,Netherlands,2026-09,"3.298,61",10
+INV-1160,Alpen Holz,Austria,2026-09,"1.246,40",5

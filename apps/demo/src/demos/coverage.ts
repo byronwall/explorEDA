@@ -735,6 +735,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "supplier-invoices",
+    intent:
+      "Read amounts written as 1.234,50 as numbers with one number input, and review the values that fail.",
+    features: {
+      "chart:bar": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+    },
+  },
+  {
     exampleId: "rank-correlation-basics",
     intent:
       "Compare Pearson and Spearman on a curve that always rises, with tied ratings and missing practice-test counts.",

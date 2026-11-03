@@ -23,6 +23,7 @@ import {
   shopDashboard,
   timeSeriesDashboard,
   categoryMappingsDashboard,
+  supplierInvoicesDashboard,
 } from "@/demos/dashboardSettings";
 import { demoSettings as lorenzSettings } from "@/demos/lorenz";
 import { engineeringHistogramsDashboard } from "@/demos/engineeringHistograms";
@@ -752,6 +753,18 @@ export const liveExamples = {
       { expectText: "Country, mapped" },
       { expectText: "114" },
     ],
+  },
+  "number-input": {
+    label: "Live number input",
+    data: "/datasets/supplier-invoices.csv",
+    savedData: focus(supplierInvoicesDashboard, {
+      "invoices-amount": [0, 0, 6, 5],
+      "invoices-supplier": [6, 0, 6, 5],
+    }),
+    exampleId: "supplier-invoices",
+    shotAlt:
+      "A histogram of invoice amounts in euros beside a row chart of invoices by supplier.",
+    steps: [{ expectRows: 160 }, { expectText: "Amount (EUR)" }],
   },
   calculations: {
     label: "Live calculated fields",
