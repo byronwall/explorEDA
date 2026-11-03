@@ -239,7 +239,7 @@ export function getChartFields(settings: ChartSettings): string[] {
           settings.entityField,
         ];
       case "joint-missingness":
-        return settings.fields;
+        return [...settings.fields, settings.groupField];
       case "timeline":
         return [
           settings.field,

@@ -1,3 +1,4 @@
+import { categoryKey, categoryLabel } from "@/lib/categories";
 import { isMissingValue } from "@/lib/valueParsing";
 import type { IdType } from "@/providers/lib/dataLayerState";
 import type { datum } from "@/types/ChartTypes";
@@ -134,4 +135,80 @@ export function defaultMissingnessFields(
     if (!chosen.includes(field)) chosen.push(field);
   }
   return chosen;
+}
+
+/** Groups that get their own column; the rest share one remainder column. */
+export const MAX_NAMED_GROUPS = 8;
+
+export interface GroupColumn {
+  key: string;
+  /** The group's value; absent for the remainder column. */
+  value?: datum;
+  label: string;
+  /** Rows of this group in the chart's scope. */
+  total: number;
+}
+
+export interface GroupPlan {
+  columns: GroupColumn[];
+  /** Each row's column key. */
+  columnOf: (id: IdType) => string;
+}
+
+const REMAINDER_KEY = "__remainder";
+
+/**
+ * Splits the scope by a group field: the most common groups first, missing
+ * values (blank text included) as one group, and the rest in a remainder.
+ */
+export function planGroups(
+  ids: readonly IdType[],
+  group: Record<IdType, datum>
+): GroupPlan {
+  const valueOf = (id: IdType) =>
+    isMissingValue(group[id]) ? null : group[id];
+  const counts = new Map<string, { value: datum; total: number }>();
+  for (const id of ids) {
+    const value = valueOf(id);
+    const key = categoryKey(value);
+    const entry = counts.get(key);
+    if (entry) entry.total++;
+    else counts.set(key, { value, total: 1 });
+  }
+  const sorted = [...counts.entries()].sort((a, b) => b[1].total - a[1].total);
+  const named = sorted.slice(0, MAX_NAMED_GROUPS);
+  const rest = sorted.slice(MAX_NAMED_GROUPS);
+  const columns: GroupColumn[] = named.map(([key, entry]) => ({
+    key,
+    value: entry.value,
+    label: categoryLabel(entry.value),
+    total: entry.total,
+  }));
+  if (rest.length)
+    columns.push({
+      key: REMAINDER_KEY,
+      label: `${rest.length} other groups`,
+      total: rest.reduce((sum, [, entry]) => sum + entry.total, 0),
+    });
+  const namedKeys = new Set(named.map(([key]) => key));
+  return {
+    columns,
+    columnOf: (id) => {
+      const key = categoryKey(valueOf(id));
+      return namedKeys.has(key) ? key : REMAINDER_KEY;
+    },
+  };
+}
+
+/** Rows of `ids` in each group column. */
+export function countByGroup(
+  ids: Iterable<IdType>,
+  plan: GroupPlan
+): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const id of ids) {
+    const key = plan.columnOf(id);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return counts;
 }

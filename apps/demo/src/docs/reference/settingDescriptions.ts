@@ -158,6 +158,8 @@ export const CHART_SETTINGS: Readonly<
   },
   "joint-missingness": {
     field: "Not used. The chart reads its fields from `fields`.",
+    groupField:
+      "Optional group field. Each of its eight largest groups gets a column with every pattern's share of that group; the rest share one column.",
     fields:
       "Two to twelve fields, in column order. A pattern names the missing fields; every other field here is present. Changing the fields clears the selection.",
   },

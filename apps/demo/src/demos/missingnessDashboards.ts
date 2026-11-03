@@ -36,6 +36,7 @@ const orderGaps: Chart = {
   title: "Store orders explain most missing tracking",
   subtitle: "Exact missing patterns across fulfilment and feedback fields",
   fields: ["Shipped", "Tracking", "Delivered", "Rating", "Review", "Phone"],
+  groupField: "Channel",
   layout: layout(0, 0, 8, 8),
 };
 

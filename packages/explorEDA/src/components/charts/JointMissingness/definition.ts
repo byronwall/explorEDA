@@ -12,6 +12,8 @@ export interface JointMissingnessSettings extends BaseChartSettings {
   type: "joint-missingness";
   /** Fields in column order. Order is display only. */
   fields: string[];
+  /** Optional field whose groups each get a share column. */
+  groupField?: string;
 }
 
 /** The chart's own selection: a union of exact missing patterns. */

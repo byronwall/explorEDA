@@ -832,6 +832,8 @@ function isChart(value: unknown): boolean {
         Array.isArray(value.fields) &&
         value.fields.every((field) => typeof field === "string") &&
         new Set(value.fields).size === value.fields.length &&
+        (value.groupField === undefined ||
+          typeof value.groupField === "string") &&
         (value.filters as unknown[]).filter(
           (filter) => isRecord(filter) && filter.type === "missingness-pattern"
         ).length <= 1

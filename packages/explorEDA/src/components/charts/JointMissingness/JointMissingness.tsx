@@ -23,6 +23,8 @@ import type { JointMissingnessTrace } from "./JointMissingnessTraceBody";
 import {
   MIN_MISSINGNESS_FIELDS,
   PATTERN_PAGE_SIZE,
+  countByGroup,
+  planGroups,
   missingPatternLabel,
   patternKey,
   planPatterns,
@@ -73,6 +75,15 @@ export function JointMissingness({
     );
     return planPatterns({ ids: liveIds, fields, columns });
   }, [fields, liveIds, getColumnData, nonce]);
+
+  // Each group's share divides by that group's own rows in scope.
+  const { groupField } = settings;
+  const groups = useMemo(() => {
+    void nonce;
+    return groupField
+      ? planGroups(liveIds, getColumnData(groupField))
+      : undefined;
+  }, [groupField, liveIds, getColumnData, nonce]);
 
   const selection = patternSelection(settings);
   const selectedKeys = new Set(selection?.patterns.map(patternKey));
@@ -183,12 +194,55 @@ export function JointMissingness({
       (pattern) =>
         !plan.patterns.some((item) => item.key === patternKey(pattern))
     ) ?? [];
+  const selectedByGroup =
+    groups &&
+    selection &&
+    countByGroup(
+      plan.patterns
+        .filter((pattern) => selectedKeys.has(pattern.key))
+        .flatMap((pattern) => pattern.ids),
+      groups
+    );
+  const groupShares = groups?.columns
+    .filter((column) => column.total > 0)
+    .map((column) => ({
+      column,
+      share: (selectedByGroup?.get(column.key) ?? 0) / column.total,
+    }));
+  const highest = groupShares?.reduce(
+    (a, b) => (b.share > a.share ? b : a),
+    groupShares[0]!
+  );
+  const lowest = groupShares?.reduce(
+    (a, b) => (b.share < a.share ? b : a),
+    groupShares[0]!
+  );
+  const gapText =
+    selectedByGroup &&
+    highest &&
+    lowest &&
+    highest !== lowest &&
+    `${highest.column.label} − ${lowest.column.label}: ${((highest.share - lowest.share) * 100).toFixed(1)} points`;
+  const groupCell = (count: number, total: number) => {
+    const share = total ? count / total : 0;
+    return (
+      <span
+        style={{
+          background: `color-mix(in srgb, ${themeColors.mark} ${Math.round(Math.min(1, share * 1.6) * 100)}%, transparent)`,
+          color: share > 0.35 ? "white" : undefined,
+        }}
+      >
+        {sharePercent(count, total)}
+      </span>
+    );
+  };
   const hiddenRows = plan.patterns
     .filter((_, index) => Math.floor(index / PATTERN_PAGE_SIZE) !== current)
     .reduce((sum, pattern) => sum + pattern.ids.length, 0);
   const statusParts = [
     selection &&
       `${selection.patterns.length} ${selection.patterns.length === 1 ? "pattern" : "patterns"} selected · ${selectedRows.toLocaleString()} of ${plan.total.toLocaleString()} rows (${sharePercent(selectedRows, plan.total)})`,
+    gapText,
     zeroSelected.length > 0 &&
       `${zeroSelected.length} selected with no rows: ${zeroSelected.map(label).join("; ")}`,
   ];
@@ -265,7 +319,7 @@ export function JointMissingness({
                   />
                 </th>
               ))}
-              <th colSpan={2} />
+              <th colSpan={2 + (groups?.columns.length ?? 0)} />
             </tr>
             <tr>
               <th className="eda-missingness-caption">Exact missing set</th>
@@ -280,6 +334,14 @@ export function JointMissingness({
               ))}
               <th className="eda-missingness-caption">Rows</th>
               <th className="eda-missingness-caption text-right">Share</th>
+              {groups?.columns.map((column) => (
+                <th key={column.key} className="eda-missingness-group">
+                  <span>{column.label}</span>
+                  <small className="tabular-nums">
+                    of {column.total.toLocaleString()}
+                  </small>
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -291,6 +353,7 @@ export function JointMissingness({
               );
               const first = Math.min(...positions);
               const last = Math.max(...positions);
+              const byGroup = groups && countByGroup(pattern.ids, groups);
               return (
                 <tr
                   key={pattern.key}
@@ -341,10 +404,45 @@ export function JointMissingness({
                   <td className="eda-missingness-share tabular-nums">
                     {sharePercent(pattern.ids.length, plan.total)}
                   </td>
+                  {groups?.columns.map((column) => (
+                    <td
+                      key={column.key}
+                      className="eda-missingness-group-cell tabular-nums"
+                    >
+                      {groupCell(byGroup!.get(column.key) ?? 0, column.total)}
+                    </td>
+                  ))}
                 </tr>
               );
             })}
           </tbody>
+          {selectedByGroup && (
+            <tfoot>
+              <tr className="eda-missingness-selected">
+                <th scope="row" className="eda-missingness-caption">
+                  Selected
+                </th>
+                <td colSpan={fields.length} />
+                <td className="tabular-nums">
+                  <b>{selectedRows.toLocaleString()}</b>
+                </td>
+                <td className="eda-missingness-share tabular-nums">
+                  {sharePercent(selectedRows, plan.total)}
+                </td>
+                {groups!.columns.map((column) => (
+                  <td
+                    key={column.key}
+                    className="eda-missingness-group-cell tabular-nums"
+                  >
+                    {groupCell(
+                      selectedByGroup.get(column.key) ?? 0,
+                      column.total
+                    )}
+                  </td>
+                ))}
+              </tr>
+            </tfoot>
+          )}
         </table>
         {pages > 1 && (
           <div className="eda-missingness-pager">

@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import type { datum } from "@/types/ChartTypes";
 import { jointMissingnessDefinition } from "./definition";
 import {
+  countByGroup,
   defaultMissingnessFields,
+  planGroups,
   patternMatcher,
   planPatterns,
 } from "./jointMissingnessPlan";
@@ -177,5 +179,37 @@ describe("defaultMissingnessFields", () => {
       defaultMissingnessFields(["a", "b", "c", "d"], (f) => counts[f]!)
     ).toEqual(["c", "b", "d"]);
     expect(defaultMissingnessFields(["a", "b"], () => 0)).toEqual(["a", "b"]);
+  });
+});
+
+describe("planGroups", () => {
+  it("compares a selection's share within each group", () => {
+    const groups = planGroups(ids, column("group"));
+    expect(groups.columns.map((c) => [c.label, c.total])).toEqual([
+      ["A", 8],
+      ["B", 4],
+    ]);
+    const selected = ids.filter(
+      patternMatcher(FIELDS, columns, [["x", "y"], ["note"]])
+    );
+    const counts = countByGroup(selected, groups);
+    expect(counts.get(groups.columns[0]!.key)).toBe(3);
+    expect(counts.get(groups.columns[1]!.key)).toBe(1);
+  });
+
+  it("pools groups past the limit and keeps missing groups together", () => {
+    const many = Object.fromEntries(
+      Array.from({ length: 12 }, (_, i) => [i, i < 2 ? "" : `g${i}`])
+    );
+    const groups = planGroups(
+      Array.from({ length: 12 }, (_, i) => i),
+      many
+    );
+    expect(groups.columns[0]).toMatchObject({ label: "(missing)", total: 2 });
+    expect(groups.columns.at(-1)).toMatchObject({
+      label: "3 other groups",
+      total: 3,
+    });
+    expect(groups.columns.reduce((sum, c) => sum + c.total, 0)).toBe(12);
   });
 });

@@ -94,6 +94,44 @@ export function JointMissingnessSettingsPanel({
           onChange={(field) => field && setFields([...settings.fields, field])}
         />
       )}
+      <div className="space-y-1 pt-1">
+        <h5 className="text-sm font-medium">Compare groups</h5>
+        <div className="flex min-w-0 items-center gap-1">
+          <div className="min-w-0 flex-1">
+            <FieldSelector
+              label=""
+              placeholder="No groups"
+              value={settings.groupField ?? ""}
+              fields={allFields}
+              onChange={(groupField) =>
+                onSettingsChange({
+                  ...settings,
+                  groupField: groupField || undefined,
+                })
+              }
+            />
+          </div>
+          {settings.groupField && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              aria-label="Stop comparing groups"
+              tooltip="Remove the group columns."
+              onClick={() =>
+                onSettingsChange({ ...settings, groupField: undefined })
+              }
+            >
+              <X />
+            </Button>
+          )}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Each group gets a column with every pattern&apos;s share of that
+          group&apos;s rows. The eight largest groups get their own column; the
+          rest share one.
+        </p>
+      </div>
       <p className="text-xs text-muted-foreground">
         Each pattern names the fields that are missing; every other field here
         is present. Changing the fields clears the selection.
