@@ -160,6 +160,7 @@ export const CHART_SETTINGS: Readonly<
     field: "Not used. The chart reads its fields from `fields`.",
     eligibility:
       "Optional rule for usable rows: `fields` lists the inputs a later step needs, from the chart's fields, and `requirement` is present (every input has a value) or finite (every input is also a finite number).",
+    sort: "Pattern order. Absent puts the most rows first; fields puts the fewest missing fields first. All present always comes first.",
     groupField:
       "Optional group field. Each of its eight largest groups gets a column with every pattern's share of that group; the rest share one column.",
     fields:

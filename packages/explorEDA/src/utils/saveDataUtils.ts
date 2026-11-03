@@ -843,6 +843,7 @@ function isChart(value: unknown): boolean {
         new Set(value.fields).size === value.fields.length &&
         (value.groupField === undefined ||
           typeof value.groupField === "string") &&
+        (value.sort === undefined || value.sort === "fields") &&
         (value.eligibility === undefined ||
           (isRecord(value.eligibility) &&
             (value.eligibility.requirement === "present" ||

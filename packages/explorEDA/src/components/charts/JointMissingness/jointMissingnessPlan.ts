@@ -52,10 +52,13 @@ export function planPatterns({
   ids,
   fields,
   columns,
+  sort = "rows",
 }: {
   ids: readonly IdType[];
   fields: readonly string[];
   columns: Columns;
+  /** Most rows first, or fewest missing fields first. */
+  sort?: "rows" | "fields";
 }): PatternPlan {
   const missing = missingOf(fields, columns);
   const byKey = new Map<string, MissingPattern>();
@@ -73,11 +76,14 @@ export function planPatterns({
     pattern.ids.push(id);
   }
   const [allPresent, ...rest] = byKey.values();
-  rest.sort(
-    (a, b) =>
-      b.ids.length - a.ids.length ||
-      a.missing.length - b.missing.length ||
-      (a.key < b.key ? -1 : 1)
+  rest.sort((a, b) =>
+    sort === "fields"
+      ? a.missing.length - b.missing.length ||
+        b.ids.length - a.ids.length ||
+        (a.key < b.key ? -1 : 1)
+      : b.ids.length - a.ids.length ||
+        a.missing.length - b.missing.length ||
+        (a.key < b.key ? -1 : 1)
   );
   return { patterns: [allPresent!, ...rest], fieldTotals, total: ids.length };
 }

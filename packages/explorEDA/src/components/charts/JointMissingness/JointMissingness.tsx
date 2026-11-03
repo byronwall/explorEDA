@@ -6,6 +6,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { SavedChartSettings } from "@/types/SavedDataTypes";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
+import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
   STATUS_HINT_MIN_WIDTH,
@@ -64,6 +65,7 @@ export function JointMissingness({
   const calculations = useDataLayer((state) => state.calculations);
   const themeColors = useThemeColors();
   const [page, setPage] = useState(0);
+  const [hovered, setHovered] = useState<string | null>(null);
 
   const { fields } = settings;
   const unknown = useMemo(() => {
@@ -78,8 +80,8 @@ export function JointMissingness({
     const columns = Object.fromEntries(
       fields.map((field) => [field, getColumnData(field)])
     );
-    return planPatterns({ ids: liveIds, fields, columns });
-  }, [fields, liveIds, getColumnData, nonce]);
+    return planPatterns({ ids: liveIds, fields, columns, sort: settings.sort });
+  }, [fields, liveIds, getColumnData, nonce, settings.sort]);
 
   // Each group's share divides by that group's own rows in scope.
   const { groupField } = settings;
@@ -201,6 +203,45 @@ export function JointMissingness({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revision, plan, owner, settings.id, fields]);
   useTraceSource(owner, source);
+  // A field header selects every pattern that misses it: the rows missing
+  // that field, as a union of exact patterns.
+  const fieldPatterns = (field: string) =>
+    plan.patterns
+      .filter((pattern) => pattern.missing.includes(field))
+      .map((pattern) => pattern.missing);
+  const fieldSelected = (field: string) => {
+    const keys = fieldPatterns(field).map(patternKey);
+    return (
+      keys.length > 0 &&
+      keys.length === selectedKeys.size &&
+      keys.every((key) => selectedKeys.has(key))
+    );
+  };
+  const selectField = (field: string, add: boolean) => {
+    const own = fieldPatterns(field);
+    const keys = new Set(own.map(patternKey));
+    const patterns = fieldSelected(field)
+      ? []
+      : add
+        ? [
+            ...(selection?.patterns ?? []).filter(
+              (pattern) => !keys.has(patternKey(pattern))
+            ),
+            ...own.map((missing) => [...missing].sort()),
+          ]
+        : own.map((missing) => [...missing].sort());
+    const filters = settings.filters.filter(
+      (filter) => filter !== selection && filter !== inputs
+    );
+    if (patterns.length)
+      filters.push({ type: "missingness-pattern", field: "__ID", patterns });
+    updateChart(settings.id, { filters });
+  };
+  const setSort = (sort: "rows" | "fields") =>
+    updateChart(settings.id, {
+      sort: sort === "rows" ? undefined : "fields",
+    });
+
   const inspect = (key: string) =>
     api?.inspect(owner, "missingness-pattern", key);
 
@@ -218,8 +259,6 @@ export function JointMissingness({
     );
   }
 
-  // Narrow charts give the dots and bars the room.
-  const labelWidth = Math.max(96, Math.min(220, width * 0.3));
   const pages = Math.ceil(plan.patterns.length / PATTERN_PAGE_SIZE);
   const current = Math.min(page, pages - 1);
   const shown = plan.patterns.slice(
@@ -228,6 +267,28 @@ export function JointMissingness({
   );
   const maxRows = Math.max(1, ...plan.patterns.map((item) => item.ids.length));
   const maxField = Math.max(1, ...plan.fieldTotals);
+  // Field names stand on one baseline, as tall as the longest needs.
+  const nameHeight = Math.min(
+    88,
+    Math.max(
+      36,
+      ...fields.map((field) => Math.ceil(getFieldLabel(field).length * 6.2) + 2)
+    )
+  );
+  const complete = plan.patterns[0]!.ids.length;
+  const commonGap = plan.patterns
+    .slice(1)
+    .reduce<
+      MissingPattern | undefined
+    >((best, pattern) => (!best || pattern.ids.length > best.ids.length ? pattern : best), undefined);
+  const hoveredPattern = plan.patterns.find((item) => item.key === hovered);
+  const hoveredIndex = hovered?.startsWith("field:")
+    ? fields.indexOf(hovered.slice(6))
+    : -1;
+  const hoveredField =
+    hoveredIndex >= 0
+      ? { field: fields[hoveredIndex]!, total: plan.fieldTotals[hoveredIndex]! }
+      : undefined;
   const selectedRows = plan.patterns
     .filter((pattern) => selectedKeys.has(pattern.key))
     .reduce((sum, pattern) => sum + pattern.ids.length, 0);
@@ -305,7 +366,17 @@ export function JointMissingness({
       if (event.altKey) inspect(pattern.key);
       else select(pattern, event.shiftKey || event.metaKey || event.ctrlKey);
     },
-    onKeyDown: (event: React.KeyboardEvent) => {
+    onKeyDown: (event: React.KeyboardEvent<HTMLElement>) => {
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        const row = event.currentTarget;
+        const next =
+          event.key === "ArrowDown"
+            ? row.nextElementSibling
+            : row.previousElementSibling;
+        (next as HTMLElement | null)?.focus();
+        return;
+      }
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
       if (event.altKey) inspect(pattern.key);
@@ -371,6 +442,77 @@ export function JointMissingness({
           )}
         </div>
       )}
+      <div className="eda-missingness-summary">
+        <span>
+          Complete rows{" "}
+          <b className="tabular-nums">{complete.toLocaleString()}</b> of{" "}
+          {plan.total.toLocaleString()} ({sharePercent(complete, plan.total)})
+          {commonGap && (
+            <>
+              {" · "}most common gap {label(commonGap.missing)},{" "}
+              <b className="tabular-nums">
+                {commonGap.ids.length.toLocaleString()}
+              </b>{" "}
+              rows
+            </>
+          )}
+        </span>
+        <span
+          className="eda-missingness-sort"
+          role="group"
+          aria-label="Sort patterns"
+        >
+          {(
+            [
+              ["rows", "Most rows"],
+              ["fields", "Fewest missing"],
+            ] as const
+          ).map(([value, text]) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={(settings.sort ?? "rows") === value}
+              onClick={() => setSort(value)}
+            >
+              {text}
+            </button>
+          ))}
+        </span>
+      </div>
+      {hoveredPattern && (
+        <ChartReadout fallbackClassName="eda-chart-readout-inline">
+          <span className="eda-readout-item">
+            <span>Missing</span>
+            <b>
+              {hoveredPattern.missing.length
+                ? label(hoveredPattern.missing)
+                : "Nothing"}
+            </b>
+          </span>
+          <span className="eda-readout-item">
+            <span>Rows</span>
+            <b>
+              {hoveredPattern.ids.length.toLocaleString()} (
+              {sharePercent(hoveredPattern.ids.length, plan.total)})
+            </b>
+          </span>
+        </ChartReadout>
+      )}
+      {hoveredField && (
+        <ChartReadout fallbackClassName="eda-chart-readout-inline">
+          <span className="eda-readout-item">
+            <span>{getFieldLabel(hoveredField.field)}</span>
+            <b>
+              {hoveredField.total.toLocaleString()} missing (
+              {sharePercent(hoveredField.total, plan.total)})
+            </b>
+          </span>
+          <span className="eda-readout-item">
+            <span>Click</span>
+            <b>select every pattern missing it</b>
+          </span>
+        </ChartReadout>
+      )}
       <div
         className="min-h-0 flex-1 overflow-auto px-3"
         style={{ marginBottom: STATUS_LINE_HEIGHT + 6 }}
@@ -378,40 +520,46 @@ export function JointMissingness({
         <table className="eda-missingness-table">
           <thead>
             <tr>
-              <th className="eda-missingness-caption" scope="row">
-                Missing per field
-              </th>
-              {fields.map((field, index) => (
-                <th key={field} className="eda-missingness-total">
-                  <span className="tabular-nums">
-                    {plan.fieldTotals[index]!.toLocaleString()}
-                  </span>
-                  <span
-                    className="eda-missingness-total-bar"
-                    style={{
-                      height: Math.max(
-                        2,
-                        (plan.fieldTotals[index]! / maxField) * 32
-                      ),
-                      background: themeColors.mark,
-                    }}
-                    aria-hidden="true"
-                  />
-                </th>
-              ))}
-              <th colSpan={2 + (groups?.columns.length ?? 0)} />
-            </tr>
-            <tr>
-              <th className="eda-missingness-caption">Exact missing set</th>
-              {fields.map((field) => (
-                <th
-                  key={field}
-                  className="eda-missingness-field"
-                  data-field={field}
-                >
-                  <span>{getFieldLabel(field)}</span>
-                </th>
-              ))}
+              {fields.map((field, index) => {
+                const total = plan.fieldTotals[index]!;
+                const name = getFieldLabel(field);
+                return (
+                  <th key={field} className="eda-missingness-field">
+                    <button
+                      type="button"
+                      data-field={field}
+                      aria-label={`Select every pattern missing ${name}: ${total} rows`}
+                      aria-pressed={fieldSelected(field)}
+                      onClick={(event) =>
+                        selectField(
+                          field,
+                          event.shiftKey || event.metaKey || event.ctrlKey
+                        )
+                      }
+                      onPointerEnter={() => setHovered(`field:${field}`)}
+                      onPointerLeave={() => setHovered(null)}
+                    >
+                      <span className="eda-missingness-total tabular-nums">
+                        {total.toLocaleString()}
+                      </span>
+                      <span
+                        className="eda-missingness-total-bar"
+                        style={{
+                          height: Math.max(2, (total / maxField) * 28),
+                          background: themeColors.mark,
+                        }}
+                        aria-hidden="true"
+                      />
+                      <span
+                        className="eda-missingness-name"
+                        style={{ height: nameHeight }}
+                      >
+                        {name}
+                      </span>
+                    </button>
+                  </th>
+                );
+              })}
               <th className="eda-missingness-caption">Rows</th>
               <th className="eda-missingness-caption text-right">Share</th>
               {groups?.columns.map((column) => (
@@ -422,6 +570,7 @@ export function JointMissingness({
                   </small>
                 </th>
               ))}
+              <th className="eda-missingness-caption">Missing</th>
             </tr>
           </thead>
           <tbody>
@@ -441,24 +590,29 @@ export function JointMissingness({
                   data-selected={selected || undefined}
                   data-dimmed={(selection && !selected) || undefined}
                   data-pinned={pattern.key === "" || undefined}
+                  data-hovered={hovered === pattern.key || undefined}
                   role="button"
                   tabIndex={0}
                   aria-pressed={selected}
                   aria-label={`${name}: ${pattern.ids.length} rows, ${sharePercent(pattern.ids.length, plan.total)}`}
+                  onPointerEnter={() => setHovered(pattern.key)}
+                  onPointerLeave={() => setHovered(null)}
+                  onFocus={() => setHovered(pattern.key)}
+                  onBlur={() => setHovered(null)}
                   {...rowAction(pattern)}
                 >
-                  <td
-                    className="eda-missingness-label"
-                    style={{ maxWidth: labelWidth }}
-                  >
-                    {name}
-                  </td>
                   {fields.map((field, index) => {
                     const on = pattern.missing.includes(field);
                     const line =
                       positions.length > 1 && index >= first && index <= last;
                     return (
-                      <td key={field} className="eda-missingness-dot">
+                      <td
+                        key={field}
+                        className="eda-missingness-dot"
+                        data-field-hovered={
+                          hovered === `field:${field}` || undefined
+                        }
+                      >
                         {line && (
                           <span
                             className="eda-missingness-link"
@@ -492,6 +646,15 @@ export function JointMissingness({
                       {groupCell(byGroup!.get(column.key) ?? 0, column.total)}
                     </td>
                   ))}
+                  <td className="eda-missingness-label">
+                    {pattern.missing.length ? (
+                      name
+                    ) : (
+                      <span className="eda-missingness-complete">
+                        Complete rows
+                      </span>
+                    )}
+                  </td>
                 </tr>
               );
             })}
@@ -499,10 +662,13 @@ export function JointMissingness({
           {selectedByGroup && (
             <tfoot>
               <tr className="eda-missingness-selected">
-                <th scope="row" className="eda-missingness-caption">
+                <th
+                  scope="row"
+                  colSpan={fields.length}
+                  className="eda-missingness-caption text-right"
+                >
                   Selected
                 </th>
-                <td colSpan={fields.length} />
                 <td className="tabular-nums">
                   <b>{selectedRows.toLocaleString()}</b>
                 </td>
@@ -520,6 +686,7 @@ export function JointMissingness({
                     )}
                   </td>
                 ))}
+                <td />
               </tr>
             </tfoot>
           )}

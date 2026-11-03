@@ -22,6 +22,8 @@ export interface JointMissingnessSettings extends BaseChartSettings {
   fields: string[];
   /** Optional field whose groups each get a share column. */
   groupField?: string;
+  /** Pattern order: most rows first (absent) or fewest missing first. */
+  sort?: "fields";
   /** Optional rule for the rows a later step can use. */
   eligibility?: InputRule;
 }

@@ -627,6 +627,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "localFilters",
     "margin",
     "note",
+    "sort",
     "style",
     "subtitle",
     "title",
