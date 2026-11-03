@@ -1,0 +1,27 @@
+## Try it
+
+<LiveExample
+  id="joint-missingness"
+  caption="Missing patterns of 600 fictional orders, from the order gaps example."
+/>
+
+## Why patterns, not counts
+
+Summary shows one missing count per field. Two fields can each be missing in 25% of rows and still leave anywhere from half to three quarters of rows complete. It depends on whether the gaps fall in the same rows. This chart counts rows by their **exact** set of missing fields, so you see how gaps line up.
+
+## How it reads
+
+- Each row of the chart is one pattern. Filled dots are the missing fields; every other chosen field is present. A line joins the missing fields of a pattern.
+- **All present** is always the first row, even with no rows, so complete rows are easy to find.
+- The bar and number give the rows with that pattern. **Share** divides by every row that passes the other charts' filters, and a selection here never changes it.
+- The small bars above the field names count each field's missing rows, the same numbers Summary shows.
+- A value is missing after field settings: null, an absent key, blank text, or a null token such as `NA`. Zero and false are present.
+- The chart shows 20 patterns at a time. The pager says how many rows sit on other pages.
+
+## Select and trace
+
+- Click a pattern to select its rows. Shift-click, or Command-click, adds or removes a pattern, so the selection is a union of exact patterns.
+- Exact means exact: selecting **Tracking + Delivered** leaves out rows that are also missing **Shipped**. Select that pattern too to include them.
+- The selection saves as the patterns, not as row numbers, so a corrected or added row moves in or out of it.
+- Changing the chart's fields clears the selection, since each pattern means something else.
+- Alt-click a pattern to list its rows, 50 at a time, with the raw value behind each missing cell.

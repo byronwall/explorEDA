@@ -39,6 +39,7 @@ import {
   roomBookingsDashboard,
 } from "@/demos/journeyDashboards";
 import { emptySelectionDashboard } from "@/demos/emptySelection";
+import { orderGapsDashboard } from "@/demos/missingnessDashboards";
 import type { SavedDataStructure } from "exploreda";
 
 /**
@@ -446,6 +447,22 @@ export const liveExamples = {
       { click: "Lab 4: Mar 23, 9:00 AM to no end" },
       { expectChip: "Source row" },
       { expectRows: 1 },
+    ],
+  },
+  "joint-missingness": {
+    label: "Live joint missingness chart",
+    data: "/datasets/order-gaps.csv",
+    savedData: focus(orderGapsDashboard, {
+      "order-gaps": [0, 0, 12, 8],
+    }),
+    exampleId: "order-gaps",
+    shotAlt:
+      "Exact missing patterns of 600 orders, with a missing count above each field.",
+    steps: [
+      { expectRows: 600 },
+      { click: "Tracking + Delivered + Rating + Review: 51 rows, 8.5%" },
+      { expectChip: "Missing exactly" },
+      { expectRows: 51 },
     ],
   },
   "parallel-coordinates": {

@@ -156,6 +156,11 @@ export const CHART_SETTINGS: Readonly<
     windowDays:
       "Days from an entity's first step in which later steps count. Blank counts any time.",
   },
+  "joint-missingness": {
+    field: "Not used. The chart reads its fields from `fields`.",
+    fields:
+      "Two to twelve fields, in column order. A pattern names the missing fields; every other field here is present. Changing the fields clears the selection.",
+  },
   timeline: {
     field: "The lane field. Each value gets its own lane.",
     startField: "When each row begins. Times read as UTC.",

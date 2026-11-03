@@ -89,6 +89,7 @@ import {
   ArrowDownWideNarrow as FunnelIcon,
   Grid2x2 as RetentionIcon,
   ChartGantt as TimelineIcon,
+  Grid2x2Check as MissingnessIcon,
   LayoutGrid as GridIcon,
   Columns3,
   Grid3x3,
@@ -145,6 +146,7 @@ import {
   productRetentionDashboard,
   roomBookingsDashboard,
 } from "./journeyDashboards";
+import { orderGapsDashboard } from "./missingnessDashboards";
 import { worldBankAnalysis } from "./analyses/worldbank";
 import type { ExampleAnalysis } from "./analyses/types";
 import { categoricalChartSettings } from "./categoricalChartSettings";
@@ -230,6 +232,7 @@ const viewNames: Record<string, string> = {
   funnel: "funnel",
   retention: "retention",
   timeline: "timeline",
+  "joint-missingness": "missingness chart",
   "data-table": "table",
   heatmap: "heatmap",
   ecdf: "ECDF",
@@ -1032,6 +1035,17 @@ export const examples: ExampleData[] = [
     icon: TimelineIcon,
     data: "/datasets/room-bookings.csv",
     savedData: roomBookingsDashboard,
+  },
+  {
+    id: "order-gaps",
+    title: "Which order fields are missing together",
+    description:
+      "600 fictional orders with gaps in shipping, tracking, delivery, rating, review, and phone. Each row of the joint missingness chart is one exact pattern of missing fields. Click a pattern, or Shift-click to add more, and the channel chart and table narrow to those orders. Most missing tracking turns out to be store pickups.",
+    dataset: { rows: "600 orders", fields: 9, source: "Synthetic" },
+    shows: ["Exact missing patterns", "Missing per field", "Select a union"],
+    icon: MissingnessIcon,
+    data: "/datasets/order-gaps.csv",
+    savedData: orderGapsDashboard,
   },
   {
     id: "budget-report",

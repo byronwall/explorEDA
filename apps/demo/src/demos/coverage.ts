@@ -336,6 +336,16 @@ export const coverageFeatures = [
     chartType: "retention",
   },
   {
+    id: "chart:joint-missingness",
+    label: "Joint missingness",
+    family: "Chart types",
+    description:
+      "Show which fields are missing together as exact patterns, and select a union of patterns to filter every view.",
+    required: true,
+    status: "supported",
+    chartType: "joint-missingness",
+  },
+  {
     id: "chart:timeline",
     label: "Timeline",
     family: "Chart types",
@@ -1263,6 +1273,17 @@ export const exampleCoverage = [
       "Lay out four weeks of room bookings in lanes, brush a time window to keep overlapping bookings, and select one booking.",
     features: {
       "chart:timeline": "shown",
+      "chart:row": "shown",
+      "chart:data-table": "shown",
+      "interaction:cross-filter": "shown",
+    },
+  },
+  {
+    exampleId: "order-gaps",
+    intent:
+      "Show the exact missing patterns of 600 orders and select patterns to see which channel they come from.",
+    features: {
+      "chart:joint-missingness": "shown",
       "chart:row": "shown",
       "chart:data-table": "shown",
       "interaction:cross-filter": "shown",

@@ -3,7 +3,11 @@ import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
-import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
+import {
+  ChartStatusLine,
+  STATUS_HINT_MIN_WIDTH,
+  STATUS_LINE_HEIGHT,
+} from "../ChartStatusLine";
 import {
   useChartTraceApi,
   useTraceRevision,
@@ -141,6 +145,8 @@ export function JointMissingness({
     );
   }
 
+  // Narrow charts give the dots and bars the room.
+  const labelWidth = Math.max(96, Math.min(220, width * 0.3));
   const pages = Math.ceil(plan.patterns.length / PATTERN_PAGE_SIZE);
   const current = Math.min(page, pages - 1);
   const shown = plan.patterns.slice(
@@ -192,7 +198,10 @@ export function JointMissingness({
       className="eda-missingness relative flex flex-col"
       style={{ width, height }}
     >
-      <div className="min-h-0 flex-1 overflow-auto px-3 pb-6">
+      <div
+        className="min-h-0 flex-1 overflow-auto px-3"
+        style={{ marginBottom: STATUS_LINE_HEIGHT + 6 }}
+      >
         <table className="eda-missingness-table">
           <thead>
             <tr>
@@ -256,7 +265,11 @@ export function JointMissingness({
                   aria-label={`${name}: ${pattern.ids.length} rows, ${sharePercent(pattern.ids.length, plan.total)}`}
                   {...rowAction(pattern)}
                 >
-                  <td className="eda-missingness-label" title={name}>
+                  <td
+                    className="eda-missingness-label"
+                    title={name}
+                    style={{ maxWidth: labelWidth }}
+                  >
                     {name}
                   </td>
                   {fields.map((field, index) => {
