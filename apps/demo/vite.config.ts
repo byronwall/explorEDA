@@ -34,6 +34,36 @@ function spaFallback(): Plugin {
 }
 
 /**
+ * Google Analytics for exploreda.dev. Only the build gets the tag, so the
+ * dev server and local previews of source never report visits.
+ */
+const GA_ID = "G-7XK4GG1QNN";
+
+function analytics(): Plugin {
+  return {
+    name: "analytics",
+    apply: "build",
+    transformIndexHtml() {
+      return [
+        {
+          tag: "script",
+          attrs: {
+            async: true,
+            src: `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`,
+          },
+          injectTo: "head",
+        },
+        {
+          tag: "script",
+          children: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","${GA_ID}");`,
+          injectTo: "head",
+        },
+      ];
+    },
+  };
+}
+
+/**
  * `pnpm dev:agent` sets EXPLOREDA_DEV_IDLE_MINUTES so servers that agent
  * sessions leave behind exit once nothing has requested a file for that long.
  * Dozens of forgotten servers ran the machine out of memory. A plain
@@ -74,6 +104,7 @@ export default defineConfig(({ command }) => ({
     docsMdx(),
     react({ include: /\.(mdx|js|jsx|ts|tsx)$/ }),
     tailwindcss(),
+    analytics(),
     spaFallback(),
     dailyCorpus(),
     idleExit(),
