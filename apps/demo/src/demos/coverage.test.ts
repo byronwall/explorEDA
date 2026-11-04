@@ -95,6 +95,7 @@ describe("example coverage manifest", () => {
       "product-funnel",
       "product-retention",
       "room-bookings",
+      "order-gaps",
       "consumer-confidence",
       "pew-meaning",
       "income-life",

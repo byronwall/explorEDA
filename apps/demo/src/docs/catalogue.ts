@@ -46,6 +46,7 @@ import {
   Hash,
   type LucideIcon,
   Merge,
+  Grid2x2Check,
 } from "lucide-react";
 import type { MDXContent } from "mdx/types";
 import type { DocsTarget } from "./targets";
@@ -405,6 +406,20 @@ export const catalogue: readonly DocsPage[] = [
     chartType: "retention",
     examples: ["product-retention"],
     related: ["funnel", "heatmap"],
+  },
+  {
+    topic: "joint-missingness",
+    thumbnail: "joint-missingness",
+    title: "Joint missingness",
+    group: "plots",
+    icon: Grid2x2Check,
+    lede: "See which fields are missing together, so equal missing counts don't hide how many rows are complete.",
+    summary: "Count rows by their exact set of missing fields.",
+    highlights: ["Exact patterns", "Missing per field", "Select a union"],
+    covers: ["chart:joint-missingness"],
+    chartType: "joint-missingness",
+    examples: ["order-gaps"],
+    related: ["summary", "data-table"],
   },
   {
     topic: "timeline",

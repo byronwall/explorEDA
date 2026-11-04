@@ -75,6 +75,10 @@ export const CHART_QUESTIONS: readonly ChartQuestion[] = [
     picks: [
       ["summary", "Every field's statistics and distribution."],
       ["data-table", "The rows themselves, sortable and searchable."],
+      [
+        "joint-missingness",
+        "Which fields are missing together, and how often.",
+      ],
       ["parallel-coordinates", "Every row across many numeric fields."],
     ],
   },

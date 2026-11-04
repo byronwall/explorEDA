@@ -1,0 +1,69 @@
+## Try it
+
+<LiveExample
+  id="joint-missingness"
+  caption="Missing patterns of 600 fictional orders, from the order gaps example."
+/>
+
+## Why patterns, not counts
+
+Summary shows one missing count per field. Two fields can each be missing in 25% of rows and still leave anywhere from half to three quarters of rows complete. It depends on whether the gaps fall in the same rows. This chart counts rows by their **exact** set of missing fields, so you see how gaps line up.
+
+## How it reads
+
+- Each row of the chart is one pattern. Filled dots are the missing fields; every other chosen field is present. A line joins the missing fields of a pattern.
+- **All present** is always the first row, even with no rows, so complete rows are easy to find.
+- The bar and number give the rows with that pattern. **Share** divides by every row that passes the other charts' filters, and a selection here never changes it.
+- The small bars above the field names count each field's missing rows, the same numbers Summary shows.
+- A value is missing after field settings: null, an absent key, blank text, or a null token such as `NA`. Zero and false are present.
+- The chart shows 20 patterns at a time. The pager says how many rows sit on other pages.
+
+## Select and trace
+
+- Click a pattern to select its rows. Shift-click, or Command-click, adds or removes a pattern, so the selection is a union of exact patterns.
+- Exact means exact: selecting **Tracking + Delivered** leaves out rows that are also missing **Shipped**. Select that pattern too to include them.
+- The selection saves as the patterns, not as row numbers, so a corrected or added row moves in or out of it.
+- Changing the chart's fields clears the selection, since each pattern means something else.
+- Alt-click a pattern to list its rows, 50 at a time, with the raw value behind each missing cell.
+
+## Compare groups
+
+Set **Compare groups** in chart settings, or `groupField=` in text, to add one column per group, such as each sales channel.
+
+- Each cell is that pattern's share of the group's own rows, so a small group is not drowned out by a large one.
+- The eight largest groups get their own column. The rest share one column, and rows with no group value form a **(missing)** group. Every row still counts once.
+- With a selection, a **Selected** row gives the selection's share of each group, and the status line gives the gap between the highest and lowest group in percentage points. The gap describes these rows; it does not say why they differ.
+
+## Rows usable for chosen inputs
+
+Check the inputs a later step needs under **Inputs a later step needs** in chart settings, such as both dates and the rating for a delivery-time model. The chart then counts the **Usable** rows, where every checked input has a value, and the **Excluded** rest.
+
+- Choose **Have finite numbers** to also leave out values that are present but are not numbers, such as `"5 stars"` or `Infinity`. The chart says how many rows that removes.
+- Click **Usable** or **Excluded** to select those rows. It replaces any pattern selection, and a pattern click replaces it in turn.
+- Removing a checked input's field from the chart removes the rule and its selection.
+
+The selection saves the rule, not the rows. In text, the last line names the admitted or excluded rows:
+
+```text
+chart joint-missingness @gaps fields[]=Shipped,Tracking,Delivered,Rating {
+  eligibility.fields[]=Shipped,Delivered,Rating
+  eligibility.requirement=present
+  inputSelection=excluded
+}
+```
+
+## In dashboard text and notebooks
+
+The selection reads as `patterns` lines inside the chart's block. Each `patterns.N[]=` line lists one pattern's missing fields:
+
+```text
+chart joint-missingness @gaps fields[]=Shipped,Tracking,Delivered,Rating {
+  patterns[]=
+  patterns.0[]=Tracking,Delivered
+  patterns.1[]=Shipped,Tracking,Delivered
+}
+```
+
+- No `patterns` line means no selection. `patterns[]=` alone selects no rows, and `patterns.0[]=` with nothing after it is the all-present pattern.
+- A pattern must name only the chart's fields. Text that names another field, or skips a number, skips the chart with an error, so it never draws with more rows than written.
+- In a notebook, clicks stay on the page. When the selection differs from the text, the chart shows **Unkept changes** with **Keep selection** and **Reset to kept**. Keep writes the `patterns` lines into the notebook, so it reopens with the same patterns and recounts them on the current rows. Reset puts back the kept selection.

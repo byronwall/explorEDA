@@ -33,6 +33,7 @@ import type { DonutTrace } from "../Donut/DonutTraceBody";
 import type { FunnelTrace } from "../Funnel/FunnelTraceBody";
 import type { RetentionTrace } from "../Retention/RetentionTraceBody";
 import type { TimelineTrace } from "../Timeline/TimelineTraceBody";
+import type { JointMissingnessTrace } from "../JointMissingness/JointMissingnessTraceBody";
 
 /** A selected object. The owner's source resolves it against its current plan. */
 export interface TraceSelection {
@@ -138,6 +139,7 @@ export type ChartTrace =
   | FunnelTrace
   | RetentionTrace
   | TimelineTrace
+  | JointMissingnessTrace
   | TimeSeriesTrace
   | GuideTrace
   | TitleTrace

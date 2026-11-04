@@ -233,6 +233,51 @@ function isFilter(value: unknown): boolean {
   );
 }
 
+/**
+ * A joint-missingness selection: whole-row patterns over the owning chart's
+ * own fields, each sorted and unique. Only that chart's `filters` take it.
+ */
+function isPatternFilter(
+  value: unknown,
+  chart: Record<string, unknown>
+): boolean {
+  if (
+    isRecord(value) &&
+    value.type === "missingness-inputs" &&
+    value.field === "__ID"
+  )
+    return (
+      (value.side === "admitted" || value.side === "excluded") &&
+      isRecord(chart.eligibility)
+    );
+  if (
+    !isRecord(value) ||
+    value.type !== "missingness-pattern" ||
+    value.field !== "__ID" ||
+    !Array.isArray(value.patterns) ||
+    !Array.isArray(chart.fields)
+  )
+    return false;
+  const fields = new Set(chart.fields);
+  const keys = new Set<string>();
+  return value.patterns.every((pattern) => {
+    if (
+      !Array.isArray(pattern) ||
+      !pattern.every(
+        (field, index) =>
+          typeof field === "string" &&
+          fields.has(field) &&
+          (index === 0 || pattern[index - 1] < field)
+      )
+    )
+      return false;
+    const key = pattern.join("\u001f");
+    if (keys.has(key)) return false;
+    keys.add(key);
+    return true;
+  });
+}
+
 function isDatum(value: unknown): boolean {
   return (
     value === null ||
@@ -392,7 +437,11 @@ function isBaseChart(value: Record<string, unknown>): boolean {
     isFiniteNumber(value.margin.bottom) &&
     isFiniteNumber(value.margin.left) &&
     Array.isArray(value.filters) &&
-    value.filters.every(isFilter) &&
+    value.filters.every(
+      (filter) =>
+        isFilter(filter) ||
+        (value.type === "joint-missingness" && isPatternFilter(filter, value))
+    ) &&
     (value.localFilters === undefined ||
       (Array.isArray(value.localFilters) &&
         value.localFilters.every(isFilter))) &&
@@ -786,6 +835,32 @@ function isChart(value: unknown): boolean {
             ))) &&
         (value.selectedCell === undefined ||
           typeof value.selectedCell === "string")
+      );
+    case "joint-missingness":
+      return (
+        Array.isArray(value.fields) &&
+        value.fields.every((field) => typeof field === "string") &&
+        new Set(value.fields).size === value.fields.length &&
+        (value.groupField === undefined ||
+          typeof value.groupField === "string") &&
+        (value.sort === undefined || value.sort === "fields") &&
+        (value.eligibility === undefined ||
+          (isRecord(value.eligibility) &&
+            (value.eligibility.requirement === "present" ||
+              value.eligibility.requirement === "finite") &&
+            Array.isArray(value.eligibility.fields) &&
+            value.eligibility.fields.every(
+              (field) =>
+                typeof field === "string" &&
+                (value.fields as unknown[]).includes(field)
+            ))) &&
+        // One own selection: patterns or input rows, not both.
+        (value.filters as unknown[]).filter(
+          (filter) =>
+            isRecord(filter) &&
+            (filter.type === "missingness-pattern" ||
+              filter.type === "missingness-inputs")
+        ).length <= 1
       );
     case "donut":
       return (

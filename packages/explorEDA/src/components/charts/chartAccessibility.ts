@@ -28,6 +28,7 @@ const chartNames: Record<string, string> = {
   funnel: "Funnel",
   retention: "Retention",
   timeline: "Timeline",
+  "joint-missingness": "Joint missingness",
 };
 
 export function getChartTitle(
@@ -80,6 +81,9 @@ export function getChartTitle(
     return settings.steps.length >= 2 && settings.entityField
       ? `${getFieldLabel(settings.entityField)} from ${String(first)} to ${String(last)}`
       : getChartDefinition(settings.type).name;
+  }
+  if (settings.type === "joint-missingness") {
+    return `Missing together: ${settings.fields.map(getFieldLabel).join(", ")}`;
   }
   if (settings.type === "timeline") {
     return settings.field
@@ -234,6 +238,8 @@ export function getChartFields(settings: ChartSettings): string[] {
           settings.aggregation === "count" ? undefined : settings.measureField,
           settings.entityField,
         ];
+      case "joint-missingness":
+        return [...settings.fields, settings.groupField];
       case "timeline":
         return [
           settings.field,

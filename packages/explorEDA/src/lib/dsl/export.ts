@@ -104,6 +104,24 @@ function filterPairs(
       case "spec-status":
         pairs.push(`${field}.spec=${filter.region}`);
         break;
+      case "missingness-inputs":
+        if (prefix !== "select") {
+          return undefined;
+        }
+        pairs.push(`inputSelection=${filter.side}`);
+        break;
+      case "missingness-pattern":
+        // A joint-missingness chart's selection reads as its own paths.
+        if (prefix !== "select") {
+          return undefined;
+        }
+        pairs.push("patterns[]=");
+        filter.patterns.forEach((pattern, index) =>
+          pairs.push(
+            `patterns.${index}[]=${pattern.map((name) => encodeScalar(name)).join(",")}`
+          )
+        );
+        break;
       case "text":
         pairs.push(
           `${field}.${filter.operator}=${JSON.stringify(filter.value)}`
@@ -161,6 +179,18 @@ function headFor(chart: SavedChartSettings): string {
         )
         ? `table ${chart.columns.map((column) => name(column.field)).join(",")}`
         : "table";
+    case "joint-missingness":
+      // Its patterns name these fields, so they read before the selection.
+      return [
+        `chart joint-missingness fields[]=${chart.fields.map(name).join(",")}`,
+        // inputSelection= reads this rule.
+        ...(chart.eligibility
+          ? [
+              `eligibility.fields[]=${chart.eligibility.fields.map(name).join(",")}`,
+              `eligibility.requirement=${chart.eligibility.requirement}`,
+            ]
+          : []),
+      ].join(" ");
     case "parallel-coordinates":
       return chart.axes.length && chart.axes.every((axis) => !axis.inverted)
         ? `parallel ${chart.axes.map((axis) => name(axis.field)).join(",")}`

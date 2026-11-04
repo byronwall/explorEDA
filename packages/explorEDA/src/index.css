@@ -8708,3 +8708,294 @@ td[data-null] {
   color: var(--muted-foreground);
   font-variant-numeric: tabular-nums;
 }
+
+/* Joint missingness: one row per exact missing pattern. */
+.eda-missingness-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 12px;
+}
+.eda-missingness-table th {
+  font-weight: 500;
+  color: var(--muted-foreground);
+  padding: 2px 3px;
+  white-space: nowrap;
+}
+.eda-missingness-caption {
+  text-align: left;
+  vertical-align: bottom;
+}
+.eda-missingness-field {
+  vertical-align: bottom;
+  padding: 0 !important;
+}
+.eda-missingness-field > button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  width: 26px;
+  padding: 2px 0 4px;
+  border-radius: 4px;
+  color: var(--muted-foreground);
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+.eda-missingness-field > button:hover,
+.eda-missingness-field > button:focus-visible {
+  background: var(--muted);
+  color: var(--foreground);
+}
+.eda-missingness-field > button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+}
+.eda-missingness-total {
+  font-size: 10.5px;
+}
+.eda-missingness-total-bar {
+  display: block;
+  width: 10px;
+  border-radius: 2px 2px 0 0;
+}
+.eda-missingness-name {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  /* One height for every name puts the bars on one baseline. */
+  margin-top: 3px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.eda-missingness-row {
+  cursor: pointer;
+}
+.eda-missingness-row > td {
+  padding: 2px 3px;
+  border-block: 1px solid transparent;
+}
+.eda-missingness-row:hover > td,
+.eda-missingness-row:focus-visible > td {
+  background: var(--muted);
+}
+.eda-missingness-row:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+.eda-missingness-row[data-selected] > td {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+}
+.eda-missingness-row[data-dimmed] {
+  opacity: 0.55;
+}
+.eda-missingness-row[data-pinned] > td {
+  border-bottom: 1px dashed var(--border);
+}
+.eda-missingness-label {
+  padding-left: 10px !important;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+}
+.eda-missingness-complete {
+  color: var(--foreground);
+  font-weight: 600;
+}
+.eda-missingness-row[data-hovered] .eda-missingness-label {
+  color: var(--foreground);
+}
+.eda-missingness-dot[data-field-hovered] {
+  background: color-mix(in srgb, var(--muted) 70%, transparent);
+}
+.eda-missingness-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 0 12px 6px;
+  font-size: 13px;
+}
+.eda-missingness-sort {
+  display: inline-flex;
+  gap: 2px;
+  font-size: 12px;
+}
+.eda-missingness-sort > button {
+  border-radius: 5px;
+  padding: 1px 7px;
+  color: var(--muted-foreground);
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+.eda-missingness-sort > button:hover {
+  color: var(--foreground);
+}
+.eda-missingness-sort > button[aria-pressed="true"] {
+  background: var(--muted);
+  color: var(--foreground);
+  font-weight: 600;
+}
+.eda-missingness-row[data-selected] .eda-missingness-label {
+  font-weight: 600;
+}
+.eda-missingness-dot {
+  position: relative;
+  width: 22px;
+  text-align: center;
+}
+.eda-missingness-dot > i {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  vertical-align: middle;
+}
+.eda-missingness-dot > i[data-on] {
+  background: var(--foreground);
+  border-color: var(--foreground);
+}
+.eda-missingness-link {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  transform: translateY(-50%);
+  background: var(--foreground);
+}
+.eda-missingness-link[data-start] {
+  left: 50%;
+}
+.eda-missingness-link[data-end] {
+  right: 50%;
+}
+.eda-missingness-bar {
+  min-width: 120px;
+  width: 40%;
+}
+.eda-missingness-bar > span {
+  display: inline-block;
+  min-width: 2px;
+  max-width: calc(100% - 48px);
+  height: 11px;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+.eda-missingness-bar > b {
+  margin-left: 6px;
+  font-weight: 600;
+}
+.eda-missingness-share {
+  text-align: right;
+  color: var(--muted-foreground);
+}
+.eda-missingness-pager {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 6px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.eda-missingness-pager > button {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 8px;
+  color: var(--foreground);
+}
+.eda-missingness-pager > button:disabled {
+  opacity: 0.45;
+}
+.eda-missingness-records {
+  font-size: 12px;
+  border-collapse: collapse;
+}
+.eda-missingness-records th,
+.eda-missingness-records td {
+  padding: 2px 6px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+.eda-missingness-records td[data-missing] {
+  color: var(--color-warning);
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+.eda-missingness-keep {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 0 12px 4px;
+}
+.eda-missingness-unkept {
+  margin-right: auto;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-warning);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+}
+.eda-missingness-group {
+  vertical-align: bottom;
+  text-align: center;
+  max-width: 72px;
+}
+.eda-missingness-group > span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--foreground);
+}
+.eda-missingness-group > small {
+  display: block;
+  font-size: 10px;
+}
+.eda-missingness-group-cell {
+  text-align: center;
+  font-size: 11px;
+}
+.eda-missingness-group-cell > span {
+  display: block;
+  min-width: 44px;
+  border-radius: 3px;
+  padding: 1px 2px;
+}
+.eda-missingness-selected > * {
+  border-top: 1px solid var(--border);
+  padding: 4px 3px 2px;
+}
+.eda-missingness-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 0 12px 6px;
+  font-size: 12px;
+}
+.eda-missingness-inputs > button {
+  border-radius: 5px;
+  padding: 1px 7px;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+.eda-missingness-inputs > button:hover {
+  background: var(--muted);
+}
+.eda-missingness-inputs > button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+  font-weight: 600;
+}

@@ -156,6 +156,16 @@ export const CHART_SETTINGS: Readonly<
     windowDays:
       "Days from an entity's first step in which later steps count. Blank counts any time.",
   },
+  "joint-missingness": {
+    field: "Not used. The chart reads its fields from `fields`.",
+    eligibility:
+      "Optional rule for usable rows: `fields` lists the inputs a later step needs, from the chart's fields, and `requirement` is present (every input has a value) or finite (every input is also a finite number).",
+    sort: "Pattern order. Absent puts the most rows first; fields puts the fewest missing fields first. All present always comes first.",
+    groupField:
+      "Optional group field. Each of its eight largest groups gets a column with every pattern's share of that group; the rest share one column.",
+    fields:
+      "Two to twelve fields, in column order. A pattern names the missing fields; every other field here is present. Changing the fields clears the selection.",
+  },
   timeline: {
     field: "The lane field. Each value gets its own lane.",
     startField: "When each row begins. Times read as UTC.",

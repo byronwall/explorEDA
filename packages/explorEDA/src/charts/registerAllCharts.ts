@@ -24,6 +24,7 @@ import { donutDefinition } from "@/components/charts/Donut/definition";
 import { funnelDefinition } from "@/components/charts/Funnel/definition";
 import { retentionDefinition } from "@/components/charts/Retention/definition";
 import { timelineDefinition } from "@/components/charts/Timeline/definition";
+import { jointMissingnessDefinition } from "@/components/charts/JointMissingness/definition";
 import { chartRegistry } from "./registry";
 
 export function registerAllCharts() {
@@ -53,4 +54,5 @@ export function registerAllCharts() {
   chartRegistry.register(funnelDefinition);
   chartRegistry.register(retentionDefinition);
   chartRegistry.register(timelineDefinition);
+  chartRegistry.register(jointMissingnessDefinition);
 }

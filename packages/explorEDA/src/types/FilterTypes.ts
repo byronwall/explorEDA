@@ -49,12 +49,40 @@ export interface SpecStatusFilter extends FilterBase {
   region: SpecRegion;
 }
 
+/**
+ * Rows whose missing fields, among the owning joint-missingness chart's
+ * fields, equal one of these sets exactly. Each set lists field names in
+ * sorted order; an empty set is the all-present pattern. It saves the
+ * meaning, not row ids, so it re-evaluates on new or corrected rows. Only
+ * the owning chart's `filters` may hold it.
+ */
+export interface MissingnessPatternFilter extends FilterBase {
+  type: "missingness-pattern";
+  /** Always `__ID`: the filter tests whole rows. */
+  field: string;
+  patterns: string[][];
+}
+
+/**
+ * Rows a joint-missingness chart's input rule admits, or the rows it
+ * excludes. It reads the owning chart's `eligibility`, so editing the rule
+ * moves the selection with it. Only that chart's `filters` may hold it.
+ */
+export interface MissingnessInputsFilter extends FilterBase {
+  type: "missingness-inputs";
+  /** Always `__ID`: the filter tests whole rows. */
+  field: string;
+  side: "admitted" | "excluded";
+}
+
 export type Filter =
   | ValueFilter
   | RangeFilter
   | TextFilter
   | DateRangeFilter
-  | SpecStatusFilter;
+  | SpecStatusFilter
+  | MissingnessPatternFilter
+  | MissingnessInputsFilter;
 
 export interface ChartFilters {
   filters: Filter[];

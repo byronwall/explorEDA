@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { missingPatternLabel } from "@/components/charts/JointMissingness/jointMissingnessPlan";
 import { categoryLabel } from "@/lib/categories";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
@@ -95,6 +96,14 @@ export function formatFilterLabel(
       return `${name} ${filter.operator} “${filter.value}”`;
     case "spec-status":
       return `${name}: ${filter.region} spec`;
+    case "missingness-pattern":
+      return filter.patterns.length === 1
+        ? `Missing exactly: ${missingPatternLabel(filter.patterns[0]!, format.name)}`
+        : `${filter.patterns.length} missing patterns`;
+    case "missingness-inputs":
+      return filter.side === "admitted"
+        ? "Rows usable for chosen inputs"
+        : "Rows excluded by chosen inputs";
     default:
       return assertNever(filter);
   }
@@ -123,6 +132,8 @@ export function isActiveFilter(filter: Filter) {
     case "text":
       return filter.value.length > 0;
     case "spec-status":
+    case "missingness-pattern":
+    case "missingness-inputs":
       return true;
     default:
       return assertNever(filter);

@@ -3,6 +3,8 @@ import {
   useDataLayer,
   useDataLayerSnapshot,
 } from "@/providers/DataLayerProvider";
+import { defaultMissingnessFields } from "@/components/charts/JointMissingness/jointMissingnessPlan";
+import { missingRowCount } from "@/lib/fieldProfiles";
 import { ChartLayout, ChartType } from "@/types/ChartTypes";
 
 export function useCreateCharts() {
@@ -125,6 +127,15 @@ export function useCreateCharts() {
       )
         .slice(0, 4)
         .map((item) => item.value);
+    }
+    if (settings.type === "joint-missingness") {
+      settings.fields = defaultMissingnessFields(
+        profiles.map((profile) => profile.name),
+        (name) => {
+          const profile = profiles.find((item) => item.name === name);
+          return profile ? missingRowCount(profile) : 0;
+        }
+      );
     }
     if (settings.type === "timeline") {
       // Two dates make an interval; a few-valued category makes the lanes.

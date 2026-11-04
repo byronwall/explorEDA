@@ -17,6 +17,7 @@ import {
   compileNotebook,
   notebookSheets,
   withoutHeading,
+  writeBackChart,
   writeBackSettings,
   type NotebookBlockResult,
   type NotebookCompileResult,
@@ -44,6 +45,7 @@ import { GridChartPanel } from "../GridChartPanel";
 import { Button } from "../ui/button";
 import { Toaster } from "../ui/sonner";
 import { NotebookFindingsProvider } from "./NotebookFindings";
+import { NotebookKeepContext, type NotebookKeepValue } from "./NotebookKeep";
 import { NotebookProse } from "./NotebookProse";
 import { NotebookSourceEditor } from "./NotebookSourceEditor";
 import "./notebook.css";
@@ -342,6 +344,30 @@ export function ExplorEdaNotebook({
     }
   };
 
+  const keepValue: NotebookKeepValue | null = onTextChange
+    ? {
+        kept: (chartId) =>
+          result.settings.charts.find((chart) => chart.id === chartId)
+            ?.filters ?? [],
+        keep: (chart) => {
+          const outcome = writeBackChart(text, result, chart, {
+            rows: data,
+            name,
+            lastValid: memory.current,
+          });
+          if (outcome.kind === "unsupported") {
+            toast.error(outcome.reason ?? "That selection can't be kept.");
+            return;
+          }
+          if (outcome.text !== text) {
+            // The new text compiles to the selection the charts already show.
+            written.current = undefined;
+            onTextChange(outcome.text);
+          }
+        },
+      }
+    : null;
+
   return (
     <DataLayerProvider
       data={data}
@@ -359,21 +385,23 @@ export function ExplorEdaNotebook({
       <CalculationEditorProvider>
         <ChartDraftProvider>
           <ExploreChart.Provider value={onExploreChart}>
-            <NotebookFindingsProvider>
-              <NotebookColumn
-                result={result}
-                layout={layout}
-                sheet={sheet}
-                defaultSheet={defaultSheet}
-                onSheetChange={onSheetChange}
-                onSegmentChange={
-                  onTextChange
-                    ? (segment, next) =>
-                        onTextChange(replaceSegment(text, segment, next))
-                    : undefined
-                }
-              />
-            </NotebookFindingsProvider>
+            <NotebookKeepContext.Provider value={keepValue}>
+              <NotebookFindingsProvider>
+                <NotebookColumn
+                  result={result}
+                  layout={layout}
+                  sheet={sheet}
+                  defaultSheet={defaultSheet}
+                  onSheetChange={onSheetChange}
+                  onSegmentChange={
+                    onTextChange
+                      ? (segment, next) =>
+                          onTextChange(replaceSegment(text, segment, next))
+                      : undefined
+                  }
+                />
+              </NotebookFindingsProvider>
+            </NotebookKeepContext.Provider>
           </ExploreChart.Provider>
         </ChartDraftProvider>
       </CalculationEditorProvider>

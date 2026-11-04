@@ -168,6 +168,17 @@ export const GLANCES: Readonly<Record<string, Glance>> = {
       ["Alt-click", "Trace a step to its rule, drop-off, and counted events"],
     ],
   },
+  "joint-missingness": {
+    useFor:
+      "Seeing which fields go missing together, how many rows are complete, and which rows a gap pattern covers.",
+    needs:
+      "Two to twelve fields. A value is missing when it is blank, null, or a null token.",
+    gestures: [
+      ["Click a pattern", "Select the rows with exactly those fields missing"],
+      ["Shift-click", "Add or remove a pattern from the selection"],
+      ["Alt-click", "Trace a pattern to its rows and raw values"],
+    ],
+  },
   timeline: {
     useFor:
       "Seeing who or what was busy when, such as room bookings, machine jobs, or shifts, and what overlapped a stretch of time.",
