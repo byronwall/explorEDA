@@ -2,7 +2,7 @@
 // names. Everything else the site needs (paths, chart types, related pieces,
 // table sizes, static pages, the sitemap) is derived here, so an author edits
 // `catalog.json` and the piece's own files and nothing else.
-import { access, readFile, mkdir, writeFile } from "node:fs/promises";
+import { access, readFile, readdir, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import MarkdownIt from "markdown-it";
 import { CORPUS_URL, SITE, corpusLinks } from "./dailyLinks.mjs";
@@ -362,14 +362,21 @@ export function dailyCorpus() {
           `<div id="root">${shell(`<a href="/examples">All examples</a><h1>Daily data viz</h1><p>${escape(description)}</p><ul>${links}</ul>`)}</div>`
         )
       );
+      // Each docs page is one MDX file named for its topic.
+      const docs = (await readdir(path.join(root, "src/docs/pages")))
+        .filter((file) => file.endsWith(".mdx"))
+        .map((file) => `${SITE}/docs/${file.slice(0, -4)}`)
+        .sort();
       const urls = [
         `${SITE}/`,
         `${SITE}/examples`,
+        `${SITE}/docs`,
+        ...docs,
         `${SITE}/daily`,
         ...index.entries.map((entry) => `${SITE}/daily/${entry.slug}`),
       ];
       await writeFile(
-        path.join(output, "daily-sitemap.xml"),
+        path.join(output, "sitemap.xml"),
         `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map((url) => `<url><loc>${url}</loc></url>`).join("")}</urlset>`
       );
     },

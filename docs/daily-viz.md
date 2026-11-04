@@ -7,7 +7,7 @@ The demo's `/daily` collection holds narrative notebooks, compositions, and dash
 - `apps/demo/public/daily-viz/catalog.json`: the only list of pieces. One entry per piece; see [Catalogue entry](#catalogue-entry).
 - `apps/demo/public/daily-viz/datasets.json`: one credit and license record per family.
 - `apps/demo/public/daily-viz/projects/<family>/`: a project folder the CLI can open. `exploreda.eda` declares sources and queries; the piece files sit beside it. A family can read a demo dataset in place, such as `path=../../../datasets/flights/flights.csv`.
-- `apps/demo/dailyCorpus.mjs`: derives everything else from the catalogue and files: paths, chart words, composition marks, related pieces, table sizes, the static article pages, and the sitemap. The dev server serves the result at `/daily-viz/index.json`.
+- `apps/demo/dailyCorpus.mjs`: derives everything else from the catalogue and files: paths, chart words, composition marks, related pieces, table sizes, the static article pages, and the sitemap (`sitemap.xml`, which also lists the docs pages). The dev server serves the result at `/daily-viz/index.json`.
 - `apps/demo/src/daily/`: the pages, `findings.ts` (the finding calculator), and `corpus.test.ts`.
 - `scripts/daily.mjs` and `scripts/daily-templates/`: the authoring commands below.
 - `docs/research/daily-viz-corpus-2026-10-15/`: how the first 75 pieces were made, kept for provenance. Do not copy its Python pipeline; it is replaced by the steps here.
