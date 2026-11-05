@@ -461,6 +461,12 @@ export function BarChartSettingsPanel({
           </div>
         )}
       </div>
+      {histogramMode && settings.facet?.enabled && (
+        <p className="text-xs text-muted-foreground">
+          Each value of {getFieldLabel(settings.facet.rowVariable)} gets its own
+          histogram panel on the grid.
+        </p>
+      )}
       {settings.seriesField && (
         <p className="text-xs text-muted-foreground">
           Group values are categories. Select a bar to filter its category and
