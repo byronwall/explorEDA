@@ -19,7 +19,7 @@ import {
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { useGetColumnData, useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
-import type { AggregateResult } from "@/lib/aggregates";
+import { rowsWithoutMeasure, type AggregateResult } from "@/lib/aggregates";
 import {
   barAt,
   planBarChart,
@@ -571,6 +571,8 @@ function SingleBarChart({
         : names.join(", ")
     }`;
   }
+  const liveAggregate = aggregateResult ?? resolvedAggregate;
+  const leftOut = rowsWithoutMeasure(liveAggregate);
   const statusParts = histogram
     ? [
         histogram.problem,
@@ -589,6 +591,8 @@ function SingleBarChart({
         plan.unplotted.length > 0 &&
           `${plan.unplotted.length} ${plan.unplotted.length === 1 ? "group" : "groups"} without a number left out`,
         plan.notice,
+        leftOut > 0 &&
+          `${leftOut.toLocaleString()} ${leftOut === 1 ? "row" : "rows"} without ${getFieldLabel(liveAggregate!.spec.measureField ?? "")} left out`,
       ];
   const statusHint =
     !selectionText &&

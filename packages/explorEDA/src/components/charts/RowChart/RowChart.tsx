@@ -47,7 +47,11 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import type { RowTrace } from "./RowTraceBody";
-import { poolAggregateRows, type AggregateResult } from "@/lib/aggregates";
+import {
+  poolAggregateRows,
+  rowsWithoutMeasure,
+  type AggregateResult,
+} from "@/lib/aggregates";
 import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
@@ -509,8 +513,11 @@ export function RowChart({
   const fieldLabel = getFieldLabel(settings.field);
   const hoveredItem = displayCounts.find((item) => item.key === hovered);
   const liveRows = liveIds.length;
+  const leftOut = rowsWithoutMeasure(liveSummary);
   const statusParts = [
     valueFilter && `${filterValues.length} categories selected`,
+    leftOut > 0 &&
+      `${leftOut.toLocaleString()} ${leftOut === 1 ? "row" : "rows"} without ${getFieldLabel(liveSummary!.spec.measureField ?? "")} left out`,
     plan.other.length > 0 &&
       `${plan.other.length} smaller categories in Other categories`,
     settings.topN && plan.visible.length < settings.topN && plan.other.length

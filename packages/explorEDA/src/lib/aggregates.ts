@@ -100,6 +100,18 @@ export interface AggregateResult {
   sourceRowCount: number;
 }
 
+/** Rows a sum or average leaves out because their measure is not a number. */
+export function rowsWithoutMeasure(result: AggregateResult | undefined) {
+  if (!result || result.spec.aggregation === "count") return 0;
+  let count = 0;
+  for (const row of result.rows) {
+    for (const item of row.contributors) {
+      if (!item.included && numericExclusionReason(item.input)) count++;
+    }
+  }
+  return count;
+}
+
 export function displayAggregateValue(value: datum): string {
   if (value === undefined) {
     return "undefined";
