@@ -19,8 +19,14 @@ import {
   addDatabaseSource,
   chartDataFile,
   createAnalysis,
+  removeSource,
   renameAnalysis,
 } from "./projectActions";
+import {
+  readErrorText,
+  readFailure,
+  type ReadFailure,
+} from "./DatabaseSourceViews";
 import {
   ProjectWorkspace,
   type OpenPanel,
@@ -127,6 +133,8 @@ export function App({
   const selection = useRef<Selection | undefined>(undefined);
   /** Snapshots this page asked for, which it reloads itself. */
   const ownSnapshots = useRef(new Map<string, number>());
+  /** Each source's last failed read, shown beside it until a read works. */
+  const readErrors = useRef(new Map<string, ReadFailure>());
   // Each notebook's last working block text, kept across reloads.
   const notebookMemory = useRef(
     new Map<string, { current: Record<number, string> }>()
@@ -424,6 +432,7 @@ export function App({
               });
               ownSnapshots.current.set(snapshotPath(sourceId), Date.now());
               let notice: string;
+              readErrors.current.delete(sourceId);
               try {
                 const read = await files.databases!.refresh(sourceId);
                 notice = describeReads([
@@ -435,11 +444,21 @@ export function App({
                 ]);
               } catch (error) {
                 ownSnapshots.current.delete(snapshotPath(sourceId));
-                notice = `Added ${sourceId}, but it couldn't be read: ${error instanceof Error ? error.message : String(error)}`;
+                readErrors.current.set(sourceId, readFailure(error));
+                notice = `Added ${sourceId}, but it couldn't be read: ${readErrorText(error)}`;
               }
               await reload(path, notice);
             },
           } satisfies ProjectActions["database"],
+          removeSource: (sourceId: string) =>
+            act(
+              async () => {
+                await removeSource(files, folder, sourceId);
+                readErrors.current.delete(sourceId);
+                return undefined;
+              },
+              () => `Removed ${sourceId}.`
+            )(),
           refreshSources: async (sourceIds: string[]) => {
             await saver.flush();
             const read: {
@@ -453,6 +472,7 @@ export function App({
                 ownSnapshots.current.set(path, Date.now());
                 try {
                   const info = await files.databases!.refresh(sourceId);
+                  readErrors.current.delete(sourceId);
                   read.push({
                     sourceId,
                     rows: info.rowCount,
@@ -460,6 +480,7 @@ export function App({
                   });
                 } catch (error) {
                   ownSnapshots.current.delete(path);
+                  readErrors.current.set(sourceId, readFailure(error));
                   throw error;
                 }
               }
@@ -496,6 +517,7 @@ export function App({
       saver={saver}
       saveState={saveState}
       notice={loaded.notice}
+      readErrors={Object.fromEntries(readErrors.current)}
       initialSelection={selection.current}
       initialPanel={loaded.panel}
       notebookMemory={(path) => {

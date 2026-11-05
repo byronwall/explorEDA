@@ -46,6 +46,7 @@ export function AddDatabase({
   connections: ConnectionDefinition[];
   /** Source IDs the project already has, so a new one doesn't clash. */
   sourceIds: string[];
+  /** A connection just added, which the panel opens on and confirms. */
   initialConnection?: string;
   actions: AddDatabaseActions;
   onClose: () => void;
@@ -75,6 +76,11 @@ export function AddDatabase({
           <option value={NEW}>New connection…</option>
         </select>
       </label>
+      {initialConnection && connection === initialConnection && (
+        <p className="app-muted app-added" role="status">
+          Added the {connection} connection. Pick a table or write a query.
+        </p>
+      )}
       {connection === NEW ? (
         <NewConnectionForm
           taken={connections.map((item) => item.id)}
@@ -393,6 +399,7 @@ function SourcePicker({
                 <li key={item.name}>
                   <button
                     type="button"
+                    aria-label={`${item.name}, ${item.kind}`}
                     aria-pressed={table === item.name}
                     onClick={() => setTable(item.name)}
                   >

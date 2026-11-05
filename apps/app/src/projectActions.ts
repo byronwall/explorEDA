@@ -129,6 +129,48 @@ export async function addDatabaseSource(
   return analysis;
 }
 
+/**
+ * Removes a source from the project text, with the analysis adding it made
+ * when that analysis is still untouched. Other analyses are kept.
+ */
+export async function removeSource(
+  files: ProjectFiles,
+  folder: ProjectFolder,
+  sourceId: string
+) {
+  if (!folder.projectPath) {
+    return;
+  }
+  const lines = (await files.read(folder.projectPath)).split("\n");
+  const start = lines.findIndex((line) =>
+    new RegExp(`^source @${sourceId}(\\s|$)`).test(line)
+  );
+  if (start < 0) {
+    return;
+  }
+  let end = start;
+  if (lines[start]!.trimEnd().endsWith("{")) {
+    while (end < lines.length - 1 && lines[end]!.trim() !== "}") {
+      end += 1;
+    }
+  }
+  // The blank line that set it apart goes with it.
+  const first = start > 0 && !lines[start - 1]!.trim() ? start - 1 : start;
+  lines.splice(first, end - first + 1);
+  await files.write(folder.projectPath, lines.join("\n"));
+  for (const analysis of folder.analyses) {
+    const starter = newAnalysisText(
+      sourceId,
+      analysis.path,
+      labelFromId(sourceId),
+      { starter: true }
+    );
+    if ((await files.read(analysis.path)) === starter) {
+      await files.remove(analysis.path);
+    }
+  }
+}
+
 /** A new analysis of one of the project's queries. */
 export async function createAnalysis(
   files: ProjectFiles,

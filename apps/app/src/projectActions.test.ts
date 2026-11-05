@@ -2,7 +2,9 @@ import { memoryProjectFiles, readProjectFolder } from "exploreda";
 import { describe, expect, it } from "vitest";
 import {
   chartDataFile,
+  addDatabaseSource,
   createAnalysis,
+  removeSource,
   renameAnalysis,
 } from "./projectActions";
 
@@ -76,5 +78,25 @@ describe("project actions", () => {
     expect(
       folder.analyses.find((analysis) => analysis.path === renamed)!.result.name
     ).toBe("West vs East");
+  });
+
+  it("removes an unread database source and its untouched analysis", async () => {
+    const project =
+      "project @shop\n\nconnection @app driver=sqlite path=app.db\n";
+    const files = memoryProjectFiles({
+      "exploreda.eda": project,
+      "kept.eda": 'eda query=plays\ndashboard "Mine"\n',
+    });
+    await addDatabaseSource(files, await readProjectFolder(files), {
+      sourceId: "plays",
+      database: { connection: "app", table: "plays" },
+      projectName: "shop",
+      layout: "visible",
+    });
+    await removeSource(files, await readProjectFolder(files), "plays");
+    expect(files.snapshot()).toEqual({
+      "exploreda.eda": project,
+      "kept.eda": 'eda query=plays\ndashboard "Mine"\n',
+    });
   });
 });

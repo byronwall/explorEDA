@@ -137,8 +137,10 @@ describe("AddDatabase", () => {
     fireEvent.change(await screen.findByLabelText("Find a table in shop"), {
       target: { value: "ord" },
     });
-    expect(screen.queryByRole("button", { name: "customers" })).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "orders" }));
+    expect(
+      screen.queryByRole("button", { name: "customers, table" })
+    ).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "orders, table" }));
     expect(
       screen.getByLabelText("Source name").getAttribute("placeholder")
     ).toBe("orders-2");
@@ -207,7 +209,7 @@ describe("AddDatabase", () => {
       target: { value: "test-only" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Save and read" }));
-    await screen.findByRole("button", { name: "orders" });
+    await screen.findByRole("button", { name: "orders, table" });
     expect(saveSecret).toHaveBeenCalledWith("shop", "test-only");
   });
 });
