@@ -34,7 +34,9 @@ export function RowChartSettingsPanel({
   const aggregate = settings.aggregateId
     ? aggregates.find((item) => item.id === settings.aggregateId)
     : undefined;
-  const { measureFields } = useMeasureFields(aggregate?.measureField);
+  const { measureFields, defaultMeasure } = useMeasureFields(
+    aggregate?.measureField
+  );
   const [error, setError] = useState<string>();
   const summaries = aggregates.filter(
     (item) => item.groupField === settings.field
@@ -54,7 +56,7 @@ export function RowChartSettingsPanel({
     setError(undefined);
     if (value === "new:sum" || value === "new:average") {
       const aggregation = value === "new:sum" ? "sum" : "average";
-      const measureField = measureFields[0];
+      const measureField = defaultMeasure;
       try {
         applySummary(
           addAggregate({
@@ -158,7 +160,7 @@ export function RowChartSettingsPanel({
                   aggregation: event.target
                     .value as AggregateSpec["aggregation"],
                   ...(event.target.value !== "count" && !aggregate.measureField
-                    ? { measureField: measureFields[0] }
+                    ? { measureField: defaultMeasure }
                     : {}),
                 })
               }

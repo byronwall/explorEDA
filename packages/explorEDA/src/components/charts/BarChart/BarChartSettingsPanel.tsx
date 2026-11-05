@@ -27,7 +27,7 @@ export function BarChartSettingsPanel({
   const additive = !aggregate || isAdditiveAggregation(aggregate.aggregation);
   const addAggregate = useDataLayer((state) => state.addAggregate);
   const updateAggregate = useDataLayer((state) => state.updateAggregate);
-  const { fieldNames, measureFields } = useMeasureFields(
+  const { fieldNames, measureFields, defaultMeasure } = useMeasureFields(
     aggregate?.measureField
   );
   const [error, setError] = useState<string>();
@@ -124,7 +124,7 @@ export function BarChartSettingsPanel({
   );
 
   const createAggregate = (aggregation: AggregateAggregation) => {
-    const measureField = measureFields[0];
+    const measureField = defaultMeasure;
     if (aggregation !== "count" && !measureField) {
       setError("Sum and average need a numeric measure field.");
       return;
@@ -233,7 +233,7 @@ export function BarChartSettingsPanel({
               updateDefinition({
                 aggregation: event.target.value as typeof aggregate.aggregation,
                 ...(event.target.value !== "count" && !aggregate.measureField
-                  ? { measureField: measureFields[0] }
+                  ? { measureField: defaultMeasure }
                   : {}),
               });
             }}
@@ -319,7 +319,7 @@ export function BarChartSettingsPanel({
                     field:
                       event.target.value === "histogram" &&
                       !measureFields.includes(settings.field)
-                        ? measureFields[0]!
+                        ? defaultMeasure!
                         : settings.field,
                   })
                 }

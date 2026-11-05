@@ -1,3 +1,4 @@
+import { rankMeasureFields } from "@/lib/fieldRanking";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
@@ -38,7 +39,7 @@ export function MetricCardSettingsPanel({
       ...settings,
       aggregation,
       ...(aggregation !== "count" && !settings.measureField
-        ? { measureField: measureFields[0] }
+        ? { measureField: rankMeasureFields(measureFields, profiles)[0] }
         : {}),
     });
 

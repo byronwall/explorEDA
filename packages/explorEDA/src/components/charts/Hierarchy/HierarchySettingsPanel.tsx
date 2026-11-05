@@ -1,3 +1,4 @@
+import { rankMeasureFields } from "@/lib/fieldRanking";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -194,7 +195,9 @@ export function HierarchySettingsPanel({
             change({
               aggregation,
               ...(aggregation === "sum" && !settings.measureField
-                ? { measureField: measureFields[0] }
+                ? {
+                    measureField: rankMeasureFields(measureFields, profiles)[0],
+                  }
                 : {}),
             });
           }}

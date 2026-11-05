@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { hasDateValues } from "@/lib/dailyRollup";
 import { isAdditiveAggregation } from "@/lib/aggregates";
+import { rankMeasureFields } from "@/lib/fieldRanking";
 import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useColorScales } from "@/hooks/useColorScales";
@@ -86,6 +87,7 @@ export function TimeSeriesSettingsPanel({
   onSettingsChange,
 }: ChartSettingsPanelProps<LineChartSettings>) {
   const fields = useTimeSeriesFields();
+  const profiles = useDataLayer((s) => s.fieldProfiles);
   const { getOrCreateScaleForField: getOrCreateScale } = useColorScales();
   const time = settings.time!;
   const change = (next: Partial<TimeSeriesSettings>) =>
@@ -190,7 +192,9 @@ export function TimeSeriesSettingsPanel({
           onChange={(e) =>
             change({
               aggregation: e.target.value as TimeSeriesSettings["aggregation"],
-              measureField: time.measureField ?? fields.measures[0],
+              measureField:
+                time.measureField ??
+                rankMeasureFields(fields.measures, profiles)[0],
               ...(isAdditiveAggregation(
                 e.target.value as TimeSeriesSettings["aggregation"]
               )

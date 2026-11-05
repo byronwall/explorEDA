@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { aggregationLabel, type AggregateAggregation } from "@/lib/aggregates";
+import { rankMeasureFields } from "@/lib/fieldRanking";
 import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 
@@ -43,5 +44,10 @@ export function useMeasureFields(current?: string) {
     }
     return numeric;
   }, [current, calculations, fieldNames, fieldProfiles, getColumnData]);
-  return { fieldNames, measureFields };
+  // The measure a new sum or average starts with: not a key such as an id.
+  const defaultMeasure = useMemo(
+    () => rankMeasureFields(measureFields, fieldProfiles)[0],
+    [measureFields, fieldProfiles]
+  );
+  return { fieldNames, measureFields, defaultMeasure };
 }

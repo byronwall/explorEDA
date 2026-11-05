@@ -1,3 +1,4 @@
+import { rankMeasureFields } from "@/lib/fieldRanking";
 import { useMemo } from "react";
 import { FieldSelector } from "@/components/FieldSelector";
 import { FilterListEditor } from "@/components/settings/FiltersSettingsTab";
@@ -63,7 +64,7 @@ export function WaterfallSettingsPanel({
       ...settings,
       aggregation,
       ...(aggregation === "sum" && !settings.measureField
-        ? { measureField: measureFields[0] }
+        ? { measureField: rankMeasureFields(measureFields, profiles)[0] }
         : {}),
     });
 

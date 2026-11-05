@@ -1,3 +1,4 @@
+import { rankMeasureFields } from "@/lib/fieldRanking";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -16,6 +17,7 @@ export function CalendarSettingsPanel({
 }: ChartSettingsPanelProps<CalendarSettings>) {
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const getColumnData = useDataLayer((state) => state.getColumnData);
+  const profiles = useDataLayer((state) => state.fieldProfiles);
   const calculations = useDataLayer((state) => state.calculations);
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const { dateFields, measureFields } = useMemo(() => {
@@ -78,7 +80,9 @@ export function CalendarSettingsPanel({
             change({
               aggregation,
               ...(aggregation !== "count" && !settings.measureField
-                ? { measureField: measureFields[0] }
+                ? {
+                    measureField: rankMeasureFields(measureFields, profiles)[0],
+                  }
                 : {}),
             });
           }}
