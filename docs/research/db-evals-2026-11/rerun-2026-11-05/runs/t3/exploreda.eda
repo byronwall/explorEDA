@@ -1,0 +1,5 @@
+project @t3
+
+connection @nfl driver=sqlite path=data/nfl.db
+
+source @plays db=nfl sql="select game_id, week, posteam, play_type, yards_gained, qb_dropback, qb_spike, qb_scramble, air_yards, incomplete_pass, interception, pass_attempt, sack, complete_pass, passer_player_id, passer_player_name from plays"

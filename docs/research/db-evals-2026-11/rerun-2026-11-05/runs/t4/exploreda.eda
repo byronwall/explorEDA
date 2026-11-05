@@ -1,0 +1,23 @@
+project @t4
+
+connection @retail driver=duckdb path=data/retail.duckdb
+
+source @date-dim db=retail table=date_dim
+
+source @store db=retail table=store
+
+source @item db=retail table=item
+
+source @store-sales db=retail table=store_sales
+
+relate @rel-store-s_closed_date_sk-date-dim-d_date_sk store.s_closed_date_sk -> date-dim.d_date_sk "Store to Date dim"
+relate @rel-store-sales-ss_sold_date_sk-date-dim-d_date_sk store-sales.ss_sold_date_sk -> date-dim.d_date_sk "Store sales to Date dim"
+relate @rel-store-sales-ss_item_sk-item-i_item_sk store-sales.ss_item_sk -> item.i_item_sk "Store sales to Item"
+relate @rel-store-sales-ss_store_sk-store-s_store_sk store-sales.ss_store_sk -> store.s_store_sk "Store sales to Store"
+
+query @store-sales glyph=S {
+  source store-sales
+  lookup date_dim via=rel-store-sales-ss_sold_date_sk-date-dim-d_date_sk on=store-sales.ss_sold_date_sk
+  lookup item via=rel-store-sales-ss_item_sk-item-i_item_sk on=store-sales.ss_item_sk
+  lookup store via=rel-store-sales-ss_store_sk-store-s_store_sk on=store-sales.ss_store_sk
+}

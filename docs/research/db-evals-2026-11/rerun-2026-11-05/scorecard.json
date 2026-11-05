@@ -1,0 +1,104 @@
+{
+  "t1": {
+    "outcome": "done",
+    "deliverableLabel": "Fourth",
+    "minutes": 12,
+    "joins": "none",
+    "browserNeededForCli": false,
+    "outsideTools": [],
+    "readSource": false,
+    "blockers": 0,
+    "major": 1,
+    "minor": 4
+  },
+  "t2": {
+    "outcome": "done",
+    "deliverableLabel": "nfl",
+    "minutes": 25,
+    "joins": "explorEDA",
+    "browserNeededForCli": false,
+    "outsideTools": ["sqlite3"],
+    "readSource": false,
+    "blockers": 0,
+    "major": 2,
+    "minor": 2
+  },
+  "t3": {
+    "outcome": "done",
+    "deliverableLabel": "QB scouting",
+    "minutes": 28,
+    "joins": "none",
+    "browserNeededForCli": false,
+    "outsideTools": [],
+    "readSource": false,
+    "blockers": 0,
+    "major": 2,
+    "minor": 5
+  },
+  "t4": {
+    "outcome": "done",
+    "deliverableLabel": "Store sales",
+    "minutes": 25,
+    "joins": "explorEDA",
+    "browserNeededForCli": false,
+    "outsideTools": [
+      "python3 (read the app's own snapshot JSON to check the total)"
+    ],
+    "readSource": false,
+    "blockers": 0,
+    "major": 3,
+    "minor": 5
+  },
+  "t5": {
+    "outcome": "done",
+    "deliverableLabel": "returns",
+    "minutes": 18,
+    "joins": "explorEDA",
+    "browserNeededForCli": false,
+    "outsideTools": [
+      "python3 (read snapshot JSON to get numbers for the written conclusion)"
+    ],
+    "readSource": false,
+    "blockers": 0,
+    "major": 1,
+    "minor": 4
+  },
+  "t6": {
+    "outcome": "partial",
+    "deliverableLabel": "Catalog sales",
+    "minutes": 30,
+    "joins": "explorEDA",
+    "browserNeededForCli": false,
+    "outsideTools": [],
+    "readSource": false,
+    "blockers": 1,
+    "major": 3,
+    "minor": 3
+  },
+  "t7": {
+    "outcome": "done",
+    "deliverableLabel": "lowstock",
+    "minutes": 25,
+    "joins": "explorEDA",
+    "browserNeededForCli": false,
+    "outsideTools": [
+      "python3 (read snapshot JSON to find date range, null counts, quantile)"
+    ],
+    "readSource": false,
+    "blockers": 0,
+    "major": 1,
+    "minor": 4
+  },
+  "t8": {
+    "outcome": "done",
+    "deliverableLabel": "nfl",
+    "minutes": 20,
+    "joins": "explorEDA",
+    "browserNeededForCli": false,
+    "outsideTools": [],
+    "readSource": false,
+    "blockers": 0,
+    "major": 1,
+    "minor": 3
+  }
+}
