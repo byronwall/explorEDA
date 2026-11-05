@@ -193,12 +193,12 @@ it("brushes either marginal histogram to an axis range", () => {
       onInspectOverlay={vi.fn()}
     />
   );
-  const drag = (axis: "x" | "y") => {
+  const drag = (axis: "x" | "y", to: number) => {
     const bins = marginals.bins
       .filter((bin) => bin.axis === axis)
       .sort((a, b) => a.bounds[0] - b.bounds[0]);
     const first = bins[0]!;
-    const last = bins[bins.length - 1]!;
+    const last = bins.at(to)!;
     const point = (bin: typeof first) => [
       plan.margin.left + bin.x + bin.width / 2,
       plan.margin.top + bin.y + bin.height / 2,
@@ -220,14 +220,22 @@ it("brushes either marginal histogram to an axis range", () => {
     });
     fireEvent.pointerUp(target, { clientX: x1, clientY: y1, pointerId: 1 });
     fireEvent.click(target, { clientX: x1, clientY: y1 });
-    expect(onMarginalBrush).toHaveBeenLastCalledWith(axis, [
-      bins[0]!.bounds[0],
-      bins[bins.length - 1]!.bounds[1],
-    ]);
+    // The drag says whether it reaches the last bin, whose range is closed.
+    expect(onMarginalBrush).toHaveBeenLastCalledWith(
+      axis,
+      [first.bounds[0], last.bounds[1]],
+      last.last
+    );
   };
 
-  drag("x");
-  drag("y");
+  drag("x", -1);
+  drag("y", -1);
+  drag("x", 1);
+  expect(onMarginalBrush).toHaveBeenLastCalledWith(
+    "x",
+    expect.anything(),
+    false
+  );
   expect(onMarginal).not.toHaveBeenCalled();
 });
 

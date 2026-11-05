@@ -2,7 +2,7 @@ import { parseNumber } from "@/lib/valueParsing";
 import { bisectRight } from "d3-array";
 import { categoryKey } from "@/lib/categories";
 import type { IdType } from "@/providers/DataLayerProvider";
-import type { Filter } from "@/types/FilterTypes";
+import type { Filter, RangeFilter } from "@/types/FilterTypes";
 import type { datum } from "@/types/ChartTypes";
 import { buildScale } from "../Axis/axisPlan";
 import type { ScatterPlotSettings } from "./definition";
@@ -65,6 +65,17 @@ export interface MarginalPlan {
 }
 
 /**
+ * The bin a value falls in. Interior edges belong to the bin on their right
+ * and the last edge closes; a value past either end, such as one hidden by
+ * an axis bound, has no bin.
+ */
+export function binIndex(edges: number[], value: number) {
+  const last = edges.length - 1;
+  if (!(value >= edges[0]!) || value > edges[last]!) return undefined;
+  return Math.min(last - 1, bisectRight(edges, value) - 1);
+}
+
+/**
  * X and Y histograms of the plotted pairs. Edges divide the full-source axis
  * domain into equal intervals, so they stay put during filtering and resizing.
  */
@@ -116,11 +127,9 @@ export function planMarginals(
     }));
     for (const point of plan.points) {
       const value = parseNumber(axis === "x" ? point.xValue : point.yValue);
-      // Interior edges belong to the bin on their right; the last edge closes.
-      const index = Math.max(
-        0,
-        Math.min(binCount - 1, bisectRight(edges, value) - 1)
-      );
+      // A point past an axis bound is drawn clipped and counted on the axis.
+      const index = binIndex(edges, value);
+      if (index === undefined) continue;
       const member = members[index]!;
       member.ids.push(point.sourceId);
       if (!point.passesOwnFilter) continue;
@@ -258,6 +267,20 @@ function stackSegments(
   });
 }
 
+/**
+ * The filter that keeps a span of bins exactly: its upper edge is out, as it
+ * belongs to the next bin, unless the span ends at the last bin.
+ */
+export function marginalRangeFilter(
+  field: string,
+  [min, max]: [number, number],
+  last: boolean
+): RangeFilter {
+  return last
+    ? { type: "range", field, min, max }
+    : { type: "range", field, min, max, maxExclusive: true };
+}
+
 /** Clicking a bin filters this chart's axis field to its range, or clears it. */
 export function marginalBinFilters(
   settings: ScatterPlotSettings,
@@ -269,21 +292,13 @@ export function marginalBinFilters(
   const current = settings.filters.find(
     (filter) => filter.field === bin.field && filter.type === "range"
   );
+  const next = marginalRangeFilter(bin.field, bin.bounds, bin.last);
   const same =
     current?.type === "range" &&
-    current.min === bin.bounds[0] &&
-    current.max === bin.bounds[1];
-  return same
-    ? others
-    : [
-        ...others,
-        {
-          type: "range",
-          field: bin.field,
-          min: bin.bounds[0],
-          max: bin.bounds[1],
-        },
-      ];
+    current.min === next.min &&
+    current.max === next.max &&
+    !current.maxExclusive === !next.maxExclusive;
+  return same ? others : [...others, next];
 }
 
 export interface MarginalTrace {

@@ -350,6 +350,44 @@ describe("scatter fits", () => {
       )!.notice
     ).toMatch(/categorical/);
   });
+
+  it("leaves out rows a log axis cannot place and still draws the line", () => {
+    const x = [-5, 1, 10, 100, 1000];
+    const y = [1, 2, 3, 4, 5];
+    const ids = x.map((_, index) => index);
+    const settings = scatterPlotDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    Object.assign(settings, {
+      xField: "x",
+      yField: "y",
+      regression: { method: "linear" },
+    });
+    settings.xAxis = { ...settings.xAxis, scaleType: "log" };
+    const snapshot: ScatterSnapshot = {
+      revision: "1:1",
+      allIds: ids,
+      chartIds: ids,
+      filteredIds: ids,
+      xData: Object.fromEntries(x.map((value, id) => [id, value])),
+      yData: Object.fromEntries(y.map((value, id) => [id, value])),
+      colorData: {},
+      fieldSettings: {},
+    };
+    const plan = planScatter(settings, snapshot, 400, 300);
+    expect(plan.points).toHaveLength(4);
+    const fits = planScatterFits(settings, snapshot, plan)!;
+    expect(fits.fits[0]).toMatchObject({
+      eligible: 5,
+      missingX: 1,
+      outcome: { ok: true, n: 4 },
+    });
+    const [mark] = planFitMarks(fits, plan);
+    expect(mark?.path).toMatch(/^M[\d.]+,[\d.]+L/);
+  });
 });
 
 describe("polynomial least squares", () => {

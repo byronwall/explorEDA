@@ -195,6 +195,8 @@ export interface ScatterPlan {
     max: number;
     radius: number;
     legendHeight: number;
+    /** True when short labels and tight spacing keep the legend in the chart. */
+    compact: boolean;
     samples: { value: number; label: string; radius: number }[];
   };
   points: ScatterPoint[];
@@ -243,6 +245,68 @@ export function bubbleSamples(max: number): number[] {
     return (lead >= 5 ? 5 : lead >= 2 ? 2 : 1) * step;
   };
   return [...new Set([max / 4, max / 2, max].map(round))];
+}
+
+/** The legend's side inset, heading limit, and sample widths, as BubbleLegend lays them out. */
+const LEGEND_INSET = 8;
+const LEGEND_HEADING_MAX = 176;
+const LEGEND_SAMPLE_MIN = 42;
+const LEGEND_GAP = { full: 12, compact: 6 };
+/** Estimated glyph width of the legend's small tabular text. */
+const LEGEND_CHAR_WIDTH = 7;
+
+/**
+ * Sample bubbles and their labels. When full labels such as 200,000,000
+ * would run past the chart, short ones such as 200M take their place, set
+ * closer together.
+ */
+export function planBubbleLegend(
+  field: string,
+  fieldSettings: FieldSettingsMap,
+  max: number,
+  radius: number,
+  width: number
+): NonNullable<ScatterPlan["size"]> {
+  const label = fieldLabel(field, fieldSettings);
+  const values = bubbleSamples(max);
+  const text = (value: number, compact: boolean) =>
+    hasFieldDisplayFormat(fieldSettings[field])
+      ? formatFieldValue(field, value, fieldSettings[field], { compact })
+      : formatTick(value);
+  const fits = (labels: string[], gap: number) => {
+    const heading = Math.min(
+      LEGEND_HEADING_MAX,
+      Math.max(`Area: ${label}`.length, "Zero is hollow".length) *
+        LEGEND_CHAR_WIDTH
+    );
+    const samples = labels.reduce(
+      (sum, item) =>
+        sum +
+        gap +
+        Math.max(
+          LEGEND_SAMPLE_MIN,
+          radius * 2 + 6,
+          item.length * LEGEND_CHAR_WIDTH
+        ),
+      0
+    );
+    return heading + samples <= width - 2 * LEGEND_INSET;
+  };
+  const full = values.map((value) => text(value, false));
+  const compact = !fits(full, LEGEND_GAP.full);
+  return {
+    field,
+    label,
+    max,
+    radius,
+    legendHeight: radius * 2 + 30,
+    compact,
+    samples: values.map((value, index) => ({
+      value,
+      label: compact ? text(value, true) : full[index]!,
+      radius: value === 0 ? 2 : radius * Math.sqrt(value / max),
+    })),
+  };
 }
 
 /** A value as the chart shows it: the field's format, else plain text. */
@@ -365,22 +429,13 @@ export function planScatter(
       )
     : 0;
   const size = settings.sizeField
-    ? {
-        field: settings.sizeField,
-        label: fieldLabel(settings.sizeField, snapshot.fieldSettings),
-        max: sizeMax,
-        radius: bubbleRadius,
-        legendHeight: bubbleRadius * 2 + 30,
-        samples: bubbleSamples(sizeMax).map((value) => ({
-          value,
-          label: hasFieldDisplayFormat(
-            snapshot.fieldSettings[settings.sizeField!]
-          )
-            ? display(settings.sizeField!, value, snapshot.fieldSettings)
-            : formatTick(value),
-          radius: value === 0 ? 2 : bubbleRadius * Math.sqrt(value / sizeMax),
-        })),
-      }
+    ? planBubbleLegend(
+        settings.sizeField,
+        snapshot.fieldSettings,
+        sizeMax,
+        bubbleRadius,
+        width
+      )
     : undefined;
   if (size) margin.bottom += size.legendHeight;
   // A density surface keeps one line under the axis for its color legend.
@@ -614,7 +669,13 @@ export function planScatter(
   });
 
   const xSpan = filterSpan(xAxis, settings.filters, settings.xField);
-  const ySpan = filterSpan(yAxis, settings.filters, settings.yField);
+  // One field on both axes files two filters; the second is the Y axis's.
+  const ySpan = filterSpan(
+    yAxis,
+    settings.filters,
+    settings.yField,
+    settings.xField === settings.yField ? 1 : 0
+  );
   const round = (value: number) => Math.round(value * 10000) / 10000;
   const brushExtent: Extent | null =
     xSpan && ySpan
@@ -780,11 +841,24 @@ export function scatterPointReadout(plan: ScatterPlan, point: ScatterPoint) {
   };
 }
 
+/** True when a point's center lies in the plot; the rest are clipped past a bound. */
+const inPlot = (plan: ScatterPlan, point: ScatterPoint) =>
+  point.x >= 0 &&
+  point.x <= plan.plotWidth &&
+  point.y >= 0 &&
+  point.y <= plan.plotHeight;
+
+/** The points a reader can see, so hover and keyboard reach only those. */
+export function scatterPointsInPlot(plan: ScatterPlan) {
+  return plan.points.filter((point) => inPlot(plan, point));
+}
+
 export function scatterPointAt(plan: ScatterPlan, x: number, y: number) {
   if (plan.size) {
     // Canvas paints small bubbles last. Hit the topmost visible bubble.
     for (let i = plan.points.length - 1; i >= 0; i--) {
       const point = plan.points[i]!;
+      if (!inPlot(plan, point)) continue;
       if (Math.hypot(point.x - x, point.y - y) <= Math.max(6, point.radius))
         return point;
     }
@@ -793,6 +867,7 @@ export function scatterPointAt(plan: ScatterPlan, x: number, y: number) {
   let nearest: ScatterPoint | undefined;
   let distance = 10;
   for (const point of plan.points) {
+    if (!inPlot(plan, point)) continue;
     const next = Math.hypot(point.x - x, point.y - y);
     if (next < distance) {
       nearest = point;

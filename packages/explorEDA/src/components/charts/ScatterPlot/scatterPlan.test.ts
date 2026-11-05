@@ -4,7 +4,11 @@ import {
   brushFilters,
   bubbleSamples,
   paddedDomain,
+  planBubbleLegend,
   planScatter,
+  scatterPointAt,
+  scatterPointsInPlot,
+  type Extent,
 } from "./scatterPlan";
 import type { datum } from "@/types/ChartTypes";
 import type { ScaleBand } from "d3-scale";
@@ -232,6 +236,53 @@ describe("points past an axis bound", () => {
     expect(some.axes.x.hidden?.high?.count).toBe(1);
     expect(some.axes.x.scale.domain).toEqual(all.axes.x.scale.domain);
   });
+
+  it("keeps clipped points out of hover and keyboard reach", () => {
+    const plan = bounded({ min: 2.5, max: 6 });
+    const clipped = plan.points.find((point) => point.sourceId === 0)!;
+    expect(clipped.x).toBeLessThan(0);
+    expect(scatterPointAt(plan, clipped.x, clipped.y)).toBeUndefined();
+    const inside = plan.points.find((point) => point.sourceId === 3)!;
+    expect(scatterPointAt(plan, inside.x, inside.y)?.sourceId).toBe(3);
+    expect(scatterPointsInPlot(plan).map((point) => point.sourceId)).toEqual([
+      2, 3, 4, 5,
+    ]);
+  });
+});
+
+describe("one field on both axes", () => {
+  it("restores the brush from each axis's own filter", () => {
+    const settings = scatterPlotDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    settings.xField = "x";
+    settings.yField = "x";
+    const x = [1, 2, 3, 4, 5];
+    const ids = x.map((_, index) => index);
+    const data = Object.fromEntries(x.map((value, index) => [index, value]));
+    const snapshot = {
+      revision: "test",
+      allIds: ids,
+      chartIds: ids,
+      filteredIds: ids,
+      xData: data,
+      yData: data,
+      colorData: {},
+      fieldSettings: {},
+    };
+    const plan = planScatter(settings, snapshot, 400, 300);
+    const extent: Extent = [
+      [10, 20],
+      [60, 90],
+    ];
+    const filters = brushFilters(plan, extent);
+    expect(filters.map((filter) => filter.field)).toEqual(["x", "x"]);
+    const again = planScatter({ ...settings, filters }, snapshot, 400, 300);
+    expect(again.brushExtent).toEqual(extent);
+  });
 });
 
 describe("log scatter axes", () => {
@@ -304,5 +355,62 @@ describe("bubbleSamples", () => {
     expect(bubbleSamples(11964.716899999998)).toEqual([2000, 5000, 10000]);
     expect(bubbleSamples(1438.069596)).toEqual([200, 500, 1000]);
     expect(bubbleSamples(0)).toEqual([0]);
+  });
+
+  it("shortens sample labels when the full ones would run past the chart", () => {
+    const fieldSettings = {
+      Population: { format: "number" as const },
+    };
+    const legend = (width: number) =>
+      planBubbleLegend("Population", fieldSettings, 1e9, 20, width);
+    const wide = legend(1280);
+    expect(wide.compact).toBe(false);
+    expect(wide.samples.map((sample) => sample.label)).toEqual([
+      "200,000,000",
+      "500,000,000",
+      "1,000,000,000",
+    ]);
+    const narrow = legend(390);
+    expect(narrow.compact).toBe(true);
+    expect(narrow.samples.map((sample) => sample.label)).toEqual([
+      "200M",
+      "500M",
+      "1B",
+    ]);
+    // Plain numbers already read short; small ones stay as they are.
+    expect(
+      planBubbleLegend("Amount", {}, 1e9, 20, 390).samples.map((s) => s.label)
+    ).toEqual(["200M", "500M", "1B"]);
+    expect(
+      planScatter(
+        {
+          ...scatterPlotDefinition.createDefaultSettings({
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 4,
+          }),
+          xField: "x",
+          yField: "y",
+          sizeField: "Population",
+        },
+        {
+          revision: "test",
+          allIds: [0],
+          chartIds: [0],
+          filteredIds: [0],
+          xData: { 0: 1 },
+          yData: { 0: 1 },
+          sizeData: { 0: 1e9 },
+          colorData: {},
+          fieldSettings,
+        },
+        390,
+        300
+      ).size
+    ).toMatchObject({
+      compact: true,
+      samples: [{ label: "200M" }, { label: "500M" }, { label: "1B" }],
+    });
   });
 });

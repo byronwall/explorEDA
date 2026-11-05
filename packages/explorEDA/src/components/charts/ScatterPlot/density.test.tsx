@@ -10,6 +10,7 @@ import { ScatterPlot } from "./ScatterPlot";
 import { scatterPlotDefinition, type ScatterPlotSettings } from "./definition";
 import { planScatter, type ScatterSnapshot } from "./scatterPlan";
 import { densityBinFilters, densityColor, planDensity } from "./densityPlan";
+import { buildScale } from "../Axis/axisPlan";
 
 beforeAll(() => {
   registerAllCharts();
@@ -204,4 +205,70 @@ it("selects exact bin rows by pointer and keyboard, traces omitted inputs, and s
     "x has no finite value"
   );
   fireEvent.click(screen.getByRole("button", { name: "Check saved density" }));
+});
+it("bins a log axis in equal ratios under the axis's own scale and leaves out rows it cannot place", () => {
+  const x = [1, 10, 100, 1000, 0, -3];
+  const y = [1, 2, 3, 4, 5, 6];
+  const logIds = x.map((_, i) => i);
+  const plan = planDensity(
+    {
+      ...settings,
+      xAxis: { ...settings.xAxis, scaleType: "log" },
+      density: { xBins: 4, yBins: 2 },
+    },
+    {
+      ...snapshot,
+      allIds: logIds,
+      chartIds: logIds,
+      filteredIds: logIds,
+      xData: Object.fromEntries(x.map((value, id) => [id, value])),
+      yData: Object.fromEntries(y.map((value, id) => [id, value])),
+    },
+    600,
+    400
+  );
+  const scale = buildScale(plan.scatter.xScale) as (value: number) => number;
+  for (const id of [0, 1, 2, 3]) {
+    const cell = plan.cells.find((cell) => cell.sourceIds.includes(id))!;
+    const px = scale(x[id]!);
+    expect(px).toBeGreaterThanOrEqual(cell.x);
+    expect(px).toBeLessThanOrEqual(cell.x + cell.width);
+    // Equal ratios in data read as equal widths on a log axis.
+    expect(cell.width).toBeCloseTo(plan.cells[0]!.width);
+  }
+  expect(plan.cells.some((cell) => cell.sourceIds.some((id) => id >= 4))).toBe(
+    false
+  );
+  expect(plan.omittedIds).toEqual([4, 5]);
+});
+it("leaves rows past an axis bound out of every bin", () => {
+  const x = Array.from({ length: 11 }, (_, i) => i);
+  const boundIds = x.map((_, i) => i);
+  const plan = planDensity(
+    {
+      ...settings,
+      xAxis: { ...settings.xAxis, limits: { min: 5 } },
+      density: { xBins: 5, yBins: 2 },
+    },
+    {
+      ...snapshot,
+      allIds: boundIds,
+      chartIds: boundIds,
+      filteredIds: boundIds,
+      xData: Object.fromEntries(x.map((value, id) => [id, value])),
+      yData: Object.fromEntries(x.map((value, id) => [id, value])),
+    },
+    600,
+    400
+  );
+  for (const cell of plan.cells)
+    for (const id of cell.sourceIds) {
+      expect(x[id]).toBeGreaterThanOrEqual(cell.xBounds[0]);
+      if (cell.xLast) expect(x[id]).toBeLessThanOrEqual(cell.xBounds[1]);
+      else expect(x[id]).toBeLessThan(cell.xBounds[1]);
+    }
+  expect(plan.cells.reduce((sum, cell) => sum + cell.sourceIds.length, 0)).toBe(
+    6
+  );
+  expect(plan.omittedIds).toEqual([0, 1, 2, 3, 4]);
 });

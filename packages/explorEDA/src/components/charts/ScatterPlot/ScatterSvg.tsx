@@ -11,6 +11,7 @@ import {
 } from "react";
 import {
   planScatterOverlay,
+  scatterPointsInPlot,
   type Extent,
   type ScatterPlan,
   type SvgPrimitive,
@@ -46,7 +47,8 @@ function MarginalBars({
   margin: { left: number; top: number };
   plotWidth: number;
   plotHeight: number;
-  onBrush?: (axis: "x" | "y", bounds: [number, number]) => void;
+  /** `last` is true when the span ends at the last bin, whose range is closed. */
+  onBrush?: (axis: "x" | "y", bounds: [number, number], last: boolean) => void;
 }) {
   const { mark } = useThemeColors();
   const drag = useRef<{
@@ -120,7 +122,11 @@ function MarginalBars({
     if (first && last) {
       const low = Math.min(bins.indexOf(first), bins.indexOf(last));
       const high = Math.max(bins.indexOf(first), bins.indexOf(last));
-      onBrush?.(active.axis, [bins[low]!.bounds[0], bins[high]!.bounds[1]]);
+      onBrush?.(
+        active.axis,
+        [bins[low]!.bounds[0], bins[high]!.bounds[1]],
+        bins[high]!.last
+      );
     }
   };
   const cancelBrush = () => {
@@ -457,7 +463,11 @@ export function ScatterSvg({
   activeMarginalId?: string;
   onHoverMarginal?: (id: string | undefined) => void;
   onMarginal?: (id: string, inspect: boolean) => void;
-  onMarginalBrush?: (axis: "x" | "y", bounds: [number, number]) => void;
+  onMarginalBrush?: (
+    axis: "x" | "y",
+    bounds: [number, number],
+    last: boolean
+  ) => void;
   /**
    * A plain click on empty space, in the plot or a marginal band. The chart
    * clears its filters. Without it, the plot clears only the brush.
@@ -517,7 +527,9 @@ export function ScatterSvg({
   const overlay = planScatterOverlay(plan, brush.extent ?? null, hoveredId);
   const keyboardPoints = useMemo(
     () =>
-      plan.size ? [...plan.points].sort((a, b) => a.sourceId - b.sourceId) : [],
+      plan.size
+        ? scatterPointsInPlot(plan).sort((a, b) => a.sourceId - b.sourceId)
+        : [],
     [plan]
   );
   const active =
