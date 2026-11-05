@@ -23,6 +23,7 @@ export function useMeasureFields(current?: string) {
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const calculations = useDataLayer((state) => state.calculations);
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldNames = useMemo(() => {
     void calculations;
     return getColumnNames();
@@ -49,5 +50,18 @@ export function useMeasureFields(current?: string) {
     () => rankMeasureFields(measureFields, fieldProfiles)[0],
     [measureFields, fieldProfiles]
   );
-  return { fieldNames, measureFields, defaultMeasure };
+  // Summary names read as titles, so they use labels rather than field ids.
+  const aggregateName = (
+    aggregation: AggregateAggregation,
+    groupField: string,
+    measureField?: string,
+    entityField?: string
+  ) =>
+    getAggregateName(
+      aggregation,
+      getFieldLabel(groupField),
+      measureField && getFieldLabel(measureField),
+      entityField && getFieldLabel(entityField)
+    );
+  return { fieldNames, measureFields, defaultMeasure, aggregateName };
 }

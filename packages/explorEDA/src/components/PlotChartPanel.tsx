@@ -5,7 +5,13 @@ import {
   LocalFilterStrip,
 } from "./LocalFilterStrip";
 import { ChartDataPreview } from "./ChartDataPreview";
-import { ActionTooltip } from "./ui/tooltip";
+import {
+  ActionTooltip,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -264,6 +270,29 @@ export function ChartTraceInspector({
 
 type TitleEditProps = ReturnType<typeof useTitleEditing>["titleProps"];
 
+/** Hover help on a chart title: its full text and how to rename it. */
+function TitleHint({
+  text,
+  children,
+}: {
+  text: string;
+  children: React.ReactElement;
+}) {
+  return (
+    <TooltipProvider delayDuration={600}>
+      <Tooltip>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipContent side="top" align="start" className="max-w-xs">
+          <span className="block font-medium">{text}</span>
+          <span className="block text-muted-foreground">
+            Double-click to rename
+          </span>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
 function TraceTitle({
   id,
   text,
@@ -304,31 +333,33 @@ function TraceTitle({
   useTraceSource(owner, source);
   const inspect = () => api?.inspect(owner, "title", "title");
   return (
-    <h3
-      ref={titleRef}
-      id={id}
-      className="eda-panel-title min-w-0 truncate text-sm font-semibold"
-      tabIndex={0}
-      aria-description={`${TITLE_EDIT_DESCRIPTION}. Alt-click or Alt-Enter to trace it`}
-      {...editProps}
-      onMouseDownCapture={(event) => {
-        if (event.altKey) event.stopPropagation();
-      }}
-      onMouseUpCapture={(event) => {
-        if (event.altKey) {
-          event.stopPropagation();
-          inspect();
-        }
-      }}
-      onKeyDown={(event) => {
-        if (event.altKey && event.key === "Enter") {
-          event.preventDefault();
-          inspect();
-        } else editProps.onKeyDown(event);
-      }}
-    >
-      {text}
-    </h3>
+    <TitleHint text={text}>
+      <h3
+        ref={titleRef}
+        id={id}
+        className="eda-panel-title min-w-0 truncate text-sm font-semibold"
+        tabIndex={0}
+        aria-description={`${TITLE_EDIT_DESCRIPTION}. Alt-click or Alt-Enter to trace it`}
+        {...editProps}
+        onMouseDownCapture={(event) => {
+          if (event.altKey) event.stopPropagation();
+        }}
+        onMouseUpCapture={(event) => {
+          if (event.altKey) {
+            event.stopPropagation();
+            inspect();
+          }
+        }}
+        onKeyDown={(event) => {
+          if (event.altKey && event.key === "Enter") {
+            event.preventDefault();
+            inspect();
+          } else editProps.onKeyDown(event);
+        }}
+      >
+        {text}
+      </h3>
+    </TitleHint>
   );
 }
 
@@ -840,16 +871,18 @@ export function PlotChartPanel({
               titleRef={titleRef}
             />
           ) : (
-            <h3
-              ref={titleRef}
-              id={titleId}
-              className="eda-panel-title min-w-0 truncate text-sm font-semibold"
-              tabIndex={0}
-              aria-description={TITLE_EDIT_DESCRIPTION}
-              {...titleEditing.titleProps}
-            >
-              {chartTitle}
-            </h3>
+            <TitleHint text={chartTitle}>
+              <h3
+                ref={titleRef}
+                id={titleId}
+                className="eda-panel-title min-w-0 truncate text-sm font-semibold"
+                tabIndex={0}
+                aria-description={TITLE_EDIT_DESCRIPTION}
+                {...titleEditing.titleProps}
+              >
+                {chartTitle}
+              </h3>
+            </TitleHint>
           )}
           {titleEditing.overlay}
           {titleClipped && !titleEditing.editing && (

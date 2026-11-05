@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ONCE_PER_HELP, type AggregateSpec } from "@/lib/aggregates";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useEffect, useState } from "react";
-import { getAggregateName, useMeasureFields } from "../aggregateFields";
+import { useMeasureFields } from "../aggregateFields";
 
 const SELECT_CLASS = "h-9 rounded-md border-input bg-background px-2 text-sm";
 
@@ -34,7 +34,7 @@ export function RowChartSettingsPanel({
   const aggregate = settings.aggregateId
     ? aggregates.find((item) => item.id === settings.aggregateId)
     : undefined;
-  const { measureFields, defaultMeasure } = useMeasureFields(
+  const { measureFields, defaultMeasure, aggregateName } = useMeasureFields(
     aggregate?.measureField
   );
   const [error, setError] = useState<string>();
@@ -60,7 +60,7 @@ export function RowChartSettingsPanel({
       try {
         applySummary(
           addAggregate({
-            name: getAggregateName(aggregation, settings.field, measureField),
+            name: aggregateName(aggregation, settings.field, measureField),
             groupField: settings.field,
             aggregation,
             measureField,
@@ -79,7 +79,7 @@ export function RowChartSettingsPanel({
     if (!aggregate) return;
     try {
       const next = { ...aggregate, ...updates };
-      const name = getAggregateName(
+      const name = aggregateName(
         next.aggregation,
         next.groupField,
         next.measureField,

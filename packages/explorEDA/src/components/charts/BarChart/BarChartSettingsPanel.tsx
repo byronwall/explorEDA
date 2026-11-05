@@ -9,7 +9,7 @@ import { ONCE_PER_HELP, type AggregateAggregation } from "@/lib/aggregates";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useState } from "react";
-import { getAggregateName, useMeasureFields } from "../aggregateFields";
+import { useMeasureFields } from "../aggregateFields";
 import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 import {
   HistogramSettingsSection,
@@ -27,9 +27,8 @@ export function BarChartSettingsPanel({
   const additive = !aggregate || isAdditiveAggregation(aggregate.aggregation);
   const addAggregate = useDataLayer((state) => state.addAggregate);
   const updateAggregate = useDataLayer((state) => state.updateAggregate);
-  const { fieldNames, measureFields, defaultMeasure } = useMeasureFields(
-    aggregate?.measureField
-  );
+  const { fieldNames, measureFields, defaultMeasure, aggregateName } =
+    useMeasureFields(aggregate?.measureField);
   const [error, setError] = useState<string>();
   const stacked = Boolean(
     settings.seriesField &&
@@ -131,7 +130,7 @@ export function BarChartSettingsPanel({
     }
     try {
       const aggregate = addAggregate({
-        name: getAggregateName(aggregation, settings.field, measureField),
+        name: aggregateName(aggregation, settings.field, measureField),
         groupField: settings.field,
         aggregation,
         ...(aggregation === "count" ? {} : { measureField }),
@@ -161,7 +160,7 @@ export function BarChartSettingsPanel({
     const updateDefinition = (updates: Partial<typeof aggregate>) => {
       try {
         const next = { ...aggregate, ...updates };
-        const name = getAggregateName(
+        const name = aggregateName(
           next.aggregation,
           next.groupField,
           next.measureField,
