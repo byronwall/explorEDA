@@ -193,7 +193,7 @@ export function RowChartSettingsPanel({
             <ActionTooltip content={ONCE_PER_HELP}>
               <FieldSelector
                 label=""
-                placeholder="Every row"
+                placeholder="Every row counts"
                 value={aggregate.entityField ?? ""}
                 allowClear
                 onChange={(value) =>
@@ -279,7 +279,9 @@ export function RowChartSettingsPanel({
                 />
               </span>
             </ActionTooltip>
-            <Label htmlFor="colorField">Use as color field</Label>
+            <ActionTooltip content="Gives each category its own color from a shared scale. Split by adds bars per value instead.">
+              <Label htmlFor="colorField">Use as color field</Label>
+            </ActionTooltip>
           </div>
         </div>
         {settings.colorField && settings.colorScaleId && (

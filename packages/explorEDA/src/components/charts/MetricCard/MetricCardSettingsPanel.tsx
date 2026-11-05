@@ -88,7 +88,7 @@ export function MetricCardSettingsPanel({
         <ActionTooltip content={ONCE_PER_HELP}>
           <FieldSelector
             label=""
-            placeholder="Every row"
+            placeholder="Every row counts"
             value={settings.entityField ?? ""}
             allowClear
             fields={getColumnNames()}
