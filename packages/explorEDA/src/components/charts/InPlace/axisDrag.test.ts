@@ -145,6 +145,30 @@ describe("dragDomain on a log axis", () => {
     ).toEqual([0.1, 100]);
   });
 
+  it("moves one pixel at a time without stretching the span", () => {
+    const tight = {
+      domain: [1000, 2000] as [number, number],
+      range: [0, 500] as [number, number],
+      scaleType: "log",
+    };
+    const [low, high] = dragDomain({
+      ...tight,
+      mode: "pan",
+      start: 250,
+      current: 249,
+    })!;
+    expect(low).toBeGreaterThan(1000);
+    expect(high / low).toBeCloseTo(2, 2);
+    // A coarse axis still saves round numbers.
+    const [, decade] = dragDomain({
+      ...log,
+      mode: "pan",
+      start: 150,
+      current: 250,
+    })!;
+    expect(decade).toBe(100);
+  });
+
   it("never pans past zero", () => {
     const [low] = dragDomain({ ...log, mode: "pan", start: 0, current: 900 })!;
     expect(low).toBeGreaterThan(0);

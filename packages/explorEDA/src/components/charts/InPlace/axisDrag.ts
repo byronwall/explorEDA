@@ -106,12 +106,26 @@ function round(
   range: [number, number],
   scaleType: string
 ): [number, number] {
-  // A symlog or log pixel spans very different values across the axis.
-  if (scaleType === "symlog" || scaleType === "log")
-    return [low, high].map((value) => Number(value.toPrecision(3))) as [
-      number,
-      number,
-    ];
+  // A symlog or log pixel spans very different values across the axis, so
+  // each end keeps the digits one pixel resolves at that end: three at
+  // least, more when a pixel moves the value by less than a part in a
+  // thousand. A fixed three would hold a 1,000 to 2,000 pan still until it
+  // jumped, and stretch the span when it did.
+  if (scaleType === "symlog" || scaleType === "log") {
+    const { to, from } = scaleType === "symlog" ? SYMLOG : LOG;
+    const stepT =
+      Math.abs(to(domain[1]) - to(domain[0])) /
+      Math.max(1, Math.abs(range[1] - range[0]));
+    return [low, high].map((value) => {
+      if (value === 0 || !Number.isFinite(value)) return value;
+      const change = Math.abs(from(to(value) + stepT) - value);
+      const digits =
+        change > 0
+          ? Math.max(3, Math.ceil(Math.log10(Math.abs(value) / change)) + 1)
+          : 3;
+      return Number(value.toPrecision(Math.min(12, digits)));
+    }) as [number, number];
+  }
   const perPixel =
     Math.abs(domain[1] - domain[0]) /
     Math.max(1, Math.abs(range[1] - range[0]));
