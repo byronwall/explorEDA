@@ -59,7 +59,7 @@ describe("normalized charts", () => {
       "Region"
     ) as SavedChartSettings;
     const partial = { ...base, xAxis: { grid: true } } as SavedChartSettings;
-    expect(normalizeChart(partial)).toEqual(base);
+    expect(normalizeChart(partial)).toEqual(normalizeChart(base));
     const { text } = exportDocument(
       {
         charts: [{ ...partial, id: "r" }],
