@@ -6,12 +6,16 @@ import {
   addConnectionText,
   addDatabaseSourceText,
   addSourceText,
+  analysisFileText,
   analysisPathFor,
   HIDDEN_PROJECT_FILE,
   labelFromId,
   newAnalysisText,
   PROJECT_FILE,
+  projectFileText,
   sourceIdForFile,
+  type AnalysisProject,
+  type AnalysisView,
   type ConnectionDefinition,
   type DatabaseSource,
   type ProjectFiles,
@@ -181,6 +185,45 @@ export async function createAnalysis(
   await files.write(
     path,
     newAnalysisText(queryId, path, name.trim() || undefined)
+  );
+  return path;
+}
+
+/**
+ * A view a panel opened, such as a new query from a table: a new analysis
+ * file for it, and the project text when the view brings a new query.
+ */
+export async function openView(
+  files: ProjectFiles,
+  folder: ProjectFolder,
+  {
+    view,
+    name,
+    project,
+    layout,
+  }: {
+    view: AnalysisView;
+    name: string;
+    project?: AnalysisProject;
+    layout: "visible" | "hidden";
+  }
+) {
+  if (project) {
+    const { path } = await projectText(files, folder, layout);
+    await files.write(path, projectFileText(folder, project));
+  }
+  const path = analysisPathFor(name, takenPaths(folder));
+  await files.write(
+    path,
+    view.settings
+      ? analysisFileText(
+          folder,
+          path,
+          [{ ...view, name, settings: view.settings }],
+          project ?? folder.project,
+          name
+        )
+      : newAnalysisText(view.queryId, path, name, { starter: true })
   );
   return path;
 }

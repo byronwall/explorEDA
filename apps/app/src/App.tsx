@@ -19,6 +19,7 @@ import {
   addDatabaseSource,
   chartDataFile,
   createAnalysis,
+  openView,
   removeSource,
   renameAnalysis,
 } from "./projectActions";
@@ -345,6 +346,17 @@ export function App({
     createAnalysis: (name, queryId) =>
       act(
         () => createAnalysis(files, folder, { name, queryId }),
+        (path) => `Created ${path}.`
+      )(),
+    openView: (view, name, project) =>
+      act(
+        () =>
+          openView(files, folder, {
+            view,
+            name,
+            project,
+            layout: info.layout,
+          }),
         (path) => `Created ${path}.`
       )(),
     renameAnalysis: (path, name) =>

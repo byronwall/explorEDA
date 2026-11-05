@@ -1,9 +1,15 @@
-import { memoryProjectFiles, readProjectFolder } from "exploreda";
+import {
+  memoryProjectFiles,
+  projectFileText,
+  readProjectFolder,
+  type AnalysisProject,
+} from "exploreda";
 import { describe, expect, it } from "vitest";
 import {
   chartDataFile,
   addDatabaseSource,
   createAnalysis,
+  openView,
   removeSource,
   renameAnalysis,
 } from "./projectActions";
@@ -97,6 +103,101 @@ describe("project actions", () => {
     expect(files.snapshot()).toEqual({
       "exploreda.eda": project,
       "kept.eda": 'eda query=plays\ndashboard "Mine"\n',
+    });
+  });
+
+  describe("joins added from the app", () => {
+    const tables = {
+      "exploreda.eda": [
+        "project @retail",
+        "",
+        "source @sales path=sales.csv",
+        "",
+        "source @item path=item.csv",
+        "",
+        'relate @sales-item sales.item_sk -> item.i_item_sk "Sales to Item"',
+        "",
+      ].join("\n"),
+      "sales.csv": "ticket,item_sk,price\n1,10,5\n2,11,7\n3,10,2\n",
+      "item.csv": "i_item_sk,category\n10,Music\n11,Sports\n",
+      "sales.eda": 'eda query=sales\ndashboard "Sales"\n',
+    };
+    /** The project with a lookup of Item on a query that reads Sales. */
+    const withLookup = (
+      project: AnalysisProject,
+      queryId: string
+    ): AnalysisProject => ({
+      ...project,
+      queries: project.queries.map((query) =>
+        query.id === queryId
+          ? {
+              ...query,
+              steps: [
+                ...query.steps,
+                {
+                  id: "item",
+                  kind: "lookup",
+                  inputStepId: query.outputStepId,
+                  relationshipId: "sales-item",
+                  as: "item",
+                  inputFieldId: "sales.item_sk",
+                },
+              ],
+              outputStepId: "item",
+            }
+          : query
+      ),
+    });
+
+    it("writes a lookup on a table's own query as a query block", async () => {
+      const files = memoryProjectFiles(tables);
+      const folder = await readProjectFolder(files);
+      const text = projectFileText(folder, withLookup(folder.project, "sales"));
+      expect(text).toMatch(
+        /\nquery @sales glyph=\S+ \{\n {2}source sales\n {2}lookup item via=sales-item on=sales\.item_sk\n\}/
+      );
+      await files.write("exploreda.eda", text);
+      const next = await readProjectFolder(files);
+      expect(next.problems).toEqual([]);
+      // The analysis that read the table now has Item's fields.
+      expect(
+        next.project.queries
+          .find((query) => query.id === "sales")!
+          .steps.map((step) => step.kind)
+      ).toEqual(["source", "lookup"]);
+    });
+
+    it("opens a new query's view as its own analysis", async () => {
+      const files = memoryProjectFiles(tables);
+      const folder = await readProjectFolder(files);
+      const query = {
+        id: "sales-2",
+        name: "Sales with Item",
+        glyph: "◇",
+        frameLabel: "Sales",
+        steps: [{ id: "sales", kind: "source" as const, sourceId: "sales" }],
+        outputStepId: "sales",
+      };
+      const project = withLookup(
+        { ...folder.project, queries: [...folder.project.queries, query] },
+        "sales-2"
+      );
+      const path = await openView(files, folder, {
+        view: { id: "v", name: "Sales with Item", queryId: "sales-2" },
+        name: "Sales with Item",
+        project,
+        layout: "visible",
+      });
+      expect(path).toBe("sales-with-item.eda");
+      expect(files.snapshot()[path]).toMatch(/^eda query=sales-2\n/);
+      const next = await readProjectFolder(files);
+      expect(next.problems).toEqual([]);
+      expect(next.analyses.map((item) => item.result.name)).toContain(
+        "Sales with Item"
+      );
+      expect(files.snapshot()["exploreda.eda"]).toContain(
+        'query @sales-2 "Sales with Item" glyph=◇ frame=Sales {\n  source sales\n  lookup item via=sales-item on=sales.item_sk\n}'
+      );
     });
   });
 });

@@ -92,6 +92,11 @@
   font-weight: 600;
 }
 
+/* The way into the schema diagram, under the tables it relates. */
+.app-links {
+  margin-top: 4px;
+}
+
 /* Rename and Delete, under the analysis they act on. */
 .app-item-actions {
   display: flex;

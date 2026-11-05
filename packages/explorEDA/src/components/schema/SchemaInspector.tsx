@@ -58,7 +58,12 @@ export interface SchemaChartLinks {
   nodeId: string;
   onShowChart: (chartId: string) => void;
 }
-import { AddStep, NewQueryFromTable, StepEditor } from "./SchemaStepEditors";
+import {
+  AddStep,
+  NewQueryFromTable,
+  RelationshipNextSteps,
+  StepEditor,
+} from "./SchemaStepEditors";
 
 /** The step, and for a summary the measure, a query card's row draws. */
 function stepRowIds(rowId: string) {
@@ -859,6 +864,10 @@ function RelationshipBody({
           ? `Followed by ${affected.map((query) => query.name).join(", ")}`
           : "No query follows this relationship yet."}
       </p>
+      <RelationshipNextSteps
+        editing={editing}
+        relationshipId={relationship.id}
+      />
       {confirmRemove ? (
         <div
           className="eda-schema-inspector-confirm"
