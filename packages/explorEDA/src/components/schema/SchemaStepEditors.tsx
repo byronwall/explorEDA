@@ -29,6 +29,7 @@ import {
   followRelationship,
   OPERATOR_LABELS,
   queryFields,
+  relationshipQuery,
   removeStep,
   replaceStep,
   stepInputFields,
@@ -426,6 +427,121 @@ export function NewQueryFromTable({
       <Table2 aria-hidden="true" />
       New query from this table
     </Button>
+  );
+}
+
+/**
+ * What to do with a relationship: bring the related fields into the open
+ * view's query, or start a new query that reads the table with them.
+ */
+export function RelationshipNextSteps({
+  editing,
+  relationshipId,
+}: {
+  editing: SchemaProjectEditing;
+  relationshipId: string;
+}) {
+  const { project } = editing;
+  const relationship = project.relationships.find(
+    (item) => item.id === relationshipId
+  );
+  const current = editing.views?.find((view) => view.current);
+  const query = current && findQuery(editing, current.queryId);
+  const fields = useMemo(
+    () => (query ? queryFields(project, query.id) : undefined),
+    [project, query]
+  );
+  if (!relationship) return null;
+  const followed =
+    query?.steps.some(
+      (step) =>
+        (step.kind === "lookup" || step.kind === "expand") &&
+        step.relationshipId === relationship.id
+    ) ?? false;
+  const direction =
+    query && fields && !followed
+      ? relationshipDirection(
+          relationship,
+          fields.stages.get(query.outputStepId) ?? fields.output
+        )
+      : undefined;
+  const target =
+    direction &&
+    project.sources.find((source) => source.id === direction.targetSourceId);
+  const base = project.sources.find(
+    (source) =>
+      source.id ===
+      (relationship.cardinality === "one-to-many"
+        ? relationship.to.sourceId
+        : relationship.from.sourceId)
+  );
+  const follow = (mode: FollowMode) => {
+    if (!query) return;
+    const result = followRelationship({
+      project,
+      query,
+      relationship,
+      mode,
+    });
+    if (result.kind === "replace") editing.onChange(result.project);
+    else if (result.kind === "open")
+      editing.onOpenView?.(result.view, result.name, result.project);
+  };
+  const canExpand = direction && !direction.single && editing.onOpenView;
+  if (!(direction?.single && target) && !canExpand && !editing.onOpenView) {
+    return null;
+  }
+  return (
+    <div className="eda-schema-inspector-section">
+      <span>Use it</span>
+      {direction?.single && target && (
+        <Button
+          type="button"
+          size="sm"
+          tooltip={`Adds a lookup step to ${query!.name}: each row gets its ${target.name} record's fields. Rows stay the same.`}
+          onClick={() => follow("lookup")}
+        >
+          <Plus aria-hidden="true" />
+          Add {target.name} fields to {current!.name}
+        </Button>
+      )}
+      {canExpand && target && (
+        <>
+          <p className="eda-schema-inspector-hint">
+            Each {query!.name} row can match several {target.name} records, so
+            rows multiply.
+          </p>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            tooltip={FOLLOW_MODE_HELP.expand}
+            onClick={() => follow("expand")}
+          >
+            One row per {target.name} record
+          </Button>
+        </>
+      )}
+      {editing.onOpenView && base && (
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          tooltip={`Starts a new analysis that reads ${base.name}${
+            relationship.cardinality === "many-to-many"
+              ? ""
+              : " with the related table's fields"
+          }`}
+          onClick={() => {
+            const next = relationshipQuery(project, relationship);
+            editing.onOpenView!(next.view, next.name, next.project);
+          }}
+        >
+          <Table2 aria-hidden="true" />
+          New query from {base.name}
+        </Button>
+      )}
+    </div>
   );
 }
 

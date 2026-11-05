@@ -114,6 +114,54 @@ describe("SchemaDiagram editing", () => {
     ).not.toContain("order-customer");
   });
 
+  it("offers a relationship's fields to the open view's query", () => {
+    const { project, sources } = createShopFixture();
+    const onChange = vi.fn<(project: AnalysisProject) => void>();
+    const onOpenView = vi.fn();
+    const views = [
+      {
+        id: "v",
+        name: "Order dates",
+        queryId: "customer-instance",
+        current: true,
+      },
+    ];
+    render(
+      <SchemaDiagram
+        graph={projectSchemaGraph(project, sources, views)}
+        width={1200}
+        height={800}
+        editing={{
+          project: { project, tables: sources, onChange, views, onOpenView },
+        }}
+      />
+    );
+    const details = selectField("Orders", "Customer ID");
+    fireEvent.click(
+      within(details).getByRole("button", { name: /Customers\.Customer ID/ })
+    );
+    const relationship = screen.getByRole("dialog", { name: "Relationship" });
+    fireEvent.click(
+      within(relationship).getByRole("button", {
+        name: "Add Customers fields to Order dates",
+      })
+    );
+    const query = onChange.mock.calls[0]![0].queries.find(
+      (item) => item.id === "customer-instance"
+    )!;
+    expect(query.steps.at(-1)).toMatchObject({
+      kind: "lookup",
+      relationshipId: "order-customer",
+    });
+
+    fireEvent.click(
+      within(relationship).getByRole("button", {
+        name: "New query from Orders",
+      })
+    );
+    expect(onOpenView.mock.calls[0]![1]).toBe("Orders with Customers");
+  });
+
   it("clears the selection on Escape without letting the drawer close", () => {
     renderDiagram();
     selectField("Orders", "Amount");

@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ActionTooltip } from "@/components/ui/tooltip";
+import { Network } from "lucide-react";
 import { relationshipDirection } from "./queryEditing";
 import {
   FOLLOW_MODE_HELP as MODE_HELP,
@@ -22,7 +23,10 @@ import {
   type FollowMode as Mode,
 } from "./stepEditing";
 
-/** Follow a relationship from the current rows without silently changing them. */
+/**
+ * Follow a relationship from the current rows without silently changing them.
+ * With none that reaches these rows, it says how to make one.
+ */
 export function QueryRelationshipBuilder({
   project,
   query,
@@ -31,6 +35,7 @@ export function QueryRelationshipBuilder({
   readOnly,
   onChange,
   onOpenView,
+  onOpenDiagram,
 }: {
   project: AnalysisProject;
   query: AnalysisQuery;
@@ -43,6 +48,8 @@ export function QueryRelationshipBuilder({
     name: string,
     project?: AnalysisProject
   ) => void;
+  /** Opens the Schema diagram on this table, to relate it. */
+  onOpenDiagram?: (sourceId?: string) => void;
 }) {
   const [relationshipId, setRelationshipId] = useState("");
   const [mode, setMode] = useState<Mode>("lookup");
@@ -52,11 +59,46 @@ export function QueryRelationshipBuilder({
   const outputFields =
     evaluation.stages.find((stage) => stage.stepId === query.outputStepId)
       ?.fields ?? evaluation.fields;
+  // A relationship this query already follows would only add its fields twice.
+  const followed = new Set(
+    query.steps.flatMap((step) =>
+      step.kind === "lookup" || step.kind === "expand"
+        ? [step.relationshipId]
+        : []
+    )
+  );
   const usable = project.relationships.flatMap((relationship) => {
+    if (followed.has(relationship.id)) return [];
     const direction = relationshipDirection(relationship, outputFields);
     return direction ? [{ relationship, direction }] : [];
   });
-  if (!usable.length) return null;
+  if (!usable.length) {
+    // One table has nothing to relate to.
+    if (project.sources.length < 2 || !onOpenDiagram) return null;
+    const first = query.steps.find((step) => step.kind === "source");
+    const sourceId = first?.kind === "source" ? first.sourceId : undefined;
+    return (
+      <section className="space-y-1.5" aria-labelledby="query-relate-heading">
+        <h3 id="query-relate-heading" className="text-xs font-medium">
+          Use a relationship
+        </h3>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+          <p className="text-xs text-muted-foreground">
+            Relate a field of this table to another table.
+          </p>
+          <Button
+            size="sm"
+            variant="outline"
+            tooltip="Opens the Schema diagram on this table. Drag one of its fields onto the matching field of another table."
+            onClick={() => onOpenDiagram(sourceId)}
+          >
+            <Network aria-hidden="true" />
+            Relate tables
+          </Button>
+        </div>
+      </section>
+    );
+  }
   const selected =
     usable.find((item) => item.relationship.id === relationshipId) ??
     usable[0]!;
@@ -89,15 +131,13 @@ export function QueryRelationshipBuilder({
       onOpenView?.(result.view, result.name, result.project);
   }
 
+  const targetName = target?.name ?? "related";
   return (
-    <section className="space-y-3 border-t border-border pt-4">
-      <div>
-        <h3 className="font-medium">Use a relationship</h3>
-        <p className="text-xs text-muted-foreground">
-          Changes to this query apply to every view that uses it.
-        </p>
-      </div>
-      <label className="block space-y-1 text-xs">
+    <section className="space-y-2" aria-labelledby="query-relate-heading">
+      <h3 id="query-relate-heading" className="text-xs font-medium">
+        Use a relationship
+      </h3>
+      <div className="eda-setting-grid text-xs">
         <span>Relationship</span>
         <Select value={relationship.id} onValueChange={setRelationshipId}>
           <SelectTrigger aria-label="Relationship to follow">
@@ -114,11 +154,9 @@ export function QueryRelationshipBuilder({
             ))}
           </SelectContent>
         </Select>
-      </label>
-      <label className="block space-y-1 text-xs">
         <span>Effect</span>
         <ActionTooltip content={MODE_HELP[mode]}>
-          <span className="block">
+          <span className="block min-w-0">
             <Select
               value={mode}
               onValueChange={(value) => setMode(value as Mode)}
@@ -131,17 +169,17 @@ export function QueryRelationshipBuilder({
                 <SelectItem value="aggregate">
                   Summarize related rows · same rows
                 </SelectItem>
-                <SelectItem value="expand">
-                  One row per related record · new view
-                </SelectItem>
+                {onOpenView && (
+                  <SelectItem value="expand">
+                    One row per related record · new view
+                  </SelectItem>
+                )}
               </SelectContent>
             </Select>
           </span>
         </ActionTooltip>
-      </label>
-      {mode === "aggregate" && (
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <label className="block space-y-1">
+        {mode === "aggregate" && (
+          <>
             <span>Measure</span>
             <Select
               value={measure}
@@ -160,35 +198,44 @@ export function QueryRelationshipBuilder({
                 </SelectItem>
               </SelectContent>
             </Select>
-          </label>
-          {measure !== "count" && (
-            <label className="block space-y-1">
-              <span>Field</span>
-              <Select value={sumField} onValueChange={setMeasureFieldId}>
-                <SelectTrigger aria-label="Related field to summarize">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {numericFields.map((field) => (
-                    <SelectItem key={field.id} value={field.id}>
-                      {field.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </label>
-          )}
-        </div>
-      )}
+            {measure !== "count" && (
+              <>
+                <span>Field</span>
+                <Select value={sumField} onValueChange={setMeasureFieldId}>
+                  <SelectTrigger aria-label="Related field to summarize">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {numericFields.map((field) => (
+                      <SelectItem key={field.id} value={field.id}>
+                        {field.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </>
+            )}
+          </>
+        )}
+      </div>
       {mode === "lookup" && !direction.single && (
         <p className="text-xs text-muted-foreground" role="status">
-          Each row can match several {target?.name ?? "related"} records.
-          Summarize them, or expand to one row per record.
+          Each row can match several {targetName} records. Summarize them, or
+          expand to one row per record.
         </p>
       )}
-      <Button size="sm" disabled={blocked} onClick={apply}>
+      <Button
+        size="sm"
+        disabled={blocked}
+        tooltip={
+          mode === "expand"
+            ? "Opens a new view with one row per related record. This query is unchanged."
+            : "Changes this query, so every view that uses it gets the change."
+        }
+        onClick={apply}
+      >
         {mode === "lookup"
-          ? "Add fields"
+          ? `Add ${targetName} fields`
           : mode === "aggregate"
             ? "Add summary"
             : "Open expanded view"}

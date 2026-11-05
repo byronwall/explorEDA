@@ -333,5 +333,6 @@ export type * from "@/types/AnalysisProject";
 export { ExplorEdaProject } from "./ExplorEdaProject";
 export type {
   ExplorEdaProjectChange,
+  ExplorEdaProjectHandle,
   ExplorEdaProjectProps,
 } from "./ExplorEdaProject";

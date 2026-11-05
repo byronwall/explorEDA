@@ -46,6 +46,7 @@ export function ProjectQueryPanel({
   onClearFocus,
   onResetSettings,
   onOpenView,
+  onOpenDiagram,
 }: {
   project: AnalysisProject;
   view: AnalysisView;
@@ -60,6 +61,8 @@ export function ProjectQueryPanel({
   onClearFocus: () => void;
   onResetSettings?: () => void;
   onOpenView?: OpenView;
+  /** Opens the Schema diagram on a table, to relate it to another. */
+  onOpenDiagram?: (sourceId?: string) => void;
 }) {
   const query = project.queries.find((item) => item.id === view.queryId);
   const parameters = queryParameters(project.parameters, query);
@@ -178,6 +181,19 @@ export function ProjectQueryPanel({
         )}
       </section>
 
+      {!readOnly && (
+        <QueryRelationshipBuilder
+          project={project}
+          query={query}
+          view={view}
+          evaluation={evaluation}
+          readOnly={readOnly}
+          onChange={onChange}
+          onOpenView={onOpenView}
+          onOpenDiagram={onOpenDiagram}
+        />
+      )}
+
       {parameters.length > 0 && (
         <QueryParameters
           project={project}
@@ -271,18 +287,6 @@ export function ProjectQueryPanel({
             onOpenView={onOpenView}
           />
         </>
-      )}
-
-      {!readOnly && (
-        <QueryRelationshipBuilder
-          project={project}
-          query={query}
-          view={view}
-          evaluation={evaluation}
-          readOnly={readOnly}
-          onChange={onChange}
-          onOpenView={onOpenView}
-        />
       )}
     </div>
   );

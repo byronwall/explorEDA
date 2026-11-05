@@ -14,6 +14,14 @@ export function newId(prefix: string) {
   return `${prefix}-${globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2)}`;
 }
 
+/** `base`, or `base-2`, `base-3`… when that is taken. */
+export function freshId(base: string, taken: Iterable<string>) {
+  const used = new Set(taken);
+  let id = base;
+  for (let n = 2; used.has(id); n += 1) id = `${base}-${n}`;
+  return id;
+}
+
 export function replaceQuery(
   project: AnalysisProject,
   query: AnalysisQuery
@@ -169,8 +177,12 @@ export function copyQuery(query: AnalysisQuery, project: AnalysisProject) {
 export function sourceView(project: AnalysisProject, sourceId: string) {
   const source = project.sources.find((item) => item.id === sourceId);
   const name = source?.name ?? sourceId;
-  const queryId = newId(`source-${sourceId}`);
-  const stepId = `${queryId}-read`;
+  // Readable IDs keep the project text short: `query @orders-2 { source orders }`.
+  const queryId = freshId(
+    sourceId,
+    project.queries.map((query) => query.id)
+  );
+  const stepId = sourceId;
   const query: AnalysisQuery = {
     id: queryId,
     name,

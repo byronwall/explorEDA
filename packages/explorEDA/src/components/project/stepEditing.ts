@@ -20,9 +20,11 @@ import { parseExpression } from "@/lib/calculations/parser/semantics";
 import {
   copyQuery,
   fieldName,
+  freshId,
   newId,
   relationshipDirection,
   replaceQuery,
+  sourceView,
 } from "./queryEditing";
 import { settingsFieldUsage } from "./settingsCompatibility";
 
@@ -204,8 +206,12 @@ export function followRelationship({
   };
 
   if (mode === "lookup") {
+    // The alias as the step ID keeps the text to `lookup item via=…`.
     const step: LookupStep = {
-      id: newId("lookup"),
+      id: freshId(
+        alias,
+        query.steps.map((item) => item.id)
+      ),
       kind: "lookup",
       inputStepId: query.outputStepId,
       ...follow,
@@ -251,13 +257,17 @@ export function followRelationship({
   // Expanding changes the row meaning, so it gets its own query and view.
   const copy = copyQuery(query, project);
   const expand: ExpandStep = {
-    id: newId("expand"),
+    id: alias,
     kind: "expand",
     inputStepId: copy.outputStepId,
     ...follow,
   };
   const expanded: AnalysisQuery = {
     ...copy,
+    id: freshId(
+      `${query.id}-${alias}`,
+      project.queries.map((item) => item.id)
+    ),
     name: `${query.name} with ${target.name}`,
     frameLabel: target.name,
     steps: [...copy.steps, expand],
@@ -268,6 +278,49 @@ export function followRelationship({
     view: { id: newId("view"), name: expanded.name, queryId: expanded.id },
     name: expanded.name,
     project: { ...project, queries: [...project.queries, expanded] },
+  };
+}
+
+/**
+ * A new query and view for a relationship: read the table on its many side
+ * and, when each row has at most one related record, add those fields.
+ */
+export function relationshipQuery(
+  project: AnalysisProject,
+  relationship: RelationshipDefinition
+) {
+  const base =
+    relationship.cardinality === "one-to-many"
+      ? relationship.to.sourceId
+      : relationship.from.sourceId;
+  const start = sourceView(project, base);
+  const query = start.project.queries.find(
+    (item) => item.id === start.view.queryId
+  )!;
+  const result = followRelationship({
+    project: start.project,
+    query,
+    relationship,
+    mode: "lookup",
+  });
+  if (result.kind !== "replace") return { ...start, name: start.view.name };
+  const target = project.sources.find(
+    (source) =>
+      source.id ===
+      (base === relationship.from.sourceId
+        ? relationship.to.sourceId
+        : relationship.from.sourceId)
+  );
+  const name = `${query.name} with ${target?.name ?? "related fields"}`;
+  return {
+    project: {
+      ...result.project,
+      queries: result.project.queries.map((item) =>
+        item.id === query.id ? { ...item, name } : item
+      ),
+    },
+    view: { ...start.view, name },
+    name,
   };
 }
 

@@ -35,6 +35,15 @@ import {
 import { incompatibleSettingsFields } from "./project/settingsCompatibility";
 import { projectSchemaGraph } from "@/lib/schema/schemaGraph";
 
+/** `ExplorEda`'s handle, plus a way to show the Schema diagram. */
+export interface ExplorEdaProjectHandle extends ExplorEdaHandle {
+  /**
+   * Opens the Schema diagram, with this source's table selected. Always set
+   * on an `ExplorEdaProject` handle; optional so an `ExplorEdaHandle` ref fits.
+   */
+  openSchema?: (sourceId?: string) => void;
+}
+
 export interface ExplorEdaProjectChange {
   project: AnalysisProject;
   view: AnalysisView;
@@ -96,7 +105,7 @@ const FIELD_TYPES = {
  * edit the project and report every change through `onProjectChange`.
  */
 export const ExplorEdaProject = forwardRef<
-  ExplorEdaHandle,
+  ExplorEdaProjectHandle,
   ExplorEdaProjectProps
 >(function ExplorEdaProject(
   {
@@ -121,6 +130,12 @@ export const ExplorEdaProject = forwardRef<
   const chartRef = useRef<ExplorEdaHandle>(null);
   const [openPanel, setOpenPanel] = useState<"schema" | "query">();
   const [diagramOpen, setDiagramOpen] = useState(Boolean(schemaFocus));
+  const [diagramFocus, setDiagramFocus] = useState(schemaFocus);
+  const openDiagram = (sourceId?: string) => {
+    setDiagramFocus(sourceId);
+    setOpenPanel(undefined);
+    setDiagramOpen(true);
+  };
 
   const [schemaWide, setSchemaWide] = useState(false);
   const [queryWide, setQueryWide] = useState(false);
@@ -270,6 +285,7 @@ export const ExplorEdaProject = forwardRef<
         }
         return reported(chartRef.current.getSettings());
       },
+      openSchema: openDiagram,
       exportChartPng: (chartId, options) =>
         chartRef.current
           ? chartRef.current.exportChartPng(chartId, options)
@@ -309,10 +325,7 @@ export const ExplorEdaProject = forwardRef<
         readOnly={readOnly}
         onProjectChange={(next) => update(next, shownView)}
         onOpenView={readOnly ? undefined : onOpenView}
-        onOpenDiagram={() => {
-          setOpenPanel(undefined);
-          setDiagramOpen(true);
-        }}
+        onOpenDiagram={() => openDiagram()}
       />
     ),
   };
@@ -341,6 +354,7 @@ export const ExplorEdaProject = forwardRef<
           update(project, { ...shownView, settings: undefined })
         }
         onOpenView={readOnly ? undefined : onOpenView}
+        onOpenDiagram={openDiagram}
       />
     ),
   };
@@ -420,7 +434,7 @@ export const ExplorEdaProject = forwardRef<
                 },
             viewId: shownView.id,
             onAddSource,
-            focusNodeId: schemaFocus ? `table:${schemaFocus}` : undefined,
+            focusNodeId: diagramFocus ? `table:${diagramFocus}` : undefined,
             open: diagramOpen,
             onOpenChange: setDiagramOpen,
           }}
