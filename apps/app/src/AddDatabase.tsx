@@ -5,7 +5,7 @@
  * does; several open one analysis on the table the user picks, with the
  * rest added beside it, ready to relate.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   DEFAULT_BYTE_LIMIT,
   DEFAULT_ROW_LIMIT,
@@ -88,8 +88,18 @@ export function AddDatabase({
   );
   const driver =
     connections.find((item) => item.id === connection)?.driver ?? "";
+  // Opened from a source lower in the rail, the panel scrolls into view.
+  const panel = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (pick) {
+      panel.current?.scrollIntoView?.({ block: "start" });
+    }
+    // Once, when the panel opens on a source to replace.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div
+      ref={panel}
       className="app-panel app-add-database"
       role="group"
       aria-label="Add from a database"
