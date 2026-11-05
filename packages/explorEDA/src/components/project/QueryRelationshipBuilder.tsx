@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { Network } from "lucide-react";
+import type { LinkProposal } from "@/lib/project/linkProposals";
 import { relationshipDirection } from "./queryEditing";
 import {
   FOLLOW_MODE_HELP as MODE_HELP,
@@ -36,6 +37,7 @@ export function QueryRelationshipBuilder({
   onChange,
   onOpenView,
   onOpenDiagram,
+  suggestions = [],
 }: {
   project: AnalysisProject;
   query: AnalysisQuery;
@@ -50,6 +52,8 @@ export function QueryRelationshipBuilder({
   ) => void;
   /** Opens the Schema diagram on this table, to relate it. */
   onOpenDiagram?: (sourceId?: string) => void;
+  /** Drafted links, to review in the Schema diagram. */
+  suggestions?: LinkProposal[];
 }) {
   const [relationshipId, setRelationshipId] = useState("");
   const [mode, setMode] = useState<Mode>("lookup");
@@ -77,6 +81,33 @@ export function QueryRelationshipBuilder({
     if (project.sources.length < 2 || !onOpenDiagram) return null;
     const first = query.steps.find((step) => step.kind === "source");
     const sourceId = first?.kind === "source" ? first.sourceId : undefined;
+    const suggested = suggestions.filter(
+      (item) => item.from.sourceId === sourceId || item.to.sourceId === sourceId
+    ).length;
+    if (suggested) {
+      return (
+        <section className="space-y-1.5" aria-labelledby="query-relate-heading">
+          <h3 id="query-relate-heading" className="text-xs font-medium">
+            Use a relationship
+          </h3>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <p className="text-xs text-muted-foreground">
+              {suggested} suggested {suggested === 1 ? "link" : "links"} from
+              this table, drafted from its keys.
+            </p>
+            <Button
+              size="sm"
+              variant="outline"
+              tooltip="Opens the Schema diagram, where suggested links are dashed. Accept them, then add the related fields here."
+              onClick={() => onOpenDiagram(sourceId)}
+            >
+              <Network aria-hidden="true" />
+              Review {suggested === 1 ? "link" : "links"}
+            </Button>
+          </div>
+        </section>
+      );
+    }
     return (
       <section className="space-y-1.5" aria-labelledby="query-relate-heading">
         <h3 id="query-relate-heading" className="text-xs font-medium">

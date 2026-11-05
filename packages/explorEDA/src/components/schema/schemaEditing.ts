@@ -4,10 +4,8 @@ import type {
   AnalysisView,
 } from "@/types/AnalysisProject";
 import type { FieldSettings } from "@/lib/fieldSettings";
-import type {
-  SchemaEndpoint,
-  SchemaViewInput,
-} from "@/lib/schema/schemaGraph";
+import type { LinkProposal } from "@/lib/project/linkProposals";
+import type { SchemaEndpoint, SchemaViewInput } from "@/lib/schema/schemaGraph";
 
 /** Project definitions the diagram can change: sources and relationships. */
 export interface SchemaProjectEditing {
@@ -17,6 +15,9 @@ export interface SchemaProjectEditing {
   onChange: (project: AnalysisProject) => void;
   /** Saved views, so removing a step can name the views it breaks. */
   views?: SchemaViewInput[];
+  /** Links drafted from foreign keys and key names, to accept or dismiss. */
+  suggestions?: LinkProposal[];
+  onDismissSuggestion?: (id: string) => void;
   /** Open a new view, such as one for a new query. Omit to hide those actions. */
   onOpenView?: (
     view: AnalysisView,
@@ -50,7 +51,8 @@ export type SchemaSelection =
   | { kind: "table"; nodeId: string }
   | { kind: "field"; nodeId: string; rowId: string }
   | { kind: "relationship"; edgeId: string }
-  | { kind: "proposal"; from: SchemaEndpoint; to: SchemaEndpoint };
+  | { kind: "proposal"; from: SchemaEndpoint; to: SchemaEndpoint }
+  | { kind: "suggestion"; id: string };
 
 export function sameSelection(
   a: SchemaSelection | undefined,

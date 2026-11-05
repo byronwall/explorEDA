@@ -2900,6 +2900,24 @@ html {
   pointer-events: stroke;
   cursor: pointer;
 }
+.eda-schema-edge[data-kind="suggested"] {
+  stroke: var(--primary);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  opacity: 0.8;
+}
+.eda-schema-edge-group[data-selected] .eda-schema-edge[data-kind="suggested"] {
+  stroke-width: 2.5;
+  opacity: 1;
+}
+.eda-schema-edge-share {
+  fill: var(--primary);
+  font-size: 10px;
+  font-weight: 500;
+  paint-order: stroke;
+  stroke: var(--background);
+  stroke-width: 3px;
+}
 .eda-schema-edge[data-kind="ghost"] {
   stroke: var(--primary);
   stroke-width: 2;

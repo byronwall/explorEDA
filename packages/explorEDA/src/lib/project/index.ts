@@ -74,3 +74,11 @@ export {
   type DirectoryHandleLike,
   type FileHandleLike,
 } from "./directoryFiles";
+export {
+  MATCH_SHARE,
+  proposalRelationship,
+  proposeLinks,
+  UNIQUE_SHARE,
+  type ForeignKey,
+  type LinkProposal,
+} from "./linkProposals";

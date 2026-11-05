@@ -6,6 +6,9 @@
  */
 import type { Column } from "../../lib/readers/typedColumns";
 import type { ConnectionDefinition } from "../../lib/dsl/project";
+import type { ForeignKey } from "../../lib/project/linkProposals";
+
+export type { ForeignKey };
 
 export type SourceReadErrorCode =
   /** The database can't be reached, or its settings are wrong. */
@@ -59,17 +62,6 @@ export interface TableInfo {
   kind: "table" | "view";
   /** How many rows it holds, where counting is quick (local files). */
   rows?: number;
-}
-
-/**
- * A one-column foreign key the database declares: `table.column` holds
- * values of `refTable.refColumn`. Table names are as `listTables` gives them.
- */
-export interface ForeignKey {
-  table: string;
-  column: string;
-  refTable: string;
-  refColumn: string;
 }
 
 export interface ReadRequest {

@@ -34,6 +34,7 @@ import {
 } from "./project/analysisRowKeys";
 import { incompatibleSettingsFields } from "./project/settingsCompatibility";
 import { projectSchemaGraph } from "@/lib/schema/schemaGraph";
+import type { LinkProposal } from "@/lib/project/linkProposals";
 
 /** `ExplorEda`'s handle, plus a way to show the Schema diagram. */
 export interface ExplorEdaProjectHandle extends ExplorEdaHandle {
@@ -64,6 +65,14 @@ export interface ExplorEdaProjectProps {
    * it, for example with `addSourceFromRows` from `exploreda/analysis`.
    */
   onAddSource?: () => void;
+  /**
+   * Links drafted for the project, such as from `proposeLinks`. The Schema
+   * diagram draws them dashed, to accept; accepting one reports a project
+   * change with the relationship added.
+   */
+  linkProposals?: LinkProposal[];
+  /** Hides a drafted link. Without it, the diagram offers no Dismiss. */
+  onDismissLinkProposal?: (id: string) => void;
   /** Open the Schema diagram with this source selected, such as one just added. */
   schemaFocus?: string;
   sidePanels?: ExplorEdaSidePanel[];
@@ -114,6 +123,8 @@ export const ExplorEdaProject = forwardRef<
     view,
     views,
     onAddSource,
+    linkProposals,
+    onDismissLinkProposal,
     schemaFocus,
     sidePanels = [],
     queryPresets,
@@ -202,6 +213,17 @@ export const ExplorEdaProject = forwardRef<
       views,
       queryPresets,
     ]
+  );
+  // A link accepted here is a relationship before the host drafts again.
+  const suggestions = useMemo(
+    () =>
+      linkProposals?.filter(
+        (item) =>
+          !project.relationships.some(
+            (relationship) => relationship.id === item.id
+          )
+      ),
+    [linkProposals, project.relationships]
   );
   const schemaGraph = useMemo(
     () => projectSchemaGraph(project, tables, schemaViews),
@@ -355,6 +377,7 @@ export const ExplorEdaProject = forwardRef<
         }
         onOpenView={readOnly ? undefined : onOpenView}
         onOpenDiagram={openDiagram}
+        suggestions={readOnly ? undefined : suggestions}
       />
     ),
   };
@@ -431,6 +454,8 @@ export const ExplorEdaProject = forwardRef<
                   onChange: (next) => update(next, shownView),
                   views: schemaViews,
                   onOpenView,
+                  suggestions,
+                  onDismissSuggestion: onDismissLinkProposal,
                 },
             viewId: shownView.id,
             onAddSource,
