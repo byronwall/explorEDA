@@ -1,0 +1,45 @@
+eda query=fourth
+dashboard "Fourth"
+
+calc "Went for it" = sum(["fourth.fourth_down_converted"], ["fourth.fourth_down_failed"])
+calc "Yard line bin" = bin(["fourth.yardline_100"], 10)
+calc "Score margin bin" = bin(["fourth.score_differential"], 8)
+
+group @d100b83c-77b8-4a9d-8d75-2c0235bee4be avg("Went for it") by="Yard line bin" {
+  name="Average of Went for it by Yard line bin"
+}
+group @c8846fb4-865d-4376-a1bd-d178dc7b62f4 avg("Went for it") by="Score margin bin" {
+  name="Average of Went for it by Score margin bin"
+}
+group @e8b2100c-e998-46d9-90a4-8ced137ff037 sum(fourth.fourth_down_converted) by="Yard line bin" {
+  name="Fourth down converted ÷ Went for it by Yard line bin"
+  denominatorField="Went for it"
+}
+group @9d964fc5-c703-4ba2-9537-80c7e4c90d50 avg("Went for it") by=fourth.posteam {
+  name="Average of Went for it by Posteam"
+}
+
+view Fourth {
+  summary @fields title=Fields
+  bar @bar-1 "Went for it" title="Average of Went for it by Yard line bin" {
+    forceString=true group=d100b83c-77b8-4a9d-8d75-2c0235bee4be categoryOrder=label
+    valueFormat=percent
+  }
+  bar @bar-2 "Went for it" title="Average of Went for it by Score margin bin" {
+    forceString=true group=c8846fb4-865d-4376-a1bd-d178dc7b62f4 valueFormat=percent
+    categoryOrder=label
+  }
+  bar fourth.fourth_down_converted {
+    title="Fourth down converted ÷ Went for it by Yard line bin" forceString=true
+    group=e8b2100c-e998-46d9-90a4-8ced137ff037 categoryOrder=label
+    valueFormat=percent
+  }
+  row fourth.posteam title="Average of Went for it by Posteam" {
+    group=9d964fc5-c703-4ba2-9537-80c7e4c90d50 topN=32
+  }
+  layout {
+    5: fields
+    4: bar-1 bar-2
+    4: fourth.fourth_down_converted fourth.posteam
+  }
+}

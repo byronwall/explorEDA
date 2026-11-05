@@ -1,0 +1,15 @@
+eda query=catalog-sales
+dashboard "Catalog sales"
+
+view "Catalog sales" {
+  summary @fields title=Fields
+  row customer_demographics.cd_gender x.title=Records
+  row customer_demographics.cd_marital_status x.title=Records
+  row customer_demographics.cd_education_status x.title=Records
+  row customer_address.ca_state x.title=Records topN=15
+  layout {
+    5: fields
+    4: customer_demographics.cd_gender customer_demographics.cd_marital_status
+    4: customer_demographics.cd_education_status customer_address.ca_state
+  }
+}

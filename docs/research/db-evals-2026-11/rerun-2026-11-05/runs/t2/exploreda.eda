@@ -1,0 +1,27 @@
+project @nfl
+
+connection @nfl driver=sqlite path=data/nfl.db
+source @plays db=nfl sql="select game_id, play_id, posteam, defteam, play_type, epa, success, yards_gained from plays where season_type = 'REG' and play_type in ('pass','run') and epa is not null"
+source @games key=game_id db=nfl table=games
+
+relate @play-game plays.game_id -> games.game_id many-to-one
+
+query @team-game "Team by game" glyph=◆ {
+  source plays
+  lookup game via=play-game
+  calc pass_epa "Pass EPA" = ["plays.play_type"] == "pass" ? ["plays.epa"] : null
+  calc run_epa "Run EPA" = ["plays.play_type"] == "run" ? ["plays.epa"] : null
+  calc win "Won" = ["plays.posteam"] == ["game.home_team"] ? (["game.result"] > 0 ? 1 : 0) : (["game.result"] < 0 ? 1 : 0)
+  filter @reg game.game_type = REG
+  aggregate @pg by=plays.posteam,plays.game_id {
+    average @pe pass_epa
+    average @re run_epa
+    average @w win
+  }
+  aggregate @team by=plays.posteam {
+    count @games
+    average @pass_epa pe
+    average @run_epa re
+    average @winrate w
+  }
+}

@@ -1,0 +1,5 @@
+project @t1
+
+connection @nfl driver=sqlite path=data/nfl.db
+
+source @fourth db=nfl sql="select posteam, yardline_100, down, ydstogo, play_type, score_differential, fourth_down_converted, fourth_down_failed from plays where down = 4"

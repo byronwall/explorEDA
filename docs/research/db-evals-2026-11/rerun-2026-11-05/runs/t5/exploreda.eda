@@ -1,0 +1,38 @@
+project @retail
+
+connection @retail driver=duckdb path=data/retail.duckdb
+source @item key=i_item_sk db=retail table=item
+source @reason key=r_reason_sk db=retail table=reason
+source @store_returns db=retail table=store_returns
+source @store_sales db=retail table=store_sales
+source @cat_rate db=retail sql="with s as (select i.i_category cat, sum(ss_ext_sales_price) sales, count(*) sale_lines from store_sales ss join item i on i.i_item_sk=ss.ss_item_sk group by 1), r as (select i.i_category cat, sum(sr_return_amt) returned, count(*) return_lines from store_returns sr join item i on i.i_item_sk=sr.sr_item_sk group by 1) select coalesce(s.cat,'(none)') category, s.sales, coalesce(r.returned,0) returned, s.sale_lines, coalesce(r.return_lines,0) return_lines, coalesce(r.returned,0)/s.sales return_rate from s left join r using (cat)"
+
+relate @ret-item store_returns.sr_item_sk -> item.i_item_sk many-to-one
+relate @ret-reason store_returns.sr_reason_sk -> reason.r_reason_sk many-to-one
+relate @sale-item store_sales.ss_item_sk -> item.i_item_sk many-to-one
+
+query @returns-detail "Returns with item and reason" glyph=◆ {
+  source store_returns
+  lookup item via=ret-item
+  lookup reason via=ret-reason
+  calc cat "Category" = ["item.i_category"]
+  calc why "Return reason" = ["reason.r_reason_desc"] == null ? "(no reason recorded)" : ["reason.r_reason_desc"]
+}
+
+query @returns-by-cat "Returns by category" glyph=▲ {
+  source store_returns
+  lookup item via=ret-item
+  aggregate @bycat by=item.i_category {
+    sum @ret_amt store_returns.sr_return_amt
+    count @ret_n
+  }
+}
+
+query @sales-by-cat "Sales by category" glyph=■ {
+  source store_sales
+  lookup item via=sale-item
+  aggregate @bycat by=item.i_category {
+    sum @sales_amt store_sales.ss_ext_sales_price
+    count @sale_n
+  }
+}

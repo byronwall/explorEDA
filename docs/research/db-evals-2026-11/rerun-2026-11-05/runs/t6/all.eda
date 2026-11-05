@@ -1,0 +1,15 @@
+eda query=all-sales
+dashboard "Web vs catalog buyers"
+
+view "Channels" {
+  row channel x.title=Sales
+  row customer_demographics.cd_gender color=channel x.title=Sales
+  row customer_demographics.cd_marital_status color=channel x.title=Sales
+  row customer_demographics.cd_education_status color=channel x.title=Sales
+  row customer_address.ca_state color=channel topN=15 x.title=Sales
+  layout {
+    4: channel customer_demographics.cd_gender
+    4: customer_demographics.cd_marital_status customer_demographics.cd_education_status
+    4: customer_address.ca_state .
+  }
+}

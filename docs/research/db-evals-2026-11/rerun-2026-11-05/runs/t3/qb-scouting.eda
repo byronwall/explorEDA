@@ -1,0 +1,39 @@
+eda query=plays
+dashboard "QB scouting"
+
+calc QB = recode(["plays.passer_player_name"], "P.Mahomes", "Mahomes", "J.Allen", "Allen", "L.Jackson", "Jackson", "J.Hurts", "Hurts", "D.Prescott", "Prescott", "Other")
+calc "Real attempt" = 1 - ["plays.sack"] - ["plays.qb_spike"]
+
+scale @bc36f713-dcb8-403f-9956-269f17a31e55 field=QB map=Other:#2a78d6,Mahomes:#eb6834,Prescott:#1baf7a,Allen:#eda100,Hurts:#e87ba4,Jackson:#008300 {
+  palette=#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948
+  paletteId=theme order=frequency overflow=other
+}
+group @0491f9b9-f38c-4fd5-a3bc-df6d777da54c sum(plays.sack) by=QB {
+  name="Sack ÷ Qb dropback by QB" denominatorField=plays.qb_dropback
+}
+group @3dac71d5-5397-41e6-8527-5327da5c5b82 sum(plays.complete_pass) by=QB {
+  name="Complete pass ÷ Real attempt by QB" denominatorField="Real attempt"
+}
+
+view Plays {
+  filter QB=Allen,Prescott,Mahomes,Jackson,Hurts
+  summary @fields title=Fields
+  pivot @pivot-1 title="" rows=QB columns=plays.sack {
+    value avg(plays.complete_pass)
+    value avg(plays.air_yards)
+    value count(plays.game_id)
+    value avg(plays.sack)
+  }
+  boxplot plays.air_yards color=QB title=""
+  bar plays.sack title="Sack ÷ Qb dropback by QB" forceString=true {
+    group=0491f9b9-f38c-4fd5-a3bc-df6d777da54c
+  }
+  bar plays.complete_pass title="Complete pass ÷ Real attempt by QB" forceString=true {
+    group=3dac71d5-5397-41e6-8527-5327da5c5b82
+  }
+  layout {
+    5: fields
+    4: pivot-1 plays.air_yards
+    4: plays.sack plays.complete_pass
+  }
+}

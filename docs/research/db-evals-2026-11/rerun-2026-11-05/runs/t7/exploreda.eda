@@ -1,0 +1,68 @@
+project @retail
+
+connection @retail driver=duckdb path=data/retail.duckdb
+
+source @inventory db=retail table=inventory limit=300000
+source @warehouse key=w_warehouse_sk db=retail table=warehouse
+source @item key=i_item_sk db=retail table=item
+source @date_dim key=d_date_sk db=retail table=date_dim limit=100000
+
+relate @inv-wh inventory.inv_warehouse_sk -> warehouse.w_warehouse_sk many-to-one
+relate @inv-item inventory.inv_item_sk -> item.i_item_sk many-to-one
+relate @inv-date inventory.inv_date_sk -> date_dim.d_date_sk many-to-one
+
+query @stock "Inventory with context" glyph=◆ {
+  source inventory
+  lookup wh via=inv-wh
+  lookup it via=inv-item
+  lookup dt via=inv-date
+}
+
+query @weekly "Last quarter, by warehouse and week" glyph=▲ {
+  source inventory
+  lookup wh via=inv-wh
+  lookup it via=inv-item
+  lookup dt via=inv-date
+  filter @lq dt.d_year = 2002
+  filter @lq4 dt.d_qoy = 4
+  filter @known inventory.inv_quantity_on_hand not-null
+  calc low "Below line" = ["inventory.inv_quantity_on_hand"] < 100 ? 1 : 0
+  calc wlabel "Warehouse" = ["wh.w_warehouse_name"] == null ? "Warehouse 5 (no name)" : ["wh.w_warehouse_name"]
+  aggregate @wk by=dt.d_date,wlabel {
+    sum @onhand inventory.inv_quantity_on_hand
+    average @avgqty inventory.inv_quantity_on_hand
+    sum @lowrows low
+    count @nrows
+  }
+}
+
+query @bycat "Last quarter, by category" glyph=● {
+  source inventory
+  lookup wh via=inv-wh
+  lookup it via=inv-item
+  lookup dt via=inv-date
+  filter @lq dt.d_year = 2002
+  filter @lq4 dt.d_qoy = 4
+  filter @known inventory.inv_quantity_on_hand not-null
+  calc low "Below line" = ["inventory.inv_quantity_on_hand"] < 100 ? 1 : 0
+  aggregate @cat by=it.i_category {
+    sum @lowrows low
+    count @nrows
+    average @avgqty inventory.inv_quantity_on_hand
+  }
+}
+
+query @byitem "Last quarter, by item" glyph=■ {
+  source inventory
+  lookup it via=inv-item
+  lookup dt via=inv-date
+  filter @lq dt.d_year = 2002
+  filter @lq4 dt.d_qoy = 4
+  filter @known inventory.inv_quantity_on_hand not-null
+  calc low "Below line" = ["inventory.inv_quantity_on_hand"] < 100 ? 1 : 0
+  aggregate @item by=it.i_item_sk,it.i_product_name,it.i_category {
+    sum @lowrows low
+    count @nrows
+  }
+  filter @many lowrows >= 10
+}

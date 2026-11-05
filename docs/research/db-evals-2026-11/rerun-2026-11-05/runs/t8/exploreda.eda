@@ -1,0 +1,32 @@
+project @nfl
+
+connection @nfl driver=sqlite path=data/nfl.db
+
+source @games key=game_id db=nfl table=games
+source @players key=gsis_id db=nfl table=players
+source @plays db=nfl sql="select game_id, season, week, posteam, play_type, qtr, down, ydstogo, yards_gained, epa, success, pass, rush, passer_player_id, rusher_player_id from plays where play_type in ('pass','run')" limit=100000
+
+relate @play-game plays.game_id -> games.game_id many-to-one
+relate @play-passer plays.passer_player_id -> players.gsis_id many-to-one
+
+query @by-roof "Games by roof" glyph=◆ {
+  source games
+  filter @reg games.game_type = REG
+}
+
+query @by-down "Plays by down" glyph=▲ {
+  source plays
+  filter @dn plays.down not-null
+  filter @ep plays.epa not-null
+  aggregate @d by=plays.play_type,plays.down {
+    average @epa plays.epa
+    count @n
+  }
+}
+
+query @by-round "Passers by draft round" glyph=● {
+  source plays
+  filter @pass plays.play_type = pass
+  filter @ep2 plays.epa not-null
+  lookup passer via=play-passer
+}

@@ -1,0 +1,42 @@
+eda query=store-sales
+dashboard "Store sales"
+
+group @6d3c176a-558f-48f3-9d70-c7830283be3f sum(store-sales.ss_ext_sales_price) by=item.i_category {
+  name="Sum of Ss ext sales price by I category"
+}
+group @1f31f958-f37b-4c2b-ade3-5920aca4a675 sum(store-sales.ss_ext_sales_price) by=store.s_state {
+  name="Sum of Ss ext sales price by S state"
+}
+group @41c0b41b-2827-4abe-b971-3129f6c8a117 sum(store-sales.ss_ext_sales_price) by=date_dim.d_day_name {
+  name="Sum of Ss ext sales price by D day name"
+}
+group @d2a4111d-aba0-492a-84f1-0bb175358428 sum(store-sales.ss_ext_sales_price) by=item.i_product_name {
+  name="Sum of Ss ext sales price by I product name"
+}
+
+view "Store sales" {
+  summary @fields title=Fields
+  line @line-1 facet.columnCount=2 x.scale=linear y.scale=linear x=date_dim.d_date {
+    y=store-sales.ss_quantity time.interval=month time.weekStart=monday
+    time.aggregation=sum time.missingPeriods=gap
+    time.measureField=store-sales.ss_ext_sales_price
+  }
+  bar @bar-1 store-sales.ss_ext_sales_price {
+    title="Sum of Ss ext sales price by I category" forceString=true
+    group=6d3c176a-558f-48f3-9d70-c7830283be3f
+  }
+  bar @bar-2 store-sales.ss_ext_sales_price title="Sum of Ss ext sales price by S state" {
+    forceString=true group=1f31f958-f37b-4c2b-ade3-5920aca4a675
+  }
+  metric @metric-card-1 sum(store-sales.ss_ext_sales_price)
+  row item.i_product_name title="Sum of Ss ext sales price by I product name" topN=10 {
+    group=d2a4111d-aba0-492a-84f1-0bb175358428
+  }
+  layout {
+    5: fields
+    4: line-1 bar-1
+    3: bar-2:6 metric-card-1:4 .:2
+    1: bar-2 item.i_product_name
+    3: . item.i_product_name
+  }
+}
