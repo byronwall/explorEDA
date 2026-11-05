@@ -29,7 +29,12 @@ import {
 import { readAnalysisText, type AnalysisTextResult } from "./analysisText";
 import { isAbsolutePath, ProjectFileError, type ProjectFiles } from "./files";
 import { isDataFile, parseTable } from "./tables";
-import { parseSnapshot, snapshotPath, type SnapshotInfo } from "./snapshots";
+import {
+  isStaleSnapshot,
+  parseSnapshot,
+  snapshotPath,
+  type SnapshotInfo,
+} from "./snapshots";
 
 export const PROJECT_FILE = "exploreda.eda";
 export const HIDDEN_PROJECT_FILE = ".exploreda/project.eda";
@@ -80,6 +85,8 @@ export interface ProjectFolder {
   implicitQueries: string[];
   /** Sources whose file or snapshot is missing or unreadable. */
   missingSources: string[];
+  /** Database sources whose text changed since their snapshot was read. */
+  staleSources: string[];
   /** Sources read from outside the folder, so the project isn't portable. */
   outsideSources: string[];
   /** Every data file in the folder, used by a source or not. */
@@ -300,6 +307,7 @@ export async function readProjectFolder(
   const inferredSources: string[] = [];
   const declaredSources: Record<string, SourceDefinition> = {};
   const missingSources: string[] = [];
+  const staleSources: string[] = [];
   const outsideSources: string[] = [];
   const snapshots: Record<string, SnapshotInfo> = {};
   const declaredIn = (sourceId: string) =>
@@ -321,6 +329,21 @@ export async function readProjectFolder(
         continue;
       }
       snapshots[source.id] = read.info;
+      if (isStaleSnapshot(read.info, database)) {
+        staleSources.push(source.id);
+        problems.push(
+          problem(
+            declaredIn(source.id),
+            `${source.id} changed since it was read.`,
+            {
+              subject: source.id,
+              severity: "warning",
+              effect: "setting-ignored",
+              suggestion: "Refresh it to read its rows again.",
+            }
+          )
+        );
+      }
       const typed = withSnapshotTypes(source, read.info);
       const inferred = inferSource(typed, read.rows);
       const loaded = inferred?.source ?? typed;
@@ -421,6 +444,7 @@ export async function readProjectFolder(
     localSources,
     implicitQueries,
     missingSources,
+    staleSources,
     outsideSources,
     // `.exploreda/` holds the app's own records, never data.
     dataFiles: listed.filter(

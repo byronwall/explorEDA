@@ -86,6 +86,38 @@ describe("refreshing a database source", () => {
     );
   });
 
+  it("warns when a source's text changed since its read", async () => {
+    await refreshSource("first", { root });
+    const text = await readFile(path.join(root, snapshotPath("first")), "utf8");
+    const load = (project: string, snapshot = text) =>
+      readProjectFolder(
+        memoryProjectFiles({
+          "exploreda.eda": project,
+          [snapshotPath("first")]: snapshot,
+        })
+      );
+    expect((await load(PROJECT)).staleSources).toEqual([]);
+
+    const changed = await load(PROJECT.replace("id = 1", "id = 2"));
+    expect(changed.staleSources).toEqual(["first"]);
+    expect(changed.tables.first).toEqual([{ id: 1, name: "Ada" }]);
+    expect(changed.problems).toContainEqual(
+      expect.objectContaining({
+        subject: "first",
+        severity: "warning",
+        message: "first changed since it was read.",
+      })
+    );
+
+    // A snapshot written before reads were recorded isn't called stale.
+    const { read: _read, ...older } = JSON.parse(text);
+    const unknown = await load(
+      PROJECT.replace("id = 1", "id = 2"),
+      JSON.stringify(older)
+    );
+    expect(unknown.staleSources).toEqual([]);
+  });
+
   it("keeps the last snapshot when a read fails", async () => {
     await refreshSource("items", { root });
     const before = await readFile(

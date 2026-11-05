@@ -8,15 +8,29 @@ import { globalConfigStore } from "../node/globalConfig";
 import { nodeProjectFiles } from "../node/projectFiles";
 import { fileSecretStore } from "../node/secrets";
 import { startServer } from "../server/server";
+import { readCommand, schemaCommand } from "./databaseCommands";
 import { EXAMPLES } from "./examples";
 import { serverCommand } from "./serverCommand";
 
 declare const __EXPLOREDA_VERSION__: string;
 
 const USAGE = `Usage: exploreda [folder] [options]
+       exploreda read [folder] [source...]
+       exploreda schema [folder] [connection] [table...]
+       exploreda server --data <folder> [options]
 
 Opens a folder as an explorEDA project in your browser. The folder's
 exploreda.eda describes its data; each other .eda file is an analysis.
+
+Commands:
+  read      read database sources into snapshots, as Refresh does in the
+            app; with no sources named, every database source
+  schema    list a connection's tables with row counts, or the columns and
+            database types of the tables named
+  server    run explorEDA for a team (exploreda server --help)
+
+Check project text with exploreda-dsl project <folder>; print its syntax
+with exploreda-dsl reference project.
 
 Options:
   --port <n>     first port to try (default 3939; the next free one is used)
@@ -113,6 +127,12 @@ async function copyFolder(from: string, to: string) {
 
 async function main(args: string[]) {
   const here = path.dirname(fileURLToPath(import.meta.url));
+  if (args[0] === "read") {
+    return readCommand(args.slice(1));
+  }
+  if (args[0] === "schema") {
+    return schemaCommand(args.slice(1));
+  }
   if (args[0] === "server") {
     return serverCommand(args.slice(1), {
       appDir: path.resolve(here, "../app"),
