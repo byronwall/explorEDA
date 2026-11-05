@@ -93,71 +93,86 @@ export function Waterfall({
         ? "Choose a measure in chart settings."
         : undefined;
 
-  const plan = useMemo((): WaterfallPlan => {
+  // The bridge over every row sets the value axis too, so filtering keeps
+  // the axis still unless the chart fits the filtered rows.
+  const fitted = settings.scaleTo === "filtered";
+  const [plan, stablePlan] = useMemo((): [
+    WaterfallPlan,
+    WaterfallPlan | undefined,
+  ] => {
     void nonce;
     void fieldSettings;
-    if (setupMessage) return { bars: [] };
-    // Traces show each measure value as it was read, and why a value that
-    // failed conversion was left out, as metric cards do.
-    const measureInputs = (measureField: string | undefined) => {
-      const rawInputs: Record<number, datum> = {};
-      const exclusionReasons: Record<number, string> = {};
-      if (
-        measureField &&
-        !calculations.some((calc) => calc.resultColumnName === measureField)
-      ) {
-        const format = fieldSettings[measureField] ?? {};
-        const type =
-          format.type ??
-          profiles.find((profile) => profile.name === measureField)?.dataType ??
-          "categorical";
-        for (const id of liveIds) {
-          const raw = (rawData[id] as Record<string, datum> | undefined)?.[
-            measureField
-          ];
-          rawInputs[id] = raw;
-          const converted = convertFieldValue(raw, type, format);
-          if (converted.error)
-            exclusionReasons[id] = `Conversion failed: ${converted.error}`;
+    if (setupMessage) return [{ bars: [] }, undefined];
+    const planFor = (ids: number[]): WaterfallPlan => {
+      // Traces show each measure value as it was read, and why a value that
+      // failed conversion was left out, as metric cards do.
+      const measureInputs = (measureField: string | undefined) => {
+        const rawInputs: Record<number, datum> = {};
+        const exclusionReasons: Record<number, string> = {};
+        if (
+          measureField &&
+          !calculations.some((calc) => calc.resultColumnName === measureField)
+        ) {
+          const format = fieldSettings[measureField] ?? {};
+          const type =
+            format.type ??
+            profiles.find((profile) => profile.name === measureField)
+              ?.dataType ??
+            "categorical";
+          for (const id of ids) {
+            const raw = (rawData[id] as Record<string, datum> | undefined)?.[
+              measureField
+            ];
+            rawInputs[id] = raw;
+            const converted = convertFieldValue(raw, type, format);
+            if (converted.error)
+              exclusionReasons[id] = `Conversion failed: ${converted.error}`;
+          }
         }
+        return {
+          rawInputs,
+          exclusionReasons,
+          measure: measureField ? getColumnData(measureField) : undefined,
+        };
+      };
+      const shared = {
+        ids,
+        orderIds: allIds,
+        step: getColumnData(settings.field),
+        parent: settings.parentField
+          ? getColumnData(settings.parentField)
+          : undefined,
+        aggregation: settings.aggregation,
+      };
+      if (settings.mode === "accumulate") {
+        return planAccumulate({
+          ...shared,
+          ...measureInputs(measureFields[0]),
+          startValue: settings.startValue,
+          labels: [states[0]?.label ?? "Start", states[1]?.label ?? "End"],
+        });
       }
-      return {
-        rawInputs,
-        exclusionReasons,
-        measure: measureField ? getColumnData(measureField) : undefined,
-      };
+      const stateInputs = [0, 1].map((index) => {
+        const state = states[index]!;
+        const tests = state.filters.map((filter) => ({
+          filter,
+          values: getColumnData(filter.field),
+        }));
+        return {
+          label: state.label,
+          ...measureInputs(measureFields[index]),
+          includes: (id: number) =>
+            tests.every(({ filter, values }) =>
+              applyFilter(values[id], filter)
+            ),
+        };
+      }) as Parameters<typeof planBridge>[0]["states"];
+      return planBridge({ ...shared, states: stateInputs });
     };
-    const shared = {
-      ids: liveIds,
-      orderIds: allIds,
-      step: getColumnData(settings.field),
-      parent: settings.parentField
-        ? getColumnData(settings.parentField)
-        : undefined,
-      aggregation: settings.aggregation,
-    };
-    if (settings.mode === "accumulate") {
-      return planAccumulate({
-        ...shared,
-        ...measureInputs(measureFields[0]),
-        startValue: settings.startValue,
-        labels: [states[0]?.label ?? "Start", states[1]?.label ?? "End"],
-      });
-    }
-    const stateInputs = [0, 1].map((index) => {
-      const state = states[index]!;
-      const tests = state.filters.map((filter) => ({
-        filter,
-        values: getColumnData(filter.field),
-      }));
-      return {
-        label: state.label,
-        ...measureInputs(measureFields[index]),
-        includes: (id: number) =>
-          tests.every(({ filter, values }) => applyFilter(values[id], filter)),
-      };
-    }) as Parameters<typeof planBridge>[0]["states"];
-    return planBridge({ ...shared, states: stateInputs });
+    return [
+      planFor(liveIds as number[]),
+      fitted ? undefined : planFor(allIds as number[]),
+    ];
     // measureFields derives from settings.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -171,6 +186,7 @@ export function Waterfall({
     settings.startValue,
     liveIds,
     allIds,
+    fitted,
     getColumnData,
     nonce,
     fieldSettings,
@@ -387,7 +403,10 @@ export function Waterfall({
   const innerHeight = Math.max(0, chartHeight - margin.top - margin.bottom);
 
   const xScale = useMemo(() => {
-    const values = bars.flatMap((bar) => [bar.from, bar.to]);
+    const values = [...bars, ...(stablePlan?.bars ?? [])].flatMap((bar) => [
+      bar.from,
+      bar.to,
+    ]);
     let min = Math.min(0, ...values);
     let max = Math.max(0, ...values, Number.MIN_VALUE);
     // Room past each extreme, so a checkpoint there draws whole.
@@ -402,7 +421,7 @@ export function Waterfall({
       .domain(boundedDomain([min, max], settings.xAxis))
       .range([0, innerWidth]);
     return hasAxisBounds(settings.xAxis) ? scale : scale.nice();
-  }, [bars, innerWidth, settings.xAxis, valueLabelRoom]);
+  }, [bars, stablePlan, innerWidth, settings.xAxis, valueLabelRoom]);
   const yScale = useMemo(
     () =>
       scaleBand<string>()

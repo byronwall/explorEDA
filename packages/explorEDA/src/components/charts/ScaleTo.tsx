@@ -9,6 +9,8 @@ export const SCALE_TO_TYPES = new Set<ChartSettings["type"]>([
   "heatmap",
   "calendar",
   "pivot",
+  "bar",
+  "waterfall",
 ]);
 
 export const scaleToOf = (settings: ChartSettings): ScaleTo =>

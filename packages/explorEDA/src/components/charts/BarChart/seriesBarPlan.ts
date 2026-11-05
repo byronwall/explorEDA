@@ -75,8 +75,16 @@ export function planSeriesBars({
   const valueLabel = percent ? "Share of category total (%)" : metricLabel;
   const formatAxis = (value: number) =>
     percent ? `${Math.round(value * 10) / 10}%` : formatValue(value);
+  // Categories and series over every row keep their slots, so bars do not
+  // widen or shift as other charts filter groups out.
+  const fitted = settings.scaleTo === "filtered";
+  // Past 20 series the chart asks for a filter, so slots follow the live rows.
+  const slotSummaries =
+    fitted || (domainSummaries?.length ?? 0) > 20
+      ? []
+      : (domainSummaries ?? []);
   const liveCategories = new Set(
-    summaries.flatMap(({ result }) =>
+    [...slotSummaries, ...summaries].flatMap(({ result }) =>
       result.rows.map((row) => categoryKey(row.groupValue))
     )
   );
@@ -90,12 +98,25 @@ export function planSeriesBars({
       categories.set(categoryKey(row.groupValue), categoryValue(row.groupValue))
     )
   );
-  const legend = summaries.map(({ value, result }) => ({
+  const liveCounts = new Map(
+    summaries.map(({ value, result }) => [
+      categoryKey(value),
+      result.sourceRowCount,
+    ])
+  );
+  const legend = [
+    ...new Map(
+      [...slotSummaries, ...summaries].map(({ value }) => [
+        categoryKey(value),
+        value,
+      ])
+    ).values(),
+  ].map((value) => ({
     key: categoryKey(value),
     value,
     label: categoryLabel(value),
     color: getColor(value),
-    count: result.sourceRowCount,
+    count: liveCounts.get(categoryKey(value)) ?? 0,
   }));
   const rows = summaries.flatMap(({ value, result }) =>
     result.rows.map((row) => ({ row, seriesValue: value }))
@@ -151,7 +172,7 @@ export function planSeriesBars({
   );
   // Bar ends over every row set the domain; current ends past them grow it.
   const allValues =
-    domainSummaries && !percent
+    domainSummaries && !percent && !fitted
       ? planSeriesBars({
           settings,
           summaries: domainSummaries,
@@ -360,6 +381,7 @@ export function planSeriesBars({
   });
   const plan: BarChartPlan = {
     revision,
+    emptySlots: [],
     mode: "aggregate",
     width,
     height,

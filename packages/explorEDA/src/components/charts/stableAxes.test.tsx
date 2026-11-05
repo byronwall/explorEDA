@@ -134,6 +134,15 @@ it("grows the axis to fit a filtered average past the all-row domain", () => {
   expect(top()).toBe(before);
 });
 
+it("fits the axis to the filtered rows when the chart opts in", () => {
+  const { top, filter } = setup({ ...bars, scaleTo: "filtered" });
+  const before = top();
+  // Web orders sum to 40 in West, well under West's all-row 140.
+  filter("Web");
+  expect(top()).toBeLessThan(100);
+  expect(top()).toBeLessThan(before);
+});
+
 it("keeps a series bar chart's value axis while another chart filters", () => {
   const { top, filter } = setup({ ...bars, seriesField: "Channel" });
   const before = top();
