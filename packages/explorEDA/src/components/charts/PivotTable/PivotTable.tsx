@@ -1,21 +1,17 @@
 import { ActionTooltip } from "@/components/ui/tooltip";
-import {
-  categoryEqual,
-  categoryIncludes,
-  categoryKey,
-} from "@/lib/categories";
+import { categoryEqual, categoryIncludes, categoryKey } from "@/lib/categories";
 import { planHeatScale, type HeatScale } from "../heatScale";
 import {
   aggregationUnits,
   calculatePivotData,
 } from "@/components/charts/PivotTable/utils/calculations";
 import { cn } from "@/lib/utils";
-import { useDataLayer } from "@/providers/DataLayerProvider";
+import { type IdType, useDataLayer } from "@/providers/DataLayerProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { Filter, ValueFilter, datum } from "@/types/FilterTypes";
 import { Filter as FilterIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useGetLiveIds } from "../useGetLiveData";
+import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { PivotCell, PivotHeader, PivotRow, CellKey } from "./types";
 import { applyFilter } from "@/hooks/applyFilter";
 import { PivotTableSettings } from "./definition";
@@ -133,13 +129,14 @@ export function PivotTable({
   void fieldSettings;
 
   const allLiveIds = useGetLiveIds(settings);
+  const everyId = useGetAllIds(settings);
+  const fitted = settings.scaleTo === "filtered";
 
-  // Get all required field data
-  const pivotData = useMemo(() => {
-    // Use facetIds if provided, otherwise use liveItems
-    const liveIds = facetIds
-      ? allLiveIds.filter((id) => facetIds.includes(id))
-      : allLiveIds;
+  // Headers and values come from the live rows; shading spans all rows too,
+  // so filtering keeps a value's tint.
+  const [pivotData, stablePivot] = useMemo(() => {
+    const inFacet = (ids: IdType[]) =>
+      facetIds ? ids.filter((id) => facetIds.includes(id)) : ids;
 
     // Gather all required fields
     const allFields = new Set([
@@ -154,19 +151,24 @@ export function PivotTable({
       fieldData[field] = getColumnData(field);
     });
 
-    // Create data array for pivot calculations
-    const data = liveIds.map((id: string | number) => {
-      const row: Record<string, datum> & { __ID: string | number } = {
-        __ID: id,
-      };
-      allFields.forEach((field) => {
-        row[field] = fieldData[field]?.[id];
-      });
-      return row;
-    });
+    const pivotOf = (ids: IdType[]) =>
+      calculatePivotData(
+        ids.map((id) => {
+          const row: Record<string, datum> & { __ID: string | number } = {
+            __ID: id,
+          };
+          allFields.forEach((field) => {
+            row[field] = fieldData[field]?.[id];
+          });
+          return row;
+        }),
+        settings
+      );
 
-    return calculatePivotData(data, settings);
-  }, [facetIds, allLiveIds, settings, getColumnData]);
+    const live = pivotOf(inFacet(allLiveIds));
+    const shadeAll = !fitted && settings.shadeCells !== false;
+    return [live, shadeAll ? pivotOf(inFacet(everyId)) : undefined] as const;
+  }, [facetIds, allLiveIds, everyId, fitted, settings, getColumnData]);
 
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
@@ -302,7 +304,8 @@ export function PivotTable({
         : getFieldName(field, fieldSettings[field])
     } (${aggregation})`;
   const displayPivotCell = (cell: PivotCell) => {
-    if (cell.status !== "ok" || cell.value == null) return displayCellValue(cell);
+    if (cell.status !== "ok" || cell.value == null)
+      return displayCellValue(cell);
     const units = aggregationUnits(cell.aggregation);
     if (units === "count" && typeof cell.value === "number") {
       return cell.value.toLocaleString("en-US");
@@ -347,7 +350,8 @@ export function PivotTable({
     if (settings.shadeCells === false) return [];
     return settings.valueFields.map((valueField, valueIndex) => {
       if (!shadable.has(valueField.aggregation)) return undefined;
-      const values = pivotData.rows.flatMap((row) =>
+      const rows = [...pivotData.rows, ...(stablePivot?.rows ?? [])];
+      const values = rows.flatMap((row) =>
         row.cells
           .filter(
             (cell, index) =>
@@ -360,7 +364,13 @@ export function PivotTable({
       );
       return values.length > 1 ? planHeatScale(values) : undefined;
     });
-  }, [pivotData, settings.shadeCells, settings.valueFields, valueCount]);
+  }, [
+    pivotData,
+    stablePivot,
+    settings.shadeCells,
+    settings.valueFields,
+    valueCount,
+  ]);
 
   const renderCell = (
     cell: PivotCell,
@@ -413,7 +423,10 @@ export function PivotTable({
 
   const valueHeaders = (keyPrefix: string) =>
     settings.valueFields.map((valueField) => (
-      <th key={`${keyPrefix}-${valueField.field}-${valueField.aggregation}`} scope="col">
+      <th
+        key={`${keyPrefix}-${valueField.field}-${valueField.aggregation}`}
+        scope="col"
+      >
         {valueLabel(valueField.field, valueField.aggregation, valueField.label)}
       </th>
     ));
@@ -439,7 +452,9 @@ export function PivotTable({
       <table
         className="eda-pivot-table"
         style={{
-          minWidth: settings.rowFields.length * labelWidth + valueColumnCount * valueWidth,
+          minWidth:
+            settings.rowFields.length * labelWidth +
+            valueColumnCount * valueWidth,
         }}
       >
         <caption className="sr-only">{getChartSummary(settings)}</caption>

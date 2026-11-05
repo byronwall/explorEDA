@@ -229,6 +229,24 @@ function rankPeriods(
   };
 }
 
+const finiteValues = (summaries: Iterable<{ value?: number | null }>) =>
+  [...summaries].flatMap((summary) =>
+    typeof summary.value === "number" && Number.isFinite(summary.value)
+      ? [summary.value]
+      : []
+  );
+
+const cellValues = (
+  groups: Map<string, AggregateInputRow[]>,
+  settings: HeatmapSettings,
+  measureField: string | undefined
+) =>
+  finiteValues(
+    [...groups.values()].map((group) =>
+      summarizeGroup(group, { aggregation: settings.aggregation, measureField })
+    )
+  );
+
 export function planHeatmap({
   settings,
   width,
@@ -280,32 +298,36 @@ export function planHeatmap({
   const omittedRowKeys = new Set(rowRank.omitted.map((item) => item.key));
   const omittedColumnKeys = new Set(columnRank.omitted.map((item) => item.key));
 
-  // Group live rows into shown cells.
-  const groups = new Map<string, AggregateInputRow[]>();
-  let omittedSourceRows = 0;
-  for (const id of snapshot.liveIds) {
-    const rowKey = categoryKey(categoryValue(snapshot.rowData[id]));
-    const columnKey = columnKeyOf(id);
-    if (
-      columnKey === undefined ||
-      omittedRowKeys.has(rowKey) ||
-      omittedColumnKeys.has(columnKey)
-    ) {
-      omittedSourceRows += 1;
-      continue;
+  // Group rows into shown cells.
+  const groupCells = (ids: number[]) => {
+    const groups = new Map<string, AggregateInputRow[]>();
+    let omitted = 0;
+    for (const id of ids) {
+      const rowKey = categoryKey(categoryValue(snapshot.rowData[id]));
+      const columnKey = columnKeyOf(id);
+      if (
+        columnKey === undefined ||
+        omittedRowKeys.has(rowKey) ||
+        omittedColumnKeys.has(columnKey)
+      ) {
+        omitted += 1;
+        continue;
+      }
+      const key = `${rowKey}|${columnKey}`;
+      const input: AggregateInputRow = { __ID: id };
+      if (measureField) {
+        input[measureField] = snapshot.measureData[id];
+      }
+      const group = groups.get(key);
+      if (group) {
+        group.push(input);
+      } else {
+        groups.set(key, [input]);
+      }
     }
-    const key = `${rowKey}|${columnKey}`;
-    const input: AggregateInputRow = { __ID: id };
-    if (measureField) {
-      input[measureField] = snapshot.measureData[id];
-    }
-    const group = groups.get(key);
-    if (group) {
-      group.push(input);
-    } else {
-      groups.set(key, [input]);
-    }
-  }
+    return { groups, omitted };
+  };
+  const { groups, omitted: omittedSourceRows } = groupCells(snapshot.liveIds);
 
   // Layout: row labels on the left under their field name, legend above,
   // column labels and their field name below.
@@ -361,12 +383,16 @@ export function planHeatmap({
       }),
     ])
   );
-  const values = [...summaries.values()].flatMap((summary) =>
-    typeof summary.value === "number" && Number.isFinite(summary.value)
-      ? [summary.value]
-      : []
+  const values = finiteValues(summaries.values());
+  // Colors span every row's cells too, so filtering keeps a value's color.
+  const fitted = settings.scaleTo === "filtered";
+  const stableValues = fitted
+    ? []
+    : cellValues(groupCells(snapshot.allIds).groups, settings, measureField);
+  const scale = planHeatScale(
+    [...values, ...stableValues],
+    settings.colorDomain
   );
-  const scale = planHeatScale(values, settings.colorDomain);
   const total = values.reduce((sum, value) => sum + value, 0);
   const additive =
     isAdditiveAggregation(settings.aggregation) &&
@@ -493,8 +519,10 @@ export function planHeatmap({
         scale.fixed.min && scale.fixed.max
           ? "fixed ends from the chart's settings"
           : scale.fixed.min || scale.fixed.max
-            ? "shown cells after other filters, with a fixed end"
-            : "shown cells after other filters",
+            ? `${fitted ? "shown cells after other filters" : "shown cells over all rows"}, with a fixed end`
+            : fitted
+              ? "shown cells after other filters (fitted to filtered rows)"
+              : "shown cells over all rows",
     },
     hasEmpty: cells.some((cell) => cell.state === "empty"),
     hasInvalid: cells.some((cell) => cell.state === "invalid"),

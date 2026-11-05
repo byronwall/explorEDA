@@ -315,6 +315,7 @@ export function Heatmap({
           format={formatLegend}
           hasEmpty={plan.hasEmpty}
           hasInvalid={plan.hasInvalid}
+          fitted={settings.scaleTo === "filtered"}
         />
         {omittedText.length > 0 && (
           <span className="min-w-0 max-w-[40%] flex-none truncate text-[11px] text-muted-foreground">

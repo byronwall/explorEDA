@@ -6,6 +6,7 @@ import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings, datum } from "@/types/ChartTypes";
 import type { Filter } from "@/types/FilterTypes";
+import { ScaleToSetting } from "@/components/charts/ScaleTo";
 
 /** A field a chart can filter on, and how the chart reads that filter. */
 export type ChartFilterField = {
@@ -142,7 +143,10 @@ export function FiltersSettingsTab({
     ]);
 
   const chartRows = (
-    <ChartRowsFilters settings={settings} onSettingChange={onSettingChange} />
+    <>
+      <ChartRowsFilters settings={settings} onSettingChange={onSettingChange} />
+      <ScaleToSetting settings={settings} onSettingChange={onSettingChange} />
+    </>
   );
 
   if (fields.length === 0) {

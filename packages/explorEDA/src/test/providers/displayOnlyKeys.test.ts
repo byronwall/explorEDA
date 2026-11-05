@@ -36,6 +36,7 @@ const SAMPLES: Record<string, unknown> = {
   subtitle: "Changed subtitle",
   note: "Changed note",
   style: { titleSize: 30, titleWeight: 400, subtitleSize: 15 },
+  scaleTo: "filtered",
   composition: (() => {
     const base = createEmptyComposition();
     return { ...base, elements: [createTextElement(base, "title")] };

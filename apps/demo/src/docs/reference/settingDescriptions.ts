@@ -17,6 +17,8 @@ export const COMMON_SETTINGS: Readonly<Record<string, string>> = {
   filters: "The chart's selection. It filters every other chart.",
   localFilters:
     "Limits the rows this chart draws. Unlike its selection, it never filters other charts.",
+  scaleTo:
+    "Which rows set the chart's lengths and colors. Blank uses all rows, so scales hold still while other charts filter; filtered fits them to the rows other charts leave.",
   margin: "Space around the plot, in pixels, on charts that draw a plot.",
   xAxis:
     "X axis scale type, tick and label sizes, grid, and range limits, on charts with an X axis.",

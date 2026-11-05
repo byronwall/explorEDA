@@ -145,16 +145,16 @@ export function planCalendar({
       ? settings.year
       : (years.at(-1) ?? new Date().getUTCFullYear());
 
-  const rollup = rollupByDay(
-    snapshot.liveIds,
-    snapshot.dateData,
-    snapshot.measureData,
-    {
+  const rollupOf = (ids: number[]) =>
+    rollupByDay(ids, snapshot.dateData, snapshot.measureData, {
       dateField: settings.field,
       aggregation: settings.aggregation,
       measureField,
-    }
-  );
+    });
+  const rollup = rollupOf(snapshot.liveIds);
+  // All rows set the colors and the month shown, so filtering moves neither.
+  const fitted = settings.scaleTo === "filtered";
+  const stable = fitted ? rollup : rollupOf(snapshot.allIds);
   let otherYears = 0;
   for (const bucket of rollup.days.values()) {
     if (new Date(bucket.start).getUTCFullYear() !== year) {
@@ -188,7 +188,7 @@ export function planCalendar({
     { length: dayCount },
     (_, index) => yearStart + index * DAY_MS
   );
-  const latestWithRows = [...rollup.days.values()]
+  const latestWithRows = [...stable.days.values()]
     .filter((bucket) => new Date(bucket.start).getUTCFullYear() === year)
     .reduce((latest, bucket) => Math.max(latest, bucket.start), yearStart);
   const month =
@@ -236,15 +236,23 @@ export function planCalendar({
   }
   const marginLeft = view === "year" ? left : settings.margin.left;
 
-  const buckets = allDays.map((start) =>
-    rollup.days.get(new Date(start).toISOString().slice(0, 10))
+  const bucketsOf = (days: typeof rollup.days) =>
+    allDays.map((start) =>
+      days.get(new Date(start).toISOString().slice(0, 10))
+    );
+  const valuesOf = (list: ReturnType<typeof bucketsOf>) =>
+    list.flatMap((bucket) =>
+      bucket &&
+      typeof bucket.value === "number" &&
+      Number.isFinite(bucket.value)
+        ? [bucket.value]
+        : []
+    );
+  const buckets = bucketsOf(rollup.days);
+  const values = valuesOf(buckets);
+  const scale = planHeatScale(
+    fitted ? values : [...values, ...valuesOf(bucketsOf(stable.days))]
   );
-  const values = buckets.flatMap((bucket) =>
-    bucket && typeof bucket.value === "number" && Number.isFinite(bucket.value)
-      ? [bucket.value]
-      : []
-  );
-  const scale = planHeatScale(values);
   const format = (value: number) =>
     measureField && formatFieldValue
       ? formatFieldValue(measureField, value)
@@ -369,7 +377,9 @@ export function planCalendar({
     scale: {
       kind: scale.kind,
       domain: scale.domain,
-      population: `days in ${year} after other filters`,
+      population: fitted
+        ? `days in ${year} after other filters (fitted to filtered rows)`
+        : `days in ${year} over all rows`,
     },
     hasEmpty: days.some((day) => day.state === "empty"),
     hasInvalid: days.some((day) => day.state === "invalid"),

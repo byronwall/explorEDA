@@ -20,7 +20,10 @@ const rows: [string, string, datum][] = [
 
 function settings(extra: Partial<HeatmapSettings> = {}): HeatmapSettings {
   return {
-    ...heatmapDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }, "Region"),
+    ...heatmapDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "Region"
+    ),
     id: "heat",
     columnField: "Channel",
     ...extra,
@@ -47,14 +50,26 @@ function plan(extra: Partial<HeatmapSettings> = {}, liveIds?: number[]) {
 }
 
 const cell = (result: ReturnType<typeof plan>, row: string, column: string) =>
-  result.cells.find((item) => item.row.label === row && item.column.label === column)!;
+  result.cells.find(
+    (item) => item.row.label === row && item.column.label === column
+  )!;
 
 describe("planHeatmap", () => {
   it("counts each pair and keeps an empty pair distinct from zero", () => {
     const result = plan();
-    expect(result.rows.map((row) => row.label)).toEqual(["North", "South", "East"]);
-    expect(result.columns.map((column) => column.label)).toEqual(["Web", "Store"]);
-    expect(cell(result, "North", "Web")).toMatchObject({ state: "value", value: 2 });
+    expect(result.rows.map((row) => row.label)).toEqual([
+      "North",
+      "South",
+      "East",
+    ]);
+    expect(result.columns.map((column) => column.label)).toEqual([
+      "Web",
+      "Store",
+    ]);
+    expect(cell(result, "North", "Web")).toMatchObject({
+      state: "value",
+      value: 2,
+    });
     expect(cell(result, "East", "Store")).toMatchObject({
       state: "empty",
       valueText: "No rows",
@@ -65,14 +80,33 @@ describe("planHeatmap", () => {
 
   it("separates zero, invalid measures, and negative sums", () => {
     const result = plan({ aggregation: "sum", measureField: "Revenue" });
-    expect(cell(result, "North", "Web")).toMatchObject({ state: "value", value: 15 });
-    expect(cell(result, "South", "Web")).toMatchObject({ state: "value", value: 0 });
+    expect(cell(result, "North", "Web")).toMatchObject({
+      state: "value",
+      value: 15,
+    });
+    expect(cell(result, "South", "Web")).toMatchObject({
+      state: "value",
+      value: 0,
+    });
     const invalid = cell(result, "North", "Store");
     expect(invalid).toMatchObject({ state: "invalid", rowCount: 1 });
     expect(invalid.contributors).toEqual([
       expect.objectContaining({ sourceId: 2, included: false }),
     ]);
     expect(result.scale).toMatchObject({ kind: "diverging", domain: [-4, 15] });
+  });
+
+  it("keeps a value's color while other charts filter, unless the chart fits the filtered rows", () => {
+    const sum = { aggregation: "sum" as const, measureField: "Revenue" };
+    // Other charts leave only the East row.
+    const stable = plan(sum, [5]);
+    expect(stable.scale.domain).toEqual([-4, 15]);
+    expect(cell(stable, "East", "Web").fill).toBe(
+      cell(plan(sum), "East", "Web").fill
+    );
+    const fitted = plan({ ...sum, scaleTo: "filtered" }, [5]);
+    expect(fitted.scale.domain).toEqual([3, 3]);
+    expect(fitted.scale.population).toMatch(/fitted to filtered rows/);
   });
 
   it("limits each axis to the values with the most rows and says how many rows it leaves out", () => {
@@ -83,14 +117,22 @@ describe("planHeatmap", () => {
 
   it("keeps category order and cell values from other filters apart", () => {
     const result = plan({}, [0, 3]);
-    expect(result.rows.map((row) => row.label)).toEqual(["North", "South", "East"]);
+    expect(result.rows.map((row) => row.label)).toEqual([
+      "North",
+      "South",
+      "East",
+    ]);
     expect(cell(result, "North", "Web").value).toBe(1);
     expect(cell(result, "East", "Web").state).toBe("empty");
   });
 
   it("selects one exact cell, and clears it on a second click", () => {
     const first = plan();
-    const filters = toggleCellFilters(settings(), first, cell(first, "South", "Store"));
+    const filters = toggleCellFilters(
+      settings(),
+      first,
+      cell(first, "South", "Store")
+    );
     expect(filters).toEqual([
       { type: "value", field: "Region", values: ["South"] },
       { type: "value", field: "Channel", values: ["Store"] },
@@ -101,7 +143,11 @@ describe("planHeatmap", () => {
     expect(cell(selected, "South", "Web").selected).toBe(false);
     expect(cell(selected, "North", "Store").selected).toBe(false);
     expect(
-      toggleCellFilters(settings({ filters }), selected, cell(selected, "South", "Store"))
+      toggleCellFilters(
+        settings({ filters }),
+        selected,
+        cell(selected, "South", "Store")
+      )
     ).toEqual([]);
   });
 
@@ -130,7 +176,9 @@ describe("planHeatmap", () => {
       metricLabel: "Average of Revenue",
       cell: { value: 7.5, rowCount: 2 },
     });
-    expect(trace?.cell.contributors.map((item) => item.sourceId)).toEqual([0, 1]);
+    expect(trace?.cell.contributors.map((item) => item.sourceId)).toEqual([
+      0, 1,
+    ]);
   });
 
   it("places values on the scale and picks text that reads on the fill", () => {
@@ -146,8 +194,20 @@ describe("planHeatmap", () => {
     expect(result.shareLabel).toBe("Share of total");
     expect(cell(result, "North", "Web").share).toBeCloseTo(2 / 6);
     // A share means nothing for averages or sums that cross zero.
-    expect(cell(plan({ aggregation: "average", measureField: "Revenue" }), "North", "Web").share).toBeUndefined();
-    expect(cell(plan({ aggregation: "sum", measureField: "Revenue" }), "North", "Web").share).toBeUndefined();
+    expect(
+      cell(
+        plan({ aggregation: "average", measureField: "Revenue" }),
+        "North",
+        "Web"
+      ).share
+    ).toBeUndefined();
+    expect(
+      cell(
+        plan({ aggregation: "sum", measureField: "Revenue" }),
+        "North",
+        "Web"
+      ).share
+    ).toBeUndefined();
   });
 
   it("selects a whole row or column from its label, and clears it on a second click", () => {
@@ -155,14 +215,18 @@ describe("planHeatmap", () => {
     const result = plan();
     const north = result.rows.find((row) => row.label === "North")!;
     const filters = toggleAxisFilters(base, result, "row", north);
-    expect(filters).toEqual([{ type: "value", field: "Region", values: ["North"] }]);
+    expect(filters).toEqual([
+      { type: "value", field: "Region", values: ["North"] },
+    ]);
     const selected = plan({ filters });
     expect(cell(selected, "North", "Store").selected).toBe(true);
     expect(cell(selected, "South", "Web").selected).toBe(false);
-    expect(toggleAxisFilters({ ...base, filters }, selected, "row", north)).toEqual([]);
+    expect(
+      toggleAxisFilters({ ...base, filters }, selected, "row", north)
+    ).toEqual([]);
     const web = selected.columns.find((column) => column.label === "Web")!;
-    expect(toggleAxisFilters({ ...base, filters }, selected, "column", web)).toEqual([
-      { type: "value", field: "Channel", values: ["Web"] },
-    ]);
+    expect(
+      toggleAxisFilters({ ...base, filters }, selected, "column", web)
+    ).toEqual([{ type: "value", field: "Channel", values: ["Web"] }]);
   });
 });

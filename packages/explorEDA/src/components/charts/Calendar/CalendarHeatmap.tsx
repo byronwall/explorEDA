@@ -337,6 +337,7 @@ export function CalendarHeatmap({
           format={formatLegend}
           hasEmpty={plan.hasEmpty}
           hasInvalid={plan.hasInvalid}
+          fitted={settings.scaleTo === "filtered"}
         />
       </div>
       <svg width={width} height={height} className="block select-none">
