@@ -60,6 +60,27 @@ export function rankMeasureFields(names: string[], profiles: FieldProfile[]) {
   });
 }
 
+/**
+ * Fields that read as dates, best first: date-typed fields, then text that
+ * parses as dates, then plain numbers. A likely key, such as
+ * ss_sold_date_sk, is a date's ID, not a date, so it is left out.
+ */
+export function rankDateFields(names: string[], profiles: FieldProfile[]) {
+  const byName = new Map(profiles.map((profile) => [profile.name, profile]));
+  return rank(
+    names.filter((name) => {
+      const profile = byName.get(name);
+      return (
+        !profile || profile.dataType === "datetime" || !isLikelyKey(profile)
+      );
+    }),
+    (name) => {
+      const type = byName.get(name)?.dataType;
+      return type === "datetime" ? 2 : type === "numeric" ? 0 : 1;
+    }
+  );
+}
+
 /** Non-numeric fields, best group first: few-valued text, keys last. */
 export function rankGroupFields(names: string[], profiles: FieldProfile[]) {
   const byName = new Map(profiles.map((profile) => [profile.name, profile]));

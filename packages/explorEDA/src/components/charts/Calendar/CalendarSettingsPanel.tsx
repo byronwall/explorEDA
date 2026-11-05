@@ -1,4 +1,4 @@
-import { rankMeasureFields } from "@/lib/fieldRanking";
+import { rankDateFields, rankMeasureFields } from "@/lib/fieldRanking";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -24,11 +24,14 @@ export function CalendarSettingsPanel({
     const names = getColumnNames();
     const values = (field: string) => Object.values(getColumnData(field));
     return {
-      dateFields: names.filter((field) =>
-        hasDateValues(
-          values(field),
-          profiles.find((profile) => profile.name === field)?.dataType
-        )
+      dateFields: rankDateFields(
+        names.filter((field) =>
+          hasDateValues(
+            values(field),
+            profiles.find((profile) => profile.name === field)?.dataType
+          )
+        ),
+        profiles
       ),
       measureFields: names.filter((field) =>
         values(field).some(
@@ -66,6 +69,7 @@ export function CalendarSettingsPanel({
               ? dateFields
               : [settings.field, ...dateFields]
           }
+          related="date"
           onChange={(value) => change({ field: value })}
         />
 
@@ -109,6 +113,7 @@ export function CalendarSettingsPanel({
               placeholder="Measure"
               value={settings.measureField ?? ""}
               fields={measureFields}
+              related="number"
               onChange={(value) => change({ measureField: value })}
             />
           </>

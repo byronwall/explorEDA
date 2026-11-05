@@ -14,6 +14,11 @@ interface FieldSelectorProps {
   fields?: string[];
   placeholder?: string;
   allowClear?: boolean;
+  /**
+   * With `fields`, also offer related tables' fields of this type, such as
+   * dates for a date picker; picking one adds its lookup.
+   */
+  related?: "number" | "date";
 }
 
 export function FieldSelector({
@@ -23,6 +28,7 @@ export function FieldSelector({
   fields,
   placeholder = "Select field",
   allowClear = false,
+  related,
 }: FieldSelectorProps) {
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const availableFields = fields ?? getColumnNames();
@@ -57,12 +63,17 @@ export function FieldSelector({
             aria-label={label || placeholder}
             optionToNode={(option) => <FieldOptionLabel field={option.value} />}
             placeholder={placeholder}
-            // A caller that narrows the fields wants only those.
+            // A caller that narrows the fields wants only those, or related
+            // ones of the type it names.
             extra={
-              fields
+              fields && !related
                 ? undefined
                 : (close) => (
-                    <RelatedFieldGroups onSelect={close} onChoose={onChange} />
+                    <RelatedFieldGroups
+                      onSelect={close}
+                      onChoose={onChange}
+                      type={related}
+                    />
                   )
             }
           />

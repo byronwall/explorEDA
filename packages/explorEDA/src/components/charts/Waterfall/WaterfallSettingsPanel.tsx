@@ -111,6 +111,7 @@ export function WaterfallSettingsPanel({
               placeholder="Measure"
               value={settings.measureField ?? ""}
               fields={measureFields}
+              related="number"
               onChange={(measureField) =>
                 onSettingsChange({ ...settings, measureField })
               }
@@ -228,6 +229,7 @@ export function WaterfallSettingsPanel({
                       value={state.measureField ?? ""}
                       allowClear
                       fields={measureFields}
+                      related="number"
                       onChange={(measureField) =>
                         changeState(index, {
                           measureField: measureField || undefined,

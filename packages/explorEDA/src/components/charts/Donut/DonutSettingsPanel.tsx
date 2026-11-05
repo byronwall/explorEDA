@@ -76,6 +76,7 @@ export function DonutSettingsPanel({
             placeholder="Measure"
             value={settings.measureField ?? ""}
             fields={measureFields}
+            related="number"
             onChange={(measureField) =>
               onSettingsChange({ ...settings, measureField })
             }

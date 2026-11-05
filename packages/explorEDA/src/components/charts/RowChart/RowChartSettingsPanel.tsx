@@ -216,6 +216,7 @@ export function RowChartSettingsPanel({
                   placeholder="Measure"
                   value={aggregate.measureField ?? ""}
                   fields={measureFields}
+                  related="number"
                   onChange={(value) =>
                     updateDefinition({ measureField: value })
                   }
@@ -230,6 +231,7 @@ export function RowChartSettingsPanel({
                   placeholder="Denominator"
                   value={aggregate.denominatorField}
                   fields={measureFields}
+                  related="number"
                   onChange={(value) =>
                     updateDefinition({ denominatorField: value })
                   }

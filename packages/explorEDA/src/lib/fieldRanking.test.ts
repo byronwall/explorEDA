@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { buildFieldProfile } from "@/lib/fieldProfiles";
-import { rankGroupFields, rankMeasureFields } from "@/lib/fieldRanking";
+import {
+  rankDateFields,
+  rankGroupFields,
+  rankMeasureFields,
+} from "@/lib/fieldRanking";
 import type { datum } from "@/types/ChartTypes";
 
 const rows = 200;
@@ -82,5 +86,23 @@ describe("field ranking", () => {
       "rating",
       "age",
     ]);
+  });
+});
+
+describe("rankDateFields", () => {
+  it("puts a real date first and leaves out a date key", () => {
+    const dated = [
+      buildFieldProfile(
+        "store_sales.ss_sold_date_sk",
+        column((i) => 2450815 + i)
+      ),
+      buildFieldProfile(
+        "date_dim.d_date",
+        column((i) => `1998-01-${String((i % 28) + 1).padStart(2, "0")}`)
+      ),
+    ];
+    expect(
+      rankDateFields(["store_sales.ss_sold_date_sk", "date_dim.d_date"], dated)
+    ).toEqual(["date_dim.d_date"]);
   });
 });
