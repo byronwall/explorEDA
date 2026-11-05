@@ -1,0 +1,32 @@
+eda query=sales-joined
+dashboard "Sales joined"
+
+group @8849967e-b3e6-4c8f-8e17-dd861ba60a06 sum(sales-joined.sales_amt) by=sales-joined.category {
+  name="Sum of sales-joined.sales_amt by sales-joined.category"
+}
+group @822574bf-1632-43eb-ac8f-1e70f3901f75 sum(sales-joined.sales_amt) by=sales-joined.state {
+  name="Sum of sales-joined.sales_amt by sales-joined.state"
+}
+
+view "Sales joined" {
+  summary @fields title=Fields
+  line @line-1 facet.columnCount=2 x.scale=linear xAxis.min=0 xAxis.max=100 {
+    y.scale=linear yAxis.min=0 yAxis.max=100 x=sales-joined.sale_date
+    y=sales-joined.ticket time.interval=month time.weekStart=monday
+    time.aggregation=sum time.missingPeriods=gap
+    time.measureField=sales-joined.sales_amt
+  }
+  row sales-joined.category {
+    title="Sum of sales-joined.sales_amt by sales-joined.category"
+    group=8849967e-b3e6-4c8f-8e17-dd861ba60a06
+  }
+  row sales-joined.state title="Sum of sales-joined.sales_amt by sales-joined.state" {
+    group=822574bf-1632-43eb-ac8f-1e70f3901f75
+  }
+  layout {
+    5: fields
+    4: line-1 .
+    4: sales-joined.category .
+    4: sales-joined.state .
+  }
+}

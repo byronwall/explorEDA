@@ -1,0 +1,7 @@
+eda query=plays
+dashboard "Plays"
+
+summary @fields title=Fields
+layout {
+  5: fields
+}

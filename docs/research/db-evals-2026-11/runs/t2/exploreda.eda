@@ -1,0 +1,9 @@
+project @nfl
+
+connection @nfl driver=sqlite path=data/nfl.db
+
+source @teams key=team db=nfl sql="with g as (select home_team team, case when home_score>away_score then 1 else 0 end win from games where game_type='REG' union all select away_team, case when away_score>home_score then 1 else 0 end from games where game_type='REG'), w as (select team, count(*) games, sum(win) wins, avg(win) win_rate from g group by team), p as (select posteam team, avg(case when play_type='pass' then epa end) pass_epa, avg(case when play_type='run' then epa end) run_epa, avg(case when play_type='pass' then success end) pass_success, avg(case when play_type='run' then success end) run_success, avg(case when play_type in ('pass','run') then pass end) pass_rate from plays where season_type='REG' and play_type in ('pass','run') and epa is not null group by posteam) select w.team, w.games, w.wins, w.win_rate, p.pass_epa, p.run_epa, p.pass_success, p.run_success, p.pass_rate from w join p using (team)"
+
+query @team-stats "Team season" glyph=◆ {
+  source teams
+}

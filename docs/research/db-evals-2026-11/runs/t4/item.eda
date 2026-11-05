@@ -1,0 +1,7 @@
+eda query=item
+dashboard "Item"
+
+summary @fields title=Fields
+layout {
+  5: fields
+}

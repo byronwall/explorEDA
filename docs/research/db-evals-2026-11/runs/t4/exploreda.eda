@@ -1,0 +1,17 @@
+project @t4
+
+connection @retail driver=duckdb path=data/retail.duckdb
+
+source @store-sales db=retail table=store_sales
+
+source @item db=retail table=item
+
+source @date-dim db=retail table=date_dim
+
+source @store db=retail table=store
+
+relate @rel-store-sales-ss_sold_date_sk-date-dim-d_date_sk store-sales.ss_sold_date_sk -> date-dim.d_date_sk "Store sales to Date dim"
+relate @rel-store-sales-ss_item_sk-item-i_item_sk store-sales.ss_item_sk -> item.i_item_sk "Store sales to Item"
+relate @rel-store-sales-ss_store_sk-store-s_store_sk store-sales.ss_store_sk -> store.s_store_sk "Store sales to Store"
+
+source @sales-joined db=retail sql="select ss.ss_ticket_number as ticket, ss.ss_item_sk as item_sk, ss.ss_ext_sales_price as sales_amt, ss.ss_quantity as qty, ss.ss_net_profit as net_profit, d.d_date as sale_date, strftime(d.d_date, '%Y-%m') as sale_month, i.i_category as category, i.i_item_id as item_id, i.i_item_desc as item_desc, i.i_brand as brand, s.s_state as state, s.s_store_name as store_name from store_sales ss left join date_dim d on ss.ss_sold_date_sk = d.d_date_sk left join item i on ss.ss_item_sk = i.i_item_sk left join store s on ss.ss_store_sk = s.s_store_sk"
