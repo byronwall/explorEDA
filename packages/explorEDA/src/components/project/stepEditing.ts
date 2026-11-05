@@ -399,6 +399,40 @@ export function appendStep(
   };
 }
 
+/**
+ * Puts an append right after the query's leading source and append steps,
+ * so lookups and calculations after it reach the appended rows too. A query
+ * that isn't one chain of steps takes it at the end.
+ */
+export function insertAppend(
+  project: AnalysisProject,
+  query: AnalysisQuery,
+  step: AppendStep
+): AnalysisProject {
+  const lead = query.steps.findIndex(
+    (item) => item.kind !== "source" && item.kind !== "append"
+  );
+  const next = query.steps[lead];
+  const before = query.steps[lead - 1];
+  if (
+    lead < 1 ||
+    !next ||
+    !before ||
+    next.kind === "source" ||
+    next.inputStepId !== before.id
+  )
+    return appendSteps(project, query, [step]);
+  return replaceQuery(project, {
+    ...query,
+    steps: [
+      ...query.steps.slice(0, lead),
+      { ...step, inputStepId: before.id },
+      { ...next, inputStepId: step.id },
+      ...query.steps.slice(lead + 1),
+    ],
+  });
+}
+
 /** The source a query's first step reads, whose fields an append fills. */
 export function baseSourceOf(project: AnalysisProject, query: AnalysisQuery) {
   const first = query.steps.find((step) => step.kind === "source");

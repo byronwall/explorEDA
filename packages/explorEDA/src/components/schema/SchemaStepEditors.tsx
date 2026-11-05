@@ -21,6 +21,7 @@ import {
 import { appendFieldMatch } from "@/lib/analysis/evaluateProject";
 import {
   appendStep,
+  insertAppend,
   appendSteps,
   baseSourceOf,
   calculateStep,
@@ -441,7 +442,21 @@ function AppendForm({
         (step) => step.kind === "append" && step.sourceId === source.id
       )
   );
-  const [sourceId, setSourceId] = useState(choices[0]?.id ?? "");
+  // The table whose columns line up best is most likely the one to stack.
+  const [sourceId, setSourceId] = useState(() => {
+    const matches = (id: string) =>
+      Object.keys(
+        appendFieldMatch(
+          base?.fields.map((item) => item.id) ?? [],
+          editing.project.sources
+            .find((item) => item.id === id)
+            ?.fields.map((item) => item.id) ?? []
+        )
+      ).length;
+    return (
+      [...choices].sort((a, b) => matches(b.id) - matches(a.id))[0]?.id ?? ""
+    );
+  });
   const [field, setField] = useState(
     query.steps.flatMap((step) =>
       step.kind === "append" ? [step.field] : []
@@ -480,7 +495,7 @@ function AppendForm({
       field.trim() || "source",
       filled
     );
-    editing.onChange(appendSteps(editing.project, query, [step]));
+    editing.onChange(insertAppend(editing.project, query, step));
     onDone();
   };
   return (
