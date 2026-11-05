@@ -1548,6 +1548,25 @@ export function compileDocument(
         );
       }
     }
+    const dateLimits =
+      chart?.type === "line" && chart.time ? chart.xAxis.limits : undefined;
+    if (dateLimits && (dateLimits.min ?? dateLimits.max) !== undefined) {
+      // A date axis spans its rows; numericAxes gives it no range to set.
+      const pair = declaration.pairs.find(
+        (item) => item.key === "x.min" || item.key === "x.max"
+      );
+      report(
+        "warning",
+        "setting-ignored",
+        pair?.span ?? declaration.span,
+        `${subject} draws dates on its X axis, so x.min and x.max have no effect.`,
+        {
+          subject,
+          suggestion:
+            "Date axes take their range from the rows; filter the rows instead, as with where.<date field>=2024-01-01..2024-06-30.",
+        }
+      );
+    }
     if (chart) {
       charts.push(chart);
       built.push({ ...summary, id: chart.id });
