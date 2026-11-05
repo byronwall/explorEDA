@@ -8,6 +8,7 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { FieldOptionLabel } from "@/components/FieldSelector";
+import { RelatedFieldGroups } from "@/components/RelatedFieldGroups";
 import {
   useDataLayer,
   useDataLayerSnapshot,
@@ -164,6 +165,7 @@ export function RoleFieldPicker({
             </CommandItem>
           );
         })}
+        <RelatedFieldGroups onChoose={pick} />
       </CommandList>
     </Command>
   );

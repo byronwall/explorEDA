@@ -29,6 +29,8 @@ interface ComboBoxProps<T> {
   className?: string;
   id?: string;
   "aria-label"?: string;
+  /** More groups after the options, such as related tables' fields. */
+  extra?: (close: () => void) => React.ReactNode;
 }
 
 export function ComboBox<T>({
@@ -41,6 +43,7 @@ export function ComboBox<T>({
   className,
   id,
   "aria-label": ariaLabel,
+  extra,
 }: ComboBoxProps<T>) {
   const [open, setOpen] = useState(false);
 
@@ -71,9 +74,9 @@ export function ComboBox<T>({
       <PopoverContent className="w-[max(18rem,var(--radix-popover-trigger-width))] p-0">
         <Command>
           <CommandInput placeholder={placeholder} />
-          <CommandGroup>
-            <CommandList className="max-h-72 overflow-y-auto">
-              <CommandEmpty>No options found.</CommandEmpty>
+          <CommandList className="max-h-72 overflow-y-auto">
+            <CommandEmpty>No options found.</CommandEmpty>
+            <CommandGroup>
               {options.map((option, index) => {
                 return (
                   <CommandItem
@@ -94,8 +97,9 @@ export function ComboBox<T>({
                   </CommandItem>
                 );
               })}
-            </CommandList>
-          </CommandGroup>
+            </CommandGroup>
+            {extra?.(() => setOpen(false))}
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>

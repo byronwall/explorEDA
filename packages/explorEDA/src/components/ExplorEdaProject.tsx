@@ -33,6 +33,8 @@ import {
   unresolvedAnalysisRowKeys,
 } from "./project/analysisRowKeys";
 import { incompatibleSettingsFields } from "./project/settingsCompatibility";
+import { lookupField, relatedTables } from "./project/relatedFields";
+import { followRelationship } from "./project/stepEditing";
 import { projectSchemaGraph } from "@/lib/schema/schemaGraph";
 import type { LinkProposal } from "@/lib/project/linkProposals";
 
@@ -382,8 +384,53 @@ export const ExplorEdaProject = forwardRef<
     ),
   };
 
+  // Lookups a field picker asked for, resolved once the query has run.
+  const pendingFields = useRef(new Map<string, (id?: string) => void>());
+  useEffect(() => {
+    for (const [id, resolve] of pendingFields.current) {
+      const ready = evaluation.fields.some((field) => field.id === id);
+      if (!ready && status !== "error") continue;
+      pendingFields.current.delete(id);
+      resolve(ready ? id : undefined);
+    }
+  }, [evaluation, status]);
+
+  const related = useMemo(() => {
+    if (readOnly || !query) return undefined;
+    return {
+      ...relatedTables(project, query, evaluation.fields),
+      addField: (relationshipId: string, fieldId: string) => {
+        const result = lookupField(project, query, relationshipId, fieldId);
+        if (!result) return Promise.resolve(undefined);
+        return new Promise<string | undefined>((resolve) => {
+          pendingFields.current.set(result.fieldId, resolve);
+          update(result.project, shownView);
+        });
+      },
+      openExpanded: onOpenView
+        ? (relationshipId: string) => {
+            const relationship = project.relationships.find(
+              (item) => item.id === relationshipId
+            );
+            if (!relationship) return;
+            const result = followRelationship({
+              project,
+              query,
+              relationship,
+              mode: "expand",
+            });
+            if (result.kind === "open")
+              onOpenView(result.view, result.name, result.project);
+          }
+        : undefined,
+    };
+    // `update` reads only props listed here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [readOnly, project, query, evaluation.fields, shownView, onOpenView]);
+
   const chartContext = useMemo(
     () => ({
+      related,
       fields: evaluation.fields,
       sources: project.sources,
       steps: query?.steps ?? [],
@@ -401,7 +448,7 @@ export const ExplorEdaProject = forwardRef<
     }),
     // `update` and `shownView` only matter when a trace opens the flow.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [evaluation, project, query, shownView]
+    [evaluation, project, query, shownView, related]
   );
 
   return (
