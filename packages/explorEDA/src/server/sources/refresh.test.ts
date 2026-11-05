@@ -7,7 +7,12 @@ import { readProjectFolder } from "../../lib/project/folder";
 import { parseSnapshot, snapshotPath } from "../../lib/project/snapshots";
 import { fakeDriver } from "./fake";
 import { writeContractSqlite } from "./fixtures/sqliteContract";
-import { listTables, refreshSource } from "./refresh";
+import {
+  cancelRead,
+  listTables,
+  readsInProgress,
+  refreshSource,
+} from "./refresh";
 import { SourceReadError } from "./types";
 
 let root = "";
@@ -309,6 +314,32 @@ source @orders db=db table=orders
     expect(
       await readFile(path.join(root, "exploreda.eda"), "utf8")
     ).not.toMatch(/s3cret/);
+  });
+
+  it("counts rows while it reads, and stops when cancelled", async () => {
+    const many = {
+      ...orders,
+      rows: Array.from({ length: 100 }, (_, index) => [index, 1]),
+    };
+    const { driver, state } = fakeDriver({
+      tables: { orders: many },
+      batchSize: 10,
+      stallMs: 20,
+    });
+    const read = failure(
+      refreshSource("orders", { root, drivers: { fake: driver } })
+    );
+    await vi.waitFor(() =>
+      expect(readsInProgress(root)[0]?.rows).toBeGreaterThan(0)
+    );
+    expect(readsInProgress(root)[0]?.sourceId).toBe("orders");
+    expect(cancelRead(root, "orders")).toBe(true);
+    const error = await read;
+    expect(error.code).toBe("cancelled");
+    expect(error.message).toBe("Reading orders stopped.");
+    expect(readsInProgress(root)).toEqual([]);
+    expect(cancelRead(root, "orders")).toBe(false);
+    expect(state.open).toBe(0);
   });
 
   it("names a driver it doesn't know", async () => {

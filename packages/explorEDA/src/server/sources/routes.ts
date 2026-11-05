@@ -1,6 +1,8 @@
 /**
  * The database routes a project answers under its API path:
- * `POST sources/<id>/refresh` reads a database source again, and
+ * `POST sources/<id>/refresh` reads a database source again,
+ * `GET sources/reading` lists the reads running now with their rows so
+ * far, `POST sources/<id>/cancel` stops one, and
  * `GET connections/<id>/tables` lists what a connection can read, with
  * row counts for local files, `GET connections/<id>/tables/<table>` gives a
  * table's columns, `GET connections/<id>/keys` its foreign keys, and
@@ -11,9 +13,11 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { resolveSecret, type SecretStore } from "../../node/secrets";
 import { readBody, send } from "../http";
 import {
+  cancelRead,
   checkSecret,
   listTables,
   projectConnection,
+  readsInProgress,
   refreshSource,
   withConnection,
   type SourceOptions,
@@ -48,19 +52,31 @@ export async function sourceRoutes(
   }: SourceRouteOptions
 ): Promise<boolean> {
   const refresh = /^sources\/([^/]+)\/refresh$/.exec(route);
+  const cancel = /^sources\/([^/]+)\/cancel$/.exec(route);
+  const reads = route === "sources/reading";
   const secret = /^connections\/([^/]+)\/secret$/.exec(route);
   const tables = /^connections\/([^/]+)\/tables$/.exec(route);
   const columns = /^connections\/([^/]+)\/tables\/([^/]+)$/.exec(route);
   const keys = /^connections\/([^/]+)\/keys$/.exec(route);
   if (
-    !(refresh && req.method === "POST") &&
-    !((tables || columns || keys) && req.method === "GET") &&
+    !((refresh || cancel) && req.method === "POST") &&
+    !((tables || columns || keys || reads) && req.method === "GET") &&
     !secret
   ) {
     return false;
   }
   if (!canRefresh) {
     send(res, 403, { error: "Only authors can read databases." });
+    return true;
+  }
+  if (reads) {
+    send(res, 200, readsInProgress(options.root));
+    return true;
+  }
+  if (cancel) {
+    send(res, 200, {
+      cancelled: cancelRead(options.root, decodeURIComponent(cancel[1]!)),
+    });
     return true;
   }
   if (refresh) {

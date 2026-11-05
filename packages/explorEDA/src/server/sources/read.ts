@@ -50,7 +50,9 @@ export async function readSnapshot(
   session: DatabaseSession,
   request: SnapshotRequest,
   limits: ReadLimits,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  /** Called after each batch with the rows read so far. */
+  onRows?: (rows: number) => void
 ): Promise<SnapshotFile> {
   const controller = new AbortController();
   const timer = setTimeout(
@@ -112,6 +114,7 @@ export async function readSnapshot(
           );
         }
       }
+      onRows?.(rows);
     }
     stopIfAborted();
     const columns = cursor.columns(values);

@@ -165,7 +165,16 @@ async function writeWhole(file: string, text: string) {
   await fs.rename(temporary, file);
 }
 
-const reading = new Map<string, Promise<SnapshotInfo>>();
+interface Read {
+  promise: Promise<SnapshotInfo>;
+  controller: AbortController;
+  rows: number;
+}
+
+const reading = new Map<string, Read>();
+
+const readKey = (root: string, sourceId: string) =>
+  `${path.resolve(root)}\0${sourceId}`;
 
 /**
  * Reads a source again and writes its snapshot. Two refreshes of one
@@ -175,16 +184,46 @@ export function refreshSource(
   sourceId: string,
   options: SourceOptions
 ): Promise<SnapshotInfo> {
-  const key = `${path.resolve(options.root)}\0${sourceId}`;
+  const key = readKey(options.root, sourceId);
   const current = reading.get(key);
   if (current) {
-    return current;
+    return current.promise;
   }
-  const read = readAndWrite(sourceId, options).finally(() =>
-    reading.delete(key)
-  );
+  const controller = new AbortController();
+  if (options.signal?.aborted) {
+    controller.abort();
+  }
+  options.signal?.addEventListener("abort", () => controller.abort(), {
+    once: true,
+  });
+  const read: Read = { controller, rows: 0, promise: Promise.resolve(null!) };
+  read.promise = readAndWrite(sourceId, {
+    ...options,
+    signal: controller.signal,
+    onRows: (rows) => {
+      read.rows = rows;
+    },
+  }).finally(() => reading.delete(key));
   reading.set(key, read);
-  return read;
+  return read.promise;
+}
+
+/** The reads running now in a project, with the rows each has so far. */
+export function readsInProgress(root: string) {
+  const prefix = readKey(root, "");
+  return [...reading]
+    .filter(([key]) => key.startsWith(prefix))
+    .map(([key, read]) => ({
+      sourceId: key.slice(prefix.length),
+      rows: read.rows,
+    }));
+}
+
+/** Stops a running read; false when the source isn't being read. */
+export function cancelRead(root: string, sourceId: string) {
+  const read = reading.get(readKey(root, sourceId));
+  read?.controller.abort();
+  return Boolean(read);
 }
 
 /** A source whose `sql=@file` names a file, with that file's query in `sql`. */
@@ -222,7 +261,7 @@ async function withSqlFile(
 
 async function readAndWrite(
   sourceId: string,
-  options: SourceOptions
+  options: SourceOptions & { onRows: (rows: number) => void }
 ): Promise<SnapshotInfo> {
   const { connections, databases } = await projectDatabases(options.root);
   const declared: DatabaseSource | undefined = databases[sourceId];
@@ -250,7 +289,8 @@ async function readAndWrite(
         bytes: options.limits?.bytes ?? DEFAULT_BYTE_LIMIT,
         timeout: options.limits?.timeout ?? DEFAULT_READ_TIMEOUT,
       },
-      options.signal
+      options.signal,
+      options.onRows
     );
     snapshot.read = snapshotRead(database);
     const folder = path.join(options.root, SNAPSHOT_FOLDER);
