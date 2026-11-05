@@ -15,15 +15,18 @@ export function BubbleLegend({
 }) {
   return (
     <div
-      className="absolute inset-x-2 flex items-end gap-3 overflow-x-auto text-xs"
+      className={`absolute inset-x-2 flex items-end overflow-x-auto text-xs ${
+        size.compact ? "gap-1.5" : "gap-3"
+      }`}
       style={{ height: size.legendHeight, bottom }}
       aria-label="Bubble size legend"
     >
-      <div className="max-w-44 shrink-0 pb-1">
+      {/* The heading gives way first, so every sample keeps its place. */}
+      <div className="min-w-0 max-w-44 pb-1">
         <ActionTooltip content={`Bubble area: ${size.label}`}>
           <div className="truncate font-medium">Area: {size.label}</div>
         </ActionTooltip>
-        <div className="text-muted-foreground">Zero is hollow</div>
+        <div className="truncate text-muted-foreground">Zero is hollow</div>
       </div>
       {size.samples.map((sample) => (
         <div key={sample.value} className="shrink-0 text-center tabular-nums">

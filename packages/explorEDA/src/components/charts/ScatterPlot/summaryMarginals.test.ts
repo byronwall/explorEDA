@@ -3,7 +3,12 @@ import { scatterPlotDefinition } from "./definition";
 import { planScatter, type ScatterSnapshot } from "./scatterPlan";
 import { pairedStats, planPairedSummary } from "./pairedSummary";
 import type { datum } from "@/types/ChartTypes";
-import { marginalBinFilters, planMarginals } from "./marginalPlan";
+import { applyFilter } from "@/hooks/applyFilter";
+import {
+  marginalBinFilters,
+  marginalRangeFilter,
+  planMarginals,
+} from "./marginalPlan";
 
 function setup(x: (number | null)[], y: (number | null)[], groups?: string[]) {
   const settings = scatterPlotDefinition.createDefaultSettings({
@@ -157,8 +162,76 @@ describe("marginal histograms", () => {
     const bin = planMarginals(settings, plan)!.bins[0]!;
     const filters = marginalBinFilters(settings, bin);
     expect(filters).toEqual([
-      { type: "range", field: "x", min: bin.bounds[0], max: bin.bounds[1] },
+      {
+        type: "range",
+        field: "x",
+        min: bin.bounds[0],
+        max: bin.bounds[1],
+        maxExclusive: true,
+      },
     ]);
     expect(marginalBinFilters({ ...settings, filters }, bin)).toEqual([]);
+  });
+
+  it("selects a bin's half-open range, closed only for the last bin", () => {
+    const x = [0, 2, 4, 6, 8, 10];
+    const { settings, snapshot } = setup(x, x);
+    settings.marginals = { bins: 5 };
+    settings.xAxis = { ...settings.xAxis, limits: { min: 0, max: 10 } };
+    const plan = planScatter(settings, snapshot, 400, 300);
+    const bins = planMarginals(settings, plan)!.bins.filter(
+      (bin) => bin.axis === "x"
+    );
+    const first = bins[0]!;
+    expect(first.bounds).toEqual([0, 2]);
+    expect(first.sourceIds).toEqual([0]);
+    const [filter] = marginalBinFilters(settings, first);
+    expect(filter).toEqual({
+      type: "range",
+      field: "x",
+      min: 0,
+      max: 2,
+      maxExclusive: true,
+    });
+    // The row on the next bin's lower edge stays out, as it does in the bar.
+    expect(applyFilter(2, filter!)).toBe(false);
+    const last = bins.at(-1)!;
+    expect(last.last).toBe(true);
+    expect(marginalBinFilters(settings, last)).toEqual([
+      { type: "range", field: "x", min: 8, max: 10 },
+    ]);
+    // A band drag spans several bins the same way.
+    expect(marginalRangeFilter("x", [0, 4], false)).toEqual({
+      type: "range",
+      field: "x",
+      min: 0,
+      max: 4,
+      maxExclusive: true,
+    });
+    expect(marginalRangeFilter("x", [6, 10], true)).toEqual({
+      type: "range",
+      field: "x",
+      min: 6,
+      max: 10,
+    });
+  });
+
+  it("leaves rows past an axis bound out of every bin", () => {
+    const x = Array.from({ length: 11 }, (_, i) => i);
+    const { settings, snapshot } = setup(x, x);
+    settings.marginals = { bins: 5 };
+    settings.xAxis = { ...settings.xAxis, limits: { min: 5 } };
+    const plan = planScatter(settings, snapshot, 400, 300);
+    const marginals = planMarginals(settings, plan)!;
+    const xBins = marginals.bins.filter((bin) => bin.axis === "x");
+    for (const bin of xBins)
+      for (const id of bin.sourceIds) {
+        expect(x[id]).toBeGreaterThanOrEqual(bin.bounds[0]);
+        if (bin.last) expect(x[id]).toBeLessThanOrEqual(bin.bounds[1]);
+        else expect(x[id]).toBeLessThan(bin.bounds[1]);
+      }
+    expect(xBins.reduce((sum, bin) => sum + bin.sourceIds.length, 0)).toBe(6);
+    const yBins = marginals.bins.filter((bin) => bin.axis === "y");
+    expect(yBins.reduce((sum, bin) => sum + bin.sourceIds.length, 0)).toBe(11);
   });
 });

@@ -29,6 +29,7 @@ import { STATUS_LINE_HEIGHT } from "../ChartStatusLine";
 import { buildScale } from "../Axis/axisPlan";
 import {
   marginalBinFilters,
+  marginalRangeFilter,
   planMarginals,
   type MarginalTrace,
 } from "./marginalPlan";
@@ -629,17 +630,12 @@ function ScatterPoints({
                   filters: marginalBinFilters(settings, bin),
                 });
             }}
-            onMarginalBrush={(axis, bounds) => {
+            onMarginalBrush={(axis, bounds, last) => {
               const field = axis === "x" ? settings.xField : settings.yField;
               const filters = settings.filters.filter(
                 (filter) => !(filter.field === field && filter.type === "range")
               );
-              filters.push({
-                type: "range",
-                field,
-                min: bounds[0],
-                max: bounds[1],
-              });
+              filters.push(marginalRangeFilter(field, bounds, last));
               updateChart(settings.id, { filters });
             }}
             activeFitId={activeFitId}

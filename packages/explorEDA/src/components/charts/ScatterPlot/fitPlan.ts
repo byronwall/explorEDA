@@ -35,7 +35,10 @@ export interface ScatterFit {
   outcome: FitOutcome;
   /** Rows in this group and facet that pass the other filters. */
   eligible: number;
-  /** Eligible rows left out because X or Y is not a finite number. */
+  /**
+   * Eligible rows left out because X or Y is not a finite number, or sits
+   * at or below zero on a log axis.
+   */
   missingX: number;
   missingY: number;
   sourceIds: IdType[];
@@ -212,11 +215,15 @@ export function planScatterFits(
     const sourceIds: IdType[] = [];
     let missingX = 0;
     let missingY = 0;
+    // A log axis has no place for zero or a negative value, so the fit
+    // leaves those rows out as the points do.
+    const logX = plan.xScale.type === "log";
+    const logY = plan.yScale.type === "log";
     for (const sourceId of ids) {
       const x = finiteNumber(snapshot.xData[sourceId]);
       const y = finiteNumber(snapshot.yData[sourceId]);
-      if (x === undefined) missingX++;
-      else if (y === undefined) missingY++;
+      if (x === undefined || (logX && x <= 0)) missingX++;
+      else if (y === undefined || (logY && y <= 0)) missingY++;
       else {
         xs.push(x);
         ys.push(y);
@@ -313,7 +320,13 @@ export function planFitMarks(
   for (const fit of fits.fits) {
     const outcome = fit.outcome;
     if (!outcome.ok) continue;
-    const [x0, x1] = outcome.xRange;
+    let [x0, x1] = outcome.xRange;
+    // A log axis starts above zero; a range that reaches lower has no pixel.
+    if (plan.xScale.type === "log") {
+      const floor = Math.min(...(plan.xScale.domain as [number, number]));
+      x0 = Math.max(x0, floor);
+      x1 = Math.max(x1, floor);
+    }
     const p0 = xScale(x0);
     const p1 = xScale(x1);
     const steps = straight

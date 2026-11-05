@@ -75,8 +75,8 @@ export function DensityTraceBody({ trace }: { trace: DensityTrace }) {
           </>
         ) : (
           <p>
-            {ids.length} rows have a missing, invalid, or nonfinite coordinate.
-            They add no count to any bin.
+            {ids.length} rows have a missing, invalid, or nonfinite coordinate,
+            or one past an axis bound. They add no count to any bin.
           </p>
         )}
       </TraceSection>
@@ -104,7 +104,10 @@ export function DensityTraceBody({ trace }: { trace: DensityTrace }) {
             {bin.width.toFixed(2)} × {bin.height.toFixed(2)} px
           </TraceReadout>
           <TraceReadout label="Bin grid">
-            {plan.xBins} × {plan.yBins} equal numeric intervals
+            {plan.xBins} × {plan.yBins} equal{" "}
+            {scatter.xScale.type === "log" || scatter.yScale.type === "log"
+              ? "ratios on a log axis, intervals otherwise"
+              : "numeric intervals"}
           </TraceReadout>
           <p className="text-muted-foreground">
             Bin edges use the full-source scatter domains. A boundary value

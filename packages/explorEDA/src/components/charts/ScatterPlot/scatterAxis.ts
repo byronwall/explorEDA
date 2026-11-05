@@ -246,16 +246,22 @@ function bandCells(axis: Extract<ScatterAxisScale, { kind: "band" }>) {
   });
 }
 
-/** The pixel span a brush covers for this axis's own filter. */
+/**
+ * The pixel span a brush covers for this axis's own filter. A field on both
+ * axes carries one filter per axis, in X then Y order, so `nth` says which.
+ */
 export function filterSpan(
   axis: ScatterAxisScale,
   filters: Filter[],
-  field: string
+  field: string,
+  nth = 0
 ): [number, number] | undefined {
+  // A band axis brushes categories and a numeric axis brushes a range.
+  const type = axis.kind === "band" ? "value" : "range";
+  const filter = filters.filter(
+    (item) => item.type === type && item.field === field
+  )[nth];
   if (axis.kind === "numeric") {
-    const filter = filters.find(
-      (item) => item.type === "range" && item.field === field
-    );
     if (
       filter?.type !== "range" ||
       filter.min === undefined ||
@@ -266,9 +272,6 @@ export function filterSpan(
     const b = axis.scale(filter.max);
     return [Math.min(a, b), Math.max(a, b)];
   }
-  const filter = filters.find(
-    (item) => item.type === "value" && item.field === field
-  );
   if (filter?.type !== "value") return undefined;
   const cells = bandCells(axis).filter((cell) =>
     categoryIncludes(filter.values, cell.category.value)

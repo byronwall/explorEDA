@@ -119,6 +119,9 @@ export function connectionLabelRoom(
   snapshot: ScatterSnapshot,
   plotWidth: number
 ) {
+  // Only drawn points carry paths and labels; a density surface has none.
+  if (settings.display && settings.display !== "points")
+    return { start: 0, end: 0 };
   const texts = connectionLabelTexts(settings, snapshot);
   if (!texts.length) return { start: 0, end: 0 };
   const widest = Math.max(...texts.map((text) => text.length));

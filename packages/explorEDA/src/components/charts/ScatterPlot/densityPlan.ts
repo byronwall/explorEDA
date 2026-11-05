@@ -1,10 +1,9 @@
-import { bisectRight } from "d3-array";
 import { heatFill } from "../heatScale";
-import type { AxisTypography } from "../Axis/axisPlan";
+import { buildScale, type AxisTypography } from "../Axis/axisPlan";
 import { finiteNumber } from "@/lib/valueParsing";
 import type { datum, Filter } from "@/types/FilterTypes";
-import { numericScale } from "../Axis/numericScale";
 import type { ScatterPlotSettings } from "./definition";
+import { binIndex } from "./marginalPlan";
 import { planScatter, type ScatterSnapshot } from "./scatterPlan";
 import type { ScatterTrace } from "./scatterTrace";
 
@@ -33,10 +32,22 @@ export interface DensityBin {
 export const densityColor = (fraction: number) =>
   heatFill(0.2 + 0.8 * Math.max(0, Math.min(1, fraction)), "sequential");
 
-/** Equal numeric intervals keep exact membership independent of panel pixels. */
-export function densityEdges(domain: [number, number], count: number) {
+/**
+ * Equal numeric intervals keep exact membership independent of panel pixels.
+ * A log axis bins in equal ratios, so bins keep an even width on screen.
+ */
+export function densityEdges(
+  domain: [number, number],
+  count: number,
+  log = false
+) {
+  const [low, high] = domain;
   return Array.from({ length: count + 1 }, (_, i) =>
-    i === count ? domain[1] : domain[0] + ((domain[1] - domain[0]) * i) / count
+    i === count
+      ? high
+      : log
+        ? low * (high / low) ** (i / count)
+        : low + ((high - low) * i) / count
   );
 }
 
@@ -73,23 +84,34 @@ export function planDensity(
       omittedIds: [] as number[],
     };
   }
-  const xEdges = densityEdges(scatter.xScale.domain, xBins);
-  const yEdges = densityEdges(scatter.yScale.domain, yBins);
-  const xScale = numericScale(settings.xAxis)
-    .domain(scatter.xScale.domain)
-    .range(scatter.xScale.range);
-  const yScale = numericScale(settings.yAxis)
-    .domain(scatter.yScale.domain)
-    .range(scatter.yScale.range);
+  const xEdges = densityEdges(
+    scatter.xScale.domain,
+    xBins,
+    scatter.xScale.type === "log"
+  );
+  const yEdges = densityEdges(
+    scatter.yScale.domain,
+    yBins,
+    scatter.yScale.type === "log"
+  );
+  // The axes' own scales, so a log axis places its cells where its ticks are.
+  const xScale = buildScale(scatter.xScale) as (value: number) => number;
+  const yScale = buildScale(scatter.yScale) as (value: number) => number;
   const allBins = new Map<string, number[]>();
+  // Rows in this panel whose pair sits past an axis bound, so no bin holds it.
+  const panel = new Set(scatter.rowSets.facet);
+  const outside: number[] = [];
   for (const id of snapshot.allIds) {
     const x = finiteNumber(snapshot.xData[id]);
     const y = finiteNumber(snapshot.yData[id]);
     if (x === undefined || y === undefined) continue;
     if (!Number.isFinite(xScale(x)) || !Number.isFinite(yScale(y))) continue;
-    // Each interior edge belongs to the bin on its right. Only the final edge is closed.
-    const xi = Math.max(0, Math.min(xBins - 1, bisectRight(xEdges, x) - 1));
-    const yi = Math.max(0, Math.min(yBins - 1, bisectRight(yEdges, y) - 1));
+    const xi = binIndex(xEdges, x);
+    const yi = binIndex(yEdges, y);
+    if (xi === undefined || yi === undefined) {
+      if (panel.has(id)) outside.push(id);
+      continue;
+    }
     const key = `${xi}:${yi}`;
     const ids = allBins.get(key) ?? [];
     ids.push(id);
@@ -144,7 +166,10 @@ export function planDensity(
     max,
     sourceMax,
     notice: undefined as string | undefined,
-    omittedIds: scatter.exclusions.map((item) => item.sourceId),
+    omittedIds: [
+      ...scatter.exclusions.map((item) => item.sourceId),
+      ...outside,
+    ],
   };
 }
 

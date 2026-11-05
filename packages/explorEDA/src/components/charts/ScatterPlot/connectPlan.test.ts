@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { datum } from "@/types/ChartTypes";
-import { planConnections } from "./connectPlan";
+import { connectionLabelRoom, planConnections } from "./connectPlan";
 import { scatterPlotDefinition, type ScatterPlotSettings } from "./definition";
 import { planScatter, type ScatterSnapshot } from "./scatterPlan";
 
@@ -169,5 +169,37 @@ describe("scatter connections", () => {
     };
     const plan = planScatter(settings, snapshot, 500, 300);
     expect(planConnections(settings, snapshot, plan)).toBeUndefined();
+  });
+});
+
+describe("connection label room", () => {
+  const settings: ScatterPlotSettings = {
+    ...scatterPlotDefinition.createDefaultSettings({ x: 0, y: 0, w: 4, h: 4 }),
+    xField: "Miles",
+    yField: "Gas",
+    connect: { orderField: "Year", groupField: "Country", labels: "end" },
+  };
+  const snapshot: ScatterSnapshot = {
+    revision: "test",
+    allIds: [0, 1],
+    chartIds: [0, 1],
+    filteredIds: [0, 1],
+    xData: { 0: 1, 1: 2 },
+    yData: { 0: 1, 1: 2 },
+    colorData: {},
+    orderData: { 0: 2000, 1: 2001 },
+    groupData: { 0: "Austria", 1: "Austria" },
+    fieldSettings: {},
+  };
+
+  it("keeps room beside the points for path labels", () => {
+    expect(connectionLabelRoom(settings, snapshot, 300).end).toBeGreaterThan(0);
+  });
+
+  it("keeps none when a density surface replaces the points", () => {
+    for (const display of ["hexbin", "contour", "density"] as const)
+      expect(
+        connectionLabelRoom({ ...settings, display }, snapshot, 300)
+      ).toEqual({ start: 0, end: 0 });
   });
 });
