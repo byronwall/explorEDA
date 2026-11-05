@@ -58,9 +58,7 @@ export function NumberSetting({
         max={max}
         onChange={(next) =>
           Number.isFinite(next) &&
-          onChange(
-            Math.min(max ?? Infinity, Math.max(min ?? -Infinity, next))
-          )
+          onChange(Math.min(max ?? Infinity, Math.max(min ?? -Infinity, next)))
         }
       />
     </>
@@ -130,6 +128,47 @@ export function ColorSetting({
         />
         <span className="font-mono">{value}</span>
       </div>
+    </>
+  );
+}
+
+/**
+ * Which rows set an extent: every row, so lengths and colors hold while
+ * filtering, or only the rows the filters leave.
+ */
+export function FitSetting({
+  name,
+  fit,
+  onChange,
+}: {
+  name: string;
+  fit: "filtered" | undefined;
+  onChange: (fit: "filtered" | undefined) => void;
+}) {
+  return (
+    <>
+      <span className="eda-setting-label">Scale to</span>
+      <Segmented
+        label={`${name} scale to`}
+        value={fit ?? "all"}
+        options={[
+          {
+            value: "all" as const,
+            label: "All rows",
+            tooltip:
+              "Lengths and colors read every row, so filtering keeps them on one scale",
+          },
+          {
+            value: "filtered" as const,
+            label: "Filtered",
+            tooltip:
+              "Fit to the rows the filters leave. Lengths and colors change as filters change.",
+          },
+        ]}
+        onChange={(value) =>
+          onChange(value === "filtered" ? "filtered" : undefined)
+        }
+      />
     </>
   );
 }

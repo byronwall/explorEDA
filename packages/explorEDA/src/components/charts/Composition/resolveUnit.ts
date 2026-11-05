@@ -134,6 +134,8 @@ export interface GlyphDatum {
   bin: PositionBin;
   /** The aggregated value of a strip glyph, or the y value of a point. */
   value: number;
+  /** The magnitude that takes the ramp's end color, for strip marks. */
+  scaleMax?: number;
   rowIds: number[];
   /** The bin has rows but none has a value; the glyph is a missing cell. */
   missing?: boolean;
@@ -439,11 +441,21 @@ export function resolveUnit(
   const horizonSeries = subsets.map((subset) =>
     horizons.map(({ mark, x }) => horizonValues(mark, x, subset, data))
   );
+  // Peaks read every row unless the mark fits the filtered rows, so bands
+  // keep their thresholds while filtering.
+  const horizonPeaks = subsets.map((subset, index) =>
+    horizons.map(({ mark, x }, markIndex) =>
+      Math.max(
+        horizonSeries[index]![markIndex]!.peak,
+        mark.fit ? 0 : horizonValues(mark, x, everyRow(subset), data).peak
+      )
+    )
+  );
   const horizonMax = new Map<string, number>();
-  horizonSeries.forEach((perMark) =>
-    perMark.forEach((series, markIndex) => {
+  horizonPeaks.forEach((perMark) =>
+    perMark.forEach((peak, markIndex) => {
       const id = horizons[markIndex]!.mark.id;
-      horizonMax.set(id, Math.max(horizonMax.get(id) ?? 0, series.peak));
+      horizonMax.set(id, Math.max(horizonMax.get(id) ?? 0, peak));
     })
   );
   // Bars share one category order and one length axis across every repeat.
@@ -462,14 +474,15 @@ export function resolveUnit(
   );
   const barAxes = bars.map(({ mark }, markIndex) => {
     let longest = 0;
-    for (const subset of subsets)
-      for (const bar of barValues(
-        mark,
-        windowed(subset, unit.window, data),
-        barred[markIndex]!,
-        data
-      ))
-        longest = Math.max(longest, Math.abs(bar.value));
+    for (const live of subsets)
+      for (const subset of mark.fit ? [live] : [live, everyRow(live)])
+        for (const bar of barValues(
+          mark,
+          windowed(subset, unit.window, data),
+          barred[markIndex]!,
+          data
+        ))
+          longest = Math.max(longest, Math.abs(bar.value));
     const max =
       mark.max ?? scaleLinear().domain([0, longest]).nice().domain()[1] ?? 1;
     return { mark, domain: [mark.mirror ? -max : 0, max] as [number, number] };
@@ -517,7 +530,9 @@ export function resolveUnit(
           )
         : undefined;
       const categories = stackCategories(mark, data);
-      for (const subset of subsets) {
+      for (const subset of subsets.flatMap((live) =>
+        mark.fit ? [live] : [live, everyRow(live)]
+      )) {
         // Across x, the largest total at any x, or the whole extent of a
         // wiggling stream; otherwise the repeat's total.
         if (xColumn && mark.baseline === "wiggle" && !mark.normalize) {
@@ -721,11 +736,22 @@ export function resolveUnit(
       densityCurve(mark, x, subset, data, domainFor(x, subset))
     )
   );
+  const densityPeaks = subsets.map((subset, index) =>
+    densities.map(({ mark, x }, markIndex) =>
+      Math.max(
+        densityCurves[index]![markIndex]!.peak,
+        mark.fit
+          ? 0
+          : densityCurve(mark, x, everyRow(subset), data, domainFor(x, subset))
+              .peak
+      )
+    )
+  );
   const densityMax = new Map<string, number>();
-  densityCurves.forEach((perMark) =>
-    perMark.forEach((curve, markIndex) => {
+  densityPeaks.forEach((perMark) =>
+    perMark.forEach((peak, markIndex) => {
       const id = densities[markIndex]!.mark.id;
-      densityMax.set(id, Math.max(densityMax.get(id) ?? 0, curve.peak));
+      densityMax.set(id, Math.max(densityMax.get(id) ?? 0, peak));
     })
   );
   // First pass: aggregate each strip mark per subset and bin.
@@ -774,17 +800,41 @@ export function resolveUnit(
     })
   );
 
-  // Value domains: the largest value across every repeat, or within each.
+  // Value domains: the largest value across every repeat, or within each,
+  // over every row unless the value scale fits the filtered rows.
+  const stripPeaks = subsets.map((subset, index) =>
+    strips.map(({ mark, position, value }, markIndex) => {
+      let peak = 0;
+      for (const glyph of aggregated[index]![markIndex]!.glyphs)
+        if (!glyph.missing) peak = Math.max(peak, Math.abs(glyph.value));
+      if (value.fit) return peak;
+      const keyOf = binKeyReader(position, data.column(position.field));
+      const shown = new Set(
+        aggregated[index]![markIndex]!.bins.map((bin) => bin.key)
+      );
+      const groups = new Map<string, number[]>();
+      for (const id of subset.allIds) {
+        const key = keyOf(id);
+        if (key === undefined || !shown.has(key)) continue;
+        const group = groups.get(key);
+        if (group) group.push(id);
+        else groups.set(key, [id]);
+      }
+      const measure = mark.measureField
+        ? data.column(mark.measureField)
+        : undefined;
+      for (const rowIds of groups.values()) {
+        const total = aggregate(mark, rowIds, measure);
+        if (total !== undefined) peak = Math.max(peak, Math.abs(total));
+      }
+      return peak;
+    })
+  );
   const sharedMax = new Map<string, number>();
-  aggregated.forEach((perMark) =>
-    perMark.forEach(({ glyphs }, markIndex) => {
+  stripPeaks.forEach((perMark) =>
+    perMark.forEach((peak, markIndex) => {
       const id = strips[markIndex]!.value.id;
-      for (const glyph of glyphs)
-        if (!glyph.missing)
-          sharedMax.set(
-            id,
-            Math.max(sharedMax.get(id) ?? 0, Math.abs(glyph.value))
-          );
+      sharedMax.set(id, Math.max(sharedMax.get(id) ?? 0, peak));
     })
   );
 
@@ -1050,13 +1100,11 @@ export function resolveUnit(
       const instanceMax =
         value.max ??
         (value.domain === "instance"
-          ? Math.max(
-              0,
-              ...glyphs.map((glyph) =>
-                glyph.missing ? 0 : Math.abs(glyph.value)
-              )
-            )
+          ? stripPeaks[index]![markIndex]!
           : (sharedMax.get(value.id) ?? 0));
+      // The legend keys the ramp's real end, which can be a value that the
+      // filters leave out.
+      for (const glyph of glyphs) glyph.scaleMax = instanceMax;
       // An accent recolors this repeat's marks, keeping the template's ramp.
       const accented = override?.accent
         ? {
@@ -1320,7 +1368,7 @@ export function resolveUnit(
       const { mark, x } = horizons[markIndex]!;
       const peak =
         mark.domain === "instance"
-          ? series.peak
+          ? horizonPeaks[index]![markIndex]!
           : (horizonMax.get(mark.id) ?? series.peak);
       nodes.push(
         ...horizonNodes(
@@ -1346,7 +1394,7 @@ export function resolveUnit(
       );
       const peak =
         mark.height === "instance"
-          ? curve.peak
+          ? densityPeaks[index]![markIndex]!
           : (densityMax.get(mark.id) ?? curve.peak);
       const shade = scale(mark.colorScaleId ?? "");
       nodes.push(
@@ -1639,6 +1687,11 @@ function unionBounds(instances: ResolvedInstance[], unit: UnitElement) {
 
 /** A test for rows inside a frame's window, by the window field's value. */
 /** The subset's live rows inside the unit's display window, when it has one. */
+/** The same subset with every row live, for extents that ignore filters. */
+const everyRow = <T extends { allIds: number[]; liveIds: number[] }>(
+  subset: T
+): T => ({ ...subset, liveIds: subset.allIds });
+
 function windowed(
   subset: Subset,
   window: FrameWindow | undefined,

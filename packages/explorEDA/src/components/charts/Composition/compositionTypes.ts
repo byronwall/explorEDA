@@ -172,6 +172,11 @@ export interface ValueScale {
    * the end color, so one extreme value does not wash out the rest.
    */
   max?: number;
+  /**
+   * Fit this extent to the rows the filters leave. Absent, it reads every
+   * row, so filtering keeps lengths and colors on one scale.
+   */
+  fit?: "filtered";
 }
 
 /**
@@ -464,6 +469,11 @@ export interface SummaryParts {
  */
 export interface StackMark {
   type: "stack";
+  /**
+   * Fit this extent to the rows the filters leave. Absent, it reads every
+   * row, so filtering keeps lengths and colors on one scale.
+   */
+  fit?: "filtered";
   id: string;
   name: string;
   categoryField: string;
@@ -515,6 +525,11 @@ export type MarkCurve = "linear" | "smooth";
  */
 export interface BarMark {
   type: "bar";
+  /**
+   * Fit this extent to the rows the filters leave. Absent, it reads every
+   * row, so filtering keeps lengths and colors on one scale.
+   */
+  fit?: "filtered";
   id: string;
   name: string;
   aggregation: MarkAggregation;
@@ -576,6 +591,11 @@ export interface WaffleMark {
  */
 export interface HorizonMark {
   type: "horizon";
+  /**
+   * Fit this extent to the rows the filters leave. Absent, it reads every
+   * row, so filtering keeps lengths and colors on one scale.
+   */
+  fit?: "filtered";
   id: string;
   name: string;
   xScaleId: string;
@@ -604,6 +624,11 @@ export interface HorizonMark {
  */
 export interface DensityMark {
   type: "density";
+  /**
+   * Fit this extent to the rows the filters leave. Absent, it reads every
+   * row, so filtering keeps lengths and colors on one scale.
+   */
+  fit?: "filtered";
   id: string;
   name: string;
   /** The numeric scale along x; its field is the one summarized. */

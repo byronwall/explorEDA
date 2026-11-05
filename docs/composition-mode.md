@@ -102,7 +102,7 @@ Every mark keeps references to its contributing rows; nothing is recovered from 
 ## Data behavior
 
 - Repeats and position and numeric domains read every row in the population, so filtering keeps the layout and empties marks instead of removing repeats.
-- Strip color, size, and height scales, bar lengths, stack column heights, horizon bands, and density peaks currently fit the filtered rows, so they rescale while filtering. The agreed direction is stable scales by default with rescaling as an opt-in; the initiative tracks that change.
+- Strip color, size, and height scales, bar lengths, stack column heights, horizon bands, and density peaks read every row too, shared or per repeat, so filtering keeps one value on one length and color. Each value scale, and each bar, stack, horizon, and density mark, has **Scale to: All rows | Filtered** in the inspector. Filtered fits that extent to the rows the filters leave, and the value-scale trace says which one is in use. A legend keys the ramp's real end, even when the filters leave out the value at that end.
 - Stack category order and color come from totals over every row, so they match across repeats and never move. Stack denominators come from the live rows: filtering the population recomputes shares, while selecting a repeat only fades the rest.
 - Rank and summary marks recompute from the live rows.
 - Packing, joins, rankings, rounding, and source corrections stay in prepared tables under `apps/data-samples/prepare/`. Prepared data does not prove native calculation support.

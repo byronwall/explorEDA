@@ -159,6 +159,26 @@ describe("missing cells", () => {
     expect(bo1928.fill).toBe(valueColor(ramp, 0.5));
   });
 
+  it("keeps a rate's color while filtering, unless the scale fits the filtered rows", () => {
+    // Filter to 1928: Ada's 1,000 in 1930 is filtered out.
+    const bo1928 = (definition: CompositionDefinition) =>
+      resolveComposition(definition, estimateTextWidth, data([0, 3]))
+        .nodes.filter(
+          (node): node is RectNode =>
+            node.type === "rect" && Boolean(node.glyph)
+        )
+        .find(
+          (node) =>
+            node.instanceKey === "Bo" && node.glyph!.bin.label === "1928"
+        )!.fill;
+    expect(bo1928(strips())).toBe(valueColor(ramp, 0.5));
+    const fitted = strips();
+    fitted.scales = fitted.scales.map((scale) =>
+      scale.id === ramp.id ? { ...ramp, fit: "filtered" } : scale
+    );
+    expect(bo1928(fitted)).toBe(valueColor(ramp, 1));
+  });
+
   it("orders rows by a prepared rank through the repeat's value order", () => {
     const instances = resolveComposition(strips(), estimateTextWidth, data())
       .elements[0]!.instances!;
