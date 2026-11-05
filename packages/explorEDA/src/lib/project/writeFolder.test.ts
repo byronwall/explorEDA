@@ -142,7 +142,7 @@ row sales.region title="By region"
                 fieldId: "region_group",
                 label: "Region group",
                 expression:
-                  'if ["region"] == "west" then "West" else ["region"]',
+                  'if ["sales.region"] == "west" then "West" else ["sales.region"]',
               },
             ],
             outputStepId: "upper",

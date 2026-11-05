@@ -14,6 +14,8 @@ import isEqual from "react-fast-compare";
 import { Slider } from "@/components/ui/slider";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { timestampOf } from "@/lib/valueParsing";
+import { useDataLayer } from "@/providers/DataLayerProvider";
+import { useMemo, useState } from "react";
 import { datePresets, type DatePresetGroup } from "@/lib/datePresets";
 import {
   summarizeField,
@@ -21,6 +23,8 @@ import {
 } from "@/components/SummaryTable/components/FieldDistribution";
 
 const MAX_VALUE_FILTER_OPTIONS = 10;
+/** The most values "is one of" lists at once; search narrows the rest. */
+const MAX_ONE_OF_OPTIONS = 50;
 
 interface ColumnFilterProps {
   columnId: string;
@@ -45,6 +49,83 @@ interface ColumnFilterProps {
   embedded?: boolean;
   /** Always list values to check, for charts that filter by category. */
   valuesOnly?: boolean;
+}
+
+/**
+ * "Is one of" for a text field with many values: a search box over the
+ * field's values, most common first, each with a checkbox.
+ */
+function OneOfList({
+  field,
+  columnLabel,
+  chosen,
+  onToggle,
+}: {
+  field: string;
+  columnLabel: string;
+  chosen: datum[];
+  onToggle: (value: datum, checked: boolean) => void;
+}) {
+  const getColumnData = useDataLayer((state) => state.getColumnData);
+  const [search, setSearch] = useState("");
+  const values = useMemo(() => {
+    const counts = new Map<string, { value: datum; count: number }>();
+    for (const value of Object.values(getColumnData(field))) {
+      if (value == null || value === "") continue;
+      const key = categoryKey(value);
+      const entry = counts.get(key);
+      if (entry) entry.count += 1;
+      else counts.set(key, { value, count: 1 });
+    }
+    return [...counts.values()].sort((a, b) => b.count - a.count);
+  }, [getColumnData, field]);
+  const needle = search.trim().toLowerCase();
+  const matches = values.filter(
+    (item) =>
+      categoryIncludes(chosen, item.value) ||
+      categoryLabel(item.value).toLowerCase().includes(needle)
+  );
+  const shown = matches.slice(0, MAX_ONE_OF_OPTIONS);
+  return (
+    <div className="grid gap-1">
+      <Input
+        aria-label={`Find values of ${columnLabel}`}
+        placeholder={`Find among ${values.length.toLocaleString()} values`}
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+        className="h-7 w-full"
+      />
+      <div className="flex max-h-56 flex-col gap-1 overflow-auto py-0.5">
+        {shown.map(({ value, count }) => (
+          <label
+            key={categoryKey(value)}
+            className="flex items-center gap-2 text-sm"
+          >
+            <input
+              type="checkbox"
+              checked={categoryIncludes(chosen, value)}
+              onChange={(event) => onToggle(value, event.currentTarget.checked)}
+            />
+            <span className="min-w-0 flex-1 truncate">
+              {categoryLabel(value)}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {count.toLocaleString()}
+            </span>
+          </label>
+        ))}
+        {matches.length > shown.length && (
+          <p className="text-xs text-muted-foreground">
+            {(matches.length - shown.length).toLocaleString()} more; type to
+            find them.
+          </p>
+        )}
+        {!matches.length && (
+          <p className="text-xs text-muted-foreground">No value matches.</p>
+        )}
+      </div>
+    </div>
+  );
 }
 
 /** A slider step that gives about 200 stops, or whole numbers for integers. */
@@ -140,6 +221,14 @@ export function ColumnFilter({
       profile.uniqueCount <= MAX_VALUE_FILTER_OPTIONS);
   const updateText = (next: TextFilter) =>
     onChange(columnId, next.value === "" ? undefined : next);
+  // A text field with many values can still keep a few named ones.
+  const [oneOfChosen, setOneOf] = useState(false);
+  const oneOf =
+    !lowCardinality &&
+    profile.dataType === "categorical" &&
+    (oneOfChosen ||
+      (filter?.type === "value" &&
+        !(filter.values.length === 1 && filter.values[0] == null)));
   // "Only missing" keeps the rows with no value, whatever the field type.
   const missingOnly =
     filter?.type === "value" &&
@@ -435,34 +524,55 @@ export function ColumnFilter({
               Match
               <select
                 aria-label={`Text operator ${columnLabel}`}
-                value={textFilter.operator}
-                onChange={(event) =>
+                value={oneOf ? "oneOf" : textFilter.operator}
+                onChange={(event) => {
+                  const operator = event.target.value;
+                  if (operator === "oneOf") {
+                    setOneOf(true);
+                    if (filter?.type === "text") onChange(columnId);
+                    return;
+                  }
+                  setOneOf(false);
+                  if (filter?.type === "value") onChange(columnId);
                   updateText({
                     ...textFilter,
-                    operator: event.target.value as TextFilter["operator"],
-                  })
-                }
+                    operator: operator as TextFilter["operator"],
+                  });
+                }}
                 className="h-7 rounded-md border bg-transparent px-1.5 text-xs"
               >
                 <option value="contains">Contains</option>
                 <option value="equals">Equals</option>
                 <option value="startsWith">Starts with</option>
                 <option value="endsWith">Ends with</option>
+                {profile.dataType === "categorical" && (
+                  <option value="oneOf">Is one of</option>
+                )}
               </select>
             </label>
-            <label className="grid gap-0.5 text-xs">
-              Text
-              <Input
-                aria-label={`Filter text ${columnLabel}`}
-                placeholder={`Filter ${columnLabel}...`}
-                value={textFilter.value}
-                onChange={(event) =>
-                  updateText({ ...textFilter, value: event.target.value })
-                }
-                className="h-7 w-full"
-              />
-            </label>
+            {!oneOf && (
+              <label className="grid gap-0.5 text-xs">
+                Text
+                <Input
+                  aria-label={`Filter text ${columnLabel}`}
+                  placeholder={`Filter ${columnLabel}...`}
+                  value={textFilter.value}
+                  onChange={(event) =>
+                    updateText({ ...textFilter, value: event.target.value })
+                  }
+                  className="h-7 w-full"
+                />
+              </label>
+            )}
           </div>
+          {oneOf && (
+            <OneOfList
+              field={profile.name}
+              columnLabel={columnLabel}
+              chosen={filter?.type === "value" ? filter.values : []}
+              onToggle={updateValues}
+            />
+          )}
         </fieldset>
       )}
       {!lowCardinality && (

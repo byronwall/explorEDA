@@ -205,6 +205,52 @@ query @sales glyph=◆ {
     ]);
   });
 
+  it("lines up prefixed and matched fields on append, so a later lookup reaches every row", async () => {
+    const text = `project @shop
+
+source @cs key=cs_id path=cs.csv
+
+source @ws key=ws_id path=ws.csv
+
+source @customer key=c_id path=customer.csv
+
+relate @cs-customer cs.cs_buyer -> customer.c_id
+
+query @sales glyph=◆ {
+  source cs
+  append ws field=channel match=cs_paid:ws_net
+  lookup buyer via=cs-customer
+}
+`;
+    const result = compileProjectText(text);
+    expect(result.diagnostics).toEqual([]);
+    expect(exportProjectText(result.project, { paths: result.paths })).toBe(
+      text
+    );
+    const folder = await readProjectFolder(
+      memoryProjectFiles({
+        "exploreda.eda": text,
+        "cs.csv": "cs_id,cs_buyer,cs_paid\n1,7,10\n",
+        "ws.csv": "ws_id,ws_buyer,ws_net,ws_paid\n2,8,20,99\n",
+        "customer.csv": "c_id,c_name\n7,Ann\n8,Bo\n",
+      })
+    );
+    expect(folder.problems).toEqual([]);
+    const rows = evaluateAnalysisQuery(
+      folder.project,
+      folder.tables,
+      "sales"
+    ).rows.map((row) => [
+      row.values.channel,
+      row.values["cs.cs_paid"],
+      row.values["buyer.c_name"],
+    ]);
+    expect(rows).toEqual([
+      ["cs", 10, "Ann"],
+      ["ws", 20, "Bo"],
+    ]);
+  });
+
   it("points at references to things the project doesn't declare", () => {
     const { diagnostics } = compileProjectText(`project @p
 source @orders key=orderId {

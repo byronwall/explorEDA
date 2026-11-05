@@ -349,6 +349,7 @@ export function BarChartSettingsPanel({
                 placeholder="Measure"
                 value={aggregate.measureField ?? ""}
                 fields={measureFields}
+                related="number"
                 onChange={(value) => updateDefinition({ measureField: value })}
               />
             </>
@@ -361,6 +362,7 @@ export function BarChartSettingsPanel({
                 placeholder="Denominator"
                 value={aggregate.denominatorField}
                 fields={measureFields}
+                related="number"
                 onChange={(value) =>
                   updateDefinition({ denominatorField: value })
                 }

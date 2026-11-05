@@ -238,6 +238,40 @@ describe("comparisons", () => {
     });
     expect(missing.diagnostics[0]!.message).toContain("nope is not a finding");
   });
+
+  it("warns about prose that names a finding no block defines", () => {
+    const compiled = compileNotebook(
+      [
+        "Count {{n}}, gap {{gap}}, [rows](#finding:other).",
+        "```eda",
+        "finding @n count",
+        "```",
+      ].join("\n"),
+      { rows: FIXTURE }
+    );
+    expect(
+      compiled.diagnostics.map(({ message, suggestion, line, column }) => ({
+        message,
+        suggestion,
+        line,
+        column,
+      }))
+    ).toEqual([
+      {
+        message: "gap isn't a finding, so {{gap}} shows as text.",
+        suggestion: "Findings: n.",
+        line: 1,
+        column: 18,
+      },
+      {
+        message: "other isn't a finding, so (#finding:other) shows as text.",
+        suggestion: "Findings: n.",
+        line: 1,
+        column: 33,
+      },
+    ]);
+    expect(compiled.complete).toBe(false);
+  });
 });
 
 /** A share of a count over a whole that counts no rows. */

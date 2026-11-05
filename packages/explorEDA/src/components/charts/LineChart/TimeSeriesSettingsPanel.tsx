@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { hasDateValues } from "@/lib/dailyRollup";
 import { isAdditiveAggregation } from "@/lib/aggregates";
-import { rankMeasureFields } from "@/lib/fieldRanking";
+import { rankDateFields, rankMeasureFields } from "@/lib/fieldRanking";
 import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useColorScales } from "@/hooks/useColorScales";
@@ -24,11 +24,14 @@ export function useTimeSeriesFields() {
     void nonce;
     const names = getNames();
     return {
-      dates: names.filter((field) =>
-        hasDateValues(
-          Object.values(getData(field)),
-          profiles.find((profile) => profile.name === field)?.dataType
-        )
+      dates: rankDateFields(
+        names.filter((field) =>
+          hasDateValues(
+            Object.values(getData(field)),
+            profiles.find((profile) => profile.name === field)?.dataType
+          )
+        ),
+        profiles
       ),
       measures: names.filter(
         (field) =>
@@ -50,6 +53,11 @@ export function LineDataMode({
   onSettingsChange,
 }: ChartSettingsPanelProps<LineChartSettings>) {
   const fields = useTimeSeriesFields();
+  const profiles = useDataLayer((s) => s.fieldProfiles);
+  const isDate = (field?: string) =>
+    profiles.some(
+      (profile) => profile.name === field && profile.dataType === "datetime"
+    );
   return (
     <label className="eda-setting-grid text-sm">
       Data mode
@@ -61,8 +69,10 @@ export function LineDataMode({
           onSettingsChange({
             ...settings,
             time: calendar ? { ...DEFAULT_TIME_SERIES } : undefined,
+            // A plain number x, such as a date key, gives way to a date.
             xField: calendar
-              ? fields.dates.includes(settings.xField)
+              ? fields.dates.includes(settings.xField) &&
+                (isDate(settings.xField) || !isDate(fields.dates[0]))
                 ? settings.xField
                 : (fields.dates[0] ?? "")
               : settings.xField,
@@ -140,6 +150,7 @@ export function TimeSeriesSettingsPanel({
           placeholder="Date field"
           value={settings.xField}
           fields={fields.dates}
+          related="date"
           onChange={(xField) =>
             onSettingsChange({
               ...settings,
@@ -235,6 +246,7 @@ export function TimeSeriesSettingsPanel({
               placeholder="Measure"
               value={time.measureField ?? ""}
               fields={fields.measures}
+              related="number"
               onChange={(measureField) => change({ measureField })}
             />
           </>

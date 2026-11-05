@@ -17,7 +17,11 @@ import type {
   RelationshipDefinition,
   SourceDefinition,
 } from "@/types/AnalysisProject";
-import type { DslDiagnostic } from "./compile";
+import {
+  DSL_CHART_KEYWORDS,
+  DSL_OTHER_KEYWORDS,
+  type DslDiagnostic,
+} from "./compile";
 import { parseDocument, type DslDeclaration, type DslSpan } from "./parse";
 import { encodeScalar } from "./paths";
 import { block } from "./print";
@@ -66,6 +70,8 @@ export interface ProjectTextResult {
   /** Source ID to the database it reads. */
   databases: Record<string, DatabaseSource>;
   diagnostics: DslDiagnostic[];
+  /** Where each declared item, query step included, sits in the text. */
+  spans: Map<object, DslSpan>;
 }
 
 /** Settings that hold secrets, which project text refuses. */
@@ -340,6 +346,13 @@ function stepLines(step: AnalysisStep, previous?: AnalysisStep): string[] {
           ...(step.field === DEFAULT_APPEND_FIELD
             ? []
             : [`field=${encodeScalar(step.field)}`]),
+          ...(step.match && Object.keys(step.match).length
+            ? [
+                `match=${Object.entries(step.match)
+                  .map(([base, own]) => `${base}:${own}`)
+                  .join(",")}`,
+              ]
+            : []),
           ...input,
         ].join(" "),
       ];
@@ -761,7 +774,7 @@ function compileStep(
       return { id: explicitId ?? sourceId, kind: "source", sourceId };
     }
     case "append": {
-      checkPairs(declaration, ["field", "from"], report);
+      checkPairs(declaration, ["field", "from", "match"], report);
       const sourceId = parts[0]?.text;
       if (!sourceId) {
         return fail(
@@ -769,12 +782,27 @@ function compileStep(
           "Write it as append catalog-orders field=channel."
         );
       }
+      const matchPair = declaration.pairs.find((pair) => pair.key === "match");
+      const match: Record<string, string> = {};
+      for (const item of matchPair?.value.items ?? []) {
+        const [base, own] = item.text.split(":");
+        if (!base || own === undefined) {
+          report(
+            matchPair!.span,
+            `match=${item.text} needs both fields.`,
+            "Write it as match=cs_net_paid:ws_net_paid, the first source's field, then this one's."
+          );
+          continue;
+        }
+        match[base] = own;
+      }
       return {
         id: explicitId ?? sourceId,
         kind: "append",
         inputStepId,
         sourceId,
         field: single(declaration, "field") ?? DEFAULT_APPEND_FIELD,
+        ...(Object.keys(match).length ? { match } : {}),
       };
     }
     case "lookup":
@@ -875,11 +903,21 @@ function compileStep(
           report(
             child.span,
             `${child.keyword} isn't a measure.`,
-            "Write a measure as sum @amount orders.amount, average @mean …, max @peak …, min @low …, or count @rows."
+            "Write a measure as sum @amount orders.amount, average @mean …, max @peak …, min @low …, or count @n."
           );
           continue;
         }
         checkPairs(child, ["label", "per"], report);
+        if (
+          DSL_CHART_KEYWORDS[measureId] ||
+          DSL_OTHER_KEYWORDS.includes(measureId)
+        ) {
+          report(
+            child.span,
+            `${measureId} is a reserved word in dashboard text, so a measure named ${measureId} can't be charted.`,
+            `Name it something else, such as ${measureId === "rows" ? "n" : `${measureId}Total`}.`
+          );
+        }
         const fieldId = words(child)[0]?.text;
         const entityFieldId = single(child, "per");
         measures.push({
@@ -1259,5 +1297,5 @@ export function compileProjectText(
     );
   }
   checkReferences(project, spans, report, connections, databases, paths);
-  return { project, paths, connections, databases, diagnostics };
+  return { project, paths, connections, databases, diagnostics, spans };
 }

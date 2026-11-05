@@ -60,6 +60,19 @@ export function rankMeasureFields(names: string[], profiles: FieldProfile[]) {
   });
 }
 
+/**
+ * Fields that read as dates, best first: date-typed fields, then text that
+ * parses as dates. A number field, such as ss_sold_date_sk or a quantity,
+ * would read as milliseconds since 1970, so it is left out.
+ */
+export function rankDateFields(names: string[], profiles: FieldProfile[]) {
+  const byName = new Map(profiles.map((profile) => [profile.name, profile]));
+  return rank(
+    names.filter((name) => byName.get(name)?.dataType !== "numeric"),
+    (name) => (byName.get(name)?.dataType === "datetime" ? 1 : 0)
+  );
+}
+
 /** Non-numeric fields, best group first: few-valued text, keys last. */
 export function rankGroupFields(names: string[], profiles: FieldProfile[]) {
   const byName = new Map(profiles.map((profile) => [profile.name, profile]));

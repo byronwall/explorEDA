@@ -16,7 +16,7 @@ import {
   projectDatabases,
   readsInProgress,
   refreshSource,
-  withConnection,
+  withConnectionDefinition,
 } from "../server/sources/refresh";
 import { tableColumns, tablesWithRows } from "../server/sources/schema";
 import { SourceReadError, type DatabaseDriver } from "../server/sources/types";
@@ -30,11 +30,22 @@ line per source and exits 1 when any read fails.
 A server database's password comes from EXPLOREDA_<CONNECTION>_PASSWORD,
 with the connection's name in capitals, or from one saved in the app.`;
 
-export const SCHEMA_USAGE = `Usage: exploreda schema [folder] [connection] [table...]
+export const SCHEMA_USAGE = `Usage: exploreda schema [folder] [connection] [table...] [--match text]
+       exploreda schema <file.db|file.sqlite|file.duckdb> [table...] [--match text]
 
 Lists a connection's tables and views, with row counts for SQLite and
 DuckDB files. Name tables to list their columns and database types.
-With no connection named, lists every connection's tables.`;
+With no connection named, lists every connection's tables. A database
+file reads directly, with no project text. --match keeps only the tables,
+or columns, whose name holds the text.`;
+
+/** A database file's driver, from its extension. */
+const FILE_DRIVERS: Record<string, string> = {
+  ".db": "sqlite",
+  ".sqlite": "sqlite",
+  ".sqlite3": "sqlite",
+  ".duckdb": "duckdb",
+};
 
 export interface DatabaseCommandOptions {
   secrets?: SecretStore;
@@ -180,13 +191,16 @@ function fixFor(
 async function printSchema(
   connection: ConnectionDefinition,
   tables: string[],
+  match: string | undefined,
   folder: string,
   secret: (connection: ConnectionDefinition) => Promise<string | undefined>,
   options: DatabaseCommandOptions,
   log: (line: string) => void
 ) {
-  await withConnection(
-    connection.id,
+  const kept = (name: string) =>
+    !match || name.toLowerCase().includes(match.toLowerCase());
+  await withConnectionDefinition(
+    connection,
     {
       root: folder,
       secret,
@@ -195,9 +209,15 @@ async function printSchema(
     async (session, driver) => {
       if (tables.length) {
         for (const table of tables) {
-          const columns = await tableColumns(session, table);
-          log(table);
+          const all = await tableColumns(session, table);
+          const columns = all.filter((column) => kept(column.name));
+          log(
+            columns.length < all.length
+              ? `${table}: ${columns.length} of ${all.length} columns match ${match}`
+              : table
+          );
           const width = Math.max(
+            0,
             ...columns.map((column) => column.name.length)
           );
           for (const column of columns) {
@@ -206,8 +226,12 @@ async function printSchema(
         }
         return;
       }
-      const listed = await tablesWithRows(session, driver);
-      log(`${connection.id} (${driver.label}): ${listed.length} tables`);
+      const listed = (await tablesWithRows(session, driver)).filter((table) =>
+        kept(table.name)
+      );
+      log(
+        `${connection.id} (${driver.label}): ${listed.length} tables${match ? ` matching ${match}` : ""}`
+      );
       const width = Math.max(0, ...listed.map((table) => table.name.length));
       for (const table of listed) {
         const rows =
@@ -226,7 +250,55 @@ export async function schemaCommand(
   options: DatabaseCommandOptions = {}
 ): Promise<number> {
   const log = options.log ?? console.log;
-  const parsed = folderAndNames(args, SCHEMA_USAGE);
+  const at = args.indexOf("--match");
+  const match = at >= 0 ? args[at + 1] : undefined;
+  if (at >= 0 && !match) {
+    log(`--match needs the text to look for.\n\n${SCHEMA_USAGE}`);
+    return 64;
+  }
+  const rest =
+    at >= 0
+      ? args.filter((_, index) => index !== at && index !== at + 1)
+      : args;
+  const secret = resolveSecret(
+    options.secrets ?? fileSecretStore(),
+    options.env ?? process.env
+  );
+  // A database file reads directly, before there is any project text.
+  const fileDriver =
+    rest[0] && FILE_DRIVERS[path.extname(rest[0]).toLowerCase()];
+  if (
+    rest[0] &&
+    fileDriver &&
+    existsSync(rest[0]) &&
+    statSync(rest[0]).isFile()
+  ) {
+    const file = path.resolve(rest[0]);
+    const connection: ConnectionDefinition = {
+      id: path.basename(file, path.extname(file)),
+      driver: fileDriver,
+      settings: { path: file },
+    };
+    try {
+      await printSchema(
+        connection,
+        rest.slice(1),
+        match,
+        path.dirname(file),
+        secret,
+        options,
+        log
+      );
+      return 0;
+    } catch (error) {
+      log(`${rest[0]}: ${message(error)}`);
+      if (error instanceof SourceReadError && error.suggestion) {
+        log(`  fix: ${error.suggestion}`);
+      }
+      return 1;
+    }
+  }
+  const parsed = folderAndNames(rest, SCHEMA_USAGE);
   if (typeof parsed === "string") {
     log(parsed);
     return parsed === SCHEMA_USAGE ? 0 : 64;
@@ -237,6 +309,9 @@ export async function schemaCommand(
     project = await projectDatabases(folder);
   } catch (error) {
     log(`${folder}: ${message(error)}`);
+    if (error instanceof SourceReadError && error.suggestion) {
+      log(`  fix: ${error.suggestion}`);
+    }
     return 66;
   }
   const [connectionId, ...tables] = parsed.names;
@@ -251,14 +326,18 @@ export async function schemaCommand(
     );
     return 1;
   }
-  const secret = resolveSecret(
-    options.secrets ?? fileSecretStore(),
-    options.env ?? process.env
-  );
   let failed = 0;
   for (const connection of connections) {
     try {
-      await printSchema(connection, tables, folder, secret, options, log);
+      await printSchema(
+        connection,
+        tables,
+        match,
+        folder,
+        secret,
+        options,
+        log
+      );
     } catch (error) {
       failed += 1;
       log(`${connection.id}: ${message(error)}`);

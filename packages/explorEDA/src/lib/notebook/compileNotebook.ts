@@ -89,6 +89,10 @@ export interface NotebookCompileResult {
 const GENERATED_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+/** `{{name}}` or `(#finding:name)` in prose, as the notebook view reads them. */
+const PROSE_FINDING =
+  /\{\{\s*([A-Za-z_][\w-]*)\s*\}\}|\(#finding:([A-Za-z_][\w-]*)\)/g;
+
 /** The query each block names on its own `eda query=` line, if any. */
 export function blockQueries(notebook: ParsedNotebook) {
   return notebook.blocks.map((block) => {
@@ -369,12 +373,42 @@ export function compileNotebook(
       : []
   );
 
+  // Prose that names a finding no block defines would show `{{n}}` as text.
+  const defined = [...new Set([...findings.values()].flat())];
+  const undefinedFindings: DslDiagnostic[] = notebook.segments.flatMap(
+    (segment) =>
+      segment.kind !== "prose"
+        ? []
+        : segment.text.split("\n").flatMap((text, offset) =>
+            [...text.matchAll(PROSE_FINDING)].flatMap((match) => {
+              const name = match[1] ?? match[2]!;
+              return defined.includes(name)
+                ? []
+                : [
+                    {
+                      severity: "warning",
+                      effect: "setting-ignored",
+                      message: `${name} isn't a finding, so ${match[0]} shows as text.`,
+                      suggestion: defined.length
+                        ? `Findings: ${defined.join(", ")}.`
+                        : `Define it in an eda block, as finding @${name} count.`,
+                      subject: `finding ${name}`,
+                      line: segment.startLine + offset,
+                      column: match.index + 1,
+                      length: match[0].length,
+                    } satisfies DslDiagnostic,
+                  ];
+            })
+          )
+  );
+
   // Stand-in text already reported its problems when it was the file's.
   const fileDiagnostics = [
     ...[...own.values()].flat(),
     ...frozenDiagnostics,
     ...result.diagnostics.filter((item) => item.line <= notebook.lines.length),
     ...duplicates,
+    ...undefinedFindings,
   ].sort((a, b) => a.line - b.line || a.column - b.column);
   const inFile = (item: DslChartResult) => item.line <= notebook.lines.length;
 

@@ -693,7 +693,9 @@ function SourcePicker({
             {checked.length === 2
               ? "table is"
               : `${checked.length - 1} tables are`}{" "}
-            added beside it, ready to relate.
+            added beside it, ready to relate. To compare tables of the same
+            shape, such as web and catalog sales, stack them later with Append
+            rows from another table.
           </p>
         </>
       ) : replacing ? (
@@ -852,6 +854,7 @@ function ColumnPicker({
                   <input
                     type="checkbox"
                     checked={chosen.has(column.name)}
+                    aria-label={`${column.name}, ${column.type}`}
                     onChange={() => {
                       const next = new Set(picked);
                       if (!next.delete(column.name)) {

@@ -216,6 +216,7 @@ export function RowChartSettingsPanel({
                   placeholder="Measure"
                   value={aggregate.measureField ?? ""}
                   fields={measureFields}
+                  related="number"
                   onChange={(value) =>
                     updateDefinition({ measureField: value })
                   }
@@ -230,6 +231,7 @@ export function RowChartSettingsPanel({
                   placeholder="Denominator"
                   value={aggregate.denominatorField}
                   fields={measureFields}
+                  related="number"
                   onChange={(value) =>
                     updateDefinition({ denominatorField: value })
                   }
@@ -349,12 +351,16 @@ export function RowChartSettingsPanel({
 }
 
 /** A count that commits on Enter or blur; empty means fit the chart's height. */
-function TopNInput({
+export function TopNInput({
   value,
   onChange,
+  id = "row-top-n",
+  placeholder = "Fit",
 }: {
   value: number | undefined;
   onChange: (value: number | undefined) => void;
+  id?: string;
+  placeholder?: string;
 }) {
   const [text, setText] = useState(value?.toString() ?? "");
   useEffect(() => setText(value?.toString() ?? ""), [value]);
@@ -366,12 +372,12 @@ function TopNInput({
   };
   return (
     <Input
-      id="row-top-n"
+      id={id}
       type="number"
       min={1}
       step={1}
       inputMode="numeric"
-      placeholder="Fit"
+      placeholder={placeholder}
       className="h-9 w-24"
       value={text}
       onChange={(event) => setText(event.target.value)}

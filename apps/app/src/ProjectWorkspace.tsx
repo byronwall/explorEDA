@@ -857,6 +857,12 @@ function AnalysisActions({
           autoFocus
           aria-label={`New name for ${name}`}
           value={draft}
+          onFocus={(event) => event.currentTarget.select()}
+          // Select-all and Enter belong to the box, not the workspace keys.
+          onKeyDown={(event) => {
+            event.stopPropagation();
+            if (event.key === "Escape") setMode("idle");
+          }}
           onChange={(event) => setDraft(event.target.value)}
         />
         <button

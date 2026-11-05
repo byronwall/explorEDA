@@ -16,7 +16,8 @@ declare const __EXPLOREDA_VERSION__: string;
 
 const USAGE = `Usage: exploreda [folder] [options]
        exploreda read [folder] [source...]
-       exploreda schema [folder] [connection] [table...]
+       exploreda schema [folder] [connection] [table...] [--match text]
+       exploreda schema <file.db|file.duckdb> [table...] [--match text]
        exploreda server --data <folder> [options]
 
 Opens a folder as an explorEDA project in your browser. The folder's

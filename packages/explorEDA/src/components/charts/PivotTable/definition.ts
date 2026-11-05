@@ -32,6 +32,13 @@ export interface PivotTableSettings extends BaseChartSettings {
   showTotals?: boolean;
   /** Tints each value cell by its size within its measure. On by default. */
   shadeCells?: boolean;
+  /**
+   * Rows by their labels (the default), or by the first measure, largest
+   * first, so the table ranks its groups.
+   */
+  rowOrder?: "label" | "value";
+  /** Shows only this many rows; the Total row still covers every row. */
+  topN?: number;
 }
 
 const VALID_AGGREGATIONS: ReadonlySet<

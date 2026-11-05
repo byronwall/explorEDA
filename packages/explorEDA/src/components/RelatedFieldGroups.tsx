@@ -20,15 +20,27 @@ const TYPES = {
 export function RelatedFieldGroups({
   onChoose,
   onSelect,
+  type,
 }: {
   onChoose: (fieldId: string) => void;
   /** Runs as soon as an item is picked, such as to close the picker. */
   onSelect?: () => void;
+  /** Only fields of this type, for a picker that takes dates or numbers. */
+  type?: "number" | "date";
 }) {
   const related = useAnalysisChartContext()?.related;
   if (!related) return null;
-  const { lookups, addField, openExpanded } = related;
-  const expands = openExpanded ? related.expands : [];
+  const { addField, openExpanded } = related;
+  const lookups = related.lookups
+    .map((table) => ({
+      ...table,
+      fields: type
+        ? table.fields.filter((field) => field.type === type)
+        : table.fields,
+    }))
+    .filter((table) => table.fields.length);
+  // A typed picker chooses a field; opening a view is the full list's job.
+  const expands = openExpanded && !type ? related.expands : [];
   return (
     <>
       {lookups.map((table) => (

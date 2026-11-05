@@ -114,6 +114,12 @@ export interface AppendStep {
   sourceId: string;
   /** The field that holds each row's source ID, such as `source`. */
   field: string;
+  /**
+   * The input source's field to the appended source's field that fills it,
+   * for fields whose names differ, such as `cs_bill_customer_sk` to
+   * `ws_bill_customer_sk`. Fields not named here line up by name.
+   */
+  match?: Record<string, string>;
 }
 
 export type AnalysisStep =
@@ -202,7 +208,8 @@ export interface AnalysisDiagnostic {
     | "invalid-query"
     | "calculation-error"
     | "missing-parameter"
-    | "conflicting-entity-measure";
+    | "conflicting-entity-measure"
+    | "unknown-field";
   message: string;
   stepId?: string;
   sourceId?: string;

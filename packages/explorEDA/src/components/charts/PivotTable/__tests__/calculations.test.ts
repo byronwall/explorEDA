@@ -608,4 +608,46 @@ describe("aggregationUnits", () => {
     expect(aggregationUnits("avg")).toBe("measure");
     expect(aggregationUnits("stddev")).toBe("measure");
   });
+
+  it("ranks rows by value, keeps the top N, and caps thousands of groups", () => {
+    const chart = pivotTableDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    chart.rowFields = ["item"];
+    chart.valueFields = [{ field: "amount", aggregation: "sum" }];
+    const data = Array.from({ length: 3000 }, (_, index) => ({
+      item: `item ${index}`,
+      amount: index,
+    }));
+    const { unmount } = render(
+      createElement(
+        DataLayerProvider,
+        { data, charts: [chart] },
+        createElement(SavedPivotProbe)
+      )
+    );
+    expect(screen.getAllByRole("row")).toHaveLength(1 + 500 + 1 + 1);
+    expect(
+      screen.getByText(
+        "2,500 more rows. Sort by value and set Top N to rank them."
+      )
+    ).toBeTruthy();
+    unmount();
+
+    render(
+      createElement(
+        DataLayerProvider,
+        { data, charts: [{ ...chart, rowOrder: "value", topN: 3 }] },
+        createElement(SavedPivotProbe)
+      )
+    );
+    const labels = screen
+      .getAllByRole("rowheader")
+      .map((cell) => cell.textContent);
+    expect(labels).toEqual(["item 2999", "item 2998", "item 2997", "Total"]);
+    expect(screen.getByText("2,997 more rows below the top 3.")).toBeTruthy();
+  });
 });

@@ -5,7 +5,11 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { memorySecretStore } from "../node/secrets";
 import { fakeDriver } from "../server/sources/fake";
 import { SourceReadError } from "../server/sources/types";
-import { readCommand, type DatabaseCommandOptions } from "./databaseCommands";
+import {
+  readCommand,
+  schemaCommand,
+  type DatabaseCommandOptions,
+} from "./databaseCommands";
 
 let root = "";
 
@@ -67,5 +71,46 @@ describe("exploreda read", () => {
       "fix: Set EXPLOREDA_WH_PASSWORD, or save the password in the app"
     );
     expect(output).toContain("2 of 3 sources failed to read.");
+  });
+});
+
+describe("exploreda schema", () => {
+  const { driver } = fakeDriver({
+    tables: {
+      plays: {
+        columns: [{ name: "epa" }, { name: "qb_epa" }, { name: "down" }],
+        rows: [],
+      },
+      games: { columns: [{ name: "id" }], rows: [] },
+    },
+  });
+  const schema = async (args: string[]) => {
+    const lines: string[] = [];
+    const code = await schemaCommand(args, {
+      drivers: { sqlite: driver },
+      secrets: memorySecretStore(),
+      env: {},
+      log: (line) => lines.push(line),
+    });
+    return { code, output: lines.join("\n") };
+  };
+
+  it("reads a database file with no project text, and filters columns", async () => {
+    const file = path.join(root, "nfl.db");
+    await writeFile(file, "");
+    expect((await schema([file])).output).toContain("nfl (Fake): 2 tables");
+    const { code, output } = await schema([file, "plays", "--match", "EPA"]);
+    expect(code).toBe(0);
+    expect(output).toContain("plays: 2 of 3 columns match EPA");
+    expect(output).toContain("qb_epa");
+    expect(output).not.toContain("down");
+  });
+
+  it("says how to add a connection to a folder without project text", async () => {
+    const empty = await mkdtemp(path.join(tmpdir(), "exploreda-schema-"));
+    const { code, output } = await schema([empty]);
+    await rm(empty, { recursive: true, force: true });
+    expect(code).toBe(66);
+    expect(output).toContain("fix: Add exploreda.eda with project @name");
   });
 });

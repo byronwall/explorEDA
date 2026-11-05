@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import { createShopFixture } from "@/test/fixtures/shopProject";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
 import {
+  appendStep,
   appendSteps,
   calculateStep,
+  insertAppend,
   expressionProblem,
   filterValue,
   followRelationship,
@@ -170,5 +172,47 @@ describe("step editing", () => {
     expect(
       queryFields(next.project, "items").output.map((field) => field.id)
     ).toContain("products.name");
+  });
+});
+
+describe("appending from the editor", () => {
+  it("puts the append before the lookups and writes only changed pairings", () => {
+    const { project: shop } = compileProjectText(`project @p
+source @cs key=cs_id {
+  field cs_id number
+  field cs_buyer number
+  field cs_paid number
+}
+source @ws key=ws_id {
+  field ws_id number
+  field ws_buyer number
+  field ws_net number
+}
+source @customer key=c_id {
+  field c_id number
+}
+relate @cs-customer cs.cs_buyer -> customer.c_id
+query @sales glyph=S {
+  source cs
+  lookup buyer via=cs-customer
+}`);
+    const sales = shop.queries[0]!;
+    const step = appendStep(shop, sales, "ws", "channel", {
+      cs_id: "ws_id",
+      cs_buyer: "ws_buyer",
+      cs_paid: "ws_net",
+    });
+    expect(step.match).toEqual({ cs_paid: "ws_net" });
+    const next = insertAppend(shop, sales, step).queries[0]!;
+    expect(
+      next.steps.map((item) => [
+        item.id,
+        "inputStepId" in item ? item.inputStepId : "",
+      ])
+    ).toEqual([
+      ["cs", ""],
+      ["ws", "cs"],
+      ["buyer", "ws"],
+    ]);
   });
 });

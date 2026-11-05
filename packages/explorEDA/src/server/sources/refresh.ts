@@ -106,7 +106,8 @@ export async function projectDatabases(root: string) {
   if (text === undefined) {
     throw new SourceReadError(
       "unknown-source",
-      "This folder has no project text yet."
+      "This folder has no project text yet.",
+      "Add exploreda.eda with project @name and a connection line, as connection @app driver=sqlite path=data/app.db (or driver=duckdb). To look inside a database file first, run exploreda schema <file.db|file.duckdb>."
     );
   }
   return compileProjectText(text);
@@ -342,10 +343,20 @@ export async function withConnection<T>(
   work: (session: DatabaseSession, driver: DatabaseDriver) => Promise<T>
 ): Promise<T> {
   const { connections } = await projectDatabases(options.root);
-  const { session, driver } = await openConnection(
+  return withConnectionDefinition(
     findConnection(connections, connectionId),
-    options
+    options,
+    work
   );
+}
+
+/** Like `withConnection`, for a connection no project text declares. */
+export async function withConnectionDefinition<T>(
+  connection: ConnectionDefinition,
+  options: SourceOptions,
+  work: (session: DatabaseSession, driver: DatabaseDriver) => Promise<T>
+): Promise<T> {
+  const { session, driver } = await openConnection(connection, options);
   try {
     return await work(session, driver);
   } finally {

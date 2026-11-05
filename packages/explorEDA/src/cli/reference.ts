@@ -46,7 +46,10 @@ Sources:
   field lines are optional: field <id> ["Label"] [string|number|boolean|date].
   A database source has no rows until it is read:
     exploreda read <folder> [source...]     read sources into snapshots
-    exploreda schema <folder> [connection] [table...]   tables and columns
+    exploreda schema <folder> [connection] [table...] [--match text]
+                                            tables and columns
+    exploreda schema <file.db|file.duckdb|file.sqlite> [table...]
+                                            a database file, before any text
   Change table=, sql=, or limit= and read the source again.
 
 Relationships and queries:
@@ -58,22 +61,42 @@ Relationships and queries:
     lookup customer via=order-customer [on=field]
                                       the related row, fields named customer.name
     expand item via=item-order [keep-unmatched]   one row per related row
-    calc fieldId ["Label"] = formula  formula refers to fields as ["orders.amount"]
+    calc fieldId ["Label"] = formula  formula refers to fields as ["orders.amount"];
+                                      if cond then a else b (or cond ? a : b)
+                                      picks a value, as if ["p.kind"] == "run"
+                                      then 1 else 0; exploreda-dsl reference
+                                      lists every function
     filter @id field op value         =, !=, >, >=, <, <=, is-null, not-null;
                                       $param reads a parameter
     aggregate @id [by=field,field] {  one row per group; a measure per line:
       sum @total orders.amount        also average, max, min, count @n [field]
     }
-    append catalog [field=channel]    another source's rows under these; its
+    append catalog [field=channel] [match=cs_paid:ws_net,…]
+                                      another source's rows under these; its
                                       fields fill the first source's fields of
-                                      the same name (web.paid), and field=
-                                      (default source) holds each row's source
+                                      the same name (web.paid), or the same
+                                      name after a table prefix (ws_paid fills
+                                      cs_paid); match= pairs the rest. field=
+                                      (default source) holds each row's source.
+                                      A lookup after it reaches every row.
   param @id ["Name"] type [required] [pick=source[.labelField]]
   Every source can be charted on its own: it gets a query of its name.
 
-Fields in analyses and notebooks are named <step>.<field>: orders.amount,
-customer.region. Alias one for short names and a type check, on its own
-line outside any view:
+Field names: a source or lookup field is <step>.<field>, as orders.amount or
+customer.region. A calc field and an aggregate measure are bare ids, as big
+or total; a group-by field keeps its name, as orders.channel. So after
+aggregate @pc by=orders.channel { sum @total orders.amount }, the next step
+and every chart read orders.channel and total, never pc.total.
+
+Aggregate in the query, or group in a chart? Use a query aggregate when
+later steps need one row per group: a second aggregate, a filter on a total,
+a table of totals. For a chart of totals, keep the rows and write
+group @byChannel sum(orders.amount) by=orders.channel in the analysis; row
+and bar charts take group=byChannel. A row chart over aggregated rows counts
+them, one per category, unless it names a group.
+
+Fields in analyses and notebooks use these names. Alias one for short names
+and a type check, on its own line outside any view:
   amount:num=orders.amount            :num|:cat|:date|:bool
 An analysis (any other .eda file) names its query on its first line:
   eda query=order-lines

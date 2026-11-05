@@ -10,7 +10,10 @@ import type {
   AnalysisSourceRow,
 } from "@/types/AnalysisProject";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
-import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
+import {
+  aggregatedBy,
+  evaluateAnalysisQuery,
+} from "@/lib/analysis/evaluateProject";
 import {
   compileViews,
   exportViews,
@@ -151,10 +154,16 @@ export function readAnalysisText(
       return [];
     }
   });
+  const oneRowPer = (index: number) =>
+    aggregatedBy(project, targets[index]?.queryId);
   const result = compileViews(
     text,
-    { rows: rowsFor[0] ?? [], name: context.name },
-    (index) => ({ rows: rowsFor[index] ?? [], name: context.name })
+    { rows: rowsFor[0] ?? [], name: context.name, oneRowPer: oneRowPer(0) },
+    (index) => ({
+      rows: rowsFor[index] ?? [],
+      name: context.name,
+      oneRowPer: oneRowPer(index),
+    })
   );
   const diagnostics = [...problems, ...result.diagnostics];
   return {

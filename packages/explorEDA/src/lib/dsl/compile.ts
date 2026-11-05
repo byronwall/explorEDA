@@ -132,6 +132,11 @@ export interface DslCompileOptions {
   geometryAssets?: GeometryAsset[];
   /** Clock for metadata, for repeatable output. */
   now?: () => Date;
+  /**
+   * The fields the rows are already one per, as a query's last aggregate
+   * groups them. A row chart of one of them counts 1 per bar.
+   */
+  oneRowPer?: string[];
 }
 
 /**
@@ -641,10 +646,10 @@ export function compileDocument(
           "error",
           "contract",
           span,
-          `${name} is a keyword, so it can't name a field.`,
+          `${name} is a reserved word in dashboard text, so it can't name a field.`,
           {
             subject,
-            suggestion: `Choose another alias, such as ${name}Field.`,
+            suggestion: `Choose another alias, such as ${name}Field. Reserved words: ${[...Object.keys(DSL_CHART_KEYWORDS), ...DSL_OTHER_KEYWORDS].join(", ")}.`,
           }
         );
         continue;
@@ -1544,6 +1549,29 @@ export function compileDocument(
           {
             subject,
             suggestion: `Write it as row ${/^[A-Za-z_][\w.]*$/.test(spec.groupField) ? spec.groupField : JSON.stringify(spec.groupField)} group=${spec.id}.`,
+          }
+        );
+      }
+    }
+    if (
+      chart?.type === "row" &&
+      !chart.aggregateId &&
+      chart.field &&
+      options.oneRowPer?.length === 1 &&
+      options.oneRowPer[0] === chart.field
+    ) {
+      // A query aggregate's rows are one per category, so a row count is 1
+      // for every bar.
+      const field = chart.field;
+      {
+        report(
+          "warning",
+          "setting-ignored",
+          declaration.span,
+          `The query's rows are one per ${field}, so this row chart counts 1 for each bar.`,
+          {
+            subject,
+            suggestion: `Chart one of its measures: group @by sum(<measure>) by=${field}, then row ${field} group=by.`,
           }
         );
       }
@@ -2837,6 +2865,19 @@ export function compileDocument(
     const number = numberValue(value);
     const needNumber = () =>
       `${key} needs a number, so ${subject} keeps the default.`;
+    if (key === "sortBy" && chart.type === "data-table") {
+      // A table sorts by a column, so an alias or calc name resolves.
+      const field = resolveField(
+        text,
+        pair.span,
+        subject,
+        `${subject} keeps its row order`
+      );
+      if (field) {
+        chart.sortBy = field;
+      }
+      return "ok";
+    }
     switch (key) {
       case "title":
         chart.title = text;
@@ -2865,6 +2906,18 @@ export function compileDocument(
         );
         if (!field) {
           return "ok";
+        }
+        // A row chart colors only its own bars; a bar chart splits its
+        // bars by another field, so color=channel means seriesField=channel.
+        if (chart.type === "row" && field !== chart.field) {
+          return `A row chart can't color its bars by ${field}, so ${subject} stays one color. Use bar ${chart.field ?? "<field>"} color=${field} to split each bar by ${field}.`;
+        }
+        if (
+          chart.type === "bar" &&
+          field !== chart.field &&
+          !chart.seriesField
+        ) {
+          chart.seriesField = field;
         }
         chart.colorField = field;
         chart.colorScaleId = colorScaleFor(field);
