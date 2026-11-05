@@ -10,7 +10,7 @@ import type { ChartLayout, ChartSettings, ChartType } from "@/types/ChartTypes";
 import { useCreateCharts } from "@/hooks/useCreateCharts";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { AddChartDialog } from "./AddChartDialog";
-import { overlapsAny } from "./chartPlacement";
+import { nextFreeSpot, overlapsAny } from "./chartPlacement";
 
 type DraftSettings = Omit<ChartSettings, "id">;
 
@@ -52,6 +52,7 @@ export function ChartDraftProvider({ children }: { children: ReactNode }) {
   const { buildChart } = useCreateCharts();
   const addChart = useDataLayer((state) => state.addChart);
   const charts = useDataLayer((state) => state.charts);
+  const columnCount = useDataLayer((state) => state.gridSettings.columnCount);
   const updateChartLayouts = useDataLayer((state) => state.updateChartLayouts);
   const [draft, setDraft] = useState<ChartDraftState | null>(null);
   const [skipPlacement, setSkipPlacement] = useState(false);
@@ -88,15 +89,11 @@ export function ChartDraftProvider({ children }: { children: ReactNode }) {
       return;
     }
     if (skipPlacement || occupied.length === 0) {
-      place({
-        ...settings.layout,
-        x: 0,
-        y: Math.max(0, ...occupied.map((layout) => layout.y + layout.h)),
-      });
+      place(nextFreeSpot(settings.layout, occupied, columnCount));
       return;
     }
     setDraft({ ...draft, phase: "placing" });
-  }, [charts, draft, place, skipPlacement]);
+  }, [charts, columnCount, draft, place, skipPlacement]);
 
   const api = useMemo<ChartDraftApi>(
     () => ({

@@ -6,6 +6,7 @@ import {
 import { defaultMissingnessFields } from "@/components/charts/JointMissingness/jointMissingnessPlan";
 import { missingRowCount } from "@/lib/fieldProfiles";
 import { rankGroupFields, rankMeasureFields } from "@/lib/fieldRanking";
+import { nextFreeSpot } from "@/components/plot/chartPlacement";
 import { ChartLayout, ChartType } from "@/types/ChartTypes";
 
 export function useCreateCharts() {
@@ -20,15 +21,17 @@ export function useCreateCharts() {
     field: string,
     initialLayout?: ChartLayout
   ) => {
-    const layout = initialLayout ?? {
-      x: 0,
-      y: Math.max(
-        0,
-        ...getState().charts.map((chart) => chart.layout.y + chart.layout.h)
-      ),
-      w: type === "metric-card" ? 4 : type === "composition" ? 12 : 6,
-      h: type === "metric-card" ? 3 : type === "composition" ? 7 : 4,
-    };
+    const { charts, gridSettings } = getState();
+    const layout =
+      initialLayout ??
+      nextFreeSpot(
+        {
+          w: type === "metric-card" ? 4 : type === "composition" ? 12 : 6,
+          h: type === "metric-card" ? 3 : type === "composition" ? 7 : 4,
+        },
+        charts.map((chart) => chart.layout),
+        gridSettings.columnCount
+      );
 
     const definition = getChartDefinition(type);
     if (!definition) {
