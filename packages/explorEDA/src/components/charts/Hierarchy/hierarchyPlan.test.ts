@@ -91,6 +91,31 @@ describe("planHierarchy", () => {
     expect(lamps.map((node) => node.weight)).toEqual([1, 1, 1]);
   });
 
+  it("creates no node for a row that stops at a missing level", () => {
+    // "West" appears only on a row with no category, so it is never drawn.
+    const base = snapshot();
+    const result = planHierarchy({
+      settings: settings({
+        filters: [{ type: "value", field: "region", values: ["West"] }],
+      }),
+      snapshot: {
+        ...base,
+        liveIds: [...ids, 7],
+        levelData: {
+          region: { ...base.levelData.region, 7: "West" },
+          category: { ...base.levelData.category, 7: null },
+          product: { ...base.levelData.product, 7: "Lamp" },
+        },
+        measureData: { ...base.measureData, 7: 1 },
+      },
+      getFieldLabel: (field) => field,
+    });
+    expect(result.incompleteCount).toBe(2);
+    expect(result.nodes.map((node) => node.label)).not.toContain("West");
+    expect(result.nodes.every((node) => node.rowCount > 0)).toBe(true);
+    expect(result.nodes.some((node) => node.selected)).toBe(false);
+  });
+
   it("makes every parent the sum of its children", () => {
     const check = (node: HierarchyNode) => {
       if (node.children.length) {

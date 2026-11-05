@@ -29,6 +29,38 @@ function Live() {
   );
 }
 
+it("explains a rejected axis instead of drawing one axis with no lines", () => {
+  const chart: ParallelCoordinatesSettings = {
+    ...parallelCoordinatesDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 6,
+      h: 4,
+    }),
+    id: "pc",
+    axes: [
+      { field: "Length", inverted: false },
+      { field: "Code", inverted: false },
+    ],
+  };
+  render(
+    <DataLayerProvider
+      data={Array.from({ length: 50 }, (_, index) => ({
+        Length: index,
+        Code: `c${index}`,
+      }))}
+      charts={[chart]}
+    >
+      <Live />
+    </DataLayerProvider>
+  );
+  expect(
+    screen.getByText(/Code has 50 values, too many for an axis/)
+  ).toBeInTheDocument();
+  expect(screen.queryByText(/50 lines/)).toBeNull();
+  expect(screen.queryByRole("group", { name: /^Length axis/ })).toBeNull();
+});
+
 it("selects, moves, and clears an axis range from the keyboard, and reorders axes", () => {
   const chart: ParallelCoordinatesSettings = {
     ...parallelCoordinatesDefinition.createDefaultSettings({

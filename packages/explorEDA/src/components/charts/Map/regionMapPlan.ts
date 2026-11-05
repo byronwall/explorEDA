@@ -1,7 +1,7 @@
 import { parseNumber } from "@/lib/valueParsing";
 import { geoPath } from "d3-geo";
 import { heatFill } from "../heatScale";
-import { categoryKey, categoryLabel, categoryIncludes } from "@/lib/categories";
+import { categoryKey, categoryLabel } from "@/lib/categories";
 import { summarizeGroup } from "@/lib/aggregates";
 import type { GeometryAsset, RegionGeometry } from "@/lib/geometryAssets";
 import type { datum } from "@/types/ChartTypes";
@@ -15,6 +15,13 @@ export const regionKey = (value: unknown): value is string | number | boolean =>
   typeof value === "string" ||
   typeof value === "boolean" ||
   (typeof value === "number" && Number.isFinite(value));
+/**
+ * The join key of a region key. A number and its text ("6" and 6), case,
+ * and surrounding spaces name the same region; the original value is kept
+ * for labels and filters.
+ */
+export const joinKey = (value: datum): string =>
+  typeof value === "string" ? value.trim().toLowerCase() : String(value);
 export function featureValue(
   feature: RegionGeometry["features"][number],
   key: string | undefined
@@ -44,7 +51,7 @@ export function planRegionMap(
   >();
   geometry?.features.forEach((feature, index) => {
     const key = featureValue(feature, settings.featureKey);
-    const id = key === undefined ? `feature:${index}` : categoryKey(key);
+    const id = key === undefined ? `feature:${index}` : `key:${joinKey(key)}`;
     const group = groups.get(id);
     if (group) group.features.push(index);
     else groups.set(id, { id, key, features: [index] });
@@ -55,7 +62,7 @@ export function planRegionMap(
   const measures = snapshot.columns[settings.measureField ?? ""] ?? {};
   const rows = snapshot.allIds.map((sourceId) => {
     const key = keys[sourceId];
-    const id = regionKey(key) ? categoryKey(key) : undefined;
+    const id = regionKey(key) ? `key:${joinKey(key)}` : undefined;
     return {
       sourceId,
       key,
@@ -98,9 +105,16 @@ export function planRegionMap(
     };
     const d = path(shapes) ?? "",
       centroid = path.centroid(shapes);
+    const joined = group.key === undefined ? undefined : joinKey(group.key);
     return {
       ...group,
       ...summary,
+      // The rows' own spellings of the key, so a filter selects exactly them.
+      keys: [
+        ...new Map(
+          source.map((row) => [categoryKey(row.key), row.key])
+        ).values(),
+      ],
       label:
         group.key === undefined
           ? `Feature ${group.features[0]} (no key)`
@@ -131,7 +145,10 @@ export function planRegionMap(
           (filter) =>
             filter.type === "value" &&
             filter.field === settings.regionField &&
-            categoryIncludes(filter.values, group.key)
+            joined !== undefined &&
+            filter.values.some(
+              (value) => regionKey(value) && joinKey(value) === joined
+            )
         ),
     };
   });
@@ -207,7 +224,7 @@ export function regionFilters(
     return settings.filters;
   if (region.selected) return [];
   return [
-    { type: "value", field: settings.regionField!, values: [region.key] },
+    { type: "value", field: settings.regionField!, values: region.keys },
     ...(facetIds
       ? [{ type: "value" as const, field: "__ID", values: facetIds }]
       : []),

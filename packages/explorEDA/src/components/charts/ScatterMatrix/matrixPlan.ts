@@ -465,8 +465,9 @@ function planDiagonalBars(
   const bars: MatrixBar[] = Array.from(
     { length: HISTOGRAM_BINS },
     (_, index) => {
+      const last = index === HISTOGRAM_BINS - 1;
       const min = low + index * width;
-      const max = index === HISTOGRAM_BINS - 1 ? low + span : min + width;
+      const max = last ? low + span : min + width;
       return {
         id: `${field.field}:bin:${index}`,
         label: `${min}–${max}`,
@@ -474,7 +475,9 @@ function planDiagonalBars(
         end: axis.scale(max),
         total: 0,
         selected: 0,
-        filter: rangeFilter(field, min, max),
+        // Rows fall in bins half-open at the top, so the filter must too, or
+        // a value on the edge lights up the next bar as well.
+        filter: rangeFilter(field, min, max, !last),
       };
     }
   );
@@ -522,21 +525,28 @@ function allRowMaxBar(field: MatrixField, snapshot: MatrixSnapshot) {
   return Math.max(0, ...counts.values());
 }
 
-/** A continuous filter between two values: a number range or a date range. */
+/**
+ * A continuous filter between two values: a number range or a date range.
+ * With `maxExclusive`, a value equal to `max` is left out; a date range has
+ * no such flag, so its upper bound stops one millisecond short.
+ */
 export function rangeFilter(
   field: MatrixField,
   min: number,
-  max: number
+  max: number,
+  maxExclusive = false
 ): Filter {
   if (field.kind === "date") {
     return {
       type: "date-range",
       field: field.field,
       min: new Date(min).toISOString(),
-      max: new Date(max).toISOString(),
+      max: new Date(maxExclusive ? max - 1 : max).toISOString(),
     };
   }
-  return { type: "range", field: field.field, min, max };
+  return maxExclusive
+    ? { type: "range", field: field.field, min, max, maxExclusive: true }
+    : { type: "range", field: field.field, min, max };
 }
 
 /** Turns a span of offsets along a field into its filter. */
@@ -559,7 +569,10 @@ export function filterOffsets(
   filters: Filter[]
 ): [number, number] | undefined {
   const axis = field.axis;
-  if (field.kind === "date" && axis.kind === "numeric") {
+  if (axis.kind === "band") {
+    return bandFilterSpan(field.field, field.bands!, axis, filters);
+  }
+  if (field.kind === "date") {
     const filter = filters.find(
       (item) => item.field === field.field && item.type === "date-range"
     );
@@ -570,7 +583,18 @@ export function filterOffsets(
     const b = axis.scale(dateBound(filter.max, true));
     return [Math.min(a, b), Math.max(a, b)];
   }
-  return bandFilterSpan(field.field, field.bands!, axis as BandAxis, filters);
+  // A numeric field's selection is a range; an open end reaches the end of
+  // the axis. Any other filter kind on it, such as a value filter, has no span.
+  const filter = filters.find(
+    (item) => item.field === field.field && item.type === "range"
+  );
+  if (filter?.type !== "range") {
+    return undefined;
+  }
+  const [low, high] = axis.scale.domain() as [number, number];
+  const a = axis.scale(filter.min ?? low);
+  const b = axis.scale(filter.max ?? high);
+  return [Math.min(a, b), Math.max(a, b)];
 }
 
 /** Replaces the matrix's selection: a brush always starts a new one. */

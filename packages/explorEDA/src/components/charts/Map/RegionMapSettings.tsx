@@ -102,19 +102,6 @@ export function RegionMapSettings({
   };
   const size = asset && regionGeometrySize(asset.geometry);
   // Row keys that match a feature key's text but not its type.
-  const typeMismatches = useMemo(() => {
-    const byText = new Map(
-      plan.regions
-        .filter((region) => region.key !== undefined)
-        .map((region) => [String(region.key), region.key])
-    );
-    return plan.unmatched.flatMap((row) => {
-      const feature = byText.get(String(row.key));
-      return row.key != null && feature !== undefined
-        ? [{ key: row.key, feature }]
-        : [];
-    });
-  }, [plan]);
   const unmatchedSamples = [
     ...new Map(
       plan.unmatched.map((row) => [`${typeof row.key}:${String(row.key)}`, row])
@@ -403,21 +390,10 @@ export function RegionMapSettings({
                 {plan.unmatched.length > unmatchedSamples.length && ", …"}
               </p>
             )}
-            {typeMismatches.length > 0 && (
-              <p className="text-warning">
-                {typeMismatches.length}{" "}
-                {typeMismatches.length === 1 ? "row matches" : "rows match"} a
-                feature key only as text, such as{" "}
-                {displayAggregateValue(typeMismatches[0]!.key)} (
-                {typeof typeMismatches[0]!.key}) and{" "}
-                {displayAggregateValue(typeMismatches[0]!.feature)} (
-                {typeof typeMismatches[0]!.feature}). Keys must match in type
-                too; convert the field&apos;s type to join them.
-              </p>
-            )}
             <p>
-              Features with one key form one region. Alt-click outside the
-              regions on the map to see every unmatched row and feature.
+              Features with one key form one region. A number and its text,
+              case, and surrounding spaces count as one key. Alt-click outside
+              the regions on the map to see every unmatched row and feature.
             </p>
           </div>
         </details>

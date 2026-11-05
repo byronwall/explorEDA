@@ -233,6 +233,20 @@ export function SankeyChart({
       </ChartMessage>
     );
   }
+  if (plan.totalWeight === 0) {
+    // Every drawn row's measure was left out, so there is no flow to size.
+    return (
+      <ChartMessage width={width} height={height}>
+        No usable values of {plan.unit}.{" "}
+        {plan.excluded
+          .map(
+            (item) =>
+              `${item.count.toLocaleString()} rows: ${item.reason.toLowerCase()}.`
+          )
+          .join(" ")}
+      </ChartMessage>
+    );
+  }
 
   const nodeById = new Map(plan.nodes.map((node) => [node.id, node]));
   const linkById = new Map(plan.links.map((link) => [link.id, link]));

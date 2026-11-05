@@ -479,9 +479,10 @@ export function HierarchyChart({
       select(node, event.shiftKey);
     }
   };
+  // Only a drawn box can take focus; a selected box too small to draw must not.
   const tabStop =
     (focused && order.includes(focused) ? focused : undefined) ??
-    plan.nodes.find((node) => node.selected)?.id ??
+    order.find((id) => nodeById.get(id)?.selected) ??
     order[0];
 
   const hoveredNode = hovered ? nodeById.get(hovered) : undefined;

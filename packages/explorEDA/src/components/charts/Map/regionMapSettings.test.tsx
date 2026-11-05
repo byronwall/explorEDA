@@ -93,7 +93,7 @@ function Live() {
     </>
   );
 }
-it("imports valid geometry, shows its size, and flags keys that differ only in type", () => {
+it("imports valid geometry, shows its size, and joins keys that differ only in type", () => {
   render(
     <DataLayerProvider
       data={[{ region: "1" }, { region: "2" }, { region: null }]}
@@ -110,12 +110,14 @@ it("imports valid geometry, shows its size, and flags keys that differ only in t
   fireEvent.change(screen.getByLabelText("Feature key"), {
     target: { value: "code" },
   });
+  // "1" (string) joins the feature keyed 1 (number); the rest stay unmatched.
   expect(screen.getByText(/Unmatched row keys:/)).toHaveTextContent(
-    `Unmatched row keys: "1" (string), "2" (string), missing`
+    `Unmatched row keys: "2" (string), missing`
   );
-  expect(
-    screen.getByText(/1 row matches a feature key only as text/)
-  ).toHaveTextContent(`"1" (string) and 1 (number)`);
+  expect(screen.getByRole("row", { name: /1 \(number\)/ })).toHaveTextContent(
+    "1 (number)11"
+  );
+  expect(screen.queryByText(/only as text/)).toBeNull();
 });
 
 it("starts a region map on the boundaries its data names", () => {

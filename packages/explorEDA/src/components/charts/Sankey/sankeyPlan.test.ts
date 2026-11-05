@@ -137,6 +137,42 @@ describe("planSankey", () => {
     });
   });
 
+  it("keeps a stage of many zero-weight nodes inside the plot", () => {
+    // One node carries all the flow; 29 others have rows but no usable measure.
+    const ids = Array.from({ length: 30 }, (_, index) => index);
+    const result = planSankey({
+      settings: settings({
+        stages: ["from", "to"],
+        aggregation: "sum",
+        measureField: "amount",
+        maxNodesPerStage: 30,
+      }),
+      width: 600,
+      height: 300,
+      snapshot: {
+        revision: "r1",
+        allIds: ids,
+        liveIds: ids,
+        stageData: {
+          from: Object.fromEntries(ids.map((id) => [id, `v${id}`])),
+          to: Object.fromEntries(ids.map((id) => [id, "Done"])),
+        },
+        measureData: Object.fromEntries(
+          ids.map((id) => [id, id === 0 ? 100 : -1])
+        ),
+      },
+      getFieldLabel: (field) => field,
+    });
+    expect(result.stages[0]!.nodes).toHaveLength(30);
+    for (const node of result.nodes) {
+      expect(node.y).toBeGreaterThanOrEqual(0);
+      // Heights and gaps are summed, so allow float rounding.
+      expect(node.y + node.height).toBeLessThanOrEqual(
+        result.plotHeight + 1e-6
+      );
+    }
+  });
+
   it("folds small values into an Other node that lists its members", () => {
     const many = Object.fromEntries(ids.map((id) => [id, `v${id}`]));
     const result = planSankey({

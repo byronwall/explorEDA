@@ -1,7 +1,7 @@
 import { applyFilter } from "@/hooks/applyFilter";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { makeColorScale } from "@/lib/colorScaleMath";
-import { finiteNumber } from "@/lib/valueParsing";
+import { finiteNumber, isMissingValue } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { ColorScaleType } from "@/types/ColorScaleTypes";
 import type { Filter, RangeFilter, ValueFilter } from "@/types/FilterTypes";
@@ -171,10 +171,11 @@ export function planParallelCoordinates({
       const data = snapshot.columns[axis.field] ?? {};
       const counts = new Map<string, { value: datum; total: number }>();
       for (const id of snapshot.allIds) {
-        const value = categoryValue(data[id]);
-        if (value === null) {
+        const raw = data[id];
+        if (isMissingValue(raw)) {
           continue;
         }
+        const value = categoryValue(raw);
         const key = categoryKey(value);
         const item = counts.get(key);
         if (item) {
@@ -356,6 +357,9 @@ export function planParallelCoordinates({
   const positionOf = (axis: ParallelAxis, id: number): number | undefined => {
     const value = snapshot.columns[axis.field]?.[id];
     if (axis.kind === "categorical") {
+      if (isMissingValue(value)) {
+        return undefined;
+      }
       const key = categoryKey(categoryValue(value));
       const category = axis.categories.find((item) => item.key === key);
       if (!category) {
@@ -394,7 +398,8 @@ export function planParallelCoordinates({
   const missing = axes.map(() => 0);
   const matching = axes.map(() => 0);
   let selectedCount = 0;
-  for (const id of snapshot.liveIds) {
+  // A line needs two axes; with fewer, the chart explains itself instead.
+  for (const id of axes.length < 2 ? [] : snapshot.liveIds) {
     const ys: number[] = [];
     let complete = true;
     axes.forEach((axis, index) => {
