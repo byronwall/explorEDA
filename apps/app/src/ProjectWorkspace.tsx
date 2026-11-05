@@ -9,6 +9,7 @@ import {
   type AnalysisProject,
   type AnalysisView,
   type ExplorEdaProjectChange,
+  type ExplorEdaProjectHandle,
   type ProjectFolder,
   type SavedDataStructure,
 } from "exploreda";
@@ -54,6 +55,12 @@ const textViews = (views: AnalysisView[]) =>
 export interface ProjectActions {
   chartFile(dataPath: string): Promise<void>;
   createAnalysis(name: string, queryId: string): Promise<void>;
+  /** A new analysis for a view a panel opened, with its new query if any. */
+  openView(
+    view: AnalysisView,
+    name: string,
+    project?: AnalysisProject
+  ): Promise<void>;
   renameAnalysis(path: string, name: string): Promise<void>;
   deleteAnalysis(path: string): Promise<void>;
   /** On a team server: add a data file from this computer or a URL. */
@@ -195,6 +202,7 @@ export function ProjectWorkspace({
   }, []);
 
   const dirty = useRef(new Set<string>());
+  const workspace = useRef<ExplorEdaProjectHandle>(null);
   useEffect(() => {
     for (const path of dirty.current) {
       saver.queue(path, fileText(path, { project, views }));
@@ -521,6 +529,22 @@ export function ProjectWorkspace({
               </li>
             ))}
           </ul>
+          {project.sources.length > 1 && view && !notebook && (
+            <button
+              type="button"
+              className="app-item app-links"
+              onClick={() =>
+                workspace.current?.openSchema?.(viewSource(project, view))
+              }
+            >
+              <span>Tables and links</span>
+              <span className="app-muted">
+                {project.relationships.length
+                  ? `${project.relationships.length} link${project.relationships.length === 1 ? "" : "s"} between ${project.sources.length} tables`
+                  : `Relate ${project.sources.length} tables to chart their fields together`}
+              </span>
+            </button>
+          )}
         </section>
 
         {problems.length > 0 && (
@@ -580,6 +604,7 @@ export function ProjectWorkspace({
           />
         ) : view ? (
           <ExplorEdaProject
+            ref={workspace}
             key={view.id}
             project={project}
             tables={folder.tables}
@@ -587,6 +612,15 @@ export function ProjectWorkspace({
             views={allViews}
             onProjectChange={onProjectChange}
             onStateChange={onStateChange}
+            onOpenView={
+              readOnly
+                ? undefined
+                : (next, name, nextProject) =>
+                    void actions.openView(next, name, nextProject)
+            }
+            onAddSource={
+              canAddDatabase ? () => setAddingDatabase(true) : undefined
+            }
             createWorker={createAnalysisWorker}
             toolbarStart={tabs}
           />
@@ -604,6 +638,13 @@ export function ProjectWorkspace({
       </main>
     </div>
   );
+}
+
+/** The table a view's query reads first. */
+function viewSource(project: AnalysisProject, view: AnalysisView) {
+  const query = project.queries.find((item) => item.id === view.queryId);
+  const first = query?.steps.find((step) => step.kind === "source");
+  return first?.kind === "source" ? first.sourceId : undefined;
 }
 
 function SaveStatus({
