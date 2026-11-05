@@ -1,0 +1,12 @@
+{
+  "id": "720eb73f-287a-4049-ab1d-e27ecf446b3c",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:3a79e9",
+    "label": "Agent token ...3a79e9"
+  },
+  "createdAt": "2026-11-05T03:56:48.204Z",
+  "summary": "Set \"Relationship dialog offers a next step\" priority to high.",
+  "nodeIds": ["page-relationship-dialog-offers-a-next-step"]
+}

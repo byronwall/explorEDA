@@ -1,0 +1,12 @@
+{
+  "id": "5b4acf7e-4ba6-445d-9227-f3d65ce10900",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:89be1b",
+    "label": "Agent token ...89be1b"
+  },
+  "createdAt": "2026-11-05T03:56:54.737Z",
+  "summary": "Set \"check names unread sources and the fix\" priority to high.",
+  "nodeIds": ["page-check-names-unread-sources-and-the-fix"]
+}

@@ -1,0 +1,7 @@
+project @t8
+
+connection @nfl driver=sqlite path=data/nfl.db
+
+source @games key=game_id db=nfl table=games
+
+source @findings db=nfl sql="select 'margin' as kind, game_id as label, game_type as grp, result * 1.0 as value from games union all select 'team', posteam, 'all', avg(epa) from plays where play_type in ('pass','run') and posteam is not null and epa is not null group by posteam union all select 'down', 'Down ' || down, play_type, avg(epa) from plays where play_type in ('pass','run') and down is not null and epa is not null group by down, play_type"

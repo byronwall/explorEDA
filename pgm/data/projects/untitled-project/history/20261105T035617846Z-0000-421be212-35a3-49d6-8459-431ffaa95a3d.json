@@ -1,0 +1,15 @@
+{
+  "id": "421be212-35a3-49d6-8459-431ffaa95a3d",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:6d1ff4",
+    "label": "Agent token ...6d1ff4"
+  },
+  "createdAt": "2026-11-05T03:56:17.846Z",
+  "summary": "Created \"Stop writing deprecated axis min/max into dashboard text\" under \"Defaults for warehouse tables\".",
+  "nodeIds": [
+    "page-stop-writing-deprecated-axis-min-max-into-dashboard-text",
+    "area-defaults-for-warehouse-tables"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "de4a248a-ecdd-44a3-aa45-a6613ac233b5",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2adcc5",
+    "label": "Agent token ...2adcc5"
+  },
+  "createdAt": "2026-11-05T03:56:46.640Z",
+  "summary": "Set \"Wire onOpenView in the project app\" priority to high.",
+  "nodeIds": ["page-wire-onopenview-in-the-project-app"]
+}

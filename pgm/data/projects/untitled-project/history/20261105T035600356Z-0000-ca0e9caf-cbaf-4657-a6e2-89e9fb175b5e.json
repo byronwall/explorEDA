@@ -1,0 +1,12 @@
+{
+  "id": "ca0e9caf-cbaf-4657-a6e2-89e9fb175b5e",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d94447",
+    "label": "Agent token ...d94447"
+  },
+  "createdAt": "2026-11-05T03:56:00.356Z",
+  "summary": "Created \"exploreda read command\" under \"Text and CLI parity\".",
+  "nodeIds": ["page-exploreda-read-command", "area-text-and-cli-parity"]
+}

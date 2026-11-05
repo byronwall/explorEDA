@@ -1,0 +1,34 @@
+eda query=buyers
+dashboard "Buyers"
+
+scale @7f699f6e-02f6-4186-a447-ba75b2b2d94d field=buyers.channel map=catalog:#2a78d6,web:#eb6834 {
+  palette=#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948
+  paletteId=theme order=frequency overflow=other
+}
+
+view Buyers {
+  summary @fields title=Fields
+  bar buyers.gender color=buyers.channel title="" seriesField=buyers.channel {
+    seriesLayout=percent
+  }
+  bar buyers.marital_status color=buyers.channel title="" seriesField=buyers.channel {
+    seriesLayout=percent
+  }
+  bar buyers.education color=buyers.channel title="" seriesField=buyers.channel {
+    seriesLayout=percent
+  }
+  bar buyers.state color=buyers.channel title="" seriesField=buyers.channel {
+    seriesLayout=percent
+  }
+  markdown @markdown-1 {
+    content="<p>Web vs catalog buyers. Each row is one customer in one channel, joined to customer, demographics and address. Catalog has 1,581 buyers, web has 598. In every gender, marital status, education and state the mix stays near 73% catalog, so the groups look alike. Missing data: 80 buyers have no birth year, and some have no demographics or address row. These show as Unknown. Education also has a real Unknown value in the source.</p>"
+  }
+  layout {
+    5: fields
+    4: buyers.gender .
+    4: buyers.marital_status .
+    4: buyers.education .
+    4: buyers.state .
+    4: markdown-1 .
+  }
+}

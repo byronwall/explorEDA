@@ -1,0 +1,12 @@
+{
+  "id": "380ca257-2f0e-420b-bbdc-1224aded363a",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:bdef6d",
+    "label": "Agent token ...bdef6d"
+  },
+  "createdAt": "2026-11-05T03:56:56.342Z",
+  "summary": "Set \"Prerender docs pages so they return HTTP 200\" priority to high.",
+  "nodeIds": ["page-prerender-docs-pages-so-they-return-http-200"]
+}

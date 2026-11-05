@@ -1,0 +1,15 @@
+{
+  "id": "b92282db-7970-4005-bdee-e2754fa90658",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:905a2b",
+    "label": "Agent token ...905a2b"
+  },
+  "createdAt": "2026-11-05T03:56:11.198Z",
+  "summary": "Created \"Progress and cancel for long reads\" under \"Errors and reads\".",
+  "nodeIds": [
+    "page-progress-and-cancel-for-long-reads",
+    "area-errors-and-reads"
+  ]
+}

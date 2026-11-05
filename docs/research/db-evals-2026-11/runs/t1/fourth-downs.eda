@@ -1,0 +1,47 @@
+eda query=fourth_downs
+dashboard "Fourth downs"
+
+calc "Went for it" = if ["fourth_downs.decision"] == "Go for it" then 1 else 0
+calc Converted = if ["fourth_downs.result"] == null then null else if ["fourth_downs.result"] == "Converted" then 1 else 0
+calc "Yards to goal bin" = if ["fourth_downs.yardline_100"] <= 10 then "01-10 goal line" else (if ["fourth_downs.yardline_100"] <= 20 then "11-20" else (if ["fourth_downs.yardline_100"] <= 30 then "21-30" else (if ["fourth_downs.yardline_100"] <= 40 then "31-40" else (if ["fourth_downs.yardline_100"] <= 50 then "41-50" else (if ["fourth_downs.yardline_100"] <= 60 then "51-60" else (if ["fourth_downs.yardline_100"] <= 70 then "61-70" else (if ["fourth_downs.yardline_100"] <= 80 then "71-80" else (if ["fourth_downs.yardline_100"] <= 90 then "81-90" else ("91-99 own end zone")))))))))
+calc "Score bin" = if ["fourth_downs.score_differential"] <= -17 then "1 down 17+" else (if ["fourth_downs.score_differential"] <= -9 then "2 down 9-16" else (if ["fourth_downs.score_differential"] <= -1 then "3 down 1-8" else (if ["fourth_downs.score_differential"] <= 0 then "4 tied" else (if ["fourth_downs.score_differential"] <= 8 then "5 up 1-8" else (if ["fourth_downs.score_differential"] <= 16 then "6 up 9-16" else ("7 up 17+"))))))
+
+scale @d9a7d9e5-e152-4760-b87c-10f3e796d9fd field=fourth_downs.decision map=Punt:#2a78d6,"Field goal":#eb6834,"Go for it":#1baf7a {
+  palette=#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948
+  paletteId=theme order=frequency overflow=other
+}
+group @b4d35be0-6391-4831-87d0-ca7434429b23 avg("Went for it") by="Yards to goal bin" {
+  name="Average of Went for it by Yards to goal bin"
+}
+group @d053f748-f630-42bc-99c7-ec009715fead avg("Went for it") by="Score bin" {
+  name="Average of Went for it by Score bin"
+}
+group @670eacab-d85a-42dc-887a-e4a814e87706 avg("Went for it") by=fourth_downs.team {
+  name="Average of Went for it by fourth_downs.team"
+}
+group @6f43647b-3881-4fda-b7c0-2bc7c9b439b0 avg(Converted) by="Yards to goal bin" {
+  name="Average of Converted by Yards to goal bin"
+}
+
+view "Fourth downs" {
+  summary @fields title=Fields
+  bar @bar-1 "Went for it" title="Average of Went for it by Yards to goal bin" {
+    forceString=true group=b4d35be0-6391-4831-87d0-ca7434429b23 categoryOrder=label
+  }
+  bar @bar-2 "Went for it" title="Average of Went for it by Score bin" forceString=true {
+    group=d053f748-f630-42bc-99c7-ec009715fead categoryOrder=label
+  }
+  bar @bar-3 "Went for it" title="Average of Went for it by fourth_downs.team" {
+    forceString=true group=670eacab-d85a-42dc-887a-e4a814e87706 categoryOrder=value
+  }
+  bar Converted title="Average of Converted by Yards to goal bin" forceString=true {
+    group=6f43647b-3881-4fda-b7c0-2bc7c9b439b0 categoryOrder=label
+  }
+  layout {
+    5: fields
+    4: bar-1 .
+    4: bar-2 .
+    4: bar-3 .
+    4: Converted .
+  }
+}

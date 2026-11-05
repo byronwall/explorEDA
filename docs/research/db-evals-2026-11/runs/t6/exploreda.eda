@@ -1,0 +1,5 @@
+project @t6
+
+connection @retail driver=duckdb path=data/retail.duckdb
+
+source @buyers db=retail sql="select s.channel, s.customer_sk, c.c_birth_year, coalesce(d.cd_gender, 'Unknown') as gender, coalesce(d.cd_marital_status, 'Unknown') as marital_status, coalesce(d.cd_education_status, 'Unknown') as education, coalesce(a.ca_state, 'Unknown') as state, s.lines, s.net_paid from (select 'web' as channel, ws_bill_customer_sk as customer_sk, count(*) as lines, sum(ws_net_paid) as net_paid from web_sales where ws_bill_customer_sk is not null group by 1,2 union all select 'catalog', cs_bill_customer_sk, count(*), sum(cs_net_paid) from catalog_sales where cs_bill_customer_sk is not null group by 1,2) s left join customer c on c.c_customer_sk = s.customer_sk left join customer_demographics d on d.cd_demo_sk = c.c_current_cdemo_sk left join customer_address a on a.ca_address_sk = c.c_current_addr_sk"

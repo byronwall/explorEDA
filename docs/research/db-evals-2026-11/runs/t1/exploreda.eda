@@ -1,0 +1,5 @@
+project @t1
+
+connection @nfl driver=sqlite path=data/nfl.db
+
+source @fourth_downs db=nfl sql="select game_id, week, posteam as team, defteam, qtr, ydstogo, yardline_100, score_differential, case when play_type in ('pass','run') then 'Go for it' when play_type = 'punt' then 'Punt' else 'Field goal' end as decision, case when play_type in ('pass','run') then (case when fourth_down_converted = 1 then 'Converted' else 'Failed' end) end as result, epa, wpa from plays where down = 4 and play_type in ('pass','run','punt','field_goal')"

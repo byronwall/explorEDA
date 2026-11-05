@@ -1,0 +1,12 @@
+{
+  "id": "3ad33f52-91b3-4772-82c1-b14486a7975d",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:48da4a",
+    "label": "Agent token ...48da4a"
+  },
+  "createdAt": "2026-11-05T03:56:59.458Z",
+  "summary": "Set \"Show 'Use a relationship' where people look\" priority to medium.",
+  "nodeIds": ["page-show-use-a-relationship-where-people-look"]
+}

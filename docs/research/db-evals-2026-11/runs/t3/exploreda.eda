@@ -1,0 +1,9 @@
+project @t3
+
+connection @nfl driver=sqlite path=data/nfl.db
+
+source @plays db=nfl table=plays
+
+source @sample db=nfl sql="select * from plays limit 2000"
+
+source @qb_dropbacks db=nfl sql="select passer_player_name, passer_player_id, game_id, week, posteam, play_type, qb_dropback, pass_attempt, complete_pass, incomplete_pass, interception, sack, qb_spike, qb_scramble, air_yards, yards_gained, pass_touchdown, epa, \"desc\" from plays where passer_player_name in ('P.Mahomes','J.Allen','L.Jackson','J.Hurts','D.Prescott') and qb_dropback = 1"

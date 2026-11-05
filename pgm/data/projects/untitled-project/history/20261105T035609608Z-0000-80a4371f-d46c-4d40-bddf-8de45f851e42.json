@@ -1,0 +1,15 @@
+{
+  "id": "80a4371f-d46c-4d40-bddf-8de45f851e42",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:36b076",
+    "label": "Agent token ...36b076"
+  },
+  "createdAt": "2026-11-05T03:56:09.608Z",
+  "summary": "Created \"Failed source should not linger as 'Not read yet'\" under \"Errors and reads\".",
+  "nodeIds": [
+    "page-failed-source-should-not-linger-as-not-read-yet",
+    "area-errors-and-reads"
+  ]
+}

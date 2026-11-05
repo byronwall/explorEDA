@@ -1,0 +1,14 @@
+project @retail
+
+connection @wh driver=duckdb path=data/retail.duckdb
+
+source @returns key=sr_ticket_number db=wh sql="select sr_ticket_number, sr_item_sk, sr_return_amt, sr_return_quantity, case when sr.sr_reason_sk is null then 'No reason recorded' when r.r_reason_desc like 'reason %' then 'Unlabelled reason code' else r.r_reason_desc end as reason, coalesce(i.i_category, 'Unknown') as category from store_returns sr left join reason r on r.r_reason_sk = sr.sr_reason_sk left join item i on i.i_item_sk = sr.sr_item_sk"
+
+source @cat_rate key=category db=wh sql="with s as (select coalesce(i_category,'Unknown') c, sum(ss_ext_sales_price) sales from store_sales join item on i_item_sk = ss_item_sk group by 1), r as (select coalesce(i_category,'Unknown') c, sum(sr_return_amt) returned from store_returns join item on i_item_sk = sr_item_sk group by 1) select s.c as category, s.sales, coalesce(r.returned,0) as returned, coalesce(r.returned,0)/s.sales as return_rate from s left join r on r.c = s.c"
+
+relate @ret-cat returns.category -> cat_rate.category
+
+query @return-lines "Returns with category sales" glyph=◆ {
+  source returns
+  lookup cat via=ret-cat
+}

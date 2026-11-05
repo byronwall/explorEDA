@@ -1,0 +1,12 @@
+{
+  "id": "8c474d48-a17d-47a6-941b-1e29dd373a39",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:6c410e",
+    "label": "Agent token ...6c410e"
+  },
+  "createdAt": "2026-11-05T03:57:04.702Z",
+  "summary": "Set \"Default measure and group skip key and ID fields\" priority to medium.",
+  "nodeIds": ["page-default-measure-and-group-skip-key-and-id-fields"]
+}

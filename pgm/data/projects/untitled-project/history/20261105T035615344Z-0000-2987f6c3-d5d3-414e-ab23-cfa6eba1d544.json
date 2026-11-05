@@ -1,0 +1,15 @@
+{
+  "id": "2987f6c3-d5d3-414e-ab23-cfa6eba1d544",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8de7e7",
+    "label": "Agent token ...8de7e7"
+  },
+  "createdAt": "2026-11-05T03:56:15.344Z",
+  "summary": "Created \"Default measure and group skip key and ID fields\" under \"Defaults for warehouse tables\".",
+  "nodeIds": [
+    "page-default-measure-and-group-skip-key-and-id-fields",
+    "area-defaults-for-warehouse-tables"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "602bef15-72ef-43a9-8497-675b2b86f667",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:104bd1",
+    "label": "Agent token ...104bd1"
+  },
+  "createdAt": "2026-11-05T03:56:02.615Z",
+  "summary": "Created \"exploreda-dsl reference project and notebook\" under \"Text and CLI parity\".",
+  "nodeIds": [
+    "page-exploreda-dsl-reference-project-and-notebook",
+    "area-text-and-cli-parity"
+  ]
+}

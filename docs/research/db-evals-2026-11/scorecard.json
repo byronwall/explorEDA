@@ -1,0 +1,90 @@
+{
+  "t1": {
+    "outcome": "done",
+    "joins": "none",
+    "browserNeededForCli": false,
+    "outsideTools": ["sqlite3"],
+    "readSource": false,
+    "blockers": 0,
+    "major": 1,
+    "minor": 7,
+    "minutes": 5
+  },
+  "t2": {
+    "outcome": "done",
+    "joins": "sql",
+    "browserNeededForCli": true,
+    "outsideTools": ["sqlite3"],
+    "readSource": false,
+    "blockers": 0,
+    "major": 0,
+    "minor": 5,
+    "minutes": 2
+  },
+  "t3": {
+    "outcome": "done",
+    "joins": "none",
+    "browserNeededForCli": false,
+    "outsideTools": [],
+    "readSource": false,
+    "blockers": 0,
+    "major": 2,
+    "minor": 8,
+    "minutes": 6
+  },
+  "t4": {
+    "outcome": "partial",
+    "joins": "sql",
+    "browserNeededForCli": false,
+    "outsideTools": [],
+    "readSource": false,
+    "blockers": 0,
+    "major": 2,
+    "minor": 6,
+    "minutes": 7
+  },
+  "t5": {
+    "outcome": "done",
+    "joins": "sql",
+    "browserNeededForCli": true,
+    "outsideTools": [],
+    "readSource": false,
+    "blockers": 0,
+    "major": 4,
+    "minor": 4,
+    "minutes": 3
+  },
+  "t6": {
+    "outcome": "partial",
+    "joins": "sql",
+    "browserNeededForCli": false,
+    "outsideTools": [],
+    "readSource": false,
+    "blockers": 0,
+    "major": 1,
+    "minor": 7,
+    "minutes": 3
+  },
+  "t7": {
+    "outcome": "partial",
+    "joins": "sql",
+    "browserNeededForCli": true,
+    "outsideTools": ["duckdb"],
+    "readSource": false,
+    "blockers": 0,
+    "major": 3,
+    "minor": 5,
+    "minutes": 5
+  },
+  "t8": {
+    "outcome": "done",
+    "joins": "sql",
+    "browserNeededForCli": true,
+    "outsideTools": ["jq"],
+    "readSource": false,
+    "blockers": 0,
+    "major": 4,
+    "minor": 5,
+    "minutes": 8
+  }
+}

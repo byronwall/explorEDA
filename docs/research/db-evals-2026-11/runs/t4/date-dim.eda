@@ -1,0 +1,7 @@
+eda query=date-dim
+dashboard "Date dim"
+
+summary @fields title=Fields
+layout {
+  5: fields
+}

@@ -1,0 +1,15 @@
+{
+  "id": "f32cba0d-43e1-4227-88e7-4ca892be46c0",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:511ffa",
+    "label": "Agent token ...511ffa"
+  },
+  "createdAt": "2026-11-05T03:55:55.854Z",
+  "summary": "Created \"Show 'Use a relationship' where people look\" under \"Combine tables without SQL\".",
+  "nodeIds": [
+    "page-show-use-a-relationship-where-people-look",
+    "area-combine-tables-without-sql"
+  ]
+}

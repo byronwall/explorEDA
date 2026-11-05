@@ -1,0 +1,5 @@
+project @t7
+
+connection @retail driver=duckdb path=data/retail.duckdb
+
+source @inventory db=retail limit=200000 sql="select i.inv_date_sk, d.d_date as snapshot_date, i.inv_item_sk, it.i_item_id, it.i_category, it.i_product_name, i.inv_warehouse_sk, coalesce(w.w_warehouse_name, 'Unnamed warehouse ' || i.inv_warehouse_sk) as warehouse, i.inv_quantity_on_hand as qty from inventory i left join date_dim d on d.d_date_sk = i.inv_date_sk left join item it on it.i_item_sk = i.inv_item_sk left join warehouse w on w.w_warehouse_sk = i.inv_warehouse_sk"

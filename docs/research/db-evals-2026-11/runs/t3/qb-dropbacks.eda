@@ -1,0 +1,46 @@
+eda query=qb_dropbacks
+dashboard "Qb dropbacks"
+
+calc "Completed (attempts only)" = if ["qb_dropbacks.sack"] == 1 then null else ["qb_dropbacks.complete_pass"]
+
+scale @8ed1c973-d3a0-4921-8b28-11be040de9eb field=qb_dropbacks.passer_player_name map=P.Mahomes:#2a78d6,D.Prescott:#eb6834,J.Allen:#1baf7a,J.Hurts:#eda100,L.Jackson:#e87ba4 {
+  palette=#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948
+  paletteId=theme order=frequency overflow=other
+}
+group @7b5d7ae4-0f67-49d6-b037-4240dcd917b9 avg(qb_dropbacks.sack) by=qb_dropbacks.passer_player_name {
+  name="Average of qb_dropbacks.sack by qb_dropbacks.passer_player_name"
+}
+group @7ff879e5-9727-48f9-89a1-2aa01a9dcba9 avg(qb_dropbacks.air_yards) by=qb_dropbacks.passer_player_name {
+  name="Average of qb_dropbacks.air_yards by qb_dropbacks.passer_player_name"
+}
+group @e8c50a72-d531-417a-8f2f-f4740749ad24 avg("Completed (attempts only)") by=qb_dropbacks.passer_player_name {
+  name="Average of Completed (attempts only) by qb_dropbacks.passer_player_name"
+}
+
+view "Qb dropbacks" {
+  summary @fields title=Fields
+  row @row-1 qb_dropbacks.passer_player_name x.title=Records
+  row @row-2 qb_dropbacks.passer_player_name {
+    title="Average of qb_dropbacks.sack by qb_dropbacks.passer_player_name"
+    group=7b5d7ae4-0f67-49d6-b037-4240dcd917b9
+  }
+  row @row-3 qb_dropbacks.passer_player_name {
+    title="Average of qb_dropbacks.air_yards by qb_dropbacks.passer_player_name"
+    group=7ff879e5-9727-48f9-89a1-2aa01a9dcba9
+  }
+  boxplot @boxplot-1 qb_dropbacks.air_yards color=qb_dropbacks.passer_player_name title=""
+  row @row-4 qb_dropbacks.passer_player_name {
+    title="Average of Completed (attempts only) by qb_dropbacks.passer_player_name"
+    group=e8c50a72-d531-417a-8f2f-f4740749ad24
+  }
+  ecdf @ecdf-1 qb_dropbacks.air_yards color=qb_dropbacks.passer_player_name title=""
+  layout {
+    5: fields
+    4: row-1 .
+    4: row-2 .
+    4: row-3 .
+    4: boxplot-1 .
+    4: row-4 .
+    4: ecdf-1 .
+  }
+}

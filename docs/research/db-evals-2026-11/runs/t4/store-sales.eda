@@ -1,0 +1,7 @@
+eda query=store-sales
+dashboard "Store sales"
+
+summary @fields title=Fields
+layout {
+  5: fields
+}

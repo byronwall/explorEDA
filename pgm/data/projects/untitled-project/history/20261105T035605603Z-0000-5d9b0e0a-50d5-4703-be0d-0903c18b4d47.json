@@ -1,0 +1,15 @@
+{
+  "id": "5d9b0e0a-50d5-4703-be0d-0903c18b4d47",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:315879",
+    "label": "Agent token ...315879"
+  },
+  "createdAt": "2026-11-05T03:56:05.603Z",
+  "summary": "Created \"Several queries in one notebook\" under \"Text and CLI parity\".",
+  "nodeIds": [
+    "page-several-queries-in-one-notebook",
+    "area-text-and-cli-parity"
+  ]
+}

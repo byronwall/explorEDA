@@ -1,0 +1,12 @@
+{
+  "id": "291fda9e-c12f-418c-a839-363895ea83fa",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d62851",
+    "label": "Agent token ...d62851"
+  },
+  "createdAt": "2026-11-05T03:56:06.402Z",
+  "summary": "Created \"Multi-line SQL in project text\" under \"Text and CLI parity\".",
+  "nodeIds": ["page-multi-line-sql-in-project-text", "area-text-and-cli-parity"]
+}
