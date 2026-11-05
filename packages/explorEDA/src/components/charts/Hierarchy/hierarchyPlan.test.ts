@@ -37,6 +37,7 @@ function snapshot(liveIds = ids): HierarchySnapshot {
       product: column("product"),
     },
     measureData: column("revenue"),
+    allIds: ids,
   };
 }
 
@@ -70,6 +71,13 @@ const find = (result: ReturnType<typeof plan>, ...labels: string[]) =>
 const pathOf = (node: HierarchyNode | undefined) => node?.path;
 
 describe("planHierarchy", () => {
+  it("keeps a branch's color when other charts filter other branches out", () => {
+    // Only South rows are left, so South becomes the first live branch.
+    const south = (result: ReturnType<typeof plan>) =>
+      find(result, "South")!.color;
+    expect(south(plan({}, [3, 4, 5]))).toBe(south(plan()));
+  });
+
   it("counts rows through full paths, keeping repeated labels apart", () => {
     const result = plan();
     expect(result.root.weight).toBe(6);

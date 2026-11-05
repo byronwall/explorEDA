@@ -232,16 +232,20 @@ export function TimeSeriesChart({
           {periodText} · UTC
         </span>
         {!(settings.colorField === time.splitField && settings.colorScaleId) &&
-          plan.series.map((series) => (
+          plan.legendSeries.map((series) => (
             <span
               key={series.key}
-              className="inline-flex shrink-0 items-center gap-1"
+              className={`inline-flex shrink-0 items-center gap-1${series.empty ? " opacity-40" : ""}`}
+              data-empty={series.empty || undefined}
             >
               <span
                 className="inline-block h-2 w-2 rounded-full"
                 style={{ background: series.color }}
               />
               {series.label}
+              {series.empty && (
+                <span className="sr-only">, no rows after other filters</span>
+              )}
             </span>
           ))}
       </div>

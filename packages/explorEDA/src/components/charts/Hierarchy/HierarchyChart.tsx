@@ -37,7 +37,7 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import { useGetColumnData } from "../useGetColumnData";
-import { useGetLiveIds } from "../useGetLiveData";
+import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import type { HierarchySettings } from "./definition";
 import {
   isZoomable,
@@ -196,6 +196,7 @@ export function HierarchyChart({
   const colorScale = useDisplayColorScale(colorScaleId);
   const themeColors = useThemeColors();
   const liveIds = useGetLiveIds(settings, facetIds);
+  const allIds = useGetAllIds(settings);
   const measureData = useGetColumnData(
     settings.aggregation === "sum" ? settings.measureField : undefined
   );
@@ -242,6 +243,7 @@ export function HierarchyChart({
     return {
       revision,
       liveIds,
+      allIds,
       levelData,
       measureData,
       colorScale,
@@ -253,6 +255,7 @@ export function HierarchyChart({
     levelKey,
     revision,
     liveIds,
+    allIds,
     measureData,
     colorScale,
     themeColors,
