@@ -14,6 +14,7 @@ import {
 } from "../node/secrets";
 import {
   projectDatabases,
+  readsInProgress,
   refreshSource,
   withConnection,
 } from "../server/sources/refresh";
@@ -100,13 +101,30 @@ export async function readCommand(
   );
   const width = Math.max(...ids.map((id) => id.length));
   let failed = 0;
+  // On a terminal, a counter shows the rows a long read has so far.
+  const tty = !options.log && process.stdout.isTTY;
   for (const id of ids) {
     const started = Date.now();
+    const counter = tty
+      ? setInterval(() => {
+          const rows =
+            readsInProgress(folder).find((read) => read.sourceId === id)
+              ?.rows ?? 0;
+          process.stdout.write(
+            `\r${id.padEnd(width)}  reading… ${count(rows)} rows\x1b[K`
+          );
+        }, 250)
+      : undefined;
     try {
       const info = await refreshSource(id, {
         root: folder,
         secret,
         ...(options.drivers ? { drivers: options.drivers } : {}),
+      }).finally(() => {
+        if (counter) {
+          clearInterval(counter);
+          process.stdout.write("\r\x1b[K");
+        }
       });
       const seconds = ((Date.now() - started) / 1000).toFixed(1);
       log(

@@ -3,9 +3,10 @@
  * Refresh, Read all, the panel shown while an analysis waits for its data,
  * and the password form a connection asks for when it needs one.
  */
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { readAgo, type ProjectFolder } from "exploreda";
 import { RefreshError } from "./httpFiles";
+import { ReadWatchContext, useRunningReads } from "./readProgress";
 
 /** A list of names in words: "a", "a and b", "a, b, and c". */
 export function listWords(items: string[]) {
@@ -19,6 +20,8 @@ export interface ReadFailure {
   status: "failed";
   message: string;
   suggestion?: string;
+  /** The server's reason, such as `too-large` or `cancelled`. */
+  code?: string;
   /** Set when the failure is a connection asking for its password. */
   needsSecret?: string;
 }
@@ -32,6 +35,7 @@ export function readFailure(error: unknown): ReadFailure {
     status: "failed",
     message: error instanceof Error ? error.message : String(error),
     ...(refresh?.suggestion ? { suggestion: refresh.suggestion } : {}),
+    ...(refresh?.code ? { code: refresh.code } : {}),
     ...(refresh?.code === "secret" && refresh.connection
       ? { needsSecret: refresh.connection }
       : {}),
@@ -50,6 +54,12 @@ export function useRead(
   initial: ReadState = { status: "idle" }
 ) {
   const [state, setState] = useState<ReadState>(initial);
+  // A failure that arrives later, from a read this view didn't start.
+  useEffect(() => {
+    if (initial.status === "failed") {
+      setState((current) => (current.status === "reading" ? current : initial));
+    }
+  }, [initial]);
   const run = async () => {
     if (!read) {
       return;
@@ -65,6 +75,54 @@ export function useRead(
   return { state, run };
 }
 
+const count = (value: number) => value.toLocaleString("en-US");
+
+/** Asks the server to stop a read; the read then reports it stopped. */
+function CancelRead({ sourceId }: { sourceId: string }) {
+  const watch = useContext(ReadWatchContext);
+  const [asked, setAsked] = useState(false);
+  if (!watch) {
+    return null;
+  }
+  return (
+    <button
+      type="button"
+      className="app-button app-button-sm app-button-ghost"
+      aria-label={`Stop reading ${sourceId}`}
+      disabled={asked}
+      onClick={() => {
+        setAsked(true);
+        watch.cancel(sourceId).catch(() => setAsked(false));
+      }}
+    >
+      {asked ? "Stopping…" : "Cancel"}
+    </button>
+  );
+}
+
+/** "Reading plays… 12,000 rows" and Cancel, for each read running now. */
+export function RunningReads({ sourceIds }: { sourceIds?: string[] }) {
+  const reads = useRunningReads();
+  const shown = [...reads].filter(
+    ([sourceId]) => !sourceIds || sourceIds.includes(sourceId)
+  );
+  if (!shown.length) {
+    return null;
+  }
+  return (
+    <ul className="app-running-reads" aria-label="Reads running now">
+      {shown.map(([sourceId, rows]) => (
+        <li key={sourceId} className="app-running-read">
+          <span>
+            Reading {sourceId}…{rows ? ` ${count(rows)} rows` : ""}
+          </span>
+          <CancelRead sourceId={sourceId} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /** A failed read's message, and a password form when that's the fix. */
 export function ReadProblem({
   state,
@@ -77,6 +135,13 @@ export function ReadProblem({
 }) {
   if (state.status !== "failed") {
     return null;
+  }
+  if (state.code === "cancelled") {
+    return (
+      <p className="app-muted app-read-stopped" role="status">
+        {state.message}
+      </p>
+    );
   }
   return (
     <div className="app-read-problem">
@@ -253,6 +318,7 @@ export function WaitingForData({
             : `Read ${listWords(sourceIds)}${lastError ? " again" : ""}`}
         </button>
       )}
+      <RunningReads sourceIds={sourceIds} />
       <ReadProblem state={shown} onSaveSecret={onSaveSecret} onRetry={run} />
     </div>
   );
@@ -289,6 +355,7 @@ export function DatabaseSourceItem({
   lastError,
   onRefresh,
   onRemove,
+  onPickColumns,
   onSaveSecret,
 }: {
   name: string;
@@ -301,6 +368,8 @@ export function DatabaseSourceItem({
   onRefresh?: (sourceId: string) => Promise<void>;
   /** Removes a source that has never been read; offered after a failure. */
   onRemove?: (sourceId: string) => Promise<void>;
+  /** Opens the column picker; offered when a table is too large to read. */
+  onPickColumns?: () => void;
   onSaveSecret?: (connectionId: string, secret: string) => Promise<void>;
 }) {
   const { state, run } = useRead(
@@ -309,43 +378,65 @@ export function DatabaseSourceItem({
   );
   const [removing, setRemoving] = useState(false);
   const ago = useReadAgo(snapshot?.readAt);
-  const meta =
-    state.status === "reading" ? (
-      `Reading from ${connection}…`
-    ) : snapshot ? (
-      `${rows.toLocaleString()} rows · ${connection} · ${ago}`
-    ) : (
-      <>
-        {state.status === "failed" ? (
-          <span className="app-status app-status-error">Couldn't read</span>
-        ) : (
-          <span className="app-status app-status-warning">Not read yet</span>
-        )}
-        {` · ${connection}`}
-      </>
-    );
+  // The page's own count of a running read outlives this view, so a read
+  // still shows after the workspace redraws mid-read.
+  const running = useRunningReads().get(sourceId);
+  const watched = Boolean(useContext(ReadWatchContext));
+  const reading = state.status === "reading" || running !== undefined;
+  const failed = !reading && state.status === "failed" ? state : undefined;
+  const meta = reading ? (
+    `Reading from ${connection}…${running ? ` ${count(running)} rows` : ""}`
+  ) : snapshot ? (
+    `${rows.toLocaleString()} rows · ${connection} · ${ago}`
+  ) : (
+    <>
+      {failed?.code === "cancelled" ? (
+        <span className="app-status app-status-warning">Stopped</span>
+      ) : failed ? (
+        <span className="app-status app-status-error">Couldn't read</span>
+      ) : (
+        <span className="app-status app-status-warning">Not read yet</span>
+      )}
+      {` · ${connection}`}
+    </>
+  );
+  const canPick = Boolean(onPickColumns) && failed?.code === "too-large";
+  const canRemove = Boolean(onRemove) && !snapshot && Boolean(failed);
   return (
-    <li
-      className="app-source"
-      aria-busy={state.status === "reading" || undefined}
-    >
+    <li className="app-source" aria-busy={reading || undefined}>
       <span className="app-source-name">{name}</span>
       <span className="app-source-meta">{meta}</span>
-      {onRefresh && (
-        <button
-          type="button"
-          className="app-button app-button-sm app-button-ghost"
-          aria-label={`Read ${sourceId} again from ${connection}`}
-          disabled={state.status === "reading"}
-          onClick={() => void run()}
-        >
-          {snapshot ? "Refresh" : "Read"}
-        </button>
+      {reading && watched ? (
+        <CancelRead sourceId={sourceId} />
+      ) : (
+        onRefresh && (
+          <button
+            type="button"
+            className="app-button app-button-sm app-button-ghost"
+            aria-label={`Read ${sourceId} again from ${connection}`}
+            disabled={reading}
+            onClick={() => void run()}
+          >
+            {snapshot ? "Refresh" : "Read"}
+          </button>
+        )
       )}
-      <ReadProblem state={state} onSaveSecret={onSaveSecret} onRetry={run} />
-      {onRemove && !snapshot && state.status === "failed" && (
+      {!reading && (
+        <ReadProblem state={state} onSaveSecret={onSaveSecret} onRetry={run} />
+      )}
+      {(canPick || canRemove) && (
         <div className="app-item-actions app-source-actions">
-          {removing ? (
+          {canPick && !removing && (
+            <button
+              type="button"
+              className="app-button app-button-sm app-button-ghost"
+              aria-label={`Pick columns and rows of ${sourceId} to read`}
+              onClick={onPickColumns}
+            >
+              Pick columns
+            </button>
+          )}
+          {!canRemove ? null : removing ? (
             <>
               <span className="app-muted">
                 Remove {sourceId} from the project?
@@ -353,7 +444,7 @@ export function DatabaseSourceItem({
               <button
                 type="button"
                 className="app-button app-button-sm app-button-danger"
-                onClick={() => void onRemove(sourceId)}
+                onClick={() => void onRemove?.(sourceId)}
               >
                 Remove
               </button>

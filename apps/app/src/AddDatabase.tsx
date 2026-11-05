@@ -5,15 +5,23 @@
  * does; several open one analysis on the table the user picks, with the
  * rest added beside it, ready to relate.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  DEFAULT_BYTE_LIMIT,
   DEFAULT_ROW_LIMIT,
   sourceIdForTable,
   type ConnectionDefinition,
   type DatabaseSource,
 } from "exploreda";
-import { ReadProblem, useRead } from "./DatabaseSourceViews";
+import { ReadProblem, RunningReads, useRead } from "./DatabaseSourceViews";
 import type { DatabaseTable, TableColumn } from "./httpFiles";
+import {
+  LONG_SQL,
+  WIDE_TABLE,
+  likelyTooLarge,
+  pickSql,
+  sqlFileFor,
+} from "./pickSql";
 
 export interface AddDatabaseActions {
   listTables(connectionId: string): Promise<DatabaseTable[]>;
@@ -29,9 +37,20 @@ export interface AddDatabaseActions {
     sources: { sourceId: string; database: DatabaseSource }[],
     main: string
   ): Promise<void>;
+  /** Replaces a source with one of the same ID, and reads it. */
+  replaceSource?(sourceId: string, database: DatabaseSource): Promise<void>;
   /** A table's columns, shown before it is read. */
   tableColumns?(connectionId: string, table: string): Promise<TableColumn[]>;
   saveSecret?(connectionId: string, secret: string): Promise<void>;
+}
+
+/** A source too large to read, opened in the column picker to replace it. */
+export interface PickTarget {
+  sourceId: string;
+  connection: string;
+  table: string;
+  /** Its own row limit, which the new source keeps. */
+  limit?: number;
 }
 
 const DRIVERS = [
@@ -50,6 +69,7 @@ export function AddDatabase({
   connections,
   sourceIds,
   initialConnection,
+  pick,
   actions,
   onClose,
 }: {
@@ -58,14 +78,28 @@ export function AddDatabase({
   sourceIds: string[];
   /** A connection just added, which the panel opens on and confirms. */
   initialConnection?: string;
+  /** A source to replace with some of its table's columns. */
+  pick?: PickTarget;
   actions: AddDatabaseActions;
   onClose: () => void;
 }) {
   const [connection, setConnection] = useState(
-    initialConnection ?? connections[0]?.id ?? NEW
+    pick?.connection ?? initialConnection ?? connections[0]?.id ?? NEW
   );
+  const driver =
+    connections.find((item) => item.id === connection)?.driver ?? "";
+  // Opened from a source lower in the rail, the panel scrolls into view.
+  const panel = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (pick) {
+      panel.current?.scrollIntoView?.({ block: "start" });
+    }
+    // Once, when the panel opens on a source to replace.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div
+      ref={panel}
       className="app-panel app-add-database"
       role="group"
       aria-label="Add from a database"
@@ -107,6 +141,8 @@ export function AddDatabase({
         <SourcePicker
           key={connection}
           connection={connection}
+          driver={driver}
+          pick={pick?.connection === connection ? pick : undefined}
           sourceIds={sourceIds}
           actions={actions}
           onCancel={onClose}
@@ -307,11 +343,16 @@ const roomyLimit = (rows: number) =>
 /** Checks tables, or takes a query, and names the new sources. */
 function SourcePicker({
   connection,
+  driver,
+  pick,
   sourceIds,
   actions,
   onCancel,
 }: {
   connection: string;
+  /** The connection's driver, which says how the query quotes names. */
+  driver: string;
+  pick?: PickTarget;
   sourceIds: string[];
   actions: AddDatabaseActions;
   onCancel: () => void;
@@ -319,9 +360,16 @@ function SourcePicker({
   const [mode, setMode] = useState<"table" | "sql">("table");
   const [tables, setTables] = useState<DatabaseTable[]>();
   const [filter, setFilter] = useState("");
-  const [checked, setChecked] = useState<string[]>([]);
+  const [checked, setChecked] = useState<string[]>(pick ? [pick.table] : []);
   const [expanded, setExpanded] = useState<string>();
-  const [limits, setLimits] = useState<Record<string, number>>({});
+  // The table whose columns are being picked, and what's picked so far.
+  const [picking, setPicking] = useState(pick?.table);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [where, setWhere] = useState("");
+  const replacing = pick && picking === pick.table ? pick.sourceId : undefined;
+  const [limits, setLimits] = useState<Record<string, number>>(
+    pick?.limit ? { [pick.table]: pick.limit } : {}
+  );
   const [chosenMain, setMain] = useState<string>();
   const [columns, setColumns] = useState<
     Record<string, TableColumn[] | string>
@@ -343,7 +391,8 @@ function SourcePicker({
     setTables(await actions.listTables(connection));
   });
   const byName = new Map((tables ?? []).map((item) => [item.name, item]));
-  const several = mode === "table" && checked.length > 1;
+  const pickingNow = mode === "table" ? picking : undefined;
+  const several = mode === "table" && !pickingNow && checked.length > 1;
   // The table one analysis row is: the user's pick, or the one that
   // reads, the table with the most keys that point at other tables, then
   // the largest. Tables over the read limit come last.
@@ -369,7 +418,23 @@ function SourcePicker({
     table,
     ...(limits[table] ? { limit: limits[table] } : {}),
   });
+  const pickedSql = pickingNow
+    ? pickSql(driver, pickingNow, picked, where)
+    : "";
   const add = useRead(async () => {
+    if (pickingNow) {
+      const id = replacing ?? sourceId;
+      const database: DatabaseSource = {
+        connection,
+        sql: pickedSql,
+        ...(pickedSql.length > LONG_SQL ? { sqlFile: sqlFileFor(id) } : {}),
+        ...(limits[pickingNow] ? { limit: limits[pickingNow] } : {}),
+      };
+      await (replacing && actions.replaceSource
+        ? actions.replaceSource(replacing, database)
+        : actions.addSource(id, database));
+      return;
+    }
     if (several) {
       const taken = [...sourceIds];
       const sources = checked.map((table) => {
@@ -390,6 +455,9 @@ function SourcePicker({
   });
   useEffect(() => {
     void load.run();
+    if (pick) {
+      loadColumns(pick.table);
+    }
     // Each connection gets its own picker, so this runs once per connection.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -406,9 +474,21 @@ function SourcePicker({
         .toLowerCase()
         .replace(/[^a-z0-9_-]+/g, "-")
     : suggested;
-  const clash = !several && sourceIds.includes(sourceId);
+  const clash = !several && !replacing && sourceIds.includes(sourceId);
   const ready =
-    !clash && (mode === "table" ? checked.length > 0 : Boolean(sql.trim()));
+    !clash &&
+    (pickingNow
+      ? picked.length > 0
+      : mode === "table"
+        ? checked.length > 0
+        : Boolean(sql.trim()));
+  const startPicking = (table: string) => {
+    setChecked([table]);
+    setPicking(table);
+    setPicked([]);
+    setWhere("");
+    loadColumns(table);
+  };
   const shown = useMemo(
     () =>
       (tables ?? []).filter((item) =>
@@ -464,7 +544,19 @@ function SourcePicker({
           A query
         </button>
       </div>
-      {mode === "table" ? (
+      {pickingNow ? (
+        <ColumnPicker
+          table={pickingNow}
+          rows={byName.get(pickingNow)?.rows}
+          columns={columns[pickingNow]}
+          picked={picked}
+          onPick={setPicked}
+          where={where}
+          onWhere={setWhere}
+          sql={picked.length ? pickedSql : ""}
+          onBack={() => setPicking(undefined)}
+        />
+      ) : mode === "table" ? (
         <>
           <input
             aria-label={`Find a table in ${connection}`}
@@ -536,6 +628,35 @@ function SourcePicker({
               </p>
             );
           })}
+          {checked.map((table) => {
+            const list = columns[table];
+            const rows = byName.get(table)?.rows;
+            if (!Array.isArray(list)) {
+              return null;
+            }
+            const large =
+              rows !== undefined && likelyTooLarge(rows, list.length);
+            if (list.length <= WIDE_TABLE && !large) {
+              return null;
+            }
+            return (
+              <p key={table} className="app-limit-note" role="status">
+                {table} has {count(list.length)} columns
+                {large
+                  ? `, likely more than the ${Math.round(DEFAULT_BYTE_LIMIT / 1024 / 1024)} MB a read keeps across ${count(rows)} rows`
+                  : ""}
+                .{" "}
+                <button
+                  type="button"
+                  className="app-button app-button-sm app-button-ghost"
+                  onClick={() => startPicking(table)}
+                >
+                  Pick columns
+                </button>{" "}
+                to read only the ones you need.
+              </p>
+            );
+          })}
         </>
       ) : (
         <label className="app-field">
@@ -575,6 +696,10 @@ function SourcePicker({
             added beside it, ready to relate.
           </p>
         </>
+      ) : replacing ? (
+        <p className="app-muted app-add-note">
+          Replaces {replacing}, which reads every column of {pickingNow}.
+        </p>
       ) : (
         <label className="app-field">
           <span>Source name</span>
@@ -600,7 +725,9 @@ function SourcePicker({
             ? "Reading…"
             : several
               ? `Add ${checked.length} tables and read`
-              : "Add and read"}
+              : replacing
+                ? `Replace ${replacing} and read`
+                : "Add and read"}
         </button>
         <button
           type="button"
@@ -610,12 +737,153 @@ function SourcePicker({
           Cancel
         </button>
       </div>
+      {add.state.status === "reading" && <RunningReads />}
       <ReadProblem
         state={add.state}
         onSaveSecret={actions.saveSecret}
         onRetry={add.run}
       />
     </form>
+  );
+}
+
+/**
+ * Some of a wide table's columns, and which rows: written as a query, so
+ * a table too large to read whole can still be charted.
+ */
+function ColumnPicker({
+  table,
+  rows,
+  columns,
+  picked,
+  onPick,
+  where,
+  onWhere,
+  sql,
+  onBack,
+}: {
+  table: string;
+  rows?: number;
+  /** Its columns once listed, or why they couldn't be. */
+  columns?: TableColumn[] | string;
+  picked: string[];
+  onPick: (picked: string[]) => void;
+  where: string;
+  onWhere: (where: string) => void;
+  /** The query the picks make, once a column is picked. */
+  sql: string;
+  onBack: () => void;
+}) {
+  const [filter, setFilter] = useState("");
+  const list = Array.isArray(columns) ? columns : [];
+  const needle = filter.trim().toLowerCase();
+  const shown = needle
+    ? list.filter((column) => column.name.toLowerCase().includes(needle))
+    : list;
+  const chosen = new Set(picked);
+  // Picks stay in the table's column order, so the query reads like it.
+  const pick = (names: Set<string>) =>
+    onPick(list.map((column) => column.name).filter((name) => names.has(name)));
+  return (
+    <div
+      className="app-column-picker"
+      role="group"
+      aria-label={`Columns of ${table}`}
+    >
+      <div className="app-picker-head">
+        <button
+          type="button"
+          className="app-button app-button-sm app-button-ghost"
+          onClick={onBack}
+        >
+          ‹ Tables
+        </button>
+        <span className="app-picker-title">{table}</span>
+        <span className="app-muted app-picker-count">
+          {count(picked.length)} of {count(list.length)} columns
+          {rows === undefined ? "" : ` · ${count(rows)} rows`}
+        </span>
+      </div>
+      {typeof columns === "string" ? (
+        <p className="app-source-error">{columns}</p>
+      ) : !columns ? (
+        <p className="app-muted">Listing columns…</p>
+      ) : (
+        <>
+          <div className="app-picker-find">
+            <input
+              aria-label={`Find a column in ${table}`}
+              placeholder="Find a column"
+              value={filter}
+              onChange={(event) => setFilter(event.target.value)}
+            />
+            <button
+              type="button"
+              className="app-button app-button-sm app-button-ghost"
+              disabled={shown.every((column) => chosen.has(column.name))}
+              onClick={() =>
+                pick(
+                  new Set([...picked, ...shown.map((column) => column.name)])
+                )
+              }
+            >
+              {needle ? `Select ${count(shown.length)} shown` : "Select all"}
+            </button>
+            <button
+              type="button"
+              className="app-button app-button-sm app-button-ghost"
+              disabled={!picked.length}
+              onClick={() => onPick([])}
+            >
+              Clear
+            </button>
+          </div>
+          <ul
+            className="app-table-list app-column-list"
+            aria-label={`${table} columns to read`}
+          >
+            {shown.map((column) => (
+              <li
+                key={column.name}
+                className="app-table-item"
+                data-checked={chosen.has(column.name) || undefined}
+              >
+                <label className="app-table-pick">
+                  <input
+                    type="checkbox"
+                    checked={chosen.has(column.name)}
+                    onChange={() => {
+                      const next = new Set(picked);
+                      if (!next.delete(column.name)) {
+                        next.add(column.name);
+                      }
+                      pick(next);
+                    }}
+                  />
+                  <span className="app-table-name">{column.name}</span>
+                  <span className="app-table-rows">{column.type}</span>
+                </label>
+              </li>
+            ))}
+            {!shown.length && <li className="app-muted">No column matches.</li>}
+          </ul>
+        </>
+      )}
+      <label className="app-field">
+        <span>Only rows where (optional)</span>
+        <input
+          value={where}
+          spellCheck={false}
+          placeholder={`${picked[0] ?? list[0]?.name ?? "id"} > 0`}
+          onChange={(event) => onWhere(event.target.value)}
+        />
+      </label>
+      {sql && (
+        <p className="app-muted app-pick-sql">
+          Reads <code>{sql}</code>
+        </p>
+      )}
+    </div>
   );
 }
 

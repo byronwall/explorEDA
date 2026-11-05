@@ -4,6 +4,7 @@ import {
   type ProjectFiles,
   type SnapshotInfo,
 } from "exploreda";
+import { readWatch, type ReadWatch, type RunningRead } from "./readProgress";
 
 /** Must match the server's TOKEN_HEADER. */
 const TOKEN_HEADER = "x-exploreda-token";
@@ -62,6 +63,8 @@ export class RefreshError extends Error {
 /** Reading database sources again, on a server that holds their secrets. */
 export interface DatabaseRefresh {
   refresh(sourceId: string): Promise<SnapshotInfo>;
+  /** The reads `refresh` has running, with their rows so far, and Cancel. */
+  watch: ReadWatch;
   /** Checks a connection's password, then keeps it on the server. */
   saveSecret(connectionId: string, secret: string): Promise<void>;
   /** The tables and views a connection can read. */
@@ -203,12 +206,26 @@ export function databaseRefresh(
     }
     return reply;
   };
+  const watch = readWatch({
+    reading: async () =>
+      (await call(`${api}/sources/reading`, {
+        method: "GET",
+      })) as unknown as RunningRead[],
+    cancel: async (sourceId) => {
+      await call(`${api}/sources/${encodeURIComponent(sourceId)}/cancel`, {
+        method: "POST",
+      });
+    },
+  });
   return {
-    async refresh(sourceId) {
-      return (await call(
-        `${api}/sources/${encodeURIComponent(sourceId)}/refresh`,
-        { method: "POST" }
-      )) as unknown as SnapshotInfo;
+    watch,
+    refresh(sourceId) {
+      return watch.track(
+        sourceId,
+        call(`${api}/sources/${encodeURIComponent(sourceId)}/refresh`, {
+          method: "POST",
+        }) as Promise<unknown> as Promise<SnapshotInfo>
+      );
     },
     async listTables(connectionId) {
       return (await call(

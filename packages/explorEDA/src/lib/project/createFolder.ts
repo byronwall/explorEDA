@@ -92,9 +92,11 @@ export function addDatabaseSourceText(
     ...(database.table === undefined
       ? []
       : [`table=${encodeScalar(database.table)}`]),
-    ...(database.sql === undefined
-      ? []
-      : [`sql=${JSON.stringify(database.sql)}`]),
+    ...(database.sqlFile !== undefined
+      ? [`sql=@${database.sqlFile}`]
+      : database.sql === undefined
+        ? []
+        : [`sql=${JSON.stringify(database.sql)}`]),
     ...(database.limit === undefined ? [] : [`limit=${database.limit}`]),
   ].join(" ");
   if (existing === undefined) {

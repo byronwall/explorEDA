@@ -36,6 +36,7 @@ import {
   type ProjectActions,
   type Selection,
 } from "./ProjectWorkspace";
+import { ReadWatchContext } from "./readProgress";
 import { FolderSaver, type SaveState } from "./saver";
 
 type Loaded =
@@ -138,6 +139,13 @@ export function App({
   const ownSnapshots = useRef(new Map<string, number>());
   /** Each source's last failed read, shown beside it until a read works. */
   const readErrors = useRef(new Map<string, ReadFailure>());
+  // A failed read redraws the page: the button that started it may be gone,
+  // as when a project file changed and the workspace started over mid-read.
+  const [, setFailures] = useState(0);
+  const keepFailure = (sourceId: string, error: unknown) => {
+    readErrors.current.set(sourceId, readFailure(error));
+    setFailures((count) => count + 1);
+  };
   /** Drafted links the user dismissed, kept across reloads. */
   const dismissedLinks = useRef(new Set<string>());
   /** Each connection's foreign keys, asked for once. */
@@ -324,9 +332,19 @@ export function App({
   /** Adds database sources, reads each, and opens `main`'s analysis. */
   const addSources = async (
     sources: { sourceId: string; database: DatabaseSource }[],
-    main: string
+    main: string,
+    /** True when each source takes the place of one with its ID. */
+    replace = false
   ) => {
     await saver.flush();
+    for (const { sourceId, database } of sources) {
+      if (database.sqlFile && database.sql) {
+        await files.write(database.sqlFile, `${database.sql}\n`);
+      }
+      if (replace) {
+        await removeSource(files, folder, sourceId);
+      }
+    }
     const path = await addDatabaseSources(files, folder, {
       sources,
       main,
@@ -347,11 +365,13 @@ export function App({
         });
       } catch (error) {
         ownSnapshots.current.delete(snapshotPath(sourceId));
-        readErrors.current.set(sourceId, readFailure(error));
+        keepFailure(sourceId, error);
         failed.push(
-          sources.length === 1
-            ? `Added ${sourceId}, but it couldn't be read: ${readErrorText(error)}`
-            : `${sourceId} couldn't be read: ${readErrorText(error)}`
+          readFailure(error).code === "cancelled"
+            ? `${sources.length === 1 ? `Added ${sourceId}. ` : ""}${readErrorText(error)}`
+            : sources.length === 1
+              ? `Added ${sourceId}, but it couldn't be read: ${readErrorText(error)}`
+              : `${sourceId} couldn't be read: ${readErrorText(error)}`
         );
       }
     }
@@ -484,6 +504,8 @@ export function App({
             addSource: (sourceId, database) =>
               addSources([{ sourceId, database }], sourceId),
             addSources,
+            replaceSource: (sourceId, database) =>
+              addSources([{ sourceId, database }], sourceId, true),
             tableColumns: (connectionId: string, table: string) =>
               files.databases!.tableColumns(connectionId, table),
           } satisfies ProjectActions["database"],
@@ -527,7 +549,7 @@ export function App({
                   });
                 } catch (error) {
                   ownSnapshots.current.delete(path);
-                  readErrors.current.set(sourceId, readFailure(error));
+                  keepFailure(sourceId, error);
                   throw error;
                 }
               }
@@ -551,35 +573,37 @@ export function App({
   };
 
   return (
-    <ProjectWorkspace
-      key={loaded.generation}
-      actions={actions}
-      readOnly={readOnly}
-      team={team}
-      theme={theme}
-      onThemeChange={changeTheme}
-      folder={loaded.folder}
-      fetched={loaded.fetched}
-      info={loaded.info}
-      saver={saver}
-      saveState={saveState}
-      notice={loaded.notice}
-      readErrors={Object.fromEntries(readErrors.current)}
-      initialSelection={selection.current}
-      initialPanel={loaded.panel}
-      dismissedLinks={dismissedLinks.current}
-      onDismissLink={(id) => dismissedLinks.current.add(id)}
-      notebookMemory={(path) => {
-        let memory = notebookMemory.current.get(path);
-        if (!memory) {
-          memory = { current: {} };
-          notebookMemory.current.set(path, memory);
-        }
-        return memory;
-      }}
-      onSelect={(next) => {
-        selection.current = next;
-      }}
-    />
+    <ReadWatchContext.Provider value={files.databases?.watch}>
+      <ProjectWorkspace
+        key={loaded.generation}
+        actions={actions}
+        readOnly={readOnly}
+        team={team}
+        theme={theme}
+        onThemeChange={changeTheme}
+        folder={loaded.folder}
+        fetched={loaded.fetched}
+        info={loaded.info}
+        saver={saver}
+        saveState={saveState}
+        notice={loaded.notice}
+        readErrors={Object.fromEntries(readErrors.current)}
+        initialSelection={selection.current}
+        initialPanel={loaded.panel}
+        dismissedLinks={dismissedLinks.current}
+        onDismissLink={(id) => dismissedLinks.current.add(id)}
+        notebookMemory={(path) => {
+          let memory = notebookMemory.current.get(path);
+          if (!memory) {
+            memory = { current: {} };
+            notebookMemory.current.set(path, memory);
+          }
+          return memory;
+        }}
+        onSelect={(next) => {
+          selection.current = next;
+        }}
+      />
+    </ReadWatchContext.Provider>
   );
 }

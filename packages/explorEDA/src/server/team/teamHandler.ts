@@ -268,7 +268,7 @@ export function createTeamHandler(options: TeamHandlerOptions) {
       project &&
       role &&
       (route === "sources" || route === "connections") &&
-      rest.length === 2
+      (rest.length === 2 || (route === "sources" && rest[0] === "reading"))
     ) {
       const opened = openProject(id);
       const handled = await sourceRoutes([route, ...rest].join("/"), req, res, {
