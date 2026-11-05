@@ -410,8 +410,14 @@ function planAxis(
   // categories most labels drop anyway, so the kept ones get room for twelve
   // and a date reads 2021-07-05, not 2021-….
   const roomChars = candidates.length > 12 ? 12 : 6;
+  // A few categories all keep a label, shortened, while each has room for
+  // three characters: a missing name hides which box or bar is which.
+  const fewFit =
+    band &&
+    candidates.length <= 8 &&
+    scale.step() >= 3 * tickFontSize * 0.7 + MIN_LABEL_GAP;
   const stride =
-    axis === "x" && band
+    axis === "x" && band && !fewFit
       ? Math.max(
           1,
           Math.ceil(
