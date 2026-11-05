@@ -1,4 +1,5 @@
 import type { FieldProfile } from "@/lib/fieldProfiles";
+import { isLikelyKey, rankMeasureFields } from "@/lib/fieldRanking";
 import type { ChartType } from "@/types/ChartTypes";
 
 export interface StartSuggestion {
@@ -16,7 +17,7 @@ function namedLikeId(name: string) {
 
 /** A field that names each row, such as an order ID, says little. */
 function namesEachRow(profile: FieldProfile) {
-  if (namedLikeId(profile.name.trim())) return true;
+  if (namedLikeId(profile.name.trim()) || isLikelyKey(profile)) return true;
   const present = profile.totalCount - profile.nullCount;
   return (
     profile.dataType === "categorical" &&
@@ -39,9 +40,14 @@ export function startSuggestions(profiles: FieldProfile[]): StartSuggestion[] {
       (profile.dataType === "categorical" || profile.dataType === "boolean") &&
       profile.uniqueCount <= 20
   );
-  const measures = usable.filter(
-    (profile) => profile.dataType === "numeric" && profile.uniqueCount > 10
-  );
+  const measures = rankMeasureFields(
+    usable
+      .filter(
+        (profile) => profile.dataType === "numeric" && profile.uniqueCount > 10
+      )
+      .map((profile) => profile.name),
+    usable
+  ).map((name) => ({ name }));
   const date = usable.find((profile) => profile.dataType === "datetime");
 
   const suggestions: StartSuggestion[] = [];
