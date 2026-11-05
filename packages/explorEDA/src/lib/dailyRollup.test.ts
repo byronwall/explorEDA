@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { applyFilter } from "@/hooks/applyFilter";
-import { rollupByDay, utcDay, utcPeriod } from "./dailyRollup";
+import { hasDateValues, rollupByDay, utcDay, utcPeriod } from "./dailyRollup";
 
 describe("rollupByDay", () => {
   const dates = {
@@ -179,5 +179,32 @@ describe("repeated date reads", () => {
   it("remembers unreadable dates as missing", () => {
     expect(utcPeriod("not a date", "day")).toBeUndefined();
     expect(utcPeriod("not a date", "day")).toBeUndefined();
+  });
+
+  it("reads numeric timestamps as the day does", async () => {
+    const { rollupByPeriod } = await import("./dailyRollup");
+    const noon = Date.UTC(2024, 1, 15, 12);
+    expect(utcPeriod(noon, "month")?.day).toBe("2024-02-01");
+    expect(utcPeriod(noon, "day")?.day).toBe(utcDay(noon)?.day);
+    expect(utcPeriod(NaN, "day")).toBeUndefined();
+    const result = rollupByPeriod(
+      [0, 1],
+      { 0: noon, 1: "2024-02-15" },
+      {},
+      { dateField: "date", interval: "day", aggregation: "count" }
+    );
+    expect(result.invalidDateIds).toEqual([]);
+    expect(result.buckets.map((bucket) => bucket.rowCount)).toEqual([2]);
+  });
+});
+
+describe("hasDateValues", () => {
+  it("offers date text and typed date columns, not plain numbers", () => {
+    expect(hasDateValues(["2024-01-01", null])).toBe(true);
+    expect(hasDateValues(["n/a", "Jan 5 2024"])).toBe(true);
+    expect(hasDateValues([10, 30, "40"])).toBe(false);
+    expect(hasDateValues([10, 30], "numeric")).toBe(false);
+    expect(hasDateValues([1_700_000_000_000], "datetime")).toBe(true);
+    expect(hasDateValues([])).toBe(false);
   });
 });

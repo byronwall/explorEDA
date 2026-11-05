@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { beforeAll, expect, it } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
@@ -88,6 +88,51 @@ it.each(["linear", "symlog"] as const)(
     );
   }
 );
+
+function renderValues(
+  values: (number | string)[],
+  extra: Partial<
+    ReturnType<typeof boxPlotDefinition.createDefaultSettings>
+  > = {}
+) {
+  const chart = {
+    ...boxPlotDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 5 },
+      "value"
+    ),
+    id: "values",
+    ...extra,
+  };
+  return render(
+    <DataLayerProvider
+      data={values.map((value) => ({ value }))}
+      charts={[chart]}
+    >
+      <Chart width={640} />
+    </DataLayerProvider>
+  );
+}
+
+it("keeps standard deviation whiskers inside the value axis", () => {
+  // Mean 2.5 and a deviation near 4.33: the whiskers reach -6.2 and 11.2,
+  // past the padded range of the values alone.
+  const { container } = renderValues([0, 0, 0, 10], { whiskerType: "stdDev" });
+  const domain = container
+    .querySelector("[data-axis-edit='y']")!
+    .getAttribute("data-domain")!
+    .split(",")
+    .map(Number);
+  expect(domain[0]).toBeLessThanOrEqual(-6.16);
+  expect(domain[1]).toBeGreaterThanOrEqual(11.16);
+});
+
+it("explains a field with no numeric values", () => {
+  const { container } = renderValues(["a", "b"]);
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "No numeric values in value"
+  );
+  expect(container.querySelector("[data-axis-edit='y']")).toBeNull();
+});
 
 it("keeps a minimum plot width in a narrow panel", () => {
   const { container } = renderBoxPlot(180, "linear");

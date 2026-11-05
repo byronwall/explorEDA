@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import type { AggregateAggregation } from "@/lib/aggregates";
-import { utcDay } from "@/lib/dailyRollup";
+import { hasDateValues } from "@/lib/dailyRollup";
 import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
@@ -17,13 +17,17 @@ export function CalendarSettingsPanel({
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const calculations = useDataLayer((state) => state.calculations);
+  const profiles = useDataLayer((state) => state.fieldProfiles);
   const { dateFields, measureFields } = useMemo(() => {
     void calculations;
     const names = getColumnNames();
     const values = (field: string) => Object.values(getColumnData(field));
     return {
       dateFields: names.filter((field) =>
-        values(field).some((value) => utcDay(value) !== undefined)
+        hasDateValues(
+          values(field),
+          profiles.find((profile) => profile.name === field)?.dataType
+        )
       ),
       measureFields: names.filter((field) =>
         values(field).some(
@@ -32,7 +36,7 @@ export function CalendarSettingsPanel({
         )
       ),
     };
-  }, [calculations, getColumnData, getColumnNames]);
+  }, [calculations, getColumnData, getColumnNames, profiles]);
   const change = (next: Partial<CalendarSettings>) => {
     const merged = { ...settings, ...next };
     onSettingsChange({

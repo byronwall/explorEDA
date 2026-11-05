@@ -155,12 +155,12 @@ export function BoxPlotSettingsPanel({
                 max="1"
                 step="0.1"
                 value={settings.violinBandwidth}
-                onChange={(e) =>
-                  onSettingsChange({
-                    ...settings,
-                    violinBandwidth: parseFloat(e.target.value),
-                  })
-                }
+                onChange={(e) => {
+                  // A cleared or zero field keeps the last bandwidth.
+                  const violinBandwidth = parseFloat(e.target.value);
+                  if (Number.isFinite(violinBandwidth) && violinBandwidth > 0)
+                    onSettingsChange({ ...settings, violinBandwidth });
+                }}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>

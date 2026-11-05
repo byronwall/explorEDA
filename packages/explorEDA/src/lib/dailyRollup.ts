@@ -4,7 +4,8 @@ import {
   type AggregateContributor,
   type AggregateInputRow,
 } from "@/lib/aggregates";
-import { timestampOf } from "@/lib/valueParsing";
+import { isDateText, timestampOf } from "@/lib/valueParsing";
+import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import type { datum } from "@/types/ChartTypes";
 
 export const DAY_MS = 86_400_000;
@@ -71,22 +72,44 @@ export function utcDay(
   });
 }
 
-/** Calendar boundaries, including month length and the chosen week start. */
+/**
+ * Calendar boundaries, including month length and the chosen week start.
+ * It reads the same values as {@link utcDay}: date text and numeric
+ * timestamps.
+ */
 export function utcPeriod(
   value: datum,
   interval: TimeInterval,
   weekStart: WeekStart = "monday"
 ): Readonly<UtcPeriod> | undefined {
-  if (typeof value !== "string" || !value.trim()) return undefined;
+  if (typeof value !== "string" && typeof value !== "number") return undefined;
+  if (typeof value === "string" && !value.trim()) return undefined;
   // The key names every argument. A new argument must join it, or calls
   // that differ only in that argument share one cached result.
-  return cached(`${interval}\u0000${weekStart}\u0000${value}`, () =>
-    computePeriod(value, interval, weekStart)
+  return cached(
+    `${interval}\u0000${weekStart}\u0000${typeof value}\u0000${value}`,
+    () => computePeriod(value, interval, weekStart)
   );
 }
 
+/**
+ * Whether a column can be read as dates: it is typed as datetime, or some
+ * value is date text. A number alone is not enough; every finite number
+ * reads as a timestamp, so ages and prices would be offered as dates.
+ */
+export function hasDateValues(
+  values: Iterable<datum>,
+  dataType?: DataType
+): boolean {
+  if (dataType === "datetime") return true;
+  for (const value of values) {
+    if (typeof value === "string" && isDateText(value)) return true;
+  }
+  return false;
+}
+
 function computePeriod(
-  value: string,
+  value: string | number,
   interval: TimeInterval,
   weekStart: WeekStart
 ): UtcPeriod | undefined {

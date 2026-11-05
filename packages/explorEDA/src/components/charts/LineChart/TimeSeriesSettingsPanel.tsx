@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
-import { utcDay } from "@/lib/dailyRollup";
+import { hasDateValues } from "@/lib/dailyRollup";
 import { isAdditiveAggregation } from "@/lib/aggregates";
 import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -24,7 +24,10 @@ export function useTimeSeriesFields() {
     const names = getNames();
     return {
       dates: names.filter((field) =>
-        Object.values(getData(field)).some((value) => utcDay(value))
+        hasDateValues(
+          Object.values(getData(field)),
+          profiles.find((profile) => profile.name === field)?.dataType
+        )
       ),
       measures: names.filter(
         (field) =>

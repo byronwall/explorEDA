@@ -311,20 +311,19 @@ export function TimeSeriesChart({
                 filter.field !== time.splitField &&
                 !plan.facetFilters.some((facet) => facet.field === filter.field)
             );
-            const first =
-              extent &&
+            // The axis ends where the last period ends, so a brush to the
+            // right edge inverts to the next period's first instant.
+            const lastInstant = plan.xScale.domain()[1]! - 1;
+            const periodAt = (x: number) =>
               utcPeriod(
-                new Date(plan.xScale.invert(extent[0][0])).toISOString(),
+                new Date(
+                  Math.min(plan.xScale.invert(x), lastInstant)
+                ).toISOString(),
                 time.interval,
                 time.weekStart
               );
-            const last =
-              extent &&
-              utcPeriod(
-                new Date(plan.xScale.invert(extent[1][0])).toISOString(),
-                time.interval,
-                time.weekStart
-              );
+            const first = extent && periodAt(extent[0][0]);
+            const last = extent && periodAt(extent[1][0]);
             updateChart(settings.id, {
               filters:
                 first && last

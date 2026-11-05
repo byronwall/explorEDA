@@ -68,20 +68,27 @@ export function useFilterExtent({
           return null;
         }
 
-        if (settings.type === "line" && settings.time) {
+        if (settings.type === "line") {
+          // A date axis, calendar or observation, saves its selection as dates.
           const filter = settings.filters.find(
             (filter) =>
               filter.type === "date-range" && filter.field === settings.xField
           );
-          if (!filter || filter.type !== "date-range") return null;
-          const domain = xScale.domain();
-          const min = filter.min ? dateBound(filter.min) : domain[0]!;
-          const max = filter.max ? dateBound(filter.max, true) : domain[1]!;
-          if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
-          return [
-            [xScale(min), 0],
-            [xScale(max), innerHeight],
-          ] as [[number, number], [number, number]];
+          if (filter?.type === "date-range") {
+            const domain = xScale.domain();
+            const min = filter.min ? dateBound(filter.min) : domain[0]!;
+            const max = filter.max ? dateBound(filter.max, true) : domain[1]!;
+            if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
+            // A saved period can run past the axis; the selection stays in
+            // the plot.
+            const plotWidth = xScale.range()[1] ?? 0;
+            const inPlot = (x: number) => Math.max(0, Math.min(plotWidth, x));
+            return [
+              [inPlot(xScale(min)), 0],
+              [inPlot(xScale(max)), innerHeight],
+            ] as [[number, number], [number, number]];
+          }
+          if (settings.time) return null;
         }
 
         const rangeFilter = getRangeFilterForField(

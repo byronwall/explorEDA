@@ -116,6 +116,26 @@ describe("planEcdf", () => {
     expect(zero).toMatchObject({ log: false, logUnavailable: true });
   });
 
+  it("labels tiny log ticks with exponents instead of 0", () => {
+    const tiny = planEcdf({
+      settings: settings({ logX: true }),
+      width: 900,
+      height: 300,
+      snapshot: {
+        revision: "r",
+        allIds: [0, 1],
+        liveIds: [0, 1],
+        values: { 0: 1e-9, 1: 1e9 },
+        groupData: {},
+      },
+      getFieldLabel: (field) => field,
+    });
+    const labels = tiny.xTicks.map((tick) => tick.label);
+    expect(labels).not.toContain("0");
+    expect(labels[0]).toMatch(/e-/);
+    expect(labels).toContain("1");
+  });
+
   it("draws a step path that ends at 100%", () => {
     const [curve] = plan().curves;
     expect(curve!.path.startsWith("M")).toBe(true);

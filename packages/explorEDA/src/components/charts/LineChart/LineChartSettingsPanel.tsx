@@ -66,7 +66,18 @@ const ObservationLineSettingsPanel: FC<
         <FieldSelector
           label=""
           value={settings.xField}
-          onChange={(value) => updateSettings({ xField: value })}
+          onChange={(value) =>
+            updateSettings({
+              xField: value,
+              // A dragged range belongs to the x field it was made on.
+              filters:
+                value === settings.xField
+                  ? settings.filters
+                  : settings.filters.filter(
+                      (filter) => filter.field !== settings.xField
+                    ),
+            })
+          }
         />
 
         <Label>Series Fields</Label>

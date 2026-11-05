@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   calculateBeeSwarmPositions,
   calculateBoxPlotStats,
+  calculateKernelDensity,
   MAX_BEE_SWARM_POINTS_PER_GROUP,
   medianRange,
   selectBoxGroup,
@@ -19,6 +20,16 @@ describe("calculateBoxPlotStats", () => {
       outliers: [100],
       totalCount: 5,
     });
+  });
+
+  it("keeps a violin finite when the bandwidth is empty or zero", () => {
+    for (const bandwidth of [NaN, 0, -1]) {
+      const density = calculateKernelDensity([1, 2, 3, 10], bandwidth);
+      expect(density).toHaveLength(100);
+      expect(
+        density.every(([x, y]) => Number.isFinite(x) && Number.isFinite(y))
+      ).toBe(true);
+    }
   });
 
   it("uses screen-space Y distances for beeswarm collisions", () => {

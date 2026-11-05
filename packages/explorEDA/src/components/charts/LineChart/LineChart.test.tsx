@@ -1,9 +1,14 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, it } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
-import { DataLayerProvider } from "@/providers/DataLayerProvider";
+import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
+import { timestampOf } from "@/lib/valueParsing";
 import { LineChart } from "./LineChart";
-import { DEFAULT_SERIES_SETTINGS, lineChartDefinition } from "./definition";
+import {
+  DEFAULT_SERIES_SETTINGS,
+  lineChartDefinition,
+  type LineChartSettings,
+} from "./definition";
 
 it("reads every series at the hovered x and clears during brushing or missing observations", () => {
   window.PointerEvent = MouseEvent as typeof PointerEvent;
@@ -235,4 +240,90 @@ it("lists every row at the hovered x", () => {
   });
   // Both rows at x = 1 read, top of the plot first.
   expect(screen.getByRole("status")).toHaveTextContent("x1y5y2");
+});
+
+function DateBrushHarness({ width }: { width: number }) {
+  const chart = useDataLayer((state) => state.charts[0]) as LineChartSettings;
+  const store = useDataLayer((state) => state.crossfilterWrapper);
+  return (
+    <>
+      <output aria-label="Filters">{JSON.stringify(chart.filters)}</output>
+      <output aria-label="Matching">
+        {store.getFilteredRowIds().join(",")}
+      </output>
+      <LineChart settings={chart} width={width} height={300} />
+    </>
+  );
+}
+
+it("brushes a date x axis into a date range that keeps the rows inside it", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  registerAllCharts();
+  const settings = {
+    ...lineChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    id: "line-date-brush",
+    xField: "time",
+    seriesField: ["demand"],
+    showLegend: false,
+  };
+  const rows = [
+    { time: "2021-02-07T00:00:00Z", demand: 40 },
+    { time: "2021-02-08T00:00:00Z", demand: 50 },
+    { time: "2021-02-09T00:00:00Z", demand: 55 },
+    { time: "2021-02-10T00:00:00Z", demand: 45 },
+  ];
+  const { container } = render(
+    <DataLayerProvider data={rows} charts={[settings]}>
+      <DateBrushHarness width={400} />
+    </DataLayerProvider>
+  );
+  const svg = container.querySelector("svg")!;
+  fireEvent.pointerDown(svg, { clientX: 120, clientY: 150, button: 0 });
+  fireEvent.pointerMove(svg, { clientX: 300, clientY: 150, buttons: 1 });
+  fireEvent.pointerUp(svg, { clientX: 300, clientY: 150 });
+  const [filter] = JSON.parse(screen.getByLabelText("Filters").textContent!);
+  // The filter reads as dates, so the row test can read the ISO column.
+  expect(filter).toMatchObject({ type: "date-range", field: "time" });
+  expect(filter.min).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+  const min = timestampOf(filter.min)!;
+  const max = timestampOf(filter.max)!;
+  const inside = rows.flatMap((row, id) => {
+    const time = timestampOf(row.time)!;
+    return time >= min && time <= max ? [id] : [];
+  });
+  expect(inside.length).toBeGreaterThan(0);
+  expect(inside.length).toBeLessThan(rows.length);
+  expect(screen.getByLabelText("Matching")).toHaveTextContent(
+    new RegExp(`^${inside.join(",")}$`)
+  );
+  // The selection is drawn again from the saved filter.
+  expect(container.querySelector(".eda-brush rect")).toBeInTheDocument();
+  expect(container.textContent).toMatch(/of 4 rows selected/);
+});
+
+it("explains an x field with no numeric or date values", () => {
+  registerAllCharts();
+  const settings = {
+    ...lineChartDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    id: "line-text-x",
+    xField: "name",
+    seriesField: ["y"],
+    showLegend: false,
+  };
+  const { container } = render(
+    <DataLayerProvider
+      data={[
+        { name: "alpha", y: 1 },
+        { name: "beta", y: 2 },
+      ]}
+      charts={[settings]}
+    >
+      <LineChart settings={settings} width={400} height={300} />
+    </DataLayerProvider>
+  );
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "No numeric or date values in name"
+  );
+  expect(container.querySelector("[data-domain='NaN,NaN']")).toBeNull();
+  expect(container.textContent).not.toMatch(/Drag across/);
 });

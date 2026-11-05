@@ -6,7 +6,7 @@ import { categoryKey, categoryLabel } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
 import { planObservationSeries } from "./observationSeries";
 import { THEME_PALETTE, resolvePaletteColor } from "@/lib/themePalettes";
-import { finiteNumber, timestampOf } from "@/lib/valueParsing";
+import { dateBound, finiteNumber, timestampOf } from "@/lib/valueParsing";
 import {
   boundedDomain,
   hasAxisBounds,
@@ -416,6 +416,14 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const xExtent = extent(
     allXData.map((value) => xNumber(value) ?? NaN).filter(Number.isFinite)
   ) as [number, number];
+  // Text that is neither a number nor a date has no place on the axis.
+  if (xExtent[0] === undefined) {
+    return (
+      <ChartMessage width={width} height={height}>
+        No numeric or date values in {xAxisLabel || settings.xField}.
+      </ChartMessage>
+    );
+  }
 
   // Calculate y extent across all series
   const rightAxisSeries = processedLiveSeriesData.filter(
@@ -626,9 +634,26 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
         : (formatFieldValue?.(settings.xField, hoverX) ??
           displayValue(settings.xField, hoverX));
 
-  const range = settings.filters.find(
-    (filter) => filter.type === "range" && filter.field === settings.xField
+  // A date axis saves its selection as dates, so the row test reads the
+  // column's date text; a numeric axis saves numbers.
+  const xFilter = settings.filters.find(
+    (filter) =>
+      filter.field === settings.xField &&
+      filter.type === (xIsDate ? "date-range" : "range")
   );
+  const range =
+    xFilter?.type === "range"
+      ? xFilter
+      : xFilter?.type === "date-range"
+        ? {
+            type: "range" as const,
+            min: xFilter.min === undefined ? undefined : dateBound(xFilter.min),
+            max:
+              xFilter.max === undefined
+                ? undefined
+                : dateBound(xFilter.max, true),
+          }
+        : undefined;
   // A dragged range has arbitrary decimals; show about three significant digits.
   const spanDigits = Math.max(
     0,
@@ -835,12 +860,23 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
               ),
               ...(extent
                 ? [
-                    {
-                      type: "range" as const,
-                      field: settings.xField,
-                      min: xScale.invert(extent[0][0]),
-                      max: xScale.invert(extent[1][0]),
-                    },
+                    xIsDate
+                      ? {
+                          type: "date-range" as const,
+                          field: settings.xField,
+                          min: new Date(
+                            xScale.invert(extent[0][0])
+                          ).toISOString(),
+                          max: new Date(
+                            xScale.invert(extent[1][0])
+                          ).toISOString(),
+                        }
+                      : {
+                          type: "range" as const,
+                          field: settings.xField,
+                          min: xScale.invert(extent[0][0]),
+                          max: xScale.invert(extent[1][0]),
+                        },
                   ]
                 : []),
             ],
