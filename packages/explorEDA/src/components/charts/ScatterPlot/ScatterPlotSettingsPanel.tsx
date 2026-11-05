@@ -143,6 +143,23 @@ export function ScatterPlotSettingsPanel({
               />
             ) : (
               <>
+                <Label>Label points</Label>
+                <ActionTooltip content="Writes this field's value beside each point, such as a team name. Labels that would cover another label or point are left out, and charts with more than 500 points show none.">
+                  <div className="min-w-0">
+                    <FieldSelector
+                      label=""
+                      placeholder="Label field"
+                      value={settings.labelField ?? ""}
+                      allowClear
+                      onChange={(value) =>
+                        onSettingsChange({
+                          ...settings,
+                          labelField: value || undefined,
+                        })
+                      }
+                    />
+                  </div>
+                </ActionTooltip>
                 <Label>Size by</Label>
                 <FieldSelector
                   label=""

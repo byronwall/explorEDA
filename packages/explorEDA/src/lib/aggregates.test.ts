@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { calculateGroupedAggregate, AggregateInputRow } from "./aggregates";
+import {
+  calculateGroupedAggregate,
+  poolAggregateRows,
+  AggregateInputRow,
+} from "./aggregates";
 
 const rows: AggregateInputRow[] = [
   { __ID: 0, region: "North", revenue: 10 },
@@ -268,5 +272,46 @@ describe("entity-scoped aggregates", () => {
       { ...spec, aggregation: "count", measureField: undefined }
     );
     expect(result.rows[0]?.value).toBe(2);
+  });
+});
+
+describe("rate", () => {
+  const plays: AggregateInputRow[] = [
+    { __ID: 0, qb: "A", complete: 1, attempt: 1 },
+    { __ID: 1, qb: "A", complete: 0, attempt: 1 },
+    { __ID: 2, qb: "A", complete: 1, attempt: 1 },
+    { __ID: 3, qb: "A", complete: 0, attempt: 0 },
+    { __ID: 4, qb: "B", complete: 0, attempt: 0 },
+    { __ID: 5, qb: "B", complete: 1, attempt: null },
+  ];
+  const rate = {
+    id: "rate",
+    name: "Completion rate",
+    groupField: "qb",
+    aggregation: "sum" as const,
+    measureField: "complete",
+    denominatorField: "attempt",
+  };
+
+  it("divides each group's sums and counts rows with a denominator as n", () => {
+    const [a, b] = calculateGroupedAggregate(plays, rate).rows;
+    expect(a?.value).toBeCloseTo(2 / 3);
+    expect(a?.sampleSize).toBe(3);
+    // A zero denominator has no rate, and a missing one leaves its row out.
+    expect(b?.value).toBeUndefined();
+    expect(b?.sampleSize).toBe(0);
+    expect(b?.contributors.find((item) => item.sourceId === 5)).toMatchObject({
+      included: false,
+      exclusionReason: "Denominator is not a number",
+    });
+  });
+
+  it("pools groups from their sums, not from their rates", () => {
+    const rows = calculateGroupedAggregate(
+      [...plays, { __ID: 6, qb: "C", complete: 9, attempt: 10 }],
+      rate
+    ).rows;
+    // (2 + 9) / (3 + 10), not the mean of 2/3 and 9/10.
+    expect(poolAggregateRows(rows, rate).value).toBeCloseTo(11 / 13);
   });
 });

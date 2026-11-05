@@ -205,6 +205,11 @@ Shared definitions (charts point at them by @name):
   group @byRegion sum(Revenue) by=Region
                                       grouped summary; charts: group=byRegion;
                                       count, sum(), avg(), max(), or min()
+  group @rate sum(Completions) by=Passer denominatorField=Attempts
+                                      a rate: each group's sum ÷ its sum of
+                                      Attempts; row and bar charts take
+                                      share=true, valueFormat=percent|plain,
+                                      and valueDecimals=
   rows sortBy=Revenue where.Units=2.. the Rows view
 
 Filters:

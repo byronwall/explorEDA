@@ -50,8 +50,14 @@ export const CHART_SETTINGS: Readonly<
       "Smallest row height in pixels. When rows would be shorter, the chart shows fewer categories.",
     maxRowHeight: "Largest row height in pixels, so a few rows stay compact.",
     aggregateId:
-      "Grouped summary to rank instead of counting rows. Its group field must match `field`.",
+      "Grouped summary to rank instead of counting rows: a count, sum, average, or rate (one sum divided by another). Its group field must match `field`.",
     topN: "Number of categories to show, with the rest gathered in Other. Leave unset to fit as many rows as the height allows.",
+    share:
+      "Shows each bar as its share of the total of all bars, so they add to 100%. Counts and sums only.",
+    valueFormat:
+      "How axis ticks and value labels read: percent or plain. Unset shows shares, and rates of counts that never pass 1, as percents.",
+    valueDecimals:
+      "Decimal places for plain values, from 0 to 6. Unset shows 3 significant digits.",
   },
   line: {
     field: "Not read by this chart type.",
@@ -337,6 +343,8 @@ export const CHART_SETTINGS: Readonly<
   scatter: {
     xField: "Field on the X axis.",
     yField: "Field on the Y axis.",
+    labelField:
+      "Field whose value labels each point. Labels that would cover another label or point are left out; past 500 points, none show.",
     field: "Not read by scatter plots; the axes use xField and yField.",
     display:
       "Points, rectangular density bins, hexagon bins, or smoothed density contours.",
@@ -370,7 +378,13 @@ export const CHART_SETTINGS: Readonly<
     categoryOrder:
       "Category bars in data order, sorted by label from A to Z, or by value with the largest first.",
     aggregateId:
-      "A named grouped summary to draw, which counts, sums, or averages a measure per group.",
+      "A named grouped summary to draw, which counts, sums, or averages a measure per group, or divides one sum by another as a rate.",
+    share:
+      "Shows each bar as its share of the total of all bars, so they add to 100%. Counts and sums only.",
+    valueFormat:
+      "How axis ticks and value labels read: percent or plain. Unset shows shares, and rates of counts that never pass 1, as percents.",
+    valueDecimals:
+      "Decimal places for plain values, from 0 to 6. Unset shows 3 significant digits.",
     seriesField: "A second field that splits each bar into series.",
     seriesLayout:
       "How series bars sit: grouped side by side, stacked, or as 100% shares of each category.",

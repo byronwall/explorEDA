@@ -53,6 +53,8 @@ export interface ScatterPlotSettings extends BaseChartSettings {
   pointSize?: number;
   pointOpacity?: number;
   sizeField?: string;
+  /** Field whose value labels each point; overlapping labels are left out. */
+  labelField?: string;
   maxBubbleRadius?: number;
   /** Absent when the chart draws no fit. */
   regression?: ScatterRegressionSettings;

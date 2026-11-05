@@ -1,3 +1,4 @@
+import { POINT_LABEL_SIZE, type PointLabel } from "./pointLabels";
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useBrush } from "@/hooks/useBrush";
 import {
@@ -443,7 +444,10 @@ export function ScatterSvg({
   onActiveConnection,
   onInspectConnection,
   annotations,
+  pointLabels = [],
 }: {
+  /** Text beside points, placed so labels never overlap. */
+  pointLabels?: PointLabel[];
   /** Paths joining points in order, drawn under the fits. */
   connections?: ConnectionPath[];
   activeConnectionId?: string;
@@ -786,6 +790,30 @@ export function ScatterSvg({
               paths={connections}
               activeId={activeConnectionId}
             />
+          </g>
+        )}
+        {pointLabels.length > 0 && (
+          <g
+            className="eda-point-labels"
+            pointerEvents="none"
+            aria-hidden="true"
+          >
+            {pointLabels.map((label) => (
+              <text
+                key={label.id}
+                x={label.x}
+                y={label.y}
+                textAnchor={label.anchor}
+                fontSize={POINT_LABEL_SIZE}
+                className="fill-foreground"
+                stroke="var(--background)"
+                strokeWidth={3}
+                strokeLinejoin="round"
+                paintOrder="stroke"
+              >
+                {label.text}
+              </text>
+            ))}
           </g>
         )}
         <g className="eda-brush" clipPath={`url(#${chartId}-plot)`}>

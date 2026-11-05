@@ -198,3 +198,36 @@ describe("signed summaries", () => {
     ]);
   });
 });
+
+describe("ranking rates", () => {
+  it("puts groups under the fade threshold after every larger group", () => {
+    // A: 1 of 1, B: 6 of 12, C: 9 of 12. Each play is one try.
+    const plays = [
+      { qb: "A", made: 1 },
+      ...Array.from({ length: 12 }, (_, i) => ({
+        qb: "B",
+        made: i < 6 ? 1 : 0,
+      })),
+      ...Array.from({ length: 12 }, (_, i) => ({
+        qb: "C",
+        made: i < 9 ? 1 : 0,
+      })),
+    ].map((row, __ID) => ({ __ID, ...row, tries: 1 }));
+    const result = calculateGroupedAggregate(plays, {
+      id: "rate",
+      name: "Rate",
+      groupField: "qb",
+      aggregation: "sum",
+      measureField: "made",
+      denominatorField: "tries",
+    });
+    const plan = planRowSummary(result, result, 2);
+    // A's 100% from one try ranks last, so it folds into Other.
+    expect(plan.categories.map((item) => [item.label, item.total])).toEqual([
+      ["C", 0.75],
+      ["B", 0.5],
+      ["A", 1],
+    ]);
+    expect(plan.visible.map((item) => item.label)).toEqual(["C"]);
+  });
+});

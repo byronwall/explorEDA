@@ -1357,16 +1357,22 @@ export function compileDocument(
       const valid =
         spec.groupField &&
         isAggregation(spec.aggregation) &&
-        (spec.aggregation === "count" || spec.measureField);
+        (spec.aggregation === "count" || spec.measureField) &&
+        (spec.denominatorField === undefined || spec.aggregation === "sum");
       if (!valid) {
         report(
           "error",
           "setting-ignored",
           declaration.span,
-          `${subject} needs by=, and a field to measure unless it counts, so it was skipped.`,
+          spec.denominatorField !== undefined && spec.aggregation !== "sum"
+            ? `${subject} divides by ${spec.denominatorField}, which only a sum can do, so it was skipped.`
+            : `${subject} needs by=, and a field to measure unless it counts, so it was skipped.`,
           {
             subject,
-            suggestion: "Write it as group @byRegion sum(Revenue) by=Region.",
+            suggestion:
+              spec.denominatorField !== undefined
+                ? "Write a rate as group @rate sum(Completions) by=Passer denominatorField=Attempts."
+                : "Write it as group @byRegion sum(Revenue) by=Region.",
           }
         );
         continue;
@@ -1541,6 +1547,25 @@ export function compileDocument(
           }
         );
       }
+    }
+    const dateLimits =
+      chart?.type === "line" && chart.time ? chart.xAxis.limits : undefined;
+    if (dateLimits && (dateLimits.min ?? dateLimits.max) !== undefined) {
+      // A date axis spans its rows; numericAxes gives it no range to set.
+      const pair = declaration.pairs.find(
+        (item) => item.key === "x.min" || item.key === "x.max"
+      );
+      report(
+        "warning",
+        "setting-ignored",
+        pair?.span ?? declaration.span,
+        `${subject} draws dates on its X axis, so x.min and x.max have no effect.`,
+        {
+          subject,
+          suggestion:
+            "Date axes take their range from the rows; filter the rows instead, as with where.<date field>=2024-01-01..2024-06-30.",
+        }
+      );
     }
     if (chart) {
       charts.push(chart);

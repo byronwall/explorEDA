@@ -292,4 +292,21 @@ calendar day aggregation=min measureField=n`,
       { type: "calendar", aggregation: "min" },
     ]);
   });
+
+  it("warns that a date axis ignores x.min and x.max", () => {
+    const dated = compileDocument(
+      `line x=day time.interval=month x.min=2026-01-01 y.max=10
+line x=n y=n x.min=0`,
+      { rows: [{ day: "2026-01-02", n: 3 }], now }
+    );
+    expect(dated.diagnostics).toMatchObject([
+      {
+        severity: "warning",
+        effect: "setting-ignored",
+        suggestion: expect.stringMatching(
+          /^Date axes take their range from the rows; filter the rows instead/
+        ),
+      },
+    ]);
+  });
 });

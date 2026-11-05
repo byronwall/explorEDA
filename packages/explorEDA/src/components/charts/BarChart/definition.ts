@@ -8,6 +8,7 @@ import { BarChart } from "./BarChart";
 import { BarChartSettingsPanel } from "./BarChartSettingsPanel";
 import type { WidthBinning } from "./histogramBins";
 import type { SpecLimits } from "@/lib/specification";
+import type { ValueDisplaySettings } from "../valueFormat";
 
 /**
  * Engineering histogram settings. Their presence marks a numeric field's
@@ -24,7 +25,9 @@ export interface HistogramSettings {
   spec?: SpecLimits;
 }
 
-export interface BarChartSettings extends BaseChartSettings {
+export interface BarChartSettings
+  extends BaseChartSettings,
+    ValueDisplaySettings {
   type: "bar";
   binCount?: number;
   histogram?: HistogramSettings;

@@ -1,10 +1,19 @@
 import { applyFilter } from "@/hooks/applyFilter";
 import { getRangeFilterForField } from "@/hooks/getAxisFilter";
 import {
+  SMALL_SAMPLE,
   calculateGroupedAggregate,
+  isAdditiveSpec,
   type AggregateResult,
   type AggregateResultRow,
 } from "@/lib/aggregates";
+import {
+  rateIsFraction,
+  resolveValueFormat,
+  shareOf,
+  significant,
+  valueFormatters,
+} from "../valueFormat";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import {
   finiteNumber,
@@ -145,6 +154,8 @@ export interface BarMark {
   selected?: boolean;
   /** The aggregate, count or bin row that sets the bar's value. */
   row: AggregateResultRow;
+  /** A rate or average over fewer than SMALL_SAMPLE rows draws faded. */
+  faded?: boolean;
 }
 
 export interface BarDomain {
@@ -167,6 +178,8 @@ export interface BarChartPlan {
   field: string;
   fieldLabel: string;
   valueLabel: string;
+  /** Bars show shares of the total of all bars. */
+  shared?: boolean;
   aggregation: string;
   axes: ChartAxesPlan;
   xScale: ScaleDescriptor;
@@ -237,16 +250,21 @@ export function sortByLabel<T>(items: readonly T[], value: (item: T) => datum) {
   });
 }
 
-/** Sorts largest value first; rows without a finite value go last. */
+/**
+ * Sorts largest value first; rows without a finite value go last. Rows that
+ * `small` marks, such as a rate over a few rows, follow every other row.
+ */
 export function sortByValue<T>(
   items: readonly T[],
-  value: (item: T) => number | undefined
+  value: (item: T) => number | undefined,
+  small?: (item: T) => boolean
 ) {
   const of = (item: T) => {
     const number = value(item);
     return number !== undefined && Number.isFinite(number) ? number : -Infinity;
   };
-  return [...items].sort((a, b) => of(b) - of(a) || 0);
+  const band = (item: T) => (small?.(item) ? 1 : 0);
+  return [...items].sort((a, b) => band(a) - band(b) || of(b) - of(a) || 0);
 }
 
 /**
@@ -266,6 +284,21 @@ function allRowValue(mode: BarMode, snapshot: BarSnapshot) {
   return (row: AggregateResultRow) => {
     const key = categoryKey(row.groupValue);
     return values.has(key) ? values.get(key) : row.value;
+  };
+}
+
+/** Whether a group's rate or average rests on few rows, over every source row. */
+function smallOverAllRows(snapshot: BarSnapshot) {
+  const sizes = new Map(
+    (snapshot.domainAggregate?.rows ?? []).map((row) => [
+      categoryKey(row.groupValue),
+      row.sampleSize,
+    ])
+  );
+  return (row: AggregateResultRow) => {
+    const key = categoryKey(row.groupValue);
+    const n = sizes.has(key) ? sizes.get(key) : row.sampleSize;
+    return n !== undefined && n < SMALL_SAMPLE;
   };
 }
 
@@ -457,7 +490,15 @@ export function planBarChart({
       : mode === "count"
         ? countRows(settings, snapshot)
         : undefined;
-  const rows: (AggregateResultRow & Partial<Pick<BinRow, "bin">>)[] =
+  // A share divides each bar by the total of all bars: counts and sums only.
+  const shared =
+    Boolean(settings.share) &&
+    !histogram &&
+    (mode !== "aggregate" || (spec !== undefined && isAdditiveSpec(spec)));
+  const shareRows = <T extends { value: number | undefined }>(items: T[]) =>
+    shared ? shareOf(items) : items;
+  const rate = mode === "aggregate" ? spec?.denominatorField : undefined;
+  const rawRows: (AggregateResultRow & Partial<Pick<BinRow, "bin">>)[] =
     mode === "bin"
       ? histogram
         ? histogramRows(histogram, snapshot, formatMeasure)
@@ -465,7 +506,11 @@ export function planBarChart({
       : settings.categoryOrder === "label"
         ? sortByLabel(result?.rows ?? [], (row) => row.groupValue)
         : settings.categoryOrder === "value"
-          ? sortByValue(result?.rows ?? [], allRowValue(mode, snapshot))
+          ? sortByValue(
+              result?.rows ?? [],
+              allRowValue(mode, snapshot),
+              smallOverAllRows(snapshot)
+            )
           : (result?.rows ?? []);
   // The same categories over every row, in the order the bars use.
   const domainRows = snapshot.domainAggregate?.rows ?? [];
@@ -477,6 +522,7 @@ export function planBarChart({
         : settings.categoryOrder === "value"
           ? sortByValue(domainRows, allRowValue(mode, snapshot))
           : domainRows;
+  const rows = shareRows(rawRows);
 
   // Y domain: every source row, so bars keep their scale while other charts
   // filter. An aggregate also takes its current values, so a filtered value
@@ -504,7 +550,7 @@ export function planBarChart({
           : []
       );
     domainValues = [
-      ...values(snapshot.domainAggregate?.rows ?? [], "all:"),
+      ...values(shareRows(snapshot.domainAggregate?.rows ?? []), "all:"),
       ...values(rows),
     ];
   } else if (histogram) {
@@ -515,13 +561,13 @@ export function planBarChart({
     }));
   } else if (mode === "bin") {
     const all = finiteNumbers(snapshot.allValues);
-    domainValues = numericBins(all, all, settings.binCount || 20).map(
-      (bin) => ({
+    domainValues = shareRows(
+      numericBins(all, all, settings.binCount || 20).map((bin) => ({
         id: `bin:${bin.start}:${bin.end}`,
         label: bin.label,
         value: bin.value,
-      })
-    );
+      }))
+    ) as BarDomain["values"];
   } else {
     const counts = new Map<
       string,
@@ -538,7 +584,7 @@ export function planBarChart({
           value: 1,
         });
     }
-    domainValues = [...counts.values()];
+    domainValues = shareRows([...counts.values()]) as BarDomain["values"];
   }
   const { lower, upper } = extremes(domainValues);
   let yDomain: [number, number];
@@ -554,7 +600,13 @@ export function planBarChart({
         ? "0.5 above and below"
         : "10% of the value span";
   } else {
-    yDomain = [0, Math.max(1, upper.value * (1 + Y_SCALE_PADDING))];
+    // Shares stop near the largest one rather than at 100%.
+    yDomain = [
+      0,
+      shared
+        ? upper.value * (1 + Y_SCALE_PADDING) || 1
+        : Math.max(1, upper.value * (1 + Y_SCALE_PADDING)),
+    ];
     padding = "10% above the tallest bar";
   }
   if (hasAxisBounds(settings.yAxis)) {
@@ -564,30 +616,58 @@ export function planBarChart({
 
   const xField =
     mode === "aggregate" && spec ? spec.groupField : settings.field;
+  // A rate or share is a ratio, never in its measure's units.
   const yField =
-    mode === "aggregate" && spec && spec.aggregation !== "count"
+    mode === "aggregate" &&
+    spec &&
+    spec.aggregation !== "count" &&
+    !rate &&
+    !shared
       ? spec.measureField
       : undefined;
+  const valueFormat = resolveValueFormat(
+    { ...settings, share: shared },
+    Boolean(rate && rateIsFraction(snapshot.domainAggregate?.rows ?? rows))
+  );
+  const formatters = valueFormat
+    ? valueFormatters(valueFormat, settings.valueDecimals)
+    : undefined;
   const xLabel = getChartAxisLabel(xField, settings.xAxisLabel, getFieldLabel);
-  const yLabel =
-    settings.yAxisLabel ||
-    (mode === "aggregate" && spec
+  const measureLabel =
+    mode === "aggregate" && spec
       ? spec.aggregation === "count"
         ? "Count"
-        : getFieldLabel(spec.measureField ?? "Measure")
-      : "");
+        : rate
+          ? `${getFieldLabel(spec.measureField ?? "")} ÷ ${getFieldLabel(rate)}`
+          : getFieldLabel(spec.measureField ?? "Measure")
+      : "";
+  const yLabel =
+    settings.yAxisLabel ||
+    (shared
+      ? `Share of ${!measureLabel || measureLabel === "Count" ? "rows" : measureLabel.toLowerCase()}`
+      : measureLabel);
   const yReference = Math.max(Math.abs(yDomain[0]), Math.abs(yDomain[1]));
   const format = (field: string | undefined) => (value: string | number) =>
     field && formatFieldValue
       ? formatFieldValue(field, value)
       : formatTick(value);
   const formatAxis = (field: string | undefined, reference?: number) =>
-    field && formatAxisValue
-      ? (value: string | number) => formatAxisValue(field, value, reference)
-      : (value: string | number) =>
-          field && formatFieldValue
-            ? formatFieldValue(field, value)
-            : formatTick(value, reference);
+    formatters
+      ? (value: string | number) =>
+          typeof value === "number" ? formatters.tick(value) : value
+      : field && formatAxisValue
+        ? (value: string | number) => formatAxisValue(field, value, reference)
+        : (value: string | number) =>
+            field && formatFieldValue
+              ? formatFieldValue(field, value)
+              : formatTick(value, reference);
+  // Labels: the chart's format, else 3 significant digits for a rate.
+  const formatValue = (value: number) =>
+    formatters
+      ? formatters.label(value)
+      : rate
+        ? significant(value)
+        : format(yField)(value);
   const { margin, policy } = planChartMargin({
     margin: settings.margin,
     width,
@@ -855,7 +935,7 @@ export function planBarChart({
             }
           : undefined,
       value: row.value,
-      valueText: format(yField)(row.value),
+      valueText: formatValue(row.value),
       x,
       y: Math.min(baseline, valuePosition),
       width: barWidth,
@@ -881,6 +961,10 @@ export function planBarChart({
           ? applyFilter(row.groupValue, valueFilter)
           : undefined,
       row,
+      faded:
+        row.sampleSize !== undefined && row.sampleSize < SMALL_SAMPLE
+          ? true
+          : undefined,
     });
   });
   // A category other charts filter out keeps its faint all-row bar, so its
@@ -919,9 +1003,12 @@ export function planBarChart({
     field: xField,
     fieldLabel: getFieldLabel(xField),
     valueLabel: yLabel || "Row count",
+    shared: shared || undefined,
     aggregation:
       mode === "aggregate" && spec
-        ? `${spec.aggregation}${spec.measureField ? ` of ${getFieldLabel(spec.measureField)}` : ""}`
+        ? rate
+          ? `sum of ${getFieldLabel(spec.measureField ?? "")} ÷ sum of ${getFieldLabel(rate)}`
+          : `${spec.aggregation}${spec.measureField ? ` of ${getFieldLabel(spec.measureField)}` : ""}`
         : "count",
     axes,
     xScale: describeScale(xScale, settings.xAxis.scaleType),

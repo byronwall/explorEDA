@@ -188,9 +188,20 @@ function validateAggregateState(
       !aggregate.name.trim() ||
       !aggregate.groupField.trim() ||
       !isAggregation(aggregate.aggregation) ||
-      (aggregate.aggregation !== "count" && !aggregate.measureField?.trim())
+      (aggregate.aggregation !== "count" && !aggregate.measureField?.trim()) ||
+      (aggregate.denominatorField !== undefined &&
+        (aggregate.aggregation !== "sum" || !aggregate.denominatorField.trim()))
     ) {
       throw new Error("Invalid grouped summary definition");
+    }
+    if (
+      availableFields &&
+      aggregate.denominatorField &&
+      !availableFields.has(aggregate.denominatorField)
+    ) {
+      throw new Error(
+        `Grouped summary ${aggregate.name} references missing field ${aggregate.denominatorField}`
+      );
     }
     if (
       availableFields &&
@@ -967,6 +978,9 @@ const createDataLayerStore = <T extends DatumObject>(
         const entityData = spec.entityField
           ? get().getColumnData(spec.entityField)
           : undefined;
+        const denominatorData = spec.denominatorField
+          ? get().getColumnData(spec.denominatorField)
+          : undefined;
         const rawRows = get().rawData as Array<Record<string, datum>>;
         const rawInputs: Record<number, datum> = {};
         const exclusionReasons: Record<number, string> = {};
@@ -989,6 +1003,9 @@ const createDataLayerStore = <T extends DatumObject>(
             : {}),
           ...(spec.entityField
             ? { [spec.entityField]: entityData?.[sourceId] }
+            : {}),
+          ...(spec.denominatorField
+            ? { [spec.denominatorField]: denominatorData?.[sourceId] }
             : {}),
         }));
         if (spec.measureField) {
