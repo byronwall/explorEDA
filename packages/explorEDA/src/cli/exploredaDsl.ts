@@ -1,6 +1,6 @@
 /* eslint-disable no-console -- a command-line tool prints its results */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, relative } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import {
   chartSettingReference,
@@ -14,7 +14,11 @@ import {
 import type { GeometryAsset } from "@/lib/geometryAssets";
 import type { datum } from "@/types/ChartTypes";
 import { parseCsv } from "@/lib/project/tables";
-import { readProjectFolder } from "@/lib/project/folder";
+import {
+  readProjectFolder,
+  type ProjectFolder,
+  type ProjectProblem,
+} from "@/lib/project/folder";
 import { parseSnapshot, SNAPSHOT_FORMAT } from "@/lib/project/snapshots";
 import {
   compileNotebook,
@@ -22,6 +26,7 @@ import {
   isNotebookPath,
 } from "@/lib/notebook";
 import { nodeProjectFiles } from "@/node/projectFiles";
+import { NOTEBOOK_REFERENCE, PROJECT_REFERENCE } from "./reference";
 
 const USAGE = `Usage:
   exploreda-dsl check <dashboard.eda> --data <rows.csv|rows.json> [--json]
@@ -29,7 +34,7 @@ const USAGE = `Usage:
   exploreda-dsl fields --data <rows.csv|rows.json|snapshot.json>
   exploreda-dsl fmt <dashboard.eda|notebook.eda.md> [--write]
   exploreda-dsl project <folder> [--json]
-  exploreda-dsl reference [chart-type]
+  exploreda-dsl reference [chart-type|composition|project|notebook]
 
 check   builds the dashboard (every view) and lists each problem with a fix.
         A notebook without --data reads its project's data.
@@ -42,7 +47,11 @@ project loads a project folder (exploreda.eda, its data, every analysis
         Exits 0 when complete, 1 when partial, 2 when nothing builds.
 fmt     indents by brace depth and tidies spacing; --write saves the file.
         In a notebook it formats only the eda blocks.
-reference  prints the grammar, or every setting a chart type takes.`;
+reference  prints the dashboard grammar, or every setting a chart type
+        takes. "project" prints project text: connections, sources, relate,
+        and queries. "notebook" prints the .eda.md layout.
+
+Read database sources before checking: exploreda read <folder>.`;
 
 /**
  * Rows from a CSV, a JSON array, a database source's snapshot, or a saved
@@ -87,9 +96,43 @@ function loadData(path: string) {
   }
 }
 
+/**
+ * Problems from database sources that need a read (unread, or changed since
+ * their read), first, with the command that reads them; then the rest.
+ */
+function sourcesFirst(result: ProjectFolder, folder: string) {
+  const needRead = new Set([
+    ...result.missingSources.filter((id) => result.databases[id]),
+    ...result.staleSources,
+  ]);
+  const shown = relative(process.cwd(), resolve(folder)) || ".";
+  const first: ProjectProblem[] = [];
+  const rest: ProjectProblem[] = [];
+  for (const item of result.problems) {
+    if (item.subject && needRead.has(item.subject)) {
+      first.push({
+        ...item,
+        suggestion: `Run: exploreda read ${shown} ${item.subject}`,
+      });
+    } else {
+      rest.push(item);
+    }
+  }
+  return { first, rest };
+}
+
+function formatProblem(item: ProjectProblem) {
+  return [
+    `${item.path}:${item.line}:${item.column}: ${item.severity}: ${item.message}`,
+    ...(item.suggestion ? [`  fix: ${item.suggestion}`] : []),
+  ].join("\n");
+}
+
 async function checkProject(folder: string, json: boolean) {
   registerAllCharts();
-  const result = await readProjectFolder(nodeProjectFiles(folder));
+  const read = await readProjectFolder(nodeProjectFiles(folder));
+  const { first, rest } = sourcesFirst(read, folder);
+  const result = { ...read, problems: [...first, ...rest] };
   if (json) {
     console.log(JSON.stringify({ ...result, tables: undefined }, null, 2));
   } else {
@@ -102,7 +145,12 @@ async function checkProject(folder: string, json: boolean) {
     for (const source of project.sources) {
       const rows = result.tables[source.id]?.length ?? 0;
       const notes = [
-        ...(result.missingSources.includes(source.id) ? ["missing"] : []),
+        ...(result.missingSources.includes(source.id)
+          ? [result.databases[source.id] ? "not read" : "missing"]
+          : []),
+        ...(result.staleSources.includes(source.id)
+          ? ["changed since read"]
+          : []),
         ...(result.outsideSources.includes(source.id)
           ? ["outside the folder"]
           : []),
@@ -132,12 +180,7 @@ async function checkProject(folder: string, json: boolean) {
       );
     }
     for (const item of result.problems) {
-      console.log(
-        [
-          `${item.path}:${item.line}:${item.column}: ${item.severity}: ${item.message}`,
-          ...(item.suggestion ? [`  fix: ${item.suggestion}`] : []),
-        ].join("\n")
-      );
+      console.log(formatProblem(item));
     }
     const views = result.analyses.reduce(
       (sum, analysis) => sum + analysis.result.views.length,
@@ -190,6 +233,7 @@ async function checkNotebook(
 ) {
   registerAllCharts();
   let result;
+  let sourceProblems: ProjectProblem[] = [];
   if (dataPath) {
     const source = loadData(dataPath);
     if (!source) {
@@ -212,6 +256,8 @@ async function checkNotebook(
       return 64;
     }
     result = notebook.result;
+    // Unread data makes every field look unknown; say why first.
+    sourceProblems = sourcesFirst(read, folder).first;
   }
   if (json) {
     console.log(
@@ -222,12 +268,16 @@ async function checkNotebook(
           charts: result.charts,
           skippedCharts: result.skippedCharts,
           complete: result.complete,
+          sourceProblems,
         },
         null,
         2
       )
     );
   } else {
+    for (const item of sourceProblems) {
+      console.log(formatProblem(item));
+    }
     console.log(formatDslDiagnostics(result, path));
   }
   return result.complete ? 0 : result.charts.length ? 1 : 2;
@@ -267,6 +317,14 @@ function main(args: string[]): number | Promise<number> {
       console.log(DSL_REFERENCE);
       return 0;
     }
+    if (type === "project") {
+      console.log(PROJECT_REFERENCE);
+      return 0;
+    }
+    if (type === "notebook") {
+      console.log(NOTEBOOK_REFERENCE);
+      return 0;
+    }
     registerAllCharts();
     if (type === "composition") {
       console.log(
@@ -276,7 +334,9 @@ function main(args: string[]): number | Promise<number> {
     }
     const lines = chartSettingReference(type);
     if (!lines.length) {
-      console.error(`${type} is not a chart type.`);
+      console.error(
+        `${type} is not a chart type. Topics: project, notebook, composition, or a chart type.`
+      );
       return 64;
     }
     console.log(
