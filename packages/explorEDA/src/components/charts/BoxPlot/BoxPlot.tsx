@@ -22,7 +22,7 @@ import {
   withNonpositive,
 } from "../Axis/axisBounds";
 import { planChartMargin } from "../Axis/axisPlan";
-import { numericScale } from "../Axis/numericScale";
+import { numericScale, numericScaleType } from "../Axis/numericScale";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
@@ -109,18 +109,6 @@ export function BoxPlot({
   );
 
   const typography = useAxisTypography();
-  // Value ticks read compactly, such as $15K, as on the bar chart.
-  const formatAxis = (value: string | number) =>
-    formatValue(
-      settings.field,
-      value,
-      // Zero reads as $0 beside $20K, not $0.00.
-      value === 0
-        ? { ...fieldSettings[settings.field], precision: 0 }
-        : fieldSettings[settings.field],
-      { compact: true }
-    );
-
   // The domain spans all rows, so linked filters keep the axis still.
   const yDomain = useMemo(() => {
     const values = finiteNumbers(allData);
@@ -138,11 +126,21 @@ export function BoxPlot({
         );
   }, [allData, settings.yAxis]);
 
+  // Value ticks read compactly, such as $15K, as on the bar chart, in one
+  // notation across the axis.
+  const yReference = Math.max(Math.abs(yDomain[0]), Math.abs(yDomain[1]));
+  const formatAxis = (value: string | number) =>
+    formatValue(
+      settings.field,
+      value,
+      // Zero reads as $0 beside $20K, not $0.00.
+      value === 0
+        ? { ...fieldSettings[settings.field], precision: 0 }
+        : fieldSettings[settings.field],
+      { compact: true, reference: yReference }
+    );
+
   // The left margin fits the tick labels the axis will draw.
-  const yTickLabels = numericScale(settings.yAxis, true)
-    .domain(yDomain)
-    .ticks(Math.max(2, settings.yGridLines ?? 5))
-    .map(formatAxis);
   const { margin: plannedMargin } = planChartMargin({
     margin: {
       ...settings.margin,
@@ -153,7 +151,8 @@ export function BoxPlot({
     hasXLabel: Boolean(xAxisLabel),
     hasYLabel: Boolean(yAxisLabel),
     yTickFontSize: settings.yAxis.tickFontSize,
-    yLabels: yTickLabels,
+    yScaleType: numericScaleType(settings.yAxis, true),
+    yFormat: formatAxis,
     typography,
   });
   const margin = {

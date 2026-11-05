@@ -4,6 +4,7 @@ import {
   binIndex,
   binInRange,
   binRangeFilter,
+  histogramBrushRange,
   numericBins,
   sameRange,
   snapRangeToBins,
@@ -20,6 +21,19 @@ it("keeps every valid observation, including the maximum and constant values", (
     numericBins([5, 5], [5, 5], 10).reduce((sum, bin) => sum + bin.value, 0)
   ).toBe(2);
   expect(numericBins([], [], 10)).toEqual([]);
+});
+
+it("ends the last bin exactly at the maximum despite float rounding", () => {
+  for (const [low, high, count] of [
+    [0.4, 94788.4, 21],
+    [0.21, 874.48, 78],
+    [1.12, 853.72, 38],
+  ] as const) {
+    const bins = numericBins([low, high], [low, high], count);
+    expect(bins.at(-1)!.end).toBe(high);
+    expect(bins.reduce((sum, bin) => sum + bin.value, 0)).toBe(2);
+    expect(binIndex(bins, high)).toBe(bins.length - 1);
+  }
 });
 
 it("centers whole-number bins on integers so no bar splits between values", () => {
@@ -125,4 +139,28 @@ it("leaves out the upper edge of a range that ends before the last bar", () => {
   expect(binRangeFilter([0.5, 1.5, 2.5], { min: 0.5, max: 1.5 }, true)).toEqual(
     { min: 0.5, max: 1.5 }
   );
+});
+
+it("lets an engineering histogram brush reach its coverage tails", () => {
+  const edges = [0, 10, 20];
+  expect(histogramBrushRange(edges, { min: 22, max: 28 })).toEqual({
+    min: 20,
+    minExclusive: true,
+  });
+  expect(histogramBrushRange(edges, { min: -8, max: -2 })).toEqual({
+    max: 0,
+    maxExclusive: true,
+  });
+  expect(histogramBrushRange(edges, { min: 12, max: 28 })).toEqual({
+    min: 10,
+  });
+  expect(histogramBrushRange(edges, { min: -5, max: 9 })).toEqual({
+    max: 10,
+    maxExclusive: true,
+  });
+  expect(histogramBrushRange(edges, { min: 1, max: 9 })).toEqual({
+    min: 0,
+    max: 10,
+    maxExclusive: true,
+  });
 });

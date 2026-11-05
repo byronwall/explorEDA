@@ -336,6 +336,13 @@ export function planScatter(
     yTickFontSize: settings.yAxis.tickFontSize,
     xTickFontSize: settings.xAxis.tickFontSize,
     typography,
+    yScaleType: yShape.kind === "numeric" ? yShape.type : undefined,
+    yFormat: (value) =>
+      formatFieldValue(
+        settings.yField,
+        value,
+        snapshot.fieldSettings[settings.yField]
+      ),
     yLabels:
       yShape.kind === "band"
         ? yShape.categories.map((item) =>

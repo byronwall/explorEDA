@@ -460,10 +460,12 @@ export function RowChart({
     );
     // Signed measures extend left of zero; zero always stays on the axis.
     let minValue = Math.min(0, ...values);
-    const maxValue = Math.max(
+    let maxValue = Math.max(
       summarized ? (minValue < 0 ? 0 : Number.MIN_VALUE) : 1,
       ...values
     );
+    // Every value zero still needs an axis with ticks.
+    if (maxValue - minValue < Number.EPSILON) maxValue = minValue + 1;
     if (negativeLabelRoom > 0 && innerWidth > negativeLabelRoom * 2) {
       minValue -=
         (negativeLabelRoom / (innerWidth - negativeLabelRoom)) *

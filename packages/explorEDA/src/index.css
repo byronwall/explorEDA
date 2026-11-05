@@ -4373,6 +4373,24 @@ html {
   flex: 1;
   flex-wrap: nowrap;
 }
+/* The values that did not fit the line open under their "+N more" summary,
+   as a wrapped list hung from the line's right end. */
+.eda-legend-disclosure.is-rest {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+.eda-legend-disclosure.is-rest summary {
+  white-space: nowrap;
+}
+.eda-legend-disclosure.is-rest .eda-legend-disclosure-content {
+  left: auto;
+  right: 0;
+  width: max-content;
+  max-width: min(360px, 80vw);
+}
+.eda-legend-disclosure.is-rest .eda-legend-items {
+  flex-wrap: wrap;
+}
 .eda-chart-color-legend .eda-legend-numeric {
   flex: 0 1 220px;
   width: min(220px, 100%);

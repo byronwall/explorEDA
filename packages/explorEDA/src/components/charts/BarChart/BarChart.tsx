@@ -27,7 +27,12 @@ import {
   type BarMark,
 } from "./barPlan";
 import { getRangeFilterForField } from "@/hooks/getAxisFilter";
-import { binRangeFilter, sameRange, snapRangeToBins } from "./bins";
+import {
+  binRangeFilter,
+  histogramBrushRange,
+  sameRange,
+  snapRangeToBins,
+} from "./bins";
 import { binSelection, samePredicate } from "./histogramPlan";
 import { HistogramSummary } from "./HistogramSummary";
 import type { SpecRegion } from "@/types/FilterTypes";
@@ -175,7 +180,12 @@ function SingleBarChart({
   const updateChart = useDataLayer((s) => s.updateChart);
   const { getColorForValue } = useColorScales();
   const liveIds = useGetLiveIds(settings, facetIds);
-  const allValues = useGetColumnDataForIds(settings.field);
+  // Every row the chart can draw: all rows, or its own population.
+  const allIds = useGetAllIds(settings);
+  const allValues = useGetColumnDataForIds(
+    settings.field,
+    settings.localFilters?.length ? allIds : undefined
+  );
   const fieldData = useGetColumnData(settings.field);
   const revision = useTraceRevision(settings);
   const trace = useChartTrace();
@@ -207,7 +217,6 @@ function SingleBarChart({
 
   // The same aggregate over every row the chart can draw sets the Y domain,
   // so another chart's filter never rescales this one.
-  const allIds = useGetAllIds(settings);
   const domainAggregate = useMemo(() => {
     void aggregates;
     void fieldSettings;
@@ -261,7 +270,7 @@ function SingleBarChart({
           getColorForValue(settings.colorScaleId, value, themeColors.mark),
         getFieldLabel,
         formatFieldValue,
-        formatAxisValue: (field, value) =>
+        formatAxisValue: (field, value, reference) =>
           formatValue(
             field,
             value,
@@ -269,7 +278,7 @@ function SingleBarChart({
             value === 0
               ? { ...fieldSettings[field], precision: 0 }
               : fieldSettings[field],
-            { compact: true }
+            { compact: true, reference }
           ),
         footer:
           STATUS_LINE_HEIGHT +
@@ -360,14 +369,21 @@ function SingleBarChart({
       );
       if (extent && plan.mode === "bin" && plan.binEdges.length > 1) {
         const linear = xScale as ScaleLinear<number, number>;
-        const range = snapRangeToBins(plan.binEdges, {
+        const raw = {
           min: linear.invert(extent[0][0]),
           max: linear.invert(extent[1][0]),
-        });
+        };
+        // An engineering histogram's brush can reach its coverage tails.
         newFilters.push({
           type: "range",
           field: settings.field,
-          ...binRangeFilter(plan.binEdges, range, plan.wholeNumberBins),
+          ...(plan.histogram
+            ? histogramBrushRange(plan.binEdges, raw, plan.wholeNumberBins)
+            : binRangeFilter(
+                plan.binEdges,
+                snapRangeToBins(plan.binEdges, raw),
+                plan.wholeNumberBins
+              )),
         });
       } else if (extent) {
         return;
@@ -377,6 +393,7 @@ function SingleBarChart({
     [
       plan.mode,
       plan.binEdges,
+      plan.histogram,
       plan.wholeNumberBins,
       settings.field,
       settings.filters,
@@ -571,6 +588,7 @@ function SingleBarChart({
           `${rowsOf(selectedBars).toLocaleString()} of ${rowsOf(plan.bars).toLocaleString()} rows selected: ${selectionText}`,
         plan.unplotted.length > 0 &&
           `${plan.unplotted.length} ${plan.unplotted.length === 1 ? "group" : "groups"} without a number left out`,
+        plan.notice,
       ];
   const statusHint =
     !selectionText &&

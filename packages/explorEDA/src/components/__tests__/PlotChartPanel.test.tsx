@@ -902,3 +902,83 @@ it("marks a clipped headline title under Newsprint", () => {
   expect(clear.closest(".eda-panel-actions")).toBeNull();
   heights.mockRestore();
 });
+
+it("keeps legend values that do not fit behind a +N more disclosure", async () => {
+  const regions = [
+    "East Asia & Pacific",
+    "Europe & Central Asia",
+    "Latin America & Caribbean",
+    "Middle East, North Africa, Afghanistan & Pakistan",
+    "North America",
+    "South Asia",
+    "Sub-Saharan Africa",
+  ];
+  const colorScale = {
+    id: "region-colors",
+    name: "region",
+    sourceField: "region",
+    type: "categorical" as const,
+    palette: ["#1f77b4", "#ff7f0e"],
+    mapping: regions.map(
+      (region, index) =>
+        [region, index % 2 ? "#1f77b4" : "#ff7f0e"] as [string, string]
+    ),
+  };
+  const chart = {
+    ...barChartDefinition.createDefaultSettings(
+      { x: 0, y: 0, w: 6, h: 4 },
+      "value"
+    ),
+    colorField: "region",
+    colorScaleId: colorScale.id,
+    title: "Values by region",
+  };
+  function Panel() {
+    const charts = useDataLayer((s) => s.charts);
+    return (
+      <PlotChartPanel
+        settings={charts[0]!}
+        width={520}
+        height={400}
+        onDelete={() => {}}
+        onDuplicate={() => {}}
+      />
+    );
+  }
+  render(
+    <DataLayerProvider
+      data={regions.map((region, value) => ({ region, value }))}
+      savedData={{
+        charts: [chart],
+        calculations: [],
+        gridSettings: {
+          columnCount: 12,
+          rowHeight: 100,
+          containerPadding: 10,
+          showBackgroundMarkers: false,
+        },
+        metadata: {
+          name: "Legends",
+          version: 1,
+          createdAt: "2026-01-01T00:00:00.000Z",
+          modifiedAt: "2026-01-01T00:00:00.000Z",
+        },
+        colorScales: [colorScale],
+      }}
+    >
+      <Panel />
+    </DataLayerProvider>
+  );
+  const legend = await screen.findByLabelText("region color legend");
+  expect(
+    within(legend).getByRole("button", { name: /^Filter region by East Asia/ })
+  ).toBeInTheDocument();
+  const more = within(legend).getByText(/^\+\d more$/);
+  expect(more).toBeInTheDocument();
+  // Every value is still reachable, so a hidden one is never lost.
+  expect(
+    within(legend).getByRole("button", {
+      name: /^Filter region by Sub-Saharan Africa/,
+    })
+  ).toBeInTheDocument();
+});

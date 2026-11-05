@@ -1,6 +1,8 @@
 import {
   scaleBand,
   scaleLinear,
+  scaleLog,
+  scaleSymlog,
   type ScaleBand,
   type ScaleLinear,
 } from "d3-scale";
@@ -247,21 +249,30 @@ function truncate(text: string, max: number) {
   return text.length > max ? `${text.slice(0, max - 1)}…` : text;
 }
 
-/** Keeps label order by position and drops a label that would overlap the last kept one. */
+/**
+ * Keeps label order by position and drops a label that would overlap the
+ * last kept one. Labels are kept from the axis origin outward (the left of an
+ * X axis, the bottom of a Y axis), so a crowded axis still names its lowest
+ * value, usually the baseline, and drops labels toward the far end.
+ */
 function spacedTicks<T extends number | string>(
   ticks: T[],
   position: (tick: T) => number,
-  size: (tick: T) => number
+  size: (tick: T) => number,
+  fromEnd = false
 ) {
+  const direction = fromEnd ? -1 : 1;
   let edge = -Infinity;
   return [...ticks]
-    .sort((a, b) => position(a) - position(b))
+    .sort((a, b) => direction * (position(a) - position(b)))
     .filter((tick) => {
       const half = size(tick) / 2;
-      if (position(tick) - half < edge + MIN_LABEL_GAP) return false;
-      edge = position(tick) + half;
+      if (direction * position(tick) - half < edge + MIN_LABEL_GAP)
+        return false;
+      edge = direction * position(tick) + half;
       return true;
-    });
+    })
+    .sort((a, b) => position(a) - position(b));
 }
 
 /**
@@ -291,7 +302,54 @@ function symlogTicks(scale: ScaleLinear<number, number>, requested: number) {
     for (const step of steps)
       for (const value of [step * 10 ** power, -step * 10 ** power])
         if (value >= lo && value <= hi) ticks.push(value);
+  // A domain inside one decade, such as 1,200 to 1,900, holds no power of
+  // ten; even ticks label it instead of leaving it blank.
+  if (ticks.length < 2) return scale.ticks(requested);
   return ticks.sort((x, y) => x - y);
+}
+
+/**
+ * The tick values an axis considers before spacing: every band category,
+ * powers of ten on log and symlog scales, else D3's even ticks.
+ */
+export function axisTickCandidates(
+  scale: ChartScale,
+  scaleType: AxisInput["scaleType"],
+  requested = 5
+): (number | string)[] {
+  if ("bandwidth" in scale) return scale.domain();
+  if ("base" in scale) return logTicks(scale, requested);
+  if (scaleType === "symlog") return symlogTicks(scale, requested);
+  return scale.ticks(requested);
+}
+
+/**
+ * Ticks whose labels read the same, such as 0.5 and 1 under a whole-number
+ * precision, confuse an axis. Fewer ticks are asked for until each label is
+ * its own; failing that, the first tick of each repeated label stays.
+ */
+function distinctlyLabeled(
+  candidates: (number | string)[],
+  format: AxisInput["format"],
+  requested: number,
+  more: (requested: number) => (number | string)[]
+) {
+  const repeats = (ticks: (number | string)[]) =>
+    new Set(ticks.map((tick) => format(tick))).size < ticks.length;
+  let ticks = candidates;
+  let count = requested;
+  while (repeats(ticks) && count > 2) {
+    count = Math.ceil(count / 2);
+    ticks = more(count);
+  }
+  if (!repeats(ticks)) return ticks;
+  const seen = new Set<string>();
+  return ticks.filter((tick) => {
+    const label = format(tick);
+    if (seen.has(label)) return false;
+    seen.add(label);
+    return true;
+  });
 }
 
 function position(scale: ChartScale, tick: number | string) {
@@ -338,11 +396,12 @@ function planAxis(
     input.tickValues ??
     (band
       ? scale.domain()
-      : "base" in scale
-        ? logTicks(scale, requested)
-        : input.scaleType === "symlog"
-          ? symlogTicks(scale, requested)
-          : scale.ticks(requested));
+      : distinctlyLabeled(
+          axisTickCandidates(scale, input.scaleType, requested),
+          input.format,
+          requested,
+          (count) => axisTickCandidates(scale, input.scaleType, count)
+        ));
   const format = band
     ? input.format
     : trimZeroFractions(input.format, candidates);
@@ -369,7 +428,11 @@ function planAxis(
               Math.max(1, scale.step())
           )
         )
-      : 1;
+      : axis === "y" && band
+        ? // Stacked category labels overlap once a row is shorter than the
+          // type; a row chart packs rows to its height and keeps every name.
+          Math.max(1, Math.ceil(tickFontSize / Math.max(1, scale.step())))
+        : 1;
   const shown = band
     ? candidates.filter((_, index) => index % stride === 0)
     : spacedTicks(
@@ -377,7 +440,9 @@ function planAxis(
         (tick) => position(scale, tick),
         axis === "x"
           ? (tick) => textWidth(typography, format(tick), tickFontSize)
-          : () => tickFontSize * 1.2
+          : () => tickFontSize * 1.2,
+        // A Y axis grows upward from its bottom, so keep labels from there.
+        axis === "y"
       );
   const maxLabelChars =
     axis === "x"
@@ -609,6 +674,8 @@ export function planChartMargin({
   hasYLabel,
   yTickFontSize,
   yLabels,
+  yScaleType,
+  yFormat,
   typography = DEFAULT_AXIS_TYPOGRAPHY,
   xTickFontSize,
 }: {
@@ -620,11 +687,25 @@ export function planChartMargin({
   yTickFontSize?: number;
   /** Tick labels of a band Y axis, which replace the numeric ticks. */
   yLabels?: string[];
+  /** The Y scale type, so the margin measures the ticks that axis draws. */
+  yScaleType?: AxisInput["scaleType"];
+  /** How the Y axis writes a tick, so the margin fits the real labels. */
+  yFormat?: AxisInput["format"];
   typography?: AxisTypography;
   /** The X tick size, when the chart sets one; it sizes the bottom margin. */
   xTickFontSize?: number;
 }): { margin: MarginSettings; policy: MarginPolicy } {
-  const labels = yLabels ?? scaleLinear().domain(yDomain).ticks(5).map(String);
+  const ticks = axisTickCandidates(
+    (yScaleType === "symlog"
+      ? scaleSymlog()
+      : yScaleType === "log"
+        ? scaleLog()
+        : scaleLinear()
+    ).domain(yDomain) as ScaleLinear<number, number>,
+    yScaleType
+  );
+  const labels =
+    yLabels ?? ticks.map(yFormat ? trimZeroFractions(yFormat, ticks) : String);
   const yTick = yTickFontSize ?? typography.tickSize;
   // Larger type than the compact sizes widens the title band and footer.
   const labelGrowth = Math.max(0, typography.labelSize - 11);
