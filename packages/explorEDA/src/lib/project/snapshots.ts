@@ -8,6 +8,7 @@ import type { DeclaredFieldType } from "@/lib/declaredFieldTypes";
 import type { AnalysisSourceRow } from "@/types/AnalysisProject";
 import type { datum } from "@/types/ChartTypes";
 import { timestampOf } from "@/lib/valueParsing";
+import type { DatabaseSource } from "@/lib/dsl/project";
 
 export const SNAPSHOT_FOLDER = ".exploreda/snapshots";
 export const SNAPSHOT_FORMAT = "exploreda-snapshot";
@@ -35,6 +36,41 @@ export interface SnapshotInfo {
   fields: SnapshotField[];
   /** Changes made while reading, such as a large number kept as text. */
   notes: string[];
+  /** What the source's text asked for; older snapshots leave it out. */
+  read?: SnapshotRead;
+}
+
+/** The settings of a source's text that decide what a read returns. */
+export interface SnapshotRead {
+  table?: string;
+  sql?: string;
+  limit?: number;
+}
+
+/** What a database source's text asks a read for. */
+export function snapshotRead(database: DatabaseSource): SnapshotRead {
+  return {
+    ...(database.table === undefined ? {} : { table: database.table }),
+    ...(database.sql === undefined ? {} : { sql: database.sql }),
+    ...(database.limit === undefined ? {} : { limit: database.limit }),
+  };
+}
+
+/**
+ * True when a source's text changed since its snapshot was read. A snapshot
+ * that doesn't say what it read is never stale.
+ */
+export function isStaleSnapshot(info: SnapshotInfo, database: DatabaseSource) {
+  if (!info.read) {
+    return false;
+  }
+  const now = snapshotRead(database);
+  return (
+    info.connection !== database.connection ||
+    info.read.table !== now.table ||
+    info.read.sql !== now.sql ||
+    info.read.limit !== now.limit
+  );
 }
 
 export interface SnapshotFile extends SnapshotInfo {
@@ -88,6 +124,7 @@ export function snapshotInfo(file: SnapshotFile): SnapshotInfo {
     rowCount: file.rowCount,
     fields: file.fields,
     notes: file.notes ?? [],
+    ...(file.read ? { read: file.read } : {}),
   };
 }
 

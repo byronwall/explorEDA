@@ -17,6 +17,7 @@ import {
   SNAPSHOT_FOLDER,
   snapshotInfo,
   snapshotPath,
+  snapshotRead,
   type SnapshotInfo,
 } from "../../lib/project/snapshots";
 import { sqliteDriver } from "./drivers/sqlite";
@@ -98,7 +99,8 @@ async function projectText(root: string) {
   return undefined;
 }
 
-async function projectDatabases(root: string) {
+/** The project's connections and database sources, from its text. */
+export async function projectDatabases(root: string) {
   const text = await projectText(root);
   if (text === undefined) {
     throw new SourceReadError(
@@ -215,6 +217,7 @@ async function readAndWrite(
       },
       options.signal
     );
+    snapshot.read = snapshotRead(database);
     const folder = path.join(options.root, SNAPSHOT_FOLDER);
     await fs.mkdir(folder, { recursive: true });
     // Snapshots are copies of database rows; they stay out of Git.
@@ -257,19 +260,30 @@ export async function checkSecret(
   await session.close();
 }
 
-/** The tables and views a connection can read. */
-export async function listTables(
+/** Opens a connection the project declares, uses it, and lets go. */
+export async function withConnection<T>(
   connectionId: string,
-  options: SourceOptions
-): Promise<TableInfo[]> {
+  options: SourceOptions,
+  work: (session: DatabaseSession, driver: DatabaseDriver) => Promise<T>
+): Promise<T> {
   const { connections } = await projectDatabases(options.root);
-  const { session } = await openConnection(
+  const { session, driver } = await openConnection(
     findConnection(connections, connectionId),
     options
   );
   try {
-    return await session.listTables();
+    return await work(session, driver);
   } finally {
     await session.close();
   }
+}
+
+/** The tables and views a connection can read. */
+export function listTables(
+  connectionId: string,
+  options: SourceOptions
+): Promise<TableInfo[]> {
+  return withConnection(connectionId, options, (session) =>
+    session.listTables()
+  );
 }
