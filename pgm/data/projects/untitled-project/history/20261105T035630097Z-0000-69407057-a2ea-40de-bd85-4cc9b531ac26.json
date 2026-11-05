@@ -1,0 +1,12 @@
+{
+  "id": "69407057-a2ea-40de-bd85-4cc9b531ac26",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:005205",
+    "label": "Agent token ...005205"
+  },
+  "createdAt": "2026-11-05T03:56:30.097Z",
+  "summary": "Created \"Percent format where people look\" under \"Rates as measures\".",
+  "nodeIds": ["page-percent-format-where-people-look", "area-rates-as-measures"]
+}

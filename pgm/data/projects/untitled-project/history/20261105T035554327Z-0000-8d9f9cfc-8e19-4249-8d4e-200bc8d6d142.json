@@ -1,0 +1,15 @@
+{
+  "id": "8d9f9cfc-8e19-4249-8d4e-200bc8d6d142",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:87c99f",
+    "label": "Agent token ...87c99f"
+  },
+  "createdAt": "2026-11-05T03:55:54.327Z",
+  "summary": "Created \"Wire onOpenView in the project app\" under \"Combine tables without SQL\".",
+  "nodeIds": [
+    "page-wire-onopenview-in-the-project-app",
+    "area-combine-tables-without-sql"
+  ]
+}

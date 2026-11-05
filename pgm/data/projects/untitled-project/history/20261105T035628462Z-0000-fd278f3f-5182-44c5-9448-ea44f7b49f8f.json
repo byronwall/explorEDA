@@ -1,0 +1,12 @@
+{
+  "id": "fd278f3f-5182-44c5-9448-ea44f7b49f8f",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5a9214",
+    "label": "Agent token ...5a9214"
+  },
+  "createdAt": "2026-11-05T03:56:28.462Z",
+  "summary": "Created \"Rates as measures\" under \"Database UX eval 2026-11\".",
+  "nodeIds": ["area-rates-as-measures", "area-database-ux-eval-2026-11"]
+}

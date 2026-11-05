@@ -1,0 +1,12 @@
+{
+  "id": "b38c6319-1e99-4e02-a9be-563a49bb14d2",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:e0db4e",
+    "label": "Agent token ...e0db4e"
+  },
+  "createdAt": "2026-11-05T03:57:06.661Z",
+  "summary": "Set \"Ratio and share measures\" priority to medium.",
+  "nodeIds": ["page-ratio-and-share-measures"]
+}

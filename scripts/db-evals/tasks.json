@@ -1,0 +1,88 @@
+{
+  "tasks": [
+    {
+      "id": "t1",
+      "title": "Fourth-down board",
+      "db": "nfl.db",
+      "surface": "browser",
+      "deliverable": "dashboard",
+      "dbNote": "a SQLite file with the 2023 NFL season play by play (tables `plays`, `games`, `players`)",
+      "goal": "I want a fourth-down board. When do teams go for it on fourth down, and does it work?",
+      "expected": "Only fourth-down plays; go-for-it rate by field position (yard line, binned) and by score difference; success rate of attempts; a per-team view. Success means a dashboard with 3 or more charts on fourth-down plays, where a click or brush on one chart filters the others."
+    },
+    {
+      "id": "t2",
+      "title": "Passing vs winning",
+      "db": "nfl.db",
+      "surface": "cli",
+      "deliverable": "notebook",
+      "dbNote": "a SQLite file with the 2023 NFL season play by play (tables `plays`, `games`, `players`)",
+      "goal": "Do teams that pass better win more games? Write it up for me.",
+      "expected": "Per team, efficiency on pass plays and on run plays (for example EPA per play); each team's win rate from the game results; a chart relating passing efficiency to win rate; a short written conclusion. Success means a notebook with prose and 2 or more charts, where each team's games are counted whether it was home or away."
+    },
+    {
+      "id": "t3",
+      "title": "Five-QB scout",
+      "db": "nfl.db",
+      "surface": "browser",
+      "deliverable": "dashboard",
+      "dbNote": "a SQLite file with the 2023 NFL season play by play (tables `plays`, `games`, `players`)",
+      "extra": "Do not inspect the database with other tools first; find your way through what explorEDA shows you.",
+      "goal": "Scout five quarterbacks for me: Patrick Mahomes, Josh Allen, Lamar Jackson, Jalen Hurts, and Dak Prescott. How accurate are they, how deep do they throw, and how often do they get sacked?",
+      "expected": "Per quarterback, completion percentage, average air yards (throw depth), and sack rate per dropback; a distribution of air yards per quarterback. Success means a dashboard limited to these five, built from the right columns, where plays with no air-yards value (sacks, spikes, throwaways) are handled on purpose rather than silently dropped or counted as zero."
+    },
+    {
+      "id": "t4",
+      "title": "Monthly store sales",
+      "db": "retail.duckdb",
+      "surface": "browser",
+      "deliverable": "dashboard",
+      "dbNote": "a DuckDB file with a retailer's data warehouse: 24 tables, including `store_sales`, `item`, `date_dim`, `store`, and many more, joined by `*_sk` key columns",
+      "goal": "Give the regional managers a dashboard of monthly store sales by product category and by state.",
+      "expected": "Sales amount by month (a line), by item category, and by store state; a table of top items. Success means a dashboard where store sales are joined to item, date, and store, the charts filter each other, and the total sales figure is correct.",
+      "check": "select sum(ss_ext_sales_price) from store_sales"
+    },
+    {
+      "id": "t5",
+      "title": "Return reasons",
+      "db": "retail.duckdb",
+      "surface": "cli",
+      "deliverable": "notebook",
+      "dbNote": "a DuckDB file with a retailer's data warehouse: 24 tables, including `store_sales`, `store_returns`, `item`, `reason`, and many more, joined by `*_sk` key columns",
+      "goal": "Why do customers return things in our stores? Which product categories and return reasons cost us the most?",
+      "expected": "Return amount by reason and by item category; a return rate per category (returns divided by sales); a short written conclusion. Success means a notebook with prose and 2 or more charts that uses both sales and returns, where returns with no recorded reason are shown as their own group or explained.",
+      "check": "select count(*) from store_returns where sr_reason_sk is null"
+    },
+    {
+      "id": "t6",
+      "title": "Web vs catalog buyers",
+      "db": "retail.duckdb",
+      "surface": "browser",
+      "deliverable": "dashboard",
+      "dbNote": "a DuckDB file with a retailer's data warehouse: 24 tables, including `web_sales`, `catalog_sales`, `customer`, `customer_demographics`, `customer_address`, and many more, joined by `*_sk` key columns",
+      "goal": "Compare the people who buy from us on the web with the people who buy from the catalog. Are they different?",
+      "expected": "For each channel (web, catalog), the buyers' gender, marital status, education, and state, side by side or with the channel as a color or filter. Success means a dashboard where sales are joined to customer, demographics, and address, the two channels can be compared directly, and buyers with missing demographics are visible or explained."
+    },
+    {
+      "id": "t7",
+      "title": "Low stock by week",
+      "db": "retail.duckdb",
+      "surface": "cli",
+      "deliverable": "notebook",
+      "dbNote": "a DuckDB file with a retailer's data warehouse: 24 tables, including `inventory`, `warehouse`, `item`, `date_dim`, and many more, joined by `*_sk` key columns",
+      "goal": "Which of our warehouses run low on stock? Show me week by week for the last quarter we have data for.",
+      "expected": "Weekly on-hand quantity per warehouse over the last quarter in the data; the items or categories that most often fall below a low-stock line you choose and explain. Success means a notebook with prose and 2 or more charts, that starts from the full inventory table, and that says plainly what data it left out, if any, and why."
+    },
+    {
+      "id": "t8",
+      "title": "Cold start, 3 findings",
+      "db": "nfl.db",
+      "surface": "cli",
+      "deliverable": "notebook",
+      "dbNote": "a SQLite file. You don't know what is in it yet",
+      "extra": "Open the browser app whenever you need it. Do not inspect the database with tools other than explorEDA (no sqlite3, no Python); find out what is in it through explorEDA.",
+      "goal": "Here's a database someone sent me. Connect to it and tell me three interesting things in it.",
+      "expected": "Your own choice of three findings, each with a chart and a sentence or two. Success means a notebook with three findings that are true to the data, reached through explorEDA alone."
+    }
+  ]
+}

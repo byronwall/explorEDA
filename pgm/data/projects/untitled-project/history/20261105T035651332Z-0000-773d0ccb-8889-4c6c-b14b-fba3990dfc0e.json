@@ -1,0 +1,12 @@
+{
+  "id": "773d0ccb-8889-4c6c-b14b-fba3990dfc0e",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0a605d",
+    "label": "Agent token ...0a605d"
+  },
+  "createdAt": "2026-11-05T03:56:51.332Z",
+  "summary": "Set \"Related fields in chart field pickers\" priority to high.",
+  "nodeIds": ["page-related-fields-in-chart-field-pickers"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "d091ef62-e95c-4df8-bf2c-62cd61970a18",
+  "kind": "node.priority.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:168b53",
+    "label": "Agent token ...168b53"
+  },
+  "createdAt": "2026-11-05T03:57:08.600Z",
+  "summary": "Set \"Scope filters next to selection filters\" priority to medium.",
+  "nodeIds": ["page-scope-filters-next-to-selection-filters"]
+}

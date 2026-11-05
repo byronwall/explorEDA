@@ -1,0 +1,12 @@
+{
+  "id": "95563a62-3aa4-429c-a3fd-ef7c7ea2b13c",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:ebc66a",
+    "label": "Agent token ...ebc66a"
+  },
+  "createdAt": "2026-11-05T03:56:29.235Z",
+  "summary": "Created \"Ratio and share measures\" under \"Rates as measures\".",
+  "nodeIds": ["page-ratio-and-share-measures", "area-rates-as-measures"]
+}

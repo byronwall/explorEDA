@@ -1,0 +1,15 @@
+{
+  "id": "a8f28874-7660-4aa9-b8f9-22fac34d87ac",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:644931",
+    "label": "Agent token ...644931"
+  },
+  "createdAt": "2026-11-05T03:56:21.884Z",
+  "summary": "Created \"Say when missing values drop out of a sum\" under \"Defaults for warehouse tables\".",
+  "nodeIds": [
+    "page-say-when-missing-values-drop-out-of-a-sum",
+    "area-defaults-for-warehouse-tables"
+  ]
+}
