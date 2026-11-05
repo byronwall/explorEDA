@@ -97,6 +97,11 @@
   margin-top: 4px;
 }
 
+.app-suggested {
+  color: var(--primary);
+  font-weight: 500;
+}
+
 /* Rename and Delete, under the analysis they act on. */
 .app-item-actions {
   display: flex;
@@ -368,6 +373,11 @@
   .app-rail-head .app-path,
   .app-item .app-muted {
     display: none;
+  }
+
+  /* Suggested links still need review on a phone. */
+  .app-links:has(.app-suggested) .app-muted {
+    display: inline;
   }
 }
 
@@ -643,7 +653,7 @@
 }
 
 .app-table-list {
-  max-height: 220px;
+  max-height: 280px;
   margin: 0;
   padding: 2px;
   overflow-y: auto;
@@ -653,35 +663,141 @@
   list-style: none;
 }
 
-.app-table-list button {
+.app-table-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.app-table-item:hover,
+.app-table-item[data-checked] {
+  background: var(--accent);
+}
+
+.app-form label.app-table-pick,
+.app-table-pick {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
-  width: 100%;
-  padding: 4px 8px;
-  border: 0;
-  border-radius: 4px;
-  background: transparent;
+  min-width: 0;
+  padding: 4px 0 4px 8px;
   color: var(--foreground);
-  font: inherit;
   font-size: 13px;
-  text-align: left;
   cursor: pointer;
 }
 
-.app-table-list button:hover {
-  background: var(--accent);
+.app-form .app-table-pick input {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--primary);
 }
 
-.app-table-list button[aria-pressed="true"] {
-  background: var(--accent);
+.app-table-pick input:focus-visible,
+.app-table-expand:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.app-table-text {
+  display: grid;
+  flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.app-table-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-table-item[data-checked] .app-table-name {
   font-weight: 600;
 }
 
-.app-table-list button:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: -2px;
+.app-table-rows {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-table-rows[data-over] {
+  color: var(--warning);
+  font-weight: 500;
+}
+
+.app-table-expand {
+  width: 24px;
+  height: 26px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  cursor: pointer;
+}
+
+.app-table-expand:hover {
+  color: var(--foreground);
+}
+
+/* A table's columns and types, under it while expanded. */
+.app-table-columns {
+  grid-column: 1 / -1;
+  padding: 0 8px 6px 30px;
+  font-size: 12px;
+}
+
+.app-table-columns ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.app-table-columns li {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+}
+
+.app-table-columns li > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-table-columns p {
+  margin: 0;
+}
+
+/* Over the read limit: the fix, before the user tries a read. */
+.app-limit-note {
+  margin: 0;
+  color: var(--warning);
+  font-size: 12px;
+}
+
+.app-limit-note .app-button {
+  height: auto;
+  white-space: normal;
+  text-align: left;
+  padding: 0 4px;
+  color: var(--foreground);
+  text-decoration: underline;
+}
+
+.app-add-note {
+  margin: 0;
+  font-size: 12px;
 }
 
 .app-table-list li.app-muted {

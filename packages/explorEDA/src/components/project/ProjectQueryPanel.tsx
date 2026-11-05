@@ -1,3 +1,4 @@
+import type { LinkProposal } from "@/lib/project/linkProposals";
 import { Copy, ExternalLink } from "lucide-react";
 import type {
   AnalysisEvaluation,
@@ -47,6 +48,7 @@ export function ProjectQueryPanel({
   onResetSettings,
   onOpenView,
   onOpenDiagram,
+  suggestions,
 }: {
   project: AnalysisProject;
   view: AnalysisView;
@@ -63,6 +65,8 @@ export function ProjectQueryPanel({
   onOpenView?: OpenView;
   /** Opens the Schema diagram on a table, to relate it to another. */
   onOpenDiagram?: (sourceId?: string) => void;
+  /** Drafted links, which the empty relationship step points to. */
+  suggestions?: LinkProposal[];
 }) {
   const query = project.queries.find((item) => item.id === view.queryId);
   const parameters = queryParameters(project.parameters, query);
@@ -191,6 +195,7 @@ export function ProjectQueryPanel({
           onChange={onChange}
           onOpenView={onOpenView}
           onOpenDiagram={onOpenDiagram}
+          suggestions={suggestions}
         />
       )}
 

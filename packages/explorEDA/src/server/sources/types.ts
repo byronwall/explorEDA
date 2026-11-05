@@ -6,6 +6,9 @@
  */
 import type { Column } from "../../lib/readers/typedColumns";
 import type { ConnectionDefinition } from "../../lib/dsl/project";
+import type { ForeignKey } from "../../lib/project/linkProposals";
+
+export type { ForeignKey };
 
 export type SourceReadErrorCode =
   /** The database can't be reached, or its settings are wrong. */
@@ -57,6 +60,8 @@ export interface TableInfo {
   name: string;
   schema?: string;
   kind: "table" | "view";
+  /** How many rows it holds, where counting is quick (local files). */
+  rows?: number;
 }
 
 export interface ReadRequest {
@@ -85,6 +90,8 @@ export interface ReadCursor {
 
 export interface DatabaseSession {
   listTables(): Promise<TableInfo[]>;
+  /** Foreign keys of one column; keys over several columns are left out. */
+  foreignKeys(): Promise<ForeignKey[]>;
   read(request: ReadRequest, signal: AbortSignal): Promise<ReadCursor>;
   /** Releases the connection; called after every read, failed or not. */
   close(): Promise<void>;

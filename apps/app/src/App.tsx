@@ -6,6 +6,8 @@ import {
   isSnapshotPath,
   readProjectFolder,
   snapshotPath,
+  type DatabaseSource,
+  type ForeignKey,
   type ProjectFolder,
 } from "exploreda";
 import type {
@@ -16,7 +18,7 @@ import type {
 } from "./httpFiles";
 import {
   addConnection,
-  addDatabaseSource,
+  addDatabaseSources,
   chartDataFile,
   createAnalysis,
   openView,
@@ -136,6 +138,10 @@ export function App({
   const ownSnapshots = useRef(new Map<string, number>());
   /** Each source's last failed read, shown beside it until a read works. */
   const readErrors = useRef(new Map<string, ReadFailure>());
+  /** Drafted links the user dismissed, kept across reloads. */
+  const dismissedLinks = useRef(new Set<string>());
+  /** Each connection's foreign keys, asked for once. */
+  const foreignKeys = useRef(new Map<string, Promise<ForeignKey[]>>());
   // Each notebook's last working block text, kept across reloads.
   const notebookMemory = useRef(
     new Map<string, { current: Record<number, string> }>()
@@ -315,6 +321,47 @@ export function App({
     );
   }
   const { folder, info } = loaded;
+  /** Adds database sources, reads each, and opens `main`'s analysis. */
+  const addSources = async (
+    sources: { sourceId: string; database: DatabaseSource }[],
+    main: string
+  ) => {
+    await saver.flush();
+    const path = await addDatabaseSources(files, folder, {
+      sources,
+      main,
+      projectName: info.name,
+      layout: info.layout,
+    });
+    const read: { sourceId: string; rows: number; connection: string }[] = [];
+    const failed: string[] = [];
+    for (const { sourceId } of sources) {
+      ownSnapshots.current.set(snapshotPath(sourceId), Date.now());
+      readErrors.current.delete(sourceId);
+      try {
+        const snapshot = await files.databases!.refresh(sourceId);
+        read.push({
+          sourceId,
+          rows: snapshot.rowCount,
+          connection: snapshot.connection,
+        });
+      } catch (error) {
+        ownSnapshots.current.delete(snapshotPath(sourceId));
+        readErrors.current.set(sourceId, readFailure(error));
+        failed.push(
+          sources.length === 1
+            ? `Added ${sourceId}, but it couldn't be read: ${readErrorText(error)}`
+            : `${sourceId} couldn't be read: ${readErrorText(error)}`
+        );
+      }
+    }
+    await reload(
+      path,
+      [read.length ? describeReads(read) : "", ...failed]
+        .filter(Boolean)
+        .join(" ")
+    );
+  };
   const act =
     (
       run: () => Promise<string | undefined>,
@@ -434,34 +481,22 @@ export function App({
                 { addDatabase: connection.id }
               );
             },
-            addSource: async (sourceId, database) => {
-              await saver.flush();
-              const path = await addDatabaseSource(files, folder, {
-                sourceId,
-                database,
-                projectName: info.name,
-                layout: info.layout,
-              });
-              ownSnapshots.current.set(snapshotPath(sourceId), Date.now());
-              let notice: string;
-              readErrors.current.delete(sourceId);
-              try {
-                const read = await files.databases!.refresh(sourceId);
-                notice = describeReads([
-                  {
-                    sourceId,
-                    rows: read.rowCount,
-                    connection: read.connection,
-                  },
-                ]);
-              } catch (error) {
-                ownSnapshots.current.delete(snapshotPath(sourceId));
-                readErrors.current.set(sourceId, readFailure(error));
-                notice = `Added ${sourceId}, but it couldn't be read: ${readErrorText(error)}`;
-              }
-              await reload(path, notice);
-            },
+            addSource: (sourceId, database) =>
+              addSources([{ sourceId, database }], sourceId),
+            addSources,
+            tableColumns: (connectionId: string, table: string) =>
+              files.databases!.tableColumns(connectionId, table),
           } satisfies ProjectActions["database"],
+          foreignKeys: (connectionId: string) => {
+            let keys = foreignKeys.current.get(connectionId);
+            if (!keys) {
+              keys = files.databases!.foreignKeys(connectionId);
+              // A failed ask is tried again next time.
+              keys.catch(() => foreignKeys.current.delete(connectionId));
+              foreignKeys.current.set(connectionId, keys);
+            }
+            return keys;
+          },
           removeSource: (sourceId: string) =>
             act(
               async () => {
@@ -532,6 +567,8 @@ export function App({
       readErrors={Object.fromEntries(readErrors.current)}
       initialSelection={selection.current}
       initialPanel={loaded.panel}
+      dismissedLinks={dismissedLinks.current}
+      onDismissLink={(id) => dismissedLinks.current.add(id)}
       notebookMemory={(path) => {
         let memory = notebookMemory.current.get(path);
         if (!memory) {

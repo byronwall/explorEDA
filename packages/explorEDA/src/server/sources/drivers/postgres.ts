@@ -17,6 +17,7 @@ import {
   SourceReadError,
   type DatabaseDriver,
   type DatabaseSession,
+  type ForeignKey,
   type ReadCursor,
   type ReadRequest,
   type ResolvedConnection,
@@ -172,6 +173,37 @@ class PostgresSession implements DatabaseSession {
           : `${row.table_schema}.${row.table_name}`,
       schema: row.table_schema,
       kind: row.table_type === "VIEW" ? "view" : "table",
+    }));
+  }
+
+  async foreignKeys(): Promise<ForeignKey[]> {
+    const { rows } = await this.client.query<{
+      table_schema: string;
+      table_name: string;
+      column_name: string;
+      ref_schema: string;
+      ref_table: string;
+      ref_column: string;
+    }>(
+      `select ns.nspname as table_schema, t.relname as table_name,
+              a.attname as column_name, rns.nspname as ref_schema,
+              r.relname as ref_table, ra.attname as ref_column
+         from pg_constraint c
+         join pg_class t on t.oid = c.conrelid
+         join pg_namespace ns on ns.oid = t.relnamespace
+         join pg_class r on r.oid = c.confrelid
+         join pg_namespace rns on rns.oid = r.relnamespace
+         join pg_attribute a on a.attrelid = c.conrelid and a.attnum = c.conkey[1]
+         join pg_attribute ra on ra.attrelid = c.confrelid and ra.attnum = c.confkey[1]
+        where c.contype = 'f' and array_length(c.conkey, 1) = 1`
+    );
+    const named = (schema: string, table: string) =>
+      schema === "public" ? table : `${schema}.${table}`;
+    return rows.map((row) => ({
+      table: named(row.table_schema, row.table_name),
+      column: row.column_name,
+      refTable: named(row.ref_schema, row.ref_table),
+      refColumn: row.ref_column,
     }));
   }
 

@@ -30,6 +30,7 @@ import type {
   SchemaNode,
   SchemaRow,
 } from "@/lib/schema/schemaGraph";
+import { fieldRowId, tableNodeId } from "@/lib/schema/schemaGraph";
 import {
   layoutSchemaGraph,
   routeSchemaEdge,
@@ -41,6 +42,10 @@ import {
 import { SchemaInspector, type SchemaChartLinks } from "./SchemaInspector";
 import { traceField } from "@/lib/schema/schemaTrace";
 import { compactViews } from "@/lib/schema/schemaCompact";
+import {
+  proposalRelationship,
+  type LinkProposal,
+} from "@/lib/project/linkProposals";
 import type { SchemaEditing, SchemaSelection } from "./schemaEditing";
 
 const MIN_SCALE = 0.35;
@@ -111,8 +116,22 @@ function selectionExists(graph: SchemaGraph, selection: SchemaSelection) {
       return graph.edges.some((edge) => edge.id === selection.edgeId);
     case "proposal":
       return hasRow(selection.from) && hasRow(selection.to);
+    case "suggestion":
+      return true;
   }
 }
+
+/** The rows a suggested link joins. */
+const suggestionEnds = (suggestion: LinkProposal): SchemaEndpoint[] => [
+  {
+    nodeId: tableNodeId(suggestion.from.sourceId),
+    rowId: fieldRowId(suggestion.from.fieldId),
+  },
+  {
+    nodeId: tableNodeId(suggestion.to.sourceId),
+    rowId: fieldRowId(suggestion.to.fieldId),
+  },
+];
 
 type Press = {
   pointerId: number;
@@ -274,10 +293,19 @@ export function SchemaDiagram({
     if (added) setSelection({ kind: "table", nodeId: added.id });
   }, [fullGraph]);
   // An edit can remove what was selected, such as a removed relationship.
+  const suggestions = useMemo(
+    () => editing?.project?.suggestions ?? [],
+    [editing?.project?.suggestions]
+  );
   useEffect(() => {
-    if (selection && !selectionExists(graph, selection))
+    if (
+      selection &&
+      (!selectionExists(graph, selection) ||
+        (selection.kind === "suggestion" &&
+          !suggestions.some((item) => item.id === selection.id)))
+    )
       setSelection(undefined);
-  }, [graph, selection]);
+  }, [graph, selection, suggestions]);
 
   // A swap of the details can remove the focused control. Keep focus in the
   // diagram so Escape still clears the selection instead of closing it all.
@@ -325,6 +353,9 @@ export function SchemaDiagram({
   const selectionAt = (target: Element): SchemaSelection | undefined => {
     const edge = target.closest<SVGElement>("[data-schema-edge]");
     if (edge) return { kind: "relationship", edgeId: edge.dataset.schemaEdge! };
+    const suggested = target.closest<SVGElement>("[data-schema-suggestion]");
+    if (suggested)
+      return { kind: "suggestion", id: suggested.dataset.schemaSuggestion! };
     const card = target.closest<HTMLElement>("[data-schema-node]");
     if (!card) return undefined;
     const row = target.closest<HTMLElement>("[data-schema-row]");
@@ -375,6 +406,10 @@ export function SchemaDiagram({
     } else if (selection?.kind === "proposal") {
       rows.add(key(selection.from));
       rows.add(key(selection.to));
+    } else if (selection?.kind === "suggestion") {
+      const suggestion = suggestions.find((item) => item.id === selection.id);
+      if (suggestion)
+        suggestionEnds(suggestion).forEach((end) => rows.add(key(end)));
     }
     // Cards outside a field's lineage fade, so its path stands out.
     const nodes =
@@ -382,7 +417,36 @@ export function SchemaDiagram({
         ? new Set([...rows].map((row) => row.split("\u0000")[0]!))
         : undefined;
     return { rows, edges, key, nodes };
-  }, [graph, selection]);
+  }, [graph, selection, suggestions]);
+
+  const suggestionPaths = useMemo(
+    () =>
+      suggestions.flatMap((suggestion) => {
+        const [from, to] = suggestionEnds(suggestion);
+        const path = routeSchemaEdge(graph, layout, {
+          id: `suggestion:${suggestion.id}`,
+          kind: "relationship",
+          from: from!,
+          to: to!,
+        });
+        return path ? [{ suggestion, path }] : [];
+      }),
+    [graph, layout, suggestions]
+  );
+  const acceptAll = () => {
+    const project = editing?.project;
+    if (!project) return;
+    project.onChange({
+      ...project.project,
+      relationships: [
+        ...project.project.relationships,
+        ...suggestions.map((item) =>
+          proposalRelationship(project.project, item)
+        ),
+      ],
+    });
+    setSelection(undefined);
+  };
 
   const tableCount = graph.nodes.filter((node) => node.kind === "table").length;
   const relationshipCount = graph.edges.filter(
@@ -396,16 +460,28 @@ export function SchemaDiagram({
       x: view.x + x * view.scale,
       y: view.y + y * view.scale,
     });
-    if (selection.kind === "relationship" || selection.kind === "proposal") {
+    if (
+      selection.kind === "relationship" ||
+      selection.kind === "proposal" ||
+      selection.kind === "suggestion"
+    ) {
+      const suggestion =
+        selection.kind === "suggestion"
+          ? suggestions.find((item) => item.id === selection.id)
+          : undefined;
       const ends =
         selection.kind === "proposal"
           ? [selection.from, selection.to]
-          : (() => {
-              const edge = graph.edges.find(
-                (item) => item.id === selection.edgeId
-              );
-              return edge ? [edge.from, edge.to] : [];
-            })();
+          : selection.kind === "suggestion"
+            ? suggestion
+              ? suggestionEnds(suggestion)
+              : []
+            : (() => {
+                const edge = graph.edges.find(
+                  (item) => item.id === selection.edgeId
+                );
+                return edge ? [edge.from, edge.to] : [];
+              })();
       const points = ends
         .map((end) => rowCenter(layout, graph, end))
         .filter((point): point is NonNullable<typeof point> => Boolean(point));
@@ -427,7 +503,7 @@ export function SchemaDiagram({
       left: toScreen(box.x, y),
       right: toScreen(box.x + box.width, y),
     };
-  }, [graph, layout, selection, view]);
+  }, [graph, layout, selection, view, suggestions]);
 
   const inspectorStyle = useMemo((): CSSProperties | undefined => {
     if (!selectionAnchor) return undefined;
@@ -534,12 +610,27 @@ export function SchemaDiagram({
 
   const controls = (
     <div className="eda-schema-controls" role="group" aria-label="Zoom">
+      {suggestions.length > 0 && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="eda-schema-text-button"
+          aria-label={`Accept ${suggestions.length} suggested ${suggestions.length === 1 ? "link" : "links"}`}
+          tooltip="Add every dashed, suggested link as a relationship. Select one line to see its matches first."
+          onClick={acceptAll}
+        >
+          <Link2 aria-hidden="true" />
+          Accept {suggestions.length}{" "}
+          {suggestions.length === 1 ? "link" : "links"}
+        </Button>
+      )}
       {onAddSource && (
         <Button
           type="button"
           variant="outline"
           size="sm"
-          className="eda-schema-add-source"
+          className="eda-schema-add-source eda-schema-text-button"
           tooltip="Add a table from a file; relate it to these tables next"
           onClick={onAddSource}
         >
@@ -595,7 +686,7 @@ export function SchemaDiagram({
         role="group"
         tabIndex={-1}
         aria-roledescription="diagram"
-        aria-label={`${tableCount} ${tableCount === 1 ? "table" : "tables"}, ${relationshipCount} ${relationshipCount === 1 ? "relationship" : "relationships"}`}
+        aria-label={`${tableCount} ${tableCount === 1 ? "table" : "tables"}, ${relationshipCount} ${relationshipCount === 1 ? "relationship" : "relationships"}${suggestions.length ? `, ${suggestions.length} suggested` : ""}`}
         data-panning={panning || undefined}
         data-linking={ghost ? "" : undefined}
         onKeyDown={(event) => {
@@ -722,6 +813,24 @@ export function SchemaDiagram({
                   }
                 />
               ))}
+            {suggestionPaths.map(({ suggestion, path }) => (
+              <SuggestedLine
+                key={suggestion.id}
+                suggestion={suggestion}
+                path={path}
+                selected={
+                  selection?.kind === "suggestion" &&
+                  selection.id === suggestion.id
+                }
+                dimmed={
+                  Boolean(selection) &&
+                  !(
+                    selection?.kind === "suggestion" &&
+                    selection.id === suggestion.id
+                  )
+                }
+              />
+            ))}
             {ghost && ghostStart && (
               <path
                 className="eda-schema-edge"
@@ -1022,6 +1131,46 @@ function SchemaEdgeLine({
       <path
         className="eda-schema-edge-hit"
         data-schema-edge={edge.id}
+        d={path.d}
+      />
+    </g>
+  );
+}
+
+/** A drafted link: dashed, with the share of rows that match. */
+function SuggestedLine({
+  suggestion,
+  path,
+  selected,
+  dimmed,
+}: {
+  suggestion: LinkProposal;
+  path: SchemaEdgePath;
+  selected: boolean;
+  dimmed: boolean;
+}) {
+  const share = suggestion.total
+    ? Math.floor((suggestion.matched / suggestion.total) * 100)
+    : 0;
+  return (
+    <g
+      className="eda-schema-edge-group"
+      data-suggested=""
+      data-selected={selected || undefined}
+      data-dimmed={dimmed || undefined}
+    >
+      <path className="eda-schema-edge" data-kind="suggested" d={path.d} />
+      <text
+        className="eda-schema-edge-share"
+        x={(path.start.x + path.end.x) / 2}
+        y={(path.start.y + path.end.y) / 2 - 5}
+        textAnchor="middle"
+      >
+        {share}% match
+      </text>
+      <path
+        className="eda-schema-edge-hit"
+        data-schema-suggestion={suggestion.id}
         d={path.d}
       />
     </g>

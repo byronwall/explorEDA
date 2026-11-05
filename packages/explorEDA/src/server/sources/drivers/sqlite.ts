@@ -10,9 +10,11 @@ import { setImmediate as nextTurn } from "node:timers/promises";
 import type { DatabaseSync, StatementSync } from "node:sqlite";
 import { loadSqlite } from "../../team/sqliteStore";
 import { columnFromValues, refuseBinary } from "../columnKinds";
+import { singleColumnKeys } from "../schema";
 import {
   SourceReadError,
   type DatabaseDriver,
+  type ForeignKey,
   type DatabaseSession,
   type ReadCursor,
   type ReadRequest,
@@ -58,6 +60,45 @@ class SqliteSession implements DatabaseSession {
       )
       .all() as { name: string; type: "table" | "view" }[];
     return rows.map((row) => ({ name: row.name, kind: row.type }));
+  }
+
+  async foreignKeys(): Promise<ForeignKey[]> {
+    const rows = this.db
+      .prepare(
+        `select t.name as tbl, f.id, f."table" as ref, f."from" as col, f."to" as refcol
+           from sqlite_schema t, pragma_foreign_key_list(t.name) f
+          where t.type = 'table'`
+      )
+      .all() as {
+      tbl: string;
+      id: number;
+      ref: string;
+      col: string;
+      refcol: string | null;
+    }[];
+    // A key that names no column points at the other table's primary key.
+    const primary = (table: string) =>
+      (
+        this.db
+          .prepare("select name from pragma_table_info(?) where pk = 1")
+          .get(table) as { name: string } | undefined
+      )?.name;
+    return singleColumnKeys(
+      rows.flatMap((row) => {
+        const refColumn = row.refcol ?? primary(row.ref);
+        return refColumn
+          ? [
+              {
+                constraint: `${row.tbl}\0${row.id}`,
+                table: row.tbl,
+                column: row.col,
+                refTable: row.ref,
+                refColumn,
+              },
+            ]
+          : [];
+      })
+    );
   }
 
   /** `schema.table` as SQL, unless a table's own name holds the dot. */

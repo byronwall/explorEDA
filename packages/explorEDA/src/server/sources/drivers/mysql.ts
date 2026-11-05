@@ -12,10 +12,12 @@ import mysql from "mysql2";
 import type { Column, Kind } from "../../../lib/readers/typedColumns";
 import { secretVariable } from "../../../node/secrets";
 import { decimalColumn, isoTimestamp, refuseBinary } from "../columnKinds";
+import { singleColumnKeys } from "../schema";
 import {
   SourceReadError,
   type DatabaseDriver,
   type DatabaseSession,
+  type ForeignKey,
   type ReadCursor,
   type ReadRequest,
   type ResolvedConnection,
@@ -145,6 +147,33 @@ class MysqlSession implements DatabaseSession {
       name: row.TABLE_NAME,
       kind: row.TABLE_TYPE === "VIEW" ? "view" : "table",
     }));
+  }
+
+  async foreignKeys(): Promise<ForeignKey[]> {
+    const [rows] = await this.query<
+      {
+        CONSTRAINT_NAME: string;
+        TABLE_NAME: string;
+        COLUMN_NAME: string;
+        REF_TABLE: string;
+        REF_COLUMN: string;
+      }[]
+    >(
+      `select constraint_name as CONSTRAINT_NAME, table_name as TABLE_NAME,
+              column_name as COLUMN_NAME, referenced_table_name as REF_TABLE,
+              referenced_column_name as REF_COLUMN
+         from information_schema.key_column_usage
+        where table_schema = database() and referenced_table_name is not null`
+    );
+    return singleColumnKeys(
+      rows.map((row) => ({
+        constraint: `${row.TABLE_NAME}\0${row.CONSTRAINT_NAME}`,
+        table: row.TABLE_NAME,
+        column: row.COLUMN_NAME,
+        refTable: row.REF_TABLE,
+        refColumn: row.REF_COLUMN,
+      }))
+    );
   }
 
   async read(request: ReadRequest, signal: AbortSignal): Promise<ReadCursor> {

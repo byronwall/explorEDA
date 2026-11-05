@@ -7,6 +7,7 @@ import { runSourceContract } from "../contract";
 import { writeContractDuckdb } from "../fixtures/duckdbContract";
 import { SourceReadError } from "../types";
 import { duckdbDriver } from "./duckdb";
+import { DuckDBInstance } from "@duckdb/node-api";
 
 let root = "";
 
@@ -33,6 +34,39 @@ runSourceContract("DuckDB", async () => ({
 }));
 
 describe("DuckDB files", () => {
+  it("lists one-column foreign keys", async () => {
+    const instance = await DuckDBInstance.create(
+      path.join(root, "keys.duckdb")
+    );
+    const setup = await instance.connect();
+    await setup.run(`
+      create table item (i_id integer primary key);
+      create table pair (a integer, b integer, primary key (a, b));
+      create table sale (
+        s_item integer references item (i_id),
+        a integer, b integer,
+        foreign key (a, b) references pair (a, b)
+      );
+    `);
+    setup.closeSync();
+    instance.closeSync();
+    const session = await duckdbDriver.connect(
+      connection({ path: "keys.duckdb" })
+    );
+    try {
+      expect(await session.foreignKeys()).toEqual([
+        {
+          table: "sale",
+          column: "s_item",
+          refTable: "item",
+          refColumn: "i_id",
+        },
+      ]);
+    } finally {
+      await session.close();
+    }
+  });
+
   it("can't read other files through a query", async () => {
     const session = await duckdbDriver.connect(
       connection({ path: "contract.duckdb" })

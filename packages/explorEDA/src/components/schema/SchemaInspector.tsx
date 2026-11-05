@@ -51,6 +51,7 @@ import type {
 } from "./schemaEditing";
 import { CommitInput, Field } from "./InspectorControls";
 import { traceField } from "@/lib/schema/schemaTrace";
+import { proposalRelationship } from "@/lib/project/linkProposals";
 
 /** Lets a use of a field jump to the chart in this workspace that reads it. */
 export interface SchemaChartLinks {
@@ -173,6 +174,15 @@ export function SchemaInspector({
       <RelationshipBody
         edgeId={selection.edgeId}
         graph={graph}
+        editing={editing?.project}
+        onSelect={onSelect}
+      />
+    );
+  } else if (selection.kind === "suggestion") {
+    title = "Suggested link";
+    body = (
+      <SuggestionBody
+        id={selection.id}
         editing={editing?.project}
         onSelect={onSelect}
       />
@@ -785,6 +795,71 @@ function CardinalitySelect({
         </SelectContent>
       </Select>
     </Field>
+  );
+}
+
+/** A drafted link: why it was proposed, how well it matches, and a choice. */
+function SuggestionBody({
+  id,
+  editing,
+  onSelect,
+}: {
+  id: string;
+  editing?: SchemaProjectEditing;
+  onSelect: (selection: SchemaSelection | undefined) => void;
+}) {
+  const suggestion = editing?.suggestions?.find((item) => item.id === id);
+  if (!editing || !suggestion) return null;
+  const { project } = editing;
+  const from = sourceName(project, suggestion.from.sourceId);
+  const to = sourceName(project, suggestion.to.sourceId);
+  return (
+    <>
+      <LinkLine project={editing} from={suggestion.from} to={suggestion.to} />
+      <p className="eda-schema-inspector-facts">
+        {suggestion.reason === "foreign-key"
+          ? "The database declares this foreign key."
+          : "The field names match, and so do their values."}{" "}
+        {suggestion.matched.toLocaleString("en-US")} of{" "}
+        {suggestion.total.toLocaleString("en-US")} {from} rows find a match in{" "}
+        {to}. {CARDINALITY_LABELS[suggestion.cardinality]}.
+      </p>
+      <div className="eda-schema-inspector-actions">
+        <Button
+          type="button"
+          size="sm"
+          onClick={() => {
+            editing.onChange(
+              addRelationship(
+                project,
+                proposalRelationship(project, suggestion)
+              )
+            );
+            onSelect({
+              kind: "relationship",
+              edgeId: `relationship:${suggestion.id}`,
+            });
+          }}
+        >
+          <Link2 aria-hidden="true" />
+          Accept
+        </Button>
+        {editing.onDismissSuggestion && (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            tooltip="Hide this suggestion. You can still relate these fields by dragging one onto the other."
+            onClick={() => {
+              editing.onDismissSuggestion!(suggestion.id);
+              onSelect(undefined);
+            }}
+          >
+            Dismiss
+          </Button>
+        )}
+      </div>
+    </>
   );
 }
 

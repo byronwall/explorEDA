@@ -7,6 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { nodeProjectFiles } from "../node/projectFiles";
 import { memorySecretStore } from "../node/secrets";
 import { writeContractSqlite } from "./sources/fixtures/sqliteContract";
+import { loadSqlite } from "./team/sqliteStore";
 import { isLocalHost, TOKEN_HEADER } from "./handler";
 import { startServer, type StartedServer } from "./server";
 
@@ -239,6 +240,49 @@ source @many db=app table=contract_many limit=5
         settings: { path: "data/app.db" },
       })
     ).toBeUndefined();
+  });
+
+  it("describes a connection's tables, columns, and foreign keys", async () => {
+    const { DatabaseSync } = await loadSqlite();
+    const db = new DatabaseSync(path.join(root, "data/shop.db"));
+    db.exec(`
+      create table customers (id integer primary key, name text);
+      create table orders (
+        id integer primary key,
+        customer_id integer references customers,
+        total numeric
+      );
+      insert into customers values (1, 'Ada'), (2, 'Lin');
+      insert into orders values (10, 1, 5), (11, 2, 7), (12, 1, 9);
+    `);
+    db.close();
+    writeFileSync(
+      path.join(root, "exploreda.eda"),
+      "project @p\n\nconnection @shop driver=sqlite path=data/shop.db\n"
+    );
+    const auth = { [TOKEN_HEADER]: token };
+    const tables = await get("/api/connections/shop/tables", auth);
+    expect(JSON.parse(tables.body)).toEqual([
+      { name: "customers", kind: "table", rows: 2 },
+      { name: "orders", kind: "table", rows: 3 },
+    ]);
+    const columns = await get("/api/connections/shop/tables/orders", auth);
+    expect(JSON.parse(columns.body)).toEqual([
+      { name: "id", type: "INTEGER" },
+      { name: "customer_id", type: "INTEGER" },
+      { name: "total", type: "numeric" },
+    ]);
+    const keys = await get("/api/connections/shop/keys", auth);
+    expect(JSON.parse(keys.body)).toEqual([
+      {
+        table: "orders",
+        column: "customer_id",
+        refTable: "customers",
+        refColumn: "id",
+      },
+    ]);
+    const missing = await get("/api/connections/shop/tables/nope", auth);
+    expect(missing.status).toBe(422);
   });
 
   it("knows which host names are this machine", () => {
