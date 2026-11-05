@@ -1,0 +1,12 @@
+{
+  "id": "49e16442-a265-4105-a58a-1578f6e46886",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:54950a",
+    "label": "Agent token ...54950a"
+  },
+  "createdAt": "2026-11-05T12:38:11.253Z",
+  "summary": "Changed \"Give parallel eval agents their own browser\" status to needs-review.",
+  "nodeIds": ["page-give-parallel-eval-agents-their-own-browser"]
+}

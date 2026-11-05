@@ -1,0 +1,12 @@
+{
+  "id": "15dd7413-218d-4073-b136-849f627213c2",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:54950a",
+    "label": "Agent token ...54950a"
+  },
+  "createdAt": "2026-11-05T12:38:11.361Z",
+  "summary": "Updated metadata for \"Give parallel eval agents their own browser\".",
+  "nodeIds": ["page-give-parallel-eval-agents-their-own-browser"]
+}

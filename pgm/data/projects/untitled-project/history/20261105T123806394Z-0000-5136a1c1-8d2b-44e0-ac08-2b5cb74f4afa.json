@@ -1,0 +1,12 @@
+{
+  "id": "5136a1c1-8d2b-44e0-ac08-2b5cb74f4afa",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f89a47",
+    "label": "Agent token ...f89a47"
+  },
+  "createdAt": "2026-11-05T12:38:06.394Z",
+  "summary": "Changed \"Box plot skips category labels\" status to needs-review.",
+  "nodeIds": ["page-box-plot-skips-category-labels"]
+}

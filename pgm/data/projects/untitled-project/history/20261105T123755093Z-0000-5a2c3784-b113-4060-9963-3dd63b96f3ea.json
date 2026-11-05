@@ -1,0 +1,12 @@
+{
+  "id": "5a2c3784-b113-4060-9963-3dd63b96f3ea",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:bc36ce",
+    "label": "Agent token ...bc36ce"
+  },
+  "createdAt": "2026-11-05T12:37:55.093Z",
+  "summary": "Updated metadata for \"Add-connection form confirms success\".",
+  "nodeIds": ["page-add-connection-form-confirms-success"]
+}

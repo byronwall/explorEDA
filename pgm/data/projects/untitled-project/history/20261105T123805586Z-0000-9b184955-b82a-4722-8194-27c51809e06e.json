@@ -1,0 +1,12 @@
+{
+  "id": "9b184955-b82a-4722-8194-27c51809e06e",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:fd8f59",
+    "label": "Agent token ...fd8f59"
+  },
+  "createdAt": "2026-11-05T12:38:05.586Z",
+  "summary": "Changed \"Scatter point labels\" status to needs-review.",
+  "nodeIds": ["page-scatter-point-labels"]
+}

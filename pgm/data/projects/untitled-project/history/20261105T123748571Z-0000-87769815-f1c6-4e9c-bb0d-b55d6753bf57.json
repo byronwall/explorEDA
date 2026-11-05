@@ -1,0 +1,12 @@
+{
+  "id": "87769815-f1c6-4e9c-bb0d-b55d6753bf57",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:af550e",
+    "label": "Agent token ...af550e"
+  },
+  "createdAt": "2026-11-05T12:37:48.571Z",
+  "summary": "Updated metadata for \"Several queries in one notebook\".",
+  "nodeIds": ["page-several-queries-in-one-notebook"]
+}

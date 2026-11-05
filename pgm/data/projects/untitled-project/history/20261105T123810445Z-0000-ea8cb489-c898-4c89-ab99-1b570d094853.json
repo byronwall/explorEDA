@@ -1,0 +1,12 @@
+{
+  "id": "ea8cb489-c898-4c89-ab99-1b570d094853",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:97da4c",
+    "label": "Agent token ...97da4c"
+  },
+  "createdAt": "2026-11-05T12:38:10.445Z",
+  "summary": "Changed \"Test the DuckDB install path from a clean npx install\" status to implemented.",
+  "nodeIds": ["page-test-the-duckdb-install-path-from-a-clean-npx-install"]
+}

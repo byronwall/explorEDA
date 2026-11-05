@@ -1,0 +1,12 @@
+{
+  "id": "a26f4466-8dfd-4ebf-8d37-8be8de11f203",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:41fc21",
+    "label": "Agent token ...41fc21"
+  },
+  "createdAt": "2026-11-05T12:38:01.635Z",
+  "summary": "Updated metadata for \"Histogram plus Split by makes a 99-bar chart\".",
+  "nodeIds": ["page-histogram-plus-split-by-makes-a-99-bar-chart"]
+}

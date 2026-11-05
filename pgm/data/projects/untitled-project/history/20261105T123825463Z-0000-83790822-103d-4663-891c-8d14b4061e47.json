@@ -1,0 +1,15 @@
+{
+  "id": "83790822-103d-4663-891c-8d14b4061e47",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7e4435",
+    "label": "Agent token ...7e4435"
+  },
+  "createdAt": "2026-11-05T12:38:25.463Z",
+  "summary": "Created \"Friendlier labels for warehouse column prefixes\" under \"Defaults for warehouse tables\".",
+  "nodeIds": [
+    "page-friendlier-labels-for-warehouse-column-prefixes",
+    "area-defaults-for-warehouse-tables"
+  ]
+}

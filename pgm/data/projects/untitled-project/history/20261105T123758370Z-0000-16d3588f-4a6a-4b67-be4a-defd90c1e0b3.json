@@ -1,0 +1,12 @@
+{
+  "id": "16d3588f-4a6a-4b67-be4a-defd90c1e0b3",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:27a798",
+    "label": "Agent token ...27a798"
+  },
+  "createdAt": "2026-11-05T12:37:58.370Z",
+  "summary": "Updated metadata for \"New charts fill the next free spot\".",
+  "nodeIds": ["page-new-charts-fill-the-next-free-spot"]
+}

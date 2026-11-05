@@ -1,0 +1,12 @@
+{
+  "id": "67616db4-49d3-4062-bd5a-21ec5e384a96",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a40354",
+    "label": "Agent token ...a40354"
+  },
+  "createdAt": "2026-11-05T12:37:46.933Z",
+  "summary": "Updated metadata for \"exploreda schema command\".",
+  "nodeIds": ["page-exploreda-schema-command"]
+}

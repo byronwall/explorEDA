@@ -1,0 +1,12 @@
+{
+  "id": "92f15544-8e2e-4145-b02b-6e5012699b2f",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:3324dc",
+    "label": "Agent token ...3324dc"
+  },
+  "createdAt": "2026-11-05T12:38:08.838Z",
+  "summary": "Changed \"Percent format where people look\" status to needs-review.",
+  "nodeIds": ["page-percent-format-where-people-look"]
+}

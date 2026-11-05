@@ -1,0 +1,12 @@
+{
+  "id": "a15345c8-8374-4ac3-8f73-f93b0668cde3",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:b0d3df",
+    "label": "Agent token ...b0d3df"
+  },
+  "createdAt": "2026-11-05T12:38:22.580Z",
+  "summary": "Created \"Rates on metric cards\" under \"Rates as measures\".",
+  "nodeIds": ["page-rates-on-metric-cards", "area-rates-as-measures"]
+}

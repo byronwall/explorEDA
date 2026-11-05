@@ -1,0 +1,12 @@
+{
+  "id": "1b41d1f8-4d7b-49f4-b7ed-fcefcd749ac4",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:472359",
+    "label": "Agent token ...472359"
+  },
+  "createdAt": "2026-11-05T12:37:52.528Z",
+  "summary": "Changed \"Column picker when a read is over the byte cap\" status to needs-review.",
+  "nodeIds": ["page-column-picker-when-a-read-is-over-the-byte-cap"]
+}

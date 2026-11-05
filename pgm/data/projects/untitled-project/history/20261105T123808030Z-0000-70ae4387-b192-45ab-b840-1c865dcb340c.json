@@ -1,0 +1,12 @@
+{
+  "id": "70ae4387-b192-45ab-b840-1c865dcb340c",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0893f9",
+    "label": "Agent token ...0893f9"
+  },
+  "createdAt": "2026-11-05T12:38:08.030Z",
+  "summary": "Changed \"Ratio and share measures\" status to needs-review.",
+  "nodeIds": ["page-ratio-and-share-measures"]
+}

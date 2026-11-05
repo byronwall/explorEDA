@@ -1,0 +1,12 @@
+{
+  "id": "53f57688-fdc9-46ca-a78c-939071c7bbab",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9df9be",
+    "label": "Agent token ...9df9be"
+  },
+  "createdAt": "2026-11-05T12:38:07.216Z",
+  "summary": "Changed \"Date axes accept limits or warn\" status to needs-review.",
+  "nodeIds": ["page-date-axes-accept-limits-or-warn"]
+}

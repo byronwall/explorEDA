@@ -1,0 +1,12 @@
+{
+  "id": "f62d2566-b783-4d6f-8275-9fc6af6f02c4",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:302705",
+    "label": "Agent token ...302705"
+  },
+  "createdAt": "2026-11-05T12:37:56.595Z",
+  "summary": "Changed \"Default measure and group skip key and ID fields\" status to needs-review.",
+  "nodeIds": ["page-default-measure-and-group-skip-key-and-id-fields"]
+}

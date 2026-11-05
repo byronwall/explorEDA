@@ -1,0 +1,12 @@
+{
+  "id": "777cff89-f4a9-4f59-a12f-6b00ac6be3d6",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:ad51a9",
+    "label": "Agent token ...ad51a9"
+  },
+  "createdAt": "2026-11-05T12:38:02.343Z",
+  "summary": "Changed \"Binning in calculations\" status to needs-review.",
+  "nodeIds": ["page-binning-in-calculations"]
+}

@@ -5,6 +5,7 @@ import { Label } from "./ui/label";
 import { X } from "lucide-react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { FieldMetadata, resolveFieldProfile } from "./FieldMetadata";
+import { RelatedFieldGroups } from "./RelatedFieldGroups";
 
 interface FieldSelectorProps {
   label: string;
@@ -54,6 +55,14 @@ export function FieldSelector({
             aria-label={label || placeholder}
             optionToNode={(option) => <FieldOptionLabel field={option.value} />}
             placeholder={placeholder}
+            // A caller that narrows the fields wants only those.
+            extra={
+              fields
+                ? undefined
+                : (close) => (
+                    <RelatedFieldGroups onSelect={close} onChoose={onChange} />
+                  )
+            }
           />
         </div>
       </div>

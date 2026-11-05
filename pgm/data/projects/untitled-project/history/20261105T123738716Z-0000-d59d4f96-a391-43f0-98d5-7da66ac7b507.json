@@ -1,0 +1,12 @@
+{
+  "id": "d59d4f96-a391-43f0-98d5-7da66ac7b507",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7dccb1",
+    "label": "Agent token ...7dccb1"
+  },
+  "createdAt": "2026-11-05T12:37:38.716Z",
+  "summary": "Updated metadata for \"Show 'Use a relationship' where people look\".",
+  "nodeIds": ["page-show-use-a-relationship-where-people-look"]
+}

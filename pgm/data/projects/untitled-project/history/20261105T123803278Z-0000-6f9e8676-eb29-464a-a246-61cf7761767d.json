@@ -1,0 +1,12 @@
+{
+  "id": "6f9e8676-eb29-464a-a246-61cf7761767d",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:aa6206",
+    "label": "Agent token ...aa6206"
+  },
+  "createdAt": "2026-11-05T12:38:03.278Z",
+  "summary": "Updated metadata for \"Say when missing values drop out of a sum\".",
+  "nodeIds": ["page-say-when-missing-values-drop-out-of-a-sum"]
+}

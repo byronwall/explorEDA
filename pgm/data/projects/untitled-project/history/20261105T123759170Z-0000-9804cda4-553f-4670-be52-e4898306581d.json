@@ -1,0 +1,12 @@
+{
+  "id": "9804cda4-553f-4670-be52-e4898306581d",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:78c71a",
+    "label": "Agent token ...78c71a"
+  },
+  "createdAt": "2026-11-05T12:37:59.170Z",
+  "summary": "Updated metadata for \"Stop writing deprecated axis min/max into dashboard text\".",
+  "nodeIds": ["page-stop-writing-deprecated-axis-min-max-into-dashboard-text"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "91c6691c-5013-455c-8ec2-8ca88a123e71",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:ad51a9",
+    "label": "Agent token ...ad51a9"
+  },
+  "createdAt": "2026-11-05T12:38:02.451Z",
+  "summary": "Updated metadata for \"Binning in calculations\".",
+  "nodeIds": ["page-binning-in-calculations"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "a95a40a7-2107-4c8c-8aba-4c359c7aaa14",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:aecb31",
+    "label": "Agent token ...aecb31"
+  },
+  "createdAt": "2026-11-05T12:38:09.640Z",
+  "summary": "Changed \"Sample size beside a rate\" status to needs-review.",
+  "nodeIds": ["page-sample-size-beside-a-rate"]
+}

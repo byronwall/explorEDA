@@ -1,0 +1,12 @@
+{
+  "id": "efc47bd3-47f9-4638-85fe-0a4453a93951",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9df9be",
+    "label": "Agent token ...9df9be"
+  },
+  "createdAt": "2026-11-05T12:38:07.324Z",
+  "summary": "Updated metadata for \"Date axes accept limits or warn\".",
+  "nodeIds": ["page-date-axes-accept-limits-or-warn"]
+}

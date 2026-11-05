@@ -1,0 +1,12 @@
+{
+  "id": "fb825d72-ec84-4f24-8e12-0c34affe4401",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:3324dc",
+    "label": "Agent token ...3324dc"
+  },
+  "createdAt": "2026-11-05T12:38:08.945Z",
+  "summary": "Updated metadata for \"Percent format where people look\".",
+  "nodeIds": ["page-percent-format-where-people-look"]
+}

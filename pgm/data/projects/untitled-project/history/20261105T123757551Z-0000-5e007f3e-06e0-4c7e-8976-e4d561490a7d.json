@@ -1,0 +1,12 @@
+{
+  "id": "5e007f3e-06e0-4c7e-8976-e4d561490a7d",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7c68ec",
+    "label": "Agent token ...7c68ec"
+  },
+  "createdAt": "2026-11-05T12:37:57.551Z",
+  "summary": "Updated metadata for \"Formulas accept labels and unqualified names\".",
+  "nodeIds": ["page-formulas-accept-labels-and-unqualified-names"]
+}

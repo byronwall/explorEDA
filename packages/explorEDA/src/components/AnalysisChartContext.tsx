@@ -5,6 +5,7 @@ import type {
   AnalysisStep,
   SourceDefinition,
 } from "@/types/AnalysisProject";
+import type { ExpandedTable, RelatedTable } from "./project/relatedFields";
 
 /**
  * What a chart inside `ExplorEdaProject` can learn about its rows: where each
@@ -19,6 +20,23 @@ export interface AnalysisChartContextValue {
   resultRows: readonly AnalysisResultRow[];
   /** Opens the query flow on the result rows behind a traced mark. */
   onOpenQueryFlow?: (rowKeys: string[]) => void;
+  /** Fields of related tables the field pickers offer. Unset when read-only. */
+  related?: RelatedFieldsContext;
+}
+
+export interface RelatedFieldsContext {
+  lookups: RelatedTable[];
+  expands: ExpandedTable[];
+  /**
+   * Adds a lookup to the view's query and resolves with the new field's id
+   * once the query has run, or undefined when it could not.
+   */
+  addField: (
+    relationshipId: string,
+    fieldId: string
+  ) => Promise<string | undefined>;
+  /** Opens a new view with one row per related record. */
+  openExpanded?: (relationshipId: string) => void;
 }
 
 const Context = createContext<AnalysisChartContextValue | undefined>(undefined);

@@ -1,0 +1,12 @@
+{
+  "id": "a7e08ce3-2a88-4542-9c75-b323ddd5b97e",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0fc2aa",
+    "label": "Agent token ...0fc2aa"
+  },
+  "createdAt": "2026-11-05T12:37:55.792Z",
+  "summary": "Changed \"Accessible names on Add-database table buttons\" status to needs-review.",
+  "nodeIds": ["page-accessible-names-on-add-database-table-buttons"]
+}
