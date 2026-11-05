@@ -585,11 +585,12 @@ export function RowChart({
       : undefined;
   const statusParts = [
     valueFilter && `${filterValues.length} categories selected`,
+    // Faded bars need their reason first, before a narrow chart cuts it.
+    faded && `faded: fewer than ${SMALL_SAMPLE} rows`,
     leftOut > 0 &&
       `${leftOut.toLocaleString()} ${leftOut === 1 ? "row" : "rows"} without ${getFieldLabel(liveSummary!.spec.measureField ?? "")} left out`,
     plan.other.length > 0 &&
       `${plan.other.length} smaller categories in Other categories`,
-    faded && `faded: fewer than ${SMALL_SAMPLE} rows`,
     settings.topN && plan.visible.length < settings.topN && plan.other.length
       ? `Top ${settings.topN} needs a taller chart; showing the top ${plan.visible.length}`
       : Boolean(settings.topN) &&
