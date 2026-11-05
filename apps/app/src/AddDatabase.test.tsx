@@ -138,9 +138,9 @@ describe("AddDatabase", () => {
       target: { value: "ord" },
     });
     expect(
-      screen.queryByRole("button", { name: "customers, table" })
+      screen.queryByRole("checkbox", { name: "customers, table" })
     ).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "orders, table" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "orders, table" }));
     expect(
       screen.getByLabelText("Source name").getAttribute("placeholder")
     ).toBe("orders-2");
@@ -150,6 +150,73 @@ describe("AddDatabase", () => {
         connection: "shop",
         table: "orders",
       })
+    );
+  });
+
+  it("adds several tables and opens the largest", async () => {
+    const act = actions({
+      listTables: vi.fn(async () => [
+        { name: "item", kind: "table" as const, rows: 18000 },
+        { name: "store_sales", kind: "table" as const, rows: 28694 },
+        { name: "inventory", kind: "table" as const, rows: 188400 },
+      ]),
+      addSources: vi.fn(async () => {}),
+      tableColumns: vi.fn(async () => [{ name: "i_item_sk", type: "INTEGER" }]),
+    });
+    render(
+      <AddDatabase
+        connections={[shop]}
+        sourceIds={[]}
+        actions={act}
+        onClose={vi.fn()}
+      />
+    );
+    fireEvent.click(
+      await screen.findByRole("checkbox", { name: "item, table, 18,000 rows" })
+    );
+    // Checking a table shows its columns.
+    await screen.findByText("i_item_sk");
+    fireEvent.click(
+      screen.getByRole("checkbox", { name: "store_sales, table, 28,694 rows" })
+    );
+    expect(
+      (
+        screen.getByLabelText(
+          "Which table is one row of your analysis?"
+        ) as HTMLSelectElement
+      ).value
+    ).toBe("store_sales");
+    // A table over the read limit says so, with the fix.
+    fireEvent.click(
+      screen.getByRole("checkbox", {
+        name: "inventory, table, 188,400 rows, over the read limit",
+      })
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: /Read up to 200,000 rows/ })
+    );
+    fireEvent.change(
+      screen.getByLabelText("Which table is one row of your analysis?"),
+      { target: { value: "store_sales" } }
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Add 3 tables and read" })
+    );
+    await waitFor(() =>
+      expect(act.addSources).toHaveBeenCalledWith(
+        [
+          { sourceId: "item", database: { connection: "shop", table: "item" } },
+          {
+            sourceId: "store-sales",
+            database: { connection: "shop", table: "store_sales" },
+          },
+          {
+            sourceId: "inventory",
+            database: { connection: "shop", table: "inventory", limit: 200000 },
+          },
+        ],
+        "store-sales"
+      )
     );
   });
 
@@ -209,7 +276,7 @@ describe("AddDatabase", () => {
       target: { value: "test-only" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Save and read" }));
-    await screen.findByRole("button", { name: "orders, table" });
+    await screen.findByRole("checkbox", { name: "orders, table" });
     expect(saveSecret).toHaveBeenCalledWith("shop", "test-only");
   });
 });

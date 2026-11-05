@@ -1,16 +1,19 @@
 /**
- * Adds a database source without editing project text: pick a connection
- * or add one, then pick a table or write a query. The new source is read
- * at once and opens in a new analysis, as charting a data file does.
+ * Adds database sources without editing project text: pick a connection
+ * or add one, then check tables or write a query. Each new source is read
+ * at once. One table opens in a new analysis, as charting a data file
+ * does; several open one analysis on the table the user picks, with the
+ * rest added beside it, ready to relate.
  */
 import { useEffect, useMemo, useState } from "react";
 import {
+  DEFAULT_ROW_LIMIT,
   sourceIdForTable,
   type ConnectionDefinition,
   type DatabaseSource,
 } from "exploreda";
 import { ReadProblem, useRead } from "./DatabaseSourceViews";
-import type { DatabaseTable } from "./httpFiles";
+import type { DatabaseTable, TableColumn } from "./httpFiles";
 
 export interface AddDatabaseActions {
   listTables(connectionId: string): Promise<DatabaseTable[]>;
@@ -21,6 +24,13 @@ export interface AddDatabaseActions {
     secret?: string
   ): Promise<void>;
   addSource(sourceId: string, database: DatabaseSource): Promise<void>;
+  /** Adds several sources and opens an analysis of `main` only. */
+  addSources?(
+    sources: { sourceId: string; database: DatabaseSource }[],
+    main: string
+  ): Promise<void>;
+  /** A table's columns, shown before it is read. */
+  tableColumns?(connectionId: string, table: string): Promise<TableColumn[]>;
   saveSecret?(connectionId: string, secret: string): Promise<void>;
 }
 
@@ -78,7 +88,7 @@ export function AddDatabase({
       </label>
       {initialConnection && connection === initialConnection && (
         <p className="app-muted app-added" role="status">
-          Added the {connection} connection. Pick a table or write a query.
+          Added the {connection} connection. Check tables or write a query.
         </p>
       )}
       {connection === NEW ? (
@@ -285,7 +295,13 @@ function NewConnectionForm({
   );
 }
 
-/** Picks a table, or takes a query, and names the new source. */
+const count = (value: number) => value.toLocaleString("en-US");
+
+/** A limit above a table's row count, rounded so it reads easily. */
+const roomyLimit = (rows: number) =>
+  Math.ceil(rows / DEFAULT_ROW_LIMIT) * DEFAULT_ROW_LIMIT;
+
+/** Checks tables, or takes a query, and names the new sources. */
 function SourcePicker({
   connection,
   sourceIds,
@@ -300,16 +316,47 @@ function SourcePicker({
   const [mode, setMode] = useState<"table" | "sql">("table");
   const [tables, setTables] = useState<DatabaseTable[]>();
   const [filter, setFilter] = useState("");
-  const [table, setTable] = useState<string>();
+  const [checked, setChecked] = useState<string[]>([]);
+  const [expanded, setExpanded] = useState<string>();
+  const [limits, setLimits] = useState<Record<string, number>>({});
+  const [chosenMain, setMain] = useState<string>();
   const [sql, setSql] = useState("");
   const [name, setName] = useState("");
   const load = useRead(async () => {
     setTables(await actions.listTables(connection));
   });
+  const byName = new Map((tables ?? []).map((item) => [item.name, item]));
+  const several = mode === "table" && checked.length > 1;
+  // The table one analysis row is: the user's pick, or the largest.
+  const main =
+    chosenMain && checked.includes(chosenMain)
+      ? chosenMain
+      : [...checked].sort(
+          (a, b) => (byName.get(b)?.rows ?? 0) - (byName.get(a)?.rows ?? 0)
+        )[0];
+  const database = (table: string): DatabaseSource => ({
+    connection,
+    table,
+    ...(limits[table] ? { limit: limits[table] } : {}),
+  });
   const add = useRead(async () => {
-    const database: DatabaseSource =
-      mode === "table" ? { connection, table: table! } : { connection, sql };
-    await actions.addSource(sourceId, database);
+    if (several) {
+      const taken = [...sourceIds];
+      const sources = checked.map((table) => {
+        const sourceId = sourceIdForTable(table, taken);
+        taken.push(sourceId);
+        return { sourceId, database: database(table) };
+      });
+      await actions.addSources!(
+        sources,
+        sources[checked.indexOf(main!)]!.sourceId
+      );
+      return;
+    }
+    await actions.addSource(
+      sourceId,
+      mode === "table" ? database(checked[0]!) : { connection, sql }
+    );
   });
   useEffect(() => {
     void load.run();
@@ -320,8 +367,8 @@ function SourcePicker({
   const suggested =
     mode === "sql"
       ? sourceIdForTable("query", sourceIds)
-      : table
-        ? sourceIdForTable(table, sourceIds)
+      : checked[0]
+        ? sourceIdForTable(checked[0], sourceIds)
         : "";
   const sourceId = name.trim()
     ? name
@@ -329,15 +376,27 @@ function SourcePicker({
         .toLowerCase()
         .replace(/[^a-z0-9_-]+/g, "-")
     : suggested;
-  const clash = sourceIds.includes(sourceId);
+  const clash = !several && sourceIds.includes(sourceId);
   const ready =
-    !clash && (mode === "table" ? Boolean(table) : Boolean(sql.trim()));
+    !clash && (mode === "table" ? checked.length > 0 : Boolean(sql.trim()));
   const shown = useMemo(
     () =>
       (tables ?? []).filter((item) =>
         item.name.toLowerCase().includes(filter.trim().toLowerCase())
       ),
     [tables, filter]
+  );
+  const toggle = (table: string) => {
+    setChecked((previous) =>
+      previous.includes(table)
+        ? previous.filter((item) => item !== table)
+        : [...previous, table]
+    );
+    setExpanded(table);
+  };
+  const overLimit = checked.filter(
+    (table) =>
+      (byName.get(table)?.rows ?? 0) > (limits[table] ?? DEFAULT_ROW_LIMIT)
   );
 
   return (
@@ -362,7 +421,7 @@ function SourcePicker({
           aria-checked={mode === "table"}
           onClick={() => setMode("table")}
         >
-          A table
+          Tables
         </button>
         <button
           type="button"
@@ -396,19 +455,21 @@ function SourcePicker({
               aria-label={`Tables in ${connection}`}
             >
               {shown.map((item) => (
-                <li key={item.name}>
-                  <button
-                    type="button"
-                    aria-label={`${item.name}, ${item.kind}`}
-                    aria-pressed={table === item.name}
-                    onClick={() => setTable(item.name)}
-                  >
-                    <span>{item.name}</span>
-                    {item.kind === "view" && (
-                      <span className="app-badge app-badge-warning">view</span>
-                    )}
-                  </button>
-                </li>
+                <TableItem
+                  key={item.name}
+                  connection={connection}
+                  table={item}
+                  checked={checked.includes(item.name)}
+                  expanded={expanded === item.name}
+                  limit={limits[item.name]}
+                  columns={actions.tableColumns}
+                  onToggle={() => toggle(item.name)}
+                  onExpand={() =>
+                    setExpanded((open) =>
+                      open === item.name ? undefined : item.name
+                    )
+                  }
+                />
               ))}
               {!shown.length && (
                 <li className="app-muted">
@@ -419,6 +480,29 @@ function SourcePicker({
               )}
             </ul>
           )}
+          {overLimit.map((table) => {
+            const rows = byName.get(table)!.rows!;
+            return (
+              <p key={table} className="app-limit-note" role="status">
+                {table} has {count(rows)} rows, more than the{" "}
+                {count(DEFAULT_ROW_LIMIT)} a read keeps.{" "}
+                <button
+                  type="button"
+                  className="app-button app-button-sm app-button-ghost"
+                  onClick={() =>
+                    setLimits((previous) => ({
+                      ...previous,
+                      [table]: roomyLimit(rows),
+                    }))
+                  }
+                >
+                  Read up to {count(roomyLimit(rows))} rows (limit=
+                  {roomyLimit(rows)})
+                </button>{" "}
+                or read part of it with A query.
+              </p>
+            );
+          })}
         </>
       ) : (
         <label className="app-field">
@@ -432,14 +516,42 @@ function SourcePicker({
           />
         </label>
       )}
-      <label className="app-field">
-        <span>Source name</span>
-        <input
-          value={name}
-          placeholder={suggested || "Pick a table first"}
-          onChange={(event) => setName(event.target.value)}
-        />
-      </label>
+      {several ? (
+        <>
+          <label className="app-field">
+            <span>Which table is one row of your analysis?</span>
+            <select
+              value={main}
+              onChange={(event) => setMain(event.target.value)}
+            >
+              {checked.map((table) => (
+                <option key={table} value={table}>
+                  {table}
+                  {byName.get(table)?.rows !== undefined
+                    ? ` · ${count(byName.get(table)!.rows!)} rows`
+                    : ""}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p className="app-muted app-add-note">
+            Opens one analysis of {main}. The other{" "}
+            {checked.length === 2
+              ? "table is"
+              : `${checked.length - 1} tables are`}{" "}
+            added beside it, ready to relate.
+          </p>
+        </>
+      ) : (
+        <label className="app-field">
+          <span>Source name</span>
+          <input
+            value={name}
+            placeholder={suggested || "Check a table first"}
+            onChange={(event) => setName(event.target.value)}
+          />
+        </label>
+      )}
       {clash && (
         <p className="app-source-error">
           The project already has a source named {sourceId}.
@@ -451,7 +563,11 @@ function SourcePicker({
           className="app-button app-button-primary"
           disabled={!ready || add.state.status === "reading"}
         >
-          {add.state.status === "reading" ? "Reading…" : "Add and read"}
+          {add.state.status === "reading"
+            ? "Reading…"
+            : several
+              ? `Add ${checked.length} tables and read`
+              : "Add and read"}
         </button>
         <button
           type="button"
@@ -467,5 +583,86 @@ function SourcePicker({
         onRetry={add.run}
       />
     </form>
+  );
+}
+
+/** One table to check, with its size, and its columns when expanded. */
+function TableItem({
+  connection,
+  table,
+  checked,
+  expanded,
+  limit = DEFAULT_ROW_LIMIT,
+  columns,
+  onToggle,
+  onExpand,
+}: {
+  connection: string;
+  table: DatabaseTable;
+  checked: boolean;
+  expanded: boolean;
+  limit?: number;
+  columns?: AddDatabaseActions["tableColumns"];
+  onToggle: () => void;
+  onExpand: () => void;
+}) {
+  const [list, setList] = useState<TableColumn[]>();
+  const [failed, setFailed] = useState<string>();
+  useEffect(() => {
+    if (!expanded || list || !columns) return;
+    columns(connection, table.name).then(setList, (error: unknown) =>
+      setFailed(error instanceof Error ? error.message : String(error))
+    );
+  }, [expanded, list, columns, connection, table.name]);
+  const over = table.rows !== undefined && table.rows > limit;
+  return (
+    <li className="app-table-item" data-checked={checked || undefined}>
+      <label className="app-table-pick">
+        <input
+          type="checkbox"
+          checked={checked}
+          aria-label={`${table.name}, ${table.kind}${table.rows === undefined ? "" : `, ${count(table.rows)} rows`}${over ? ", over the read limit" : ""}`}
+          onChange={onToggle}
+        />
+        <span className="app-table-name">{table.name}</span>
+        {table.kind === "view" && (
+          <span className="app-badge app-badge-warning">view</span>
+        )}
+        {table.rows !== undefined && (
+          <span className="app-table-rows" data-over={over || undefined}>
+            {count(table.rows)} rows{over ? " · over limit" : ""}
+          </span>
+        )}
+      </label>
+      {columns && (
+        <button
+          type="button"
+          className="app-table-expand"
+          aria-expanded={expanded}
+          aria-label={`Columns of ${table.name}`}
+          onClick={onExpand}
+        >
+          <span aria-hidden="true">{expanded ? "▾" : "▸"}</span>
+        </button>
+      )}
+      {expanded && columns && (
+        <div className="app-table-columns">
+          {failed ? (
+            <p className="app-source-error">{failed}</p>
+          ) : list ? (
+            <ul aria-label={`${table.name} columns`}>
+              {list.map((column) => (
+                <li key={column.name}>
+                  <span>{column.name}</span>
+                  <span className="app-muted">{column.type}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="app-muted">Listing columns…</p>
+          )}
+        </div>
+      )}
+    </li>
   );
 }

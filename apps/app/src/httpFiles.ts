@@ -1,5 +1,6 @@
 import {
   ProjectFileError,
+  type ForeignKey,
   type ProjectFiles,
   type SnapshotInfo,
 } from "exploreda";
@@ -65,12 +66,23 @@ export interface DatabaseRefresh {
   saveSecret(connectionId: string, secret: string): Promise<void>;
   /** The tables and views a connection can read. */
   listTables(connectionId: string): Promise<DatabaseTable[]>;
+  /** A table's columns and database types, without reading its rows. */
+  tableColumns(connectionId: string, table: string): Promise<TableColumn[]>;
+  /** The foreign keys a connection declares. */
+  foreignKeys(connectionId: string): Promise<ForeignKey[]>;
 }
 
 export interface DatabaseTable {
   name: string;
   schema?: string;
   kind: "table" | "view";
+  /** Its row count, for local database files. */
+  rows?: number;
+}
+
+export interface TableColumn {
+  name: string;
+  type: string;
 }
 
 export type AppFiles = Omit<ProjectFiles, "watch"> & {
@@ -203,6 +215,18 @@ export function databaseRefresh(
         `${api}/connections/${encodeURIComponent(connectionId)}/tables`,
         { method: "GET" }
       )) as unknown as DatabaseTable[];
+    },
+    async tableColumns(connectionId, table) {
+      return (await call(
+        `${api}/connections/${encodeURIComponent(connectionId)}/tables/${encodeURIComponent(table)}`,
+        { method: "GET" }
+      )) as unknown as TableColumn[];
+    },
+    async foreignKeys(connectionId) {
+      return (await call(
+        `${api}/connections/${encodeURIComponent(connectionId)}/keys`,
+        { method: "GET" }
+      )) as unknown as ForeignKey[];
     },
     async saveSecret(connectionId, secret) {
       await call(

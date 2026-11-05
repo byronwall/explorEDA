@@ -6,7 +6,9 @@ import {
   HIDDEN_PROJECT_FILE,
   PROJECT_FILE,
   projectFileText,
+  proposeLinks,
   type AnalysisProject,
+  type ForeignKey,
   type AnalysisView,
   type ExplorEdaProjectChange,
   type ExplorEdaProjectHandle,
@@ -75,6 +77,8 @@ export interface ProjectActions {
   saveSecret?(connectionId: string, secret: string): Promise<void>;
   /** Adding database sources from the app, where the server reads them. */
   database?: Omit<AddDatabaseActions, "saveSecret">;
+  /** Foreign keys a connection declares, to draft relationships from. */
+  foreignKeys?(connectionId: string): Promise<ForeignKey[]>;
 }
 
 /** What to show open when the workspace starts again after a reload. */
@@ -99,6 +103,8 @@ export function ProjectWorkspace({
   initialPanel,
   onSelect,
   notebookMemory,
+  dismissedLinks,
+  onDismissLink,
   actions,
   theme,
   onThemeChange,
@@ -126,6 +132,9 @@ export function ProjectWorkspace({
   onSelect: (selection: Selection) => void;
   /** A notebook's last working block text, kept by the host across reloads. */
   notebookMemory?: (path: string) => { current: Record<number, string> };
+  /** Drafted links the user dismissed, kept by the host across reloads. */
+  dismissedLinks?: ReadonlySet<string>;
+  onDismissLink?: (id: string) => void;
 }) {
   const [project, setProject] = useState<AnalysisProject>(folder.project);
   const [views, setViews] = useState(() => folderViews(folder));
@@ -277,6 +286,46 @@ export function ProjectWorkspace({
       : undefined;
 
   const databaseIds = Object.keys(folder.databases);
+  // Connections with two or more sources: the tables links are drafted for.
+  const linkedConnections = [
+    ...new Set(
+      databaseIds
+        .map((id) => folder.databases[id]!.connection)
+        .filter((connection, index, all) => all.indexOf(connection) !== index)
+    ),
+  ];
+  const [keys, setKeys] = useState<Record<string, ForeignKey[]>>({});
+  const [dismissed, setDismissed] = useState(
+    () => new Set(dismissedLinks ?? [])
+  );
+  useEffect(() => {
+    if (readOnly) return;
+    for (const connection of linkedConnections) {
+      actions.foreignKeys?.(connection).then(
+        (list) => setKeys((previous) => ({ ...previous, [connection]: list })),
+        // Without declared keys, links are drafted from names alone.
+        () => {}
+      );
+    }
+    // Asked once per connection; the app caches the answer.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [linkedConnections.join("\u0000"), readOnly]);
+  const proposals = useMemo(
+    () =>
+      readOnly
+        ? []
+        : proposeLinks({
+            project,
+            tables: folder.tables,
+            databases: folder.databases,
+            foreignKeys: keys,
+          }).filter((item) => !dismissed.has(item.id)),
+    [readOnly, project, folder, keys, dismissed]
+  );
+  const dismissLink = (id: string) => {
+    setDismissed((previous) => new Set(previous).add(id));
+    onDismissLink?.(id);
+  };
   const canAddDatabase = !readOnly && Boolean(actions.database);
   const unread = unreadSources(folder);
   const problems = visibleProblems(folder, project);
@@ -541,7 +590,16 @@ export function ProjectWorkspace({
               <span className="app-muted">
                 {project.relationships.length
                   ? `${project.relationships.length} link${project.relationships.length === 1 ? "" : "s"} between ${project.sources.length} tables`
-                  : `Relate ${project.sources.length} tables to chart their fields together`}
+                  : proposals.length
+                    ? `${project.sources.length} tables`
+                    : `Relate ${project.sources.length} tables to chart their fields together`}
+                {proposals.length > 0 && (
+                  <span className="app-suggested">
+                    {" · "}
+                    {proposals.length} suggested link
+                    {proposals.length === 1 ? "" : "s"} to review
+                  </span>
+                )}
               </span>
             </button>
           )}
@@ -621,6 +679,8 @@ export function ProjectWorkspace({
             onAddSource={
               canAddDatabase ? () => setAddingDatabase(true) : undefined
             }
+            linkProposals={proposals}
+            onDismissLinkProposal={dismissLink}
             createWorker={createAnalysisWorker}
             toolbarStart={tabs}
           />

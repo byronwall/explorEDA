@@ -100,35 +100,39 @@ export async function addConnection(
 }
 
 /**
- * Adds a source that reads a database, and a new analysis that charts it,
- * as charting a data file does. Returns the source's ID and the analysis.
+ * Adds sources that read a database, and a new analysis that charts `main`,
+ * as charting a data file does. The other sources get no analysis of their
+ * own; they are there to relate. Returns the analysis.
  */
-export async function addDatabaseSource(
+export async function addDatabaseSources(
   files: ProjectFiles,
   folder: ProjectFolder,
   {
-    sourceId,
-    database,
+    sources,
+    main,
     projectName,
     layout,
   }: {
-    sourceId: string;
-    database: DatabaseSource;
+    sources: { sourceId: string; database: DatabaseSource }[];
+    main: string;
     projectName: string;
     layout: "visible" | "hidden";
   }
 ) {
   const { path, text } = await projectText(files, folder, layout);
-  await files.write(
-    path,
-    addDatabaseSourceText(text, { projectId: projectName, sourceId, database })
-  );
-  const analysis = analysisPathFor(sourceId, takenPaths(folder));
+  let next = text;
+  for (const { sourceId, database } of sources) {
+    next = addDatabaseSourceText(next, {
+      projectId: projectName,
+      sourceId,
+      database,
+    });
+  }
+  await files.write(path, next!);
+  const analysis = analysisPathFor(main, takenPaths(folder));
   await files.write(
     analysis,
-    newAnalysisText(sourceId, analysis, labelFromId(sourceId), {
-      starter: true,
-    })
+    newAnalysisText(main, analysis, labelFromId(main), { starter: true })
   );
   return analysis;
 }

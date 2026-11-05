@@ -7,7 +7,7 @@ import {
 import { describe, expect, it } from "vitest";
 import {
   chartDataFile,
-  addDatabaseSource,
+  addDatabaseSources,
   createAnalysis,
   openView,
   removeSource,
@@ -93,9 +93,11 @@ describe("project actions", () => {
       "exploreda.eda": project,
       "kept.eda": 'eda query=plays\ndashboard "Mine"\n',
     });
-    await addDatabaseSource(files, await readProjectFolder(files), {
-      sourceId: "plays",
-      database: { connection: "app", table: "plays" },
+    await addDatabaseSources(files, await readProjectFolder(files), {
+      sources: [
+        { sourceId: "plays", database: { connection: "app", table: "plays" } },
+      ],
+      main: "plays",
       projectName: "shop",
       layout: "visible",
     });
@@ -104,6 +106,37 @@ describe("project actions", () => {
       "exploreda.eda": project,
       "kept.eda": 'eda query=plays\ndashboard "Mine"\n',
     });
+  });
+
+  it("adds several tables with one analysis, of the main table", async () => {
+    const files = memoryProjectFiles({
+      "exploreda.eda":
+        "project @shop\n\nconnection @app driver=sqlite path=app.db\n",
+    });
+    const path = await addDatabaseSources(
+      files,
+      await readProjectFolder(files),
+      {
+        sources: [
+          { sourceId: "item", database: { connection: "app", table: "item" } },
+          {
+            sourceId: "sales",
+            database: { connection: "app", table: "sales", limit: 200000 },
+          },
+        ],
+        main: "sales",
+        projectName: "shop",
+        layout: "visible",
+      }
+    );
+    expect(path).toBe("sales.eda");
+    const text = files.snapshot()["exploreda.eda"]!;
+    expect(text).toContain("source @item db=app table=item");
+    expect(text).toContain("source @sales db=app table=sales limit=200000");
+    expect(Object.keys(files.snapshot()).sort()).toEqual([
+      "exploreda.eda",
+      "sales.eda",
+    ]);
   });
 
   describe("joins added from the app", () => {
