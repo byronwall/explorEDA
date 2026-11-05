@@ -105,7 +105,7 @@ function setup(target: ChartSettings, aggregation: "sum" | "average" = "sum") {
     );
   const filter = (channel: string) =>
     fireEvent.click(screen.getByRole("button", { name: `${channel} only` }));
-  return { top, filter };
+  return { top, filter, container: view.container };
 }
 
 const bars: BarChartSettings = {
@@ -168,4 +168,33 @@ it("keeps a time series value axis while another chart filters", () => {
   expect(before).toBeGreaterThanOrEqual(100);
   filter("Web");
   expect(top()).toBe(before);
+});
+
+it("keeps a filtered-out series in the time series legend, dimmed", () => {
+  const line: LineChartSettings = {
+    ...lineChartDefinition.createDefaultSettings(layout),
+    id: "time",
+    xField: "Date",
+    time: {
+      ...DEFAULT_TIME_SERIES,
+      interval: "day",
+      aggregation: "sum",
+      measureField: "Amount",
+      splitField: "Channel",
+    },
+  };
+  const { filter, container } = setup(line);
+  const legend = () =>
+    [...container.querySelectorAll('[aria-label="Time series legend"] > span')]
+      .slice(1)
+      .map(
+        (item) =>
+          `${item.textContent}${item.hasAttribute("data-empty") ? " (empty)" : ""}`
+      );
+  expect(legend()).toEqual(["Web", "Store"]);
+  filter("Web");
+  expect(legend()).toEqual([
+    "Web",
+    "Store, no rows after other filters (empty)",
+  ]);
 });

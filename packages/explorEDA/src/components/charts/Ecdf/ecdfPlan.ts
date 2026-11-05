@@ -322,10 +322,26 @@ export function planEcdf({
   const resolve = snapshot.colorScale
     ? makeColorScale(snapshot.colorScale)
     : null;
+  // Groups rank by their rows over all rows, so the top groups, Other, and
+  // each group's color hold still while other charts filter.
+  const allCounts = new Map<string, number>();
+  if (settings.colorField && settings.scaleTo !== "filtered")
+    for (const id of snapshot.allIds) {
+      if (numericExclusionReason(snapshot.values[id])) continue;
+      const key = categoryKey(categoryValue(snapshot.groupData?.[id]));
+      allCounts.set(key, (allCounts.get(key) ?? 0) + 1);
+    }
+  const rankCount = ([key, group]: [string, { entries: unknown[] }]) =>
+    allCounts.get(key) ?? group.entries.length;
   const ranked = [...groups].sort(
     (a, b) =>
-      b[1].entries.length - a[1].entries.length ||
+      rankCount(b) - rankCount(a) ||
       categoryLabel(a[1].value).localeCompare(categoryLabel(b[1].value))
+  );
+  const colorRank = new Map(
+    [...allCounts]
+      .sort((a, b) => b[1] - a[1])
+      .map(([key], index) => [key, index])
   );
   const shown = ranked.slice(0, MAX_ECDF_GROUPS);
   const rest = ranked.slice(MAX_ECDF_GROUPS);
@@ -395,7 +411,7 @@ export function planEcdf({
     shown.forEach(([key, group], index) => {
       const fallback =
         snapshot.themeColors?.categorical ?? defaultCategoricalColors;
-      let color = fallback[index % fallback.length]!;
+      let color = fallback[(colorRank.get(key) ?? index) % fallback.length]!;
       if (resolve) {
         try {
           color = resolve(group.value);

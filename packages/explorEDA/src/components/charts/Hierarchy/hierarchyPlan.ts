@@ -17,6 +17,8 @@ export interface HierarchySnapshot {
   revision: string;
   /** Rows after other filters. */
   liveIds: number[];
+  /** Every row the chart can draw. Branch colors rank over them. */
+  allIds?: number[];
   levelData: Record<string, Record<number, datum>>;
   measureData: Record<number, datum>;
   /** A workspace color scale for the first level, when one exists. */
@@ -231,8 +233,25 @@ export function planHierarchy({
   root.color = snapshot.themeColors?.mark ?? ONE_COLOR;
   const colorBy = settings.colorBy ?? "branch";
   const one = snapshot.themeColors?.mark ?? ONE_COLOR;
+  // Branches rank by rows over all rows, so each keeps its color while
+  // other charts filter others out.
+  const branchRank = new Map<string, number>();
+  if (snapshot.allIds && levels[0] && settings.scaleTo !== "filtered") {
+    const data = snapshot.levelData[levels[0]] ?? {};
+    const counts = new Map<string, number>();
+    for (const id of snapshot.allIds) {
+      const key = categoryKey(categoryValue(data[id]));
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    [...counts]
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([key], index) => branchRank.set(key, index));
+  }
   root.children.forEach((branch, index) => {
-    let color = palette[index % palette.length]!;
+    let color =
+      palette[
+        (branchRank.get(categoryKey(branch.value)) ?? index) % palette.length
+      ]!;
     if (colorBy === "none") {
       color = one;
     } else if (branch.kind === "missing") {

@@ -2,7 +2,12 @@ import { useId, useMemo, useState } from "react";
 import { arc as shapeArc, pie as shapePie } from "d3-shape";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
-import { categoryEqual, categoryIncludes } from "@/lib/categories";
+import {
+  categoryEqual,
+  categoryIncludes,
+  categoryKey,
+  categoryValue,
+} from "@/lib/categories";
 import {
   convertFieldValue,
   formatFieldValue as formatValue,
@@ -24,7 +29,7 @@ import {
   useTraceSource,
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
-import { useGetLiveIds } from "../useGetLiveData";
+import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import type { DonutSettings } from "./definition";
 import type { DonutTrace } from "./DonutTraceBody";
 import { planDonut, type DonutSlice } from "./donutPlan";
@@ -49,6 +54,7 @@ export function Donut({
   const api = useChartTraceApi();
   const revision = useTraceRevision(settings);
   const liveIds = useGetLiveIds(settings, facetIds);
+  const allIds = useGetAllIds(settings);
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
@@ -139,13 +145,31 @@ export function Donut({
       ? slice.label
       : formatFieldValue(settings.field, slice.value);
 
+  // A category's color comes from its rank by rows over all rows, so it
+  // keeps its color while other charts filter others out.
+  const colorRank = useMemo(() => {
+    if (settings.scaleTo === "filtered") return new Map<string, number>();
+    const data = getColumnData(settings.field);
+    const counts = new Map<string, number>();
+    for (const id of allIds) {
+      const key = categoryKey(categoryValue(data[id]));
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    return new Map(
+      [...counts]
+        .sort((a, b) => b[1] - a[1])
+        .map(([key], index) => [key, index])
+    );
+  }, [allIds, getColumnData, settings.field, settings.scaleTo]);
+
   const colorOf = (slice: DonutSlice, index: number) =>
     slice.key === "__other"
       ? OTHER_COLOR
       : settings.colorScaleId
         ? getColorForValue(settings.colorScaleId, slice.value, themeColors.mark)
-        : (themeColors.categorical[index % themeColors.categorical.length] ??
-          themeColors.mark);
+        : (themeColors.categorical[
+            (colorRank.get(slice.key) ?? index) % themeColors.categorical.length
+          ] ?? themeColors.mark);
 
   const valueFilter = settings.filters.find(
     (filter): filter is ValueFilter =>

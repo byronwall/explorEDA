@@ -180,108 +180,119 @@ export function planTimeSeries(
     : undefined;
   const invalidDateIds: number[] = [];
   const points: TimePoint[] = [];
-  const series = [...groupMap]
-    .map(([key, value], index) => {
-      const label = time.splitField ? categoryLabel(value) : metricLabel;
-      const fallback =
-        snapshot.themeColors?.categorical ?? defaultCategoricalColors;
-      const seriesColor = color?.(value) ?? fallback[index % fallback.length]!;
-      const ids = snapshot.allIds.filter(
-        (id) =>
-          liveSet.has(id) &&
-          categoryKey(
-            time.splitField ? categoryValue(snapshot.groups[id]) : null
-          ) === key
-      );
-      const result = rollupByPeriod(
-        ids,
-        snapshot.dates,
-        snapshot.measures,
-        { ...time, dateField: settings.xField },
-        snapshot.rawInputs,
-        snapshot.exclusionReasons
-      );
-      invalidDateIds.push(...result.invalidDateIds);
-      const buckets = new Map(
-        result.buckets.map((bucket) => [bucket.start, bucket])
-      );
-      const seriesPoints: TimePoint[] = [];
-      if (!tooMany && liveGroups.has(key))
-        for (const period of periods) {
-          const bucket = buckets.get(period.start);
-          const state = !bucket
-            ? "empty"
-            : bucket.value === undefined
-              ? "invalid"
-              : "value";
-          const value =
-            bucket?.value ??
-            (!bucket &&
-            isAdditiveAggregation(time.aggregation) &&
-            time.missingPeriods === "zero"
-              ? 0
-              : undefined);
-          const label =
-            time.interval === "day"
-              ? period.day
-              : time.interval === "year"
-                ? period.day.slice(0, 4)
-                : `${period.day} – ${new Date(period.end - DAY_MS).toISOString().slice(0, 10)}`;
-          const selected =
-            !settings.filters.length ||
-            Boolean(
-              bucket?.contributors.some((row) =>
-                settings.filters.every((filter) => {
-                  if (filter.field === settings.xField)
-                    return applyFilter(snapshot.dates[row.sourceId], filter);
-                  if (filter.field === time.splitField)
-                    return applyFilter(snapshot.groups[row.sourceId], filter);
-                  if (snapshot.facetData?.[filter.field])
-                    return applyFilter(
-                      snapshot.facetData[filter.field]![row.sourceId],
-                      filter
-                    );
-                  return true;
-                })
-              )
-            );
-          const point: TimePoint = {
-            ...period,
-            value,
-            rowCount: bucket?.rowCount ?? 0,
-            contributors: bucket?.contributors ?? [],
-            id: JSON.stringify([key, period.start]),
-            seriesKey: key,
-            seriesValue: groupMap.get(key),
-            seriesLabel: time.splitField
-              ? categoryLabel(groupMap.get(key))
-              : metricLabel,
-            label,
-            state,
-            valueText:
-              value === undefined
-                ? state === "empty"
-                  ? "No rows"
-                  : "No valid values"
-                : formatValue(value),
-            selected,
-            x: 0,
-            y: 0,
-            color: seriesColor,
-          };
-          points.push(point);
-          seriesPoints.push(point);
-        }
-      return {
-        key,
-        label,
-        color: seriesColor,
-        points: seriesPoints,
-        path: "",
-        areaPath: "",
-      };
-    })
-    .filter((series) => series.points.length > 0);
+  const allSeries = [...groupMap].map(([key, value], index) => {
+    const label = time.splitField ? categoryLabel(value) : metricLabel;
+    const fallback =
+      snapshot.themeColors?.categorical ?? defaultCategoricalColors;
+    const seriesColor = color?.(value) ?? fallback[index % fallback.length]!;
+    const ids = snapshot.allIds.filter(
+      (id) =>
+        liveSet.has(id) &&
+        categoryKey(
+          time.splitField ? categoryValue(snapshot.groups[id]) : null
+        ) === key
+    );
+    const result = rollupByPeriod(
+      ids,
+      snapshot.dates,
+      snapshot.measures,
+      { ...time, dateField: settings.xField },
+      snapshot.rawInputs,
+      snapshot.exclusionReasons
+    );
+    invalidDateIds.push(...result.invalidDateIds);
+    const buckets = new Map(
+      result.buckets.map((bucket) => [bucket.start, bucket])
+    );
+    const seriesPoints: TimePoint[] = [];
+    if (!tooMany && liveGroups.has(key))
+      for (const period of periods) {
+        const bucket = buckets.get(period.start);
+        const state = !bucket
+          ? "empty"
+          : bucket.value === undefined
+            ? "invalid"
+            : "value";
+        const value =
+          bucket?.value ??
+          (!bucket &&
+          isAdditiveAggregation(time.aggregation) &&
+          time.missingPeriods === "zero"
+            ? 0
+            : undefined);
+        const label =
+          time.interval === "day"
+            ? period.day
+            : time.interval === "year"
+              ? period.day.slice(0, 4)
+              : `${period.day} – ${new Date(period.end - DAY_MS).toISOString().slice(0, 10)}`;
+        const selected =
+          !settings.filters.length ||
+          Boolean(
+            bucket?.contributors.some((row) =>
+              settings.filters.every((filter) => {
+                if (filter.field === settings.xField)
+                  return applyFilter(snapshot.dates[row.sourceId], filter);
+                if (filter.field === time.splitField)
+                  return applyFilter(snapshot.groups[row.sourceId], filter);
+                if (snapshot.facetData?.[filter.field])
+                  return applyFilter(
+                    snapshot.facetData[filter.field]![row.sourceId],
+                    filter
+                  );
+                return true;
+              })
+            )
+          );
+        const point: TimePoint = {
+          ...period,
+          value,
+          rowCount: bucket?.rowCount ?? 0,
+          contributors: bucket?.contributors ?? [],
+          id: JSON.stringify([key, period.start]),
+          seriesKey: key,
+          seriesValue: groupMap.get(key),
+          seriesLabel: time.splitField
+            ? categoryLabel(groupMap.get(key))
+            : metricLabel,
+          label,
+          state,
+          valueText:
+            value === undefined
+              ? state === "empty"
+                ? "No rows"
+                : "No valid values"
+              : formatValue(value),
+          selected,
+          x: 0,
+          y: 0,
+          color: seriesColor,
+        };
+        points.push(point);
+        seriesPoints.push(point);
+      }
+    return {
+      key,
+      label,
+      color: seriesColor,
+      points: seriesPoints,
+      path: "",
+      areaPath: "",
+    };
+  });
+  const series = allSeries.filter((item) => item.points.length > 0);
+  // A series other charts filter out keeps its color and its legend entry,
+  // dimmed and in place, so the legend does not change with every filter.
+  const keepEmpty =
+    Boolean(time.splitField) && !tooMany && settings.scaleTo !== "filtered";
+  const legendSeries = allSeries
+    .filter((item) => keepEmpty || item.points.length > 0)
+    .map(({ key, label, color, points }) => ({
+      key,
+      label,
+      color,
+      empty: points.length === 0,
+    }));
   let incompletePeriods = 0;
   if (filled) {
     for (let i = 0; i < periods.length; i++) {
@@ -426,6 +437,7 @@ export function planTimeSeries(
     snapshot,
     points,
     series,
+    legendSeries,
     invalidDateIds,
     tooMany,
     notice,
