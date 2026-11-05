@@ -295,6 +295,20 @@ describe("Calculator", () => {
       expect(result.value).toBe(11); // Week 11 of 2024
     });
   });
+
+  it("bins and rounds numbers", () => {
+    const calculator = new Calculator({ data: [], variables: new Map() });
+    const value = (text: string) =>
+      calculator.evaluate(parseExpression(text)).value;
+    expect(value("bin(37, 10)")).toBe(30);
+    expect(value("bin(-3, 10)")).toBe(-10);
+    expect(value("bin(0.3, 0.1)")).toBe(0.3);
+    expect(value("round(2.345, 2)")).toBe(2.35);
+    expect(value("floor(2.7) + ceil(2.1)")).toBe(5);
+    expect(calculator.evaluate(parseExpression("bin(3, 0)")).success).toBe(
+      false
+    );
+  });
 });
 
 describe("calculation trust", () => {
