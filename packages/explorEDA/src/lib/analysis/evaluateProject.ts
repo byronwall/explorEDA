@@ -234,6 +234,10 @@ function relationshipSide(
   const selected = inputFieldId
     ? fields.find((field) => field.id === inputFieldId)
     : undefined;
+  if (inputFieldId && !selected)
+    throw new Error(
+      `on=${inputFieldId} isn't a field here; ${unknownFieldFix(inputFieldId, fields)}.`
+    );
   const inputField =
     selected ??
     fields.find((field) => field.id === fromId) ??
@@ -263,8 +267,15 @@ function relationshipSide(
       targetSourceId: relationship.from.sourceId,
       targetFieldId: relationship.from.fieldId,
     };
+  // A field of the rows' own, such as a calc, holds the from side's keys.
+  if (selected)
+    return {
+      inputId: selected.id,
+      targetSourceId: relationship.to.sourceId,
+      targetFieldId: relationship.to.fieldId,
+    };
   throw new Error(
-    `Relationship ${relationship.id} has no matching input field in this frame`
+    `Relationship ${relationship.id} needs ${fromId} or ${toId} in these rows. Add on=<field> naming the field that holds ${fromId} keys.`
   );
 }
 
@@ -504,10 +515,47 @@ function expandedFrame(
   };
 }
 
+/** A column name after its table prefix: `cs_bill_customer_sk` → `bill_customer_sk`. */
+const unprefixed = (name: string) => name.replace(/^[a-z0-9]{1,4}_/i, "");
+
+/**
+ * For each field of the input's first source, the appended source's field
+ * that fills it: the one `match` names, else the one of the same name, else
+ * the only one with the same name after a table prefix, so `ws_net_paid`
+ * fills `cs_net_paid`.
+ */
+export function appendFieldMatch(
+  baseFields: readonly string[],
+  ownFields: readonly string[],
+  match: Record<string, string> = {}
+): Record<string, string> {
+  const own = new Set(ownFields);
+  const result: Record<string, string> = {};
+  for (const field of baseFields) {
+    const named = match[field];
+    if (named !== undefined) {
+      if (own.has(named)) result[field] = named;
+      continue;
+    }
+    if (own.has(field)) {
+      result[field] = field;
+      continue;
+    }
+    const tail = unprefixed(field);
+    if (tail === field) continue;
+    const near = ownFields.filter(
+      (item) => !baseFields.includes(item) && unprefixed(item) === tail
+    );
+    if (near.length === 1) result[field] = near[0]!;
+  }
+  return result;
+}
+
 /**
  * The input's rows, then the appended source's rows under them. A field
- * from the input's first source takes the appended row's field of the same
- * name; `step.field` says which source each row came from.
+ * from the input's first source takes the appended row's matching field
+ * (see `appendFieldMatch`); `step.field` says which source each row came
+ * from.
  */
 function appendFrame(
   step: AppendStep,
@@ -553,13 +601,22 @@ function appendFrame(
     (field) => field.origin && "sourceId" in field.origin
   )?.origin;
   const base = first && "sourceId" in first ? first.sourceId : undefined;
-  const own = new Set(source.fields.map((field) => field.id));
+  const baseFields = fields.flatMap((field) =>
+    field.origin && "sourceId" in field.origin && field.origin.sourceId === base
+      ? [field.origin.fieldId]
+      : []
+  );
+  const matched = appendFieldMatch(
+    baseFields,
+    source.fields.map((field) => field.id),
+    step.match
+  );
   const filled = fields.flatMap((field) =>
     field.origin &&
     "sourceId" in field.origin &&
     field.origin.sourceId === base &&
-    own.has(field.origin.fieldId)
-      ? [[field.id, field.origin.fieldId] as const]
+    matched[field.origin.fieldId] !== undefined
+      ? [[field.id, matched[field.origin.fieldId]!] as const]
       : []
   );
   const refs = sourceReferences(source, table, step.id, diagnostics);

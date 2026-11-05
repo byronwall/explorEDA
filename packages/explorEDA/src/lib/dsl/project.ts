@@ -342,6 +342,13 @@ function stepLines(step: AnalysisStep, previous?: AnalysisStep): string[] {
           ...(step.field === DEFAULT_APPEND_FIELD
             ? []
             : [`field=${encodeScalar(step.field)}`]),
+          ...(step.match && Object.keys(step.match).length
+            ? [
+                `match=${Object.entries(step.match)
+                  .map(([base, own]) => `${base}:${own}`)
+                  .join(",")}`,
+              ]
+            : []),
           ...input,
         ].join(" "),
       ];
@@ -763,7 +770,7 @@ function compileStep(
       return { id: explicitId ?? sourceId, kind: "source", sourceId };
     }
     case "append": {
-      checkPairs(declaration, ["field", "from"], report);
+      checkPairs(declaration, ["field", "from", "match"], report);
       const sourceId = parts[0]?.text;
       if (!sourceId) {
         return fail(
@@ -771,12 +778,27 @@ function compileStep(
           "Write it as append catalog-orders field=channel."
         );
       }
+      const matchPair = declaration.pairs.find((pair) => pair.key === "match");
+      const match: Record<string, string> = {};
+      for (const item of matchPair?.value.items ?? []) {
+        const [base, own] = item.text.split(":");
+        if (!base || !own) {
+          report(
+            matchPair!.span,
+            `match=${item.text} needs both fields.`,
+            "Write it as match=cs_net_paid:ws_net_paid, the first source's field, then this one's."
+          );
+          continue;
+        }
+        match[base] = own;
+      }
       return {
         id: explicitId ?? sourceId,
         kind: "append",
         inputStepId,
         sourceId,
         field: single(declaration, "field") ?? DEFAULT_APPEND_FIELD,
+        ...(Object.keys(match).length ? { match } : {}),
       };
     }
     case "lookup":
