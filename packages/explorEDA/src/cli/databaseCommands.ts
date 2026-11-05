@@ -17,12 +17,8 @@ import {
   refreshSource,
   withConnection,
 } from "../server/sources/refresh";
-import {
-  SourceReadError,
-  type DatabaseDriver,
-  type DatabaseSession,
-  type TableInfo,
-} from "../server/sources/types";
+import { tableColumns, tablesWithRows } from "../server/sources/schema";
+import { SourceReadError, type DatabaseDriver } from "../server/sources/types";
 
 export const READ_USAGE = `Usage: exploreda read [folder] [source...]
 
@@ -163,50 +159,6 @@ function fixFor(
   return error.suggestion;
 }
 
-const quote = (name: string) => `"${name.replace(/"/g, '""')}"`;
-
-/** `select count(*)` for a table in a SQLite or DuckDB file. */
-function countSql(table: TableInfo) {
-  const prefix = table.schema ? `${table.schema}.` : "";
-  const name =
-    prefix && table.name.startsWith(prefix)
-      ? `${quote(table.schema!)}.${quote(table.name.slice(prefix.length))}`
-      : quote(table.name);
-  return `select count(*) from ${name}`;
-}
-
-/** The first value a query returns. */
-async function firstValue(session: DatabaseSession, sql: string) {
-  const cursor = await session.read(
-    { sourceId: "schema", sql },
-    new AbortController().signal
-  );
-  let value: unknown;
-  for await (const batch of cursor.batches) {
-    value = batch[0]?.[0];
-  }
-  return value;
-}
-
-/** A table's column names and database types, without reading its rows. */
-async function columnsOf(session: DatabaseSession, table: string) {
-  const cursor = await session.read(
-    { sourceId: table, table },
-    new AbortController().signal
-  );
-  // Leaving after the first batch lets the driver close its cursor.
-  for await (const _batch of cursor.batches) {
-    break;
-  }
-  return cursor.names.map((name, index) => ({
-    name,
-    type: cursor.databaseTypes[index] ?? "",
-  }));
-}
-
-/** Drivers that read a local file, where counting every table is quick. */
-const FILE_DRIVERS = new Set(["sqlite", "duckdb"]);
-
 async function printSchema(
   connection: ConnectionDefinition,
   tables: string[],
@@ -225,7 +177,7 @@ async function printSchema(
     async (session, driver) => {
       if (tables.length) {
         for (const table of tables) {
-          const columns = await columnsOf(session, table);
+          const columns = await tableColumns(session, table);
           log(table);
           const width = Math.max(
             ...columns.map((column) => column.name.length)
@@ -236,17 +188,12 @@ async function printSchema(
         }
         return;
       }
-      const listed = await session.listTables();
+      const listed = await tablesWithRows(session, driver);
       log(`${connection.id} (${driver.label}): ${listed.length} tables`);
       const width = Math.max(0, ...listed.map((table) => table.name.length));
       for (const table of listed) {
-        let rows = "";
-        if (FILE_DRIVERS.has(driver.name)) {
-          const value = await firstValue(session, countSql(table)).catch(
-            () => undefined
-          );
-          rows = value === undefined ? "" : `  ${count(Number(value))} rows`;
-        }
+        const rows =
+          table.rows === undefined ? "" : `  ${count(table.rows)} rows`;
         log(
           `  ${table.name.padEnd(width)}  ${table.kind.padEnd(5)}${rows}`.trimEnd()
         );

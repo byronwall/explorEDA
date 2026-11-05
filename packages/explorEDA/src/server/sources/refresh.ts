@@ -22,6 +22,7 @@ import {
 } from "../../lib/project/snapshots";
 import { sqliteDriver } from "./drivers/sqlite";
 import { readSnapshot } from "./read";
+import { tablesWithRows } from "./schema";
 import {
   SourceReadError,
   type DatabaseDriver,
@@ -278,12 +279,10 @@ export async function withConnection<T>(
   }
 }
 
-/** The tables and views a connection can read. */
+/** The tables and views a connection can read, with row counts for files. */
 export function listTables(
   connectionId: string,
   options: SourceOptions
 ): Promise<TableInfo[]> {
-  return withConnection(connectionId, options, (session) =>
-    session.listTables()
-  );
+  return withConnection(connectionId, options, tablesWithRows);
 }

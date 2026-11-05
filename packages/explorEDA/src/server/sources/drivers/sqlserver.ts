@@ -11,10 +11,12 @@ import sql from "mssql";
 import type { Column, Kind } from "../../../lib/readers/typedColumns";
 import { secretVariable } from "../../../node/secrets";
 import { decimalColumn, refuseBinary } from "../columnKinds";
+import { singleColumnKeys } from "../schema";
 import {
   SourceReadError,
   type DatabaseDriver,
   type DatabaseSession,
+  type ForeignKey,
   type ReadCursor,
   type ReadRequest,
   type ResolvedConnection,
@@ -132,6 +134,40 @@ class SqlServerSession implements DatabaseSession {
       schema: row.TABLE_SCHEMA,
       kind: row.TABLE_TYPE === "VIEW" ? "view" : "table",
     }));
+  }
+
+  async foreignKeys(): Promise<ForeignKey[]> {
+    const result = await this.pool.request().query<{
+      constraint_id: number;
+      table_schema: string;
+      table_name: string;
+      column_name: string;
+      ref_schema: string;
+      ref_table: string;
+      ref_column: string;
+    }>(
+      `select fkc.constraint_object_id as constraint_id,
+              ps.name as table_schema, pt.name as table_name, pc.name as column_name,
+              rs.name as ref_schema, rt.name as ref_table, rc.name as ref_column
+         from sys.foreign_key_columns fkc
+         join sys.tables pt on pt.object_id = fkc.parent_object_id
+         join sys.schemas ps on ps.schema_id = pt.schema_id
+         join sys.columns pc on pc.object_id = fkc.parent_object_id and pc.column_id = fkc.parent_column_id
+         join sys.tables rt on rt.object_id = fkc.referenced_object_id
+         join sys.schemas rs on rs.schema_id = rt.schema_id
+         join sys.columns rc on rc.object_id = fkc.referenced_object_id and rc.column_id = fkc.referenced_column_id`
+    );
+    const named = (schema: string, table: string) =>
+      schema === "dbo" ? table : `${schema}.${table}`;
+    return singleColumnKeys(
+      result.recordset.map((row) => ({
+        constraint: String(row.constraint_id),
+        table: named(row.table_schema, row.table_name),
+        column: row.column_name,
+        refTable: named(row.ref_schema, row.ref_table),
+        refColumn: row.ref_column,
+      }))
+    );
   }
 
   private async describe(text: string): Promise<Described[]> {

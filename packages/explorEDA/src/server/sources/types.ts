@@ -57,6 +57,19 @@ export interface TableInfo {
   name: string;
   schema?: string;
   kind: "table" | "view";
+  /** How many rows it holds, where counting is quick (local files). */
+  rows?: number;
+}
+
+/**
+ * A one-column foreign key the database declares: `table.column` holds
+ * values of `refTable.refColumn`. Table names are as `listTables` gives them.
+ */
+export interface ForeignKey {
+  table: string;
+  column: string;
+  refTable: string;
+  refColumn: string;
 }
 
 export interface ReadRequest {
@@ -85,6 +98,8 @@ export interface ReadCursor {
 
 export interface DatabaseSession {
   listTables(): Promise<TableInfo[]>;
+  /** Foreign keys of one column; keys over several columns are left out. */
+  foreignKeys(): Promise<ForeignKey[]>;
   read(request: ReadRequest, signal: AbortSignal): Promise<ReadCursor>;
   /** Releases the connection; called after every read, failed or not. */
   close(): Promise<void>;

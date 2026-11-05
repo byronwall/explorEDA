@@ -1,7 +1,9 @@
 /**
  * The database routes a project answers under its API path:
  * `POST sources/<id>/refresh` reads a database source again, and
- * `GET connections/<id>/tables` lists what a connection can read, and
+ * `GET connections/<id>/tables` lists what a connection can read, with
+ * row counts for local files, `GET connections/<id>/tables/<table>` gives a
+ * table's columns, `GET connections/<id>/keys` its foreign keys, and
  * `PUT connections/<id>/secret` checks a connection's password and keeps
  * it on this computer (`DELETE` forgets it). A secret is never sent back.
  */
@@ -13,8 +15,10 @@ import {
   listTables,
   projectConnection,
   refreshSource,
+  withConnection,
   type SourceOptions,
 } from "./refresh";
+import { tableColumns } from "./schema";
 import type { SnapshotInfo } from "../../lib/project/snapshots";
 import { SourceReadError } from "./types";
 
@@ -46,9 +50,11 @@ export async function sourceRoutes(
   const refresh = /^sources\/([^/]+)\/refresh$/.exec(route);
   const secret = /^connections\/([^/]+)\/secret$/.exec(route);
   const tables = /^connections\/([^/]+)\/tables$/.exec(route);
+  const columns = /^connections\/([^/]+)\/tables\/([^/]+)$/.exec(route);
+  const keys = /^connections\/([^/]+)\/keys$/.exec(route);
   if (
     !(refresh && req.method === "POST") &&
-    !(tables && req.method === "GET") &&
+    !((tables || columns || keys) && req.method === "GET") &&
     !secret
   ) {
     return false;
@@ -82,6 +88,21 @@ export async function sourceRoutes(
         ...options,
         secret: resolveSecret(secrets),
       })
+    );
+    return true;
+  }
+  if (columns || keys) {
+    send(
+      res,
+      200,
+      await withConnection(
+        decodeURIComponent((columns ?? keys)![1]!),
+        { ...options, secret: resolveSecret(secrets) },
+        (session): Promise<unknown> =>
+          columns
+            ? tableColumns(session, decodeURIComponent(columns[2]!))
+            : session.foreignKeys()
+      )
     );
     return true;
   }

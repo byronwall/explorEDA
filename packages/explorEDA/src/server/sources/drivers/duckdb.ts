@@ -19,6 +19,7 @@ import {
   SourceReadError,
   type DatabaseDriver,
   type DatabaseSession,
+  type ForeignKey,
   type ReadCursor,
   type ReadRequest,
   type ResolvedConnection,
@@ -131,6 +132,32 @@ class DuckdbSession implements DatabaseSession {
       schema: String(row.table_schema),
       kind: row.table_type === "VIEW" ? "view" : "table",
     }));
+  }
+
+  async foreignKeys(): Promise<ForeignKey[]> {
+    const reader = await this.connection.runAndReadAll(
+      `select distinct schema_name, table_name, constraint_column_names,
+              referenced_table, referenced_column_names
+         from duckdb_constraints()
+        where constraint_type = 'FOREIGN KEY'
+          and database_name = current_database()`
+    );
+    const named = (schema: string, table: string) =>
+      schema === "main" ? table : `${schema}.${table}`;
+    return reader.getRowObjectsJson().flatMap((row) => {
+      const columns = row.constraint_column_names as string[] | null;
+      const refs = row.referenced_column_names as string[] | null;
+      if (columns?.length !== 1 || refs?.length !== 1) return [];
+      const schema = String(row.schema_name);
+      return [
+        {
+          table: named(schema, String(row.table_name)),
+          column: columns[0]!,
+          refTable: named(schema, String(row.referenced_table)),
+          refColumn: refs[0]!,
+        },
+      ];
+    });
   }
 
   async read(request: ReadRequest, signal: AbortSignal): Promise<ReadCursor> {

@@ -8,6 +8,7 @@ import {
   SourceReadError,
   type DatabaseDriver,
   type DatabaseSession,
+  type ForeignKey,
   type ReadRequest,
   type TableInfo,
 } from "./types";
@@ -29,6 +30,7 @@ export interface FakeDatabase {
   /** Answers sql= with a table's rows, keyed by the exact SQL. */
   queries?: Record<string, FakeTable>;
   batchSize?: number;
+  foreignKeys?: ForeignKey[];
   /** Throws this from `close`, after counting the session closed. */
   failClose?: Error;
 }
@@ -51,6 +53,9 @@ export function fakeDriver(database: FakeDatabase) {
             name,
             kind: table.kind ?? "table",
           }));
+        },
+        async foreignKeys() {
+          return database.foreignKeys ?? [];
         },
         async read(request, signal) {
           state.reads.push(request);
