@@ -176,7 +176,7 @@ async function checkProject(folder: string, json: boolean) {
         0
       );
       console.log(
-        `${notebook.path}: notebook, ${blocks.length} blocks, ${charts} charts (${notebook.result.queryId})`
+        `${notebook.path}: notebook, ${blocks.length} blocks, ${charts} charts (${[notebook.result.queryId, ...Object.keys(notebook.result.queryRows)].join(", ")})`
       );
     }
     for (const item of result.problems) {

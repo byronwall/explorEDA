@@ -102,11 +102,20 @@ appear where the block sits.
   }
   \`\`\`
 
-- eda query=<id> picks the one query every block charts (a project query or
-  a source's own). Without it, the notebook charts the project's first query.
-  A notebook charts one query today.
+- eda query=<id> picks the query a block charts (a project query or a
+  source's own). The first one is the notebook's query: blocks without their
+  own eda query= chart it. Without one, the notebook charts the project's
+  first query.
+- A block can name another query to chart its rows:
+    \`\`\`eda
+    eda query=regions
+    row regions.region
+    \`\`\`
+  Each query's blocks work apart: aliases, calc, filter, and finding lines
+  reach only blocks of the same query, and charts of different queries never
+  share a selection. Prose can show any finding.
 - Fields are named <step>.<field>, as demand.actual; alias them for short
-  names. Aliases and calc lines in any block reach every block.
+  names. Aliases and calc lines in any block reach every block of its query.
 - A block can hold several charts; a block of only definitions shows them.
 - Two or more # headings split the notebook into sheets, one per heading.
 - finding @n count chart=@name, then {{n}} in prose, writes a live value.

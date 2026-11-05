@@ -89,10 +89,34 @@ Sheets split the reading, not the analysis: every sheet charts the same rows, an
 
 ## How blocks work together
 
-- **Definitions reach the whole notebook.** A calculation or field alias in any block applies to every block, in any order. Define `delta` once and chart it anywhere.
+- **Definitions reach the whole notebook.** A calculation or field alias in any block applies to every block of the same query, in any order. Define `delta` once and chart it anywhere.
 - **A block can hold several charts.** They stack in the order you write them. A block with only definitions shows what it defines.
-- **The data comes from the project.** `eda query=demand` picks the query every block charts. Without one, the notebook charts the project's first query.
-- **Clicks and brushes stay with their chart.** Selecting a range in one chart doesn't narrow the others, so a zoomed window can sit below the full series. A `filter` line still narrows every chart.
+- **The data comes from the project.** The first `eda query=demand` line picks the notebook's query. Blocks without their own `eda query=` chart it. Without one anywhere, the notebook charts the project's first query.
+- **Clicks and brushes stay with their chart.** Selecting a range in one chart doesn't narrow the others, so a zoomed window can sit below the full series. A `filter` line still narrows every chart of its query.
+
+## Chart several queries in one notebook
+
+A block that starts with its own `eda query=` line charts that query's rows. Each query's blocks work together and apart from the others: an alias, calculation, `filter`, or finding applies only to blocks of the same query. Prose can still show any finding with `{{name}}`.
+
+````markdown
+Return amount by reason:
+
+```eda
+eda query=return-lines
+row returns.reason @by-reason
+```
+
+The rate comes from one row per category, so the pivot's total is not weighted by return lines:
+
+```eda
+eda query=cat_rate
+field cat_rate.return_rate format=percent precision=1
+group @rate avg(cat_rate.return_rate) by=cat_rate.category
+row cat_rate.category @rates group=rate
+```
+````
+
+Charts of different queries never share a selection. A query that a block names but the project lacks is reported at its line, with the queries you can use.
 
 ## Live findings
 

@@ -26,10 +26,12 @@ import {
 } from "@/lib/notebook";
 import { resolveThemeId } from "@/lib/themes";
 import {
+  DataLayerContext,
   DataLayerProvider,
   useDataLayer,
   type DatumObject,
 } from "@/providers/DataLayerProvider";
+import type { FindingResult } from "@/lib/notebook/findings";
 import type { ChartSettings } from "@/types/ChartTypes";
 import { restrictToPopulation } from "@/lib/chartPopulation";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
@@ -44,7 +46,10 @@ import {
 import { GridChartPanel } from "../GridChartPanel";
 import { Button } from "../ui/button";
 import { Toaster } from "../ui/sonner";
-import { NotebookFindingsProvider } from "./NotebookFindings";
+import {
+  NotebookFindingsProvider,
+  useFindingResults,
+} from "./NotebookFindings";
 import { NotebookKeepContext, type NotebookKeepValue } from "./NotebookKeep";
 import { NotebookProse } from "./NotebookProse";
 import { NotebookSourceEditor } from "./NotebookSourceEditor";
@@ -53,8 +58,15 @@ import "./notebook.css";
 export interface ExplorEdaNotebookProps {
   /** The notebook's text: Markdown with `eda` blocks. */
   text: string;
-  /** The rows every block charts, such as a project query's result. */
+  /** The rows the notebook's blocks chart, such as a project query's result. */
   data: DatumObject[];
+  /**
+   * Rows of other queries, by query ID. A block whose `eda query=` names one
+   * of them charts those rows instead, and its definitions reach only the
+   * blocks that name the same query. Charts of different queries never
+   * share a selection or a `filter`.
+   */
+  queries?: Record<string, DatumObject[]>;
   /** Field types the data's source declares. */
   fieldTypes?: Record<string, DeclaredFieldType>;
   /** The notebook's name when no `dashboard` line gives one. */
@@ -205,21 +217,27 @@ export function useNotebookResult(
   text: string,
   data: DatumObject[],
   name?: string,
-  memory?: MutableRefObject<Record<number, string>>
+  memory?: MutableRefObject<Record<number, string>>,
+  scope?: NotebookScope
 ): NotebookCompileResult {
   const ownMemory = useRef<Record<number, string>>({});
   const lastValid = memory ?? ownMemory;
+  const groups = scope?.groups;
+  const group = scope?.group ?? "";
   return useMemo(() => {
     const result = compileNotebook(text, {
       rows: data,
       name,
       lastValid: lastValid.current,
+      groups,
+      group,
     });
+    // Other queries' blocks keep what they had; they compile on their own.
     const next: Record<number, string> = {};
     for (const block of result.blocks) {
       const own = result.notebook.blocks[block.index]!.text;
       const kept = lastValid.current[block.index];
-      if (block.status === "ok") {
+      if (result.groups[block.index] === group && block.status === "ok") {
         next[block.index] = own;
       } else if (kept !== undefined) {
         next[block.index] = kept;
@@ -227,7 +245,13 @@ export function useNotebookResult(
     }
     lastValid.current = next;
     return result;
-  }, [text, data, name, lastValid]);
+  }, [text, data, name, lastValid, groups, group]);
+}
+
+/** Which blocks a compile covers: those of `group`, out of `groups`. */
+export interface NotebookScope {
+  groups: readonly string[];
+  group?: string;
 }
 
 /** How long after a key press or pointer press a change counts as an edit. */
@@ -274,24 +298,29 @@ function useWidth() {
  * column. Every block's definitions apply to the whole notebook, and each
  * chart's clicks and brushes stay with that chart.
  */
-export function ExplorEdaNotebook({
+/**
+ * Chart edits made in the app, written back into the notebook's text. One
+ * per query the notebook charts, each with its own blocks and rows.
+ */
+function useNotebookEdits({
   text,
+  result,
   data,
-  fieldTypes,
   name,
+  memory,
+  scope,
   onStateChange,
   onTextChange,
-  lastValid,
-  layout = "column",
-  sheet,
-  defaultSheet,
-  onSheetChange,
-  onExploreChart,
-}: ExplorEdaNotebookProps) {
-  const ownMemory = useRef<Record<number, string>>({});
-  const memory = lastValid ?? ownMemory;
-  const result = useNotebookResult(text, data, name, memory);
-
+}: {
+  text: string;
+  result: NotebookCompileResult;
+  data: DatumObject[];
+  name?: string;
+  memory: MutableRefObject<Record<number, string>>;
+  scope?: NotebookScope;
+  onStateChange?: (settings: SavedDataStructure) => void;
+  onTextChange?: (text: string) => void;
+}) {
   // After a splice, the app already shows what the new text says, so the
   // settings stay as they are; restoring them would close open editors.
   const written = useRef<
@@ -308,6 +337,14 @@ export function ExplorEdaNotebook({
       ? written.current.settings
       : structuredClone(result.settings);
   }, [result, text, revert]);
+  // A broken block's stand-in text compiles the same way here.
+  const options = () => ({
+    rows: data,
+    name,
+    lastValid: memory.current,
+    groups: scope?.groups,
+    group: scope?.group,
+  });
 
   const handleStateChange = (settings: SavedDataStructure) => {
     onStateChange?.(settings);
@@ -324,8 +361,7 @@ export function ExplorEdaNotebook({
       result,
       previous,
       settings,
-      // A broken block's stand-in text compiles the same way here.
-      { rows: data, name, lastValid: memory.current }
+      options()
     );
     const refused = results.find((item) => item.kind === "unsupported");
     // A refused edit is undone once, so the charts match the text again.
@@ -344,17 +380,13 @@ export function ExplorEdaNotebook({
     }
   };
 
-  const keepValue: NotebookKeepValue | null = onTextChange
+  const keep: NotebookKeepValue | null = onTextChange
     ? {
         kept: (chartId) =>
           result.settings.charts.find((chart) => chart.id === chartId)
             ?.filters ?? [],
         keep: (chart) => {
-          const outcome = writeBackChart(text, result, chart, {
-            rows: data,
-            name,
-            lastValid: memory.current,
-          });
+          const outcome = writeBackChart(text, result, chart, options());
           if (outcome.kind === "unsupported") {
             toast.error(outcome.reason ?? "That selection can't be kept.");
             return;
@@ -368,39 +400,213 @@ export function ExplorEdaNotebook({
       }
     : null;
 
-  return (
-    <DataLayerProvider
-      data={data}
-      fieldTypes={fieldTypes}
-      savedData={savedData}
-      onStateChange={handleStateChange}
-      onSavedDataApplied={(settings) => {
+  return {
+    keep,
+    provider: {
+      savedData,
+      onStateChange: handleStateChange,
+      onSavedDataApplied: (settings: SavedDataStructure) => {
         applied.current = settings;
         // Charts fill in what they draw once settings arrive; only input
         // that comes after counts as an edit.
         lastInput.current = -Infinity;
-      }}
+      },
+    },
+  };
+}
+
+/** Another query's store, block results, and live findings. */
+interface QueryScopeValue {
+  store: unknown;
+  result: NotebookCompileResult;
+  keep: NotebookKeepValue | null;
+  findings: ReadonlyMap<string, FindingResult>;
+}
+
+/** The notebook's other queries, by ID, for the blocks that chart them. */
+const QueryScopes = createContext<ReadonlyMap<string, QueryScopeValue>>(
+  new Map()
+);
+
+/**
+ * Holds one other query's charts: a store over its rows, compiled from the
+ * blocks that name it. Its children still see the notebook's own store; a
+ * block of this query switches to this one through `QueryScopes`.
+ */
+function QueryScope({
+  group,
+  groups,
+  rows,
+  text,
+  name,
+  memory,
+  onTextChange,
+  children,
+}: {
+  group: string;
+  groups: readonly string[];
+  rows: DatumObject[];
+  text: string;
+  name?: string;
+  memory: MutableRefObject<Record<number, string>>;
+  onTextChange?: (text: string) => void;
+  children: ReactNode;
+}) {
+  const outer = useContext(DataLayerContext);
+  const scope = useMemo(() => ({ groups, group }), [groups, group]);
+  const result = useNotebookResult(text, rows, name, memory, scope);
+  const edits = useNotebookEdits({
+    text,
+    result,
+    data: rows,
+    name,
+    memory,
+    scope,
+    onTextChange,
+  });
+  return (
+    <DataLayerProvider data={rows} localSelections {...edits.provider}>
+      <QueryScopeBridge
+        group={group}
+        result={result}
+        keep={edits.keep}
+        outer={outer}
+      >
+        {children}
+      </QueryScopeBridge>
+    </DataLayerProvider>
+  );
+}
+
+function QueryScopeBridge({
+  group,
+  result,
+  keep,
+  outer,
+  children,
+}: {
+  group: string;
+  result: NotebookCompileResult;
+  keep: NotebookKeepValue | null;
+  outer: unknown;
+  children: ReactNode;
+}) {
+  const store = useContext(DataLayerContext);
+  const findings = useFindingResults();
+  const scopes = useContext(QueryScopes);
+  const value = useMemo(
+    () => new Map(scopes).set(group, { store, result, keep, findings }),
+    [scopes, group, store, result, keep, findings]
+  );
+  return (
+    <QueryScopes.Provider value={value}>
+      <DataLayerContext.Provider value={outer}>
+        {children}
+      </DataLayerContext.Provider>
+    </QueryScopes.Provider>
+  );
+}
+
+/** Findings of every query, for the prose; the notebook's own win a clash. */
+function AllFindings({ children }: { children: ReactNode }) {
+  const scopes = useContext(QueryScopes);
+  const extra = useMemo(
+    () => new Map([...scopes.values()].flatMap((item) => [...item.findings])),
+    [scopes]
+  );
+  return (
+    <NotebookFindingsProvider extra={extra}>
+      {children}
+    </NotebookFindingsProvider>
+  );
+}
+
+/**
+ * A notebook: prose and the results of its `eda` blocks in one reading
+ * column. A block's definitions apply to every block of its query, and
+ * each chart's clicks and brushes stay with that chart.
+ */
+export function ExplorEdaNotebook({
+  text,
+  data,
+  queries,
+  fieldTypes,
+  name,
+  onStateChange,
+  onTextChange,
+  lastValid,
+  layout = "column",
+  sheet,
+  defaultSheet,
+  onSheetChange,
+  onExploreChart,
+}: ExplorEdaNotebookProps) {
+  const ownMemory = useRef<Record<number, string>>({});
+  const memory = lastValid ?? ownMemory;
+  // The same IDs keep the same groups, however often the rows change.
+  const queryIds = JSON.stringify(Object.keys(queries ?? {}));
+  const groups = useMemo(() => JSON.parse(queryIds) as string[], [queryIds]);
+  const scope = useMemo(() => ({ groups }), [groups]);
+  const result = useNotebookResult(text, data, name, memory, scope);
+  const edits = useNotebookEdits({
+    text,
+    result,
+    data,
+    name,
+    memory,
+    scope,
+    onStateChange,
+    onTextChange,
+  });
+  // Only a query that a block charts needs a store of its own.
+  const used = groups.filter((group) => result.groups.includes(group));
+
+  const column = (
+    <AllFindings>
+      <NotebookColumn
+        result={result}
+        layout={layout}
+        sheet={sheet}
+        defaultSheet={defaultSheet}
+        onSheetChange={onSheetChange}
+        onSegmentChange={
+          onTextChange
+            ? (segment, next) =>
+                onTextChange(replaceSegment(text, segment, next))
+            : undefined
+        }
+      />
+    </AllFindings>
+  );
+
+  return (
+    <DataLayerProvider
+      data={data}
+      fieldTypes={fieldTypes}
       localSelections
+      {...edits.provider}
     >
       <CalculationEditorProvider>
         <ChartDraftProvider>
           <ExploreChart.Provider value={onExploreChart}>
-            <NotebookKeepContext.Provider value={keepValue}>
-              <NotebookFindingsProvider>
-                <NotebookColumn
-                  result={result}
-                  layout={layout}
-                  sheet={sheet}
-                  defaultSheet={defaultSheet}
-                  onSheetChange={onSheetChange}
-                  onSegmentChange={
-                    onTextChange
-                      ? (segment, next) =>
-                          onTextChange(replaceSegment(text, segment, next))
-                      : undefined
-                  }
-                />
-              </NotebookFindingsProvider>
+            <NotebookKeepContext.Provider value={edits.keep}>
+              {used.reduceRight<ReactNode>(
+                (inner, group) => (
+                  <QueryScope
+                    key={group}
+                    group={group}
+                    groups={groups}
+                    rows={queries![group]!}
+                    text={text}
+                    name={name}
+                    memory={memory}
+                    onTextChange={onTextChange}
+                  >
+                    {inner}
+                  </QueryScope>
+                ),
+                column
+              )}
             </NotebookKeepContext.Provider>
           </ExploreChart.Provider>
         </ChartDraftProvider>
@@ -489,10 +695,13 @@ export function notebookSections(
 function NotebookSectionsView({
   segments,
   blocks,
+  groups,
   width,
 }: {
   segments: readonly NotebookSegment[];
   blocks: readonly NotebookBlockResult[];
+  /** Each block's query; see NotebookCompileResult. */
+  groups: readonly string[];
   width: number;
 }) {
   const figureWidth = width - NOTES_WIDTH - NOTES_GAP;
@@ -550,6 +759,7 @@ function NotebookSectionsView({
                 <NotebookBlockView
                   key={block.index}
                   block={block}
+                  group={groups[block.index] ?? ""}
                   width={width}
                   open={false}
                 />
@@ -574,6 +784,7 @@ function NotebookSectionsView({
               <NotebookBlockView
                 key={block.index}
                 block={block}
+                group={groups[block.index] ?? ""}
                 width={width}
                 open={false}
                 heading={section!.heading}
@@ -596,6 +807,7 @@ function NotebookSectionsView({
             <NotebookBlockView
               key={block.index}
               block={block}
+              group={groups[block.index] ?? ""}
               width={figureWidth}
               open={false}
               heading={section!.heading}
@@ -754,6 +966,7 @@ function NotebookColumn({
       <NotebookSectionsView
         segments={segments}
         blocks={result.blocks}
+        groups={result.groups}
         width={width}
       />
     ) : (
@@ -792,6 +1005,7 @@ function NotebookColumn({
           <NotebookBlockView
             key={key}
             block={result.blocks[segment.index]!}
+            group={result.groups[segment.index] ?? ""}
             width={Math.min(width, COLUMN_MAX_WIDTH)}
             edit={edit}
             editor={editor}
@@ -880,22 +1094,50 @@ function EditToggle({
   );
 }
 
-function NotebookBlockView({
-  block,
-  width,
-  edit,
-  editor,
-  open,
-  heading,
-}: {
+interface BlockViewProps {
   block: NotebookBlockResult;
+  /** The query the block belongs to; "" for the notebook's own. */
+  group: string;
   width: number;
   edit?: ReactNode;
   editor?: ReactNode;
   open: boolean;
   /** The section's heading; a chart title that repeats it is not shown. */
   heading?: string;
-}) {
+}
+
+/**
+ * A block's results. A block of another query draws from that query's
+ * store, with its own calculation editor and chart drafts.
+ */
+function NotebookBlockView(props: BlockViewProps) {
+  const scopes = useContext(QueryScopes);
+  const scope = props.group ? scopes.get(props.group) : undefined;
+  if (!scope) return <BlockBody {...props} />;
+  return (
+    <DataLayerContext.Provider value={scope.store}>
+      <NotebookKeepContext.Provider value={scope.keep}>
+        <CalculationEditorProvider>
+          <ChartDraftProvider>
+            <BlockBody
+              {...props}
+              block={scope.result.blocks[props.block.index] ?? props.block}
+            />
+          </ChartDraftProvider>
+        </CalculationEditorProvider>
+      </NotebookKeepContext.Provider>
+    </DataLayerContext.Provider>
+  );
+}
+
+function BlockBody({
+  block,
+  width,
+  edit,
+  editor,
+  open,
+  heading,
+}: BlockViewProps) {
   const charts = useDataLayer((state) => state.charts);
   const rows = useDataLayer((state) => state.data);
   const saveToStructure = useDataLayer((state) => state.saveToStructure);
