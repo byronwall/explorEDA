@@ -2866,6 +2866,18 @@ export function compileDocument(
         if (!field) {
           return "ok";
         }
+        // A row chart colors only its own bars; a bar chart splits its
+        // bars by another field, so color=channel means seriesField=channel.
+        if (chart.type === "row" && field !== chart.field) {
+          return `A row chart can't color its bars by ${field}, so ${subject} stays one color. Use bar ${chart.field ?? "<field>"} color=${field} to split each bar by ${field}.`;
+        }
+        if (
+          chart.type === "bar" &&
+          field !== chart.field &&
+          !chart.seriesField
+        ) {
+          chart.seriesField = field;
+        }
         chart.colorField = field;
         chart.colorScaleId = colorScaleFor(field);
         return "ok";

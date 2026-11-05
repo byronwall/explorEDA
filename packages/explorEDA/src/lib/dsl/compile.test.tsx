@@ -43,6 +43,21 @@ function livePopulations(settings: ReturnType<typeof compile>["settings"]) {
 beforeAll(() => registerAllCharts());
 
 describe("compileDocument", () => {
+  it("splits bars by color= and says a row chart can't", () => {
+    const result = compile(
+      "bar Category color=Channel\nrow Category color=Channel"
+    );
+    const [bar, row] = result.settings.charts as Array<Record<string, unknown>>;
+    expect(bar).toMatchObject({
+      seriesField: "Channel",
+      colorField: "Channel",
+    });
+    expect(row?.colorField).toBeUndefined();
+    expect(result.diagnostics.map((item) => item.message)).toEqual([
+      expect.stringContaining("A row chart can't color its bars by Channel"),
+    ]);
+  });
+
   it("skips a filter line without field values", () => {
     const result = compileDocument("filter\nfilter Region\nsummary", {
       rows: [{ Region: "West" }],
