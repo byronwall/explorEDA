@@ -250,16 +250,21 @@ export function sortByLabel<T>(items: readonly T[], value: (item: T) => datum) {
   });
 }
 
-/** Sorts largest value first; rows without a finite value go last. */
+/**
+ * Sorts largest value first; rows without a finite value go last. Rows that
+ * `small` marks, such as a rate over a few rows, follow every other row.
+ */
 export function sortByValue<T>(
   items: readonly T[],
-  value: (item: T) => number | undefined
+  value: (item: T) => number | undefined,
+  small?: (item: T) => boolean
 ) {
   const of = (item: T) => {
     const number = value(item);
     return number !== undefined && Number.isFinite(number) ? number : -Infinity;
   };
-  return [...items].sort((a, b) => of(b) - of(a) || 0);
+  const band = (item: T) => (small?.(item) ? 1 : 0);
+  return [...items].sort((a, b) => band(a) - band(b) || of(b) - of(a) || 0);
 }
 
 /**
@@ -279,6 +284,21 @@ function allRowValue(mode: BarMode, snapshot: BarSnapshot) {
   return (row: AggregateResultRow) => {
     const key = categoryKey(row.groupValue);
     return values.has(key) ? values.get(key) : row.value;
+  };
+}
+
+/** Whether a group's rate or average rests on few rows, over every source row. */
+function smallOverAllRows(snapshot: BarSnapshot) {
+  const sizes = new Map(
+    (snapshot.domainAggregate?.rows ?? []).map((row) => [
+      categoryKey(row.groupValue),
+      row.sampleSize,
+    ])
+  );
+  return (row: AggregateResultRow) => {
+    const key = categoryKey(row.groupValue);
+    const n = sizes.has(key) ? sizes.get(key) : row.sampleSize;
+    return n !== undefined && n < SMALL_SAMPLE;
   };
 }
 
@@ -486,7 +506,11 @@ export function planBarChart({
       : settings.categoryOrder === "label"
         ? sortByLabel(result?.rows ?? [], (row) => row.groupValue)
         : settings.categoryOrder === "value"
-          ? sortByValue(result?.rows ?? [], allRowValue(mode, snapshot))
+          ? sortByValue(
+              result?.rows ?? [],
+              allRowValue(mode, snapshot),
+              smallOverAllRows(snapshot)
+            )
           : (result?.rows ?? []);
   // The same categories over every row, in the order the bars use.
   const domainRows = snapshot.domainAggregate?.rows ?? [];

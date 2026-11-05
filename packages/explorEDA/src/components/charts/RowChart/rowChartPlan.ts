@@ -1,4 +1,4 @@
-import { isAdditiveAggregation } from "@/lib/aggregates";
+import { SMALL_SAMPLE, isAdditiveSpec } from "@/lib/aggregates";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import {
   poolAggregateRows,
@@ -33,12 +33,21 @@ export interface RowSummaryPlan extends RowPlan {
   otherSummary?: { current: number | undefined; total: number | undefined };
 }
 
-/** Largest first; categories without a value follow every valued one. */
+/**
+ * Largest first; categories without a value follow every valued one. A rate
+ * or average over fewer than SMALL_SAMPLE rows follows every larger group,
+ * so Top N shows groups with enough rows to trust and tiny ones fold away.
+ */
 function rank(categories: RowCategory[], maxRows: number): RowPlan {
+  const band = (item: RowCategory) => {
+    const n = item.all?.sampleSize;
+    return n !== undefined && n < SMALL_SAMPLE ? 1 : 0;
+  };
   const sorted = [...categories].sort(
     (a, b) =>
+      band(a) - band(b) ||
       (b.total ?? Number.NEGATIVE_INFINITY) -
-      (a.total ?? Number.NEGATIVE_INFINITY)
+        (a.total ?? Number.NEGATIVE_INFINITY)
   );
   const other = sorted.length > maxRows ? sorted.slice(maxRows - 1) : [];
   return {
@@ -92,7 +101,7 @@ export function planRowSummary(
   );
   // A sum or count of no rows is zero; an average, max, or min of none has
   // no value.
-  const empty = isAdditiveAggregation(all.spec.aggregation) ? 0 : undefined;
+  const empty = isAdditiveSpec(all.spec) ? 0 : undefined;
   const categories = all.rows.map((row): RowCategory => {
     const key = categoryKey(row.groupValue);
     const current = liveRows.get(key);
