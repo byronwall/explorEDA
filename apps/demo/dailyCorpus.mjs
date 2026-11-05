@@ -269,7 +269,7 @@ const escape = (text) =>
       ]
   );
 
-function head(template, title, description, url) {
+export function head(template, title, description, url) {
   return template.replace(
     /<title>[\s\S]*?<\/title>/,
     `<title>${escape(title)} · explorEDA</title>\n<meta name="description" content="${escape(description)}">\n<link rel="canonical" href="${url}">\n<meta property="og:title" content="${escape(title)}">\n<meta property="og:description" content="${escape(description)}">\n<meta property="og:url" content="${url}">`

@@ -40,6 +40,7 @@ import {
   type DailyEntry,
 } from "../daily/corpus";
 import { useDailyCatalog } from "../daily/useDailyCatalog";
+import { usePageTitle } from "../pageTitle";
 import { captureId, docsPath, docsTopic, liveShotPath } from "./paths";
 
 const loaded = new Map<string, ComponentType>();
@@ -340,6 +341,9 @@ function MissingPage() {
 /** The docs: an index at `/docs` and one page at each `/docs/<topic>`. */
 export function DocsSite() {
   const { pathname } = useLocation();
+  const topic = docsTopic(pathname);
+  const page = topic ? findPage(topic) : undefined;
+  usePageTitle(topic === "" ? "Docs" : page?.title);
   const capture = captureId(pathname);
   if (capture) {
     // The docs check screenshots each live example here, without page chrome.
@@ -349,8 +353,6 @@ export function DocsSite() {
       </main>
     );
   }
-  const topic = docsTopic(pathname);
-  const page = topic ? findPage(topic) : undefined;
   return (
     <DocsLayout withRail={page !== undefined}>
       {!topic ? (

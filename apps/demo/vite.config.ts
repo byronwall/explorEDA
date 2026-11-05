@@ -4,6 +4,7 @@ import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import { dailyCorpus } from "./dailyCorpus.mjs";
 import { docsMdx } from "./mdxPlugin";
+import { docsPrerender } from "./docsPrerender";
 import tailwindcss from "@tailwindcss/vite";
 import {
   docsKitDistAlias,
@@ -107,6 +108,7 @@ export default defineConfig(({ command }) => ({
     analytics(),
     spaFallback(),
     dailyCorpus(),
+    docsPrerender(),
     idleExit(),
   ],
   base: "/",
