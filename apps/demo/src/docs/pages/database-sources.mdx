@@ -19,6 +19,22 @@ Choose **Add database** beside **Data**, or **Add a database** on a new project.
 2. **Pick a table, or write a query.** Type to filter the tables. Choose **A query** to write a `select`.
 3. **Name the source and choose Add and read.** explorEDA adds one line to the project text, reads the rows, and opens a new analysis on a summary of their fields.
 
+## Read from the terminal
+
+You can do the same work without the browser, for example from a script or a coding agent. In the sample's folder:
+
+```bash
+npx exploreda schema                   # each connection's tables and row counts
+npx exploreda schema shop orders       # the orders table's columns and types
+npx exploreda read                     # read every database source
+npx exploreda read orders returns      # read the sources named
+npx -p exploreda exploreda-dsl project .
+```
+
+Put a folder first to work on another folder, as in `npx exploreda read ../shop orders`.
+
+`read` writes the same copy as **Refresh**, with the same limits and saved passwords, and prints each source's rows, columns, and time, or why it failed. It exits with 1 when any read fails. `schema` counts rows in SQLite and DuckDB files only. When you change a source's `table=`, `sql=`, or `limit=`, `exploreda-dsl project` and `check` say the source changed since it was read, until you read it again. `exploreda-dsl reference project` prints the project text syntax.
+
 ## Connections and sources
 
 ```text
