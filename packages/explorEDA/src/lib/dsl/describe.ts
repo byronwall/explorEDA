@@ -1,5 +1,6 @@
 import { categoryLabel } from "@/lib/categories";
 import { buildFieldProfiles } from "@/lib/fieldProfiles";
+import { finiteNumbers } from "@/lib/valueParsing";
 import type { datum } from "@/types/ChartTypes";
 import type { DslCompileResult } from "./compile";
 import { calculationFunctions } from "@/lib/calculations/functions/registry";
@@ -29,10 +30,15 @@ export function describeDslSource(
     const present = values.filter((value) => value != null && value !== "");
     let sample: string;
     if (profile.dataType === "numeric") {
-      const numbers = present.map(Number).filter(Number.isFinite);
-      sample = numbers.length
-        ? `${Math.min(...numbers)} to ${Math.max(...numbers)}`
-        : "no numbers";
+      // A loop, not Math.min(...numbers): a spread overflows the stack on
+      // a database snapshot's hundreds of thousands of rows.
+      let min = Infinity;
+      let max = -Infinity;
+      for (const number of finiteNumbers(present)) {
+        if (number < min) min = number;
+        if (number > max) max = number;
+      }
+      sample = min <= max ? `${min} to ${max}` : "no numbers";
     } else {
       const distinct = [
         ...new Set(present.map((value) => categoryLabel(value))),
