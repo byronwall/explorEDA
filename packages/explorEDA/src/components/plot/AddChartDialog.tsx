@@ -308,7 +308,7 @@ function AddChartDialogContent({
                   <ChartRenderer
                     settings={preview}
                     onSettingsChange={
-                      preview.type === "map"
+                      preview.type === "map" || preview.type === "markdown"
                         ? (updates) =>
                             updateDraft({
                               ...settings,
