@@ -29,7 +29,9 @@ function dateValue(value: CalculationValue): Date {
 export function recodeTarget(value: CalculationValue) {
   if (value === null || typeof value === "string") return value;
   throw new Error(
-    `recode targets must be text or null, not ${JSON.stringify(value)}`
+    typeof value === "number"
+      ? `recode targets must be text or null, not ${value}. For numbers, use if: if ["field"] == "run" then 1 else 0.`
+      : `recode targets must be text or null, not ${JSON.stringify(value)}`
   );
 }
 

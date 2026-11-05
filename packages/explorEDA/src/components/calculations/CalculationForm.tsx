@@ -250,6 +250,16 @@ export function CalculationForm({
                 with a field or value.
               </p>
               <div className="eda-calc-function-list">
+                <button
+                  type="button"
+                  onClick={() => insert("if cond then 1 else 0", 3, 7)}
+                >
+                  <code>if cond then a else b</code>
+                  <span>
+                    a when the condition holds, otherwise b; also written cond ?
+                    a : b
+                  </span>
+                </button>
                 {Object.values(calculationFunctions).map((fn) => (
                   <button
                     key={fn.syntax}

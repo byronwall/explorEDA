@@ -26,6 +26,8 @@ You can do the same work without the browser, for example from a script or a cod
 ```bash
 npx exploreda schema                   # each connection's tables and row counts
 npx exploreda schema shop orders       # the orders table's columns and types
+npx exploreda schema shop plays --match epa   # only columns whose name holds epa
+npx exploreda schema data/shop.db      # a database file, before any project text
 npx exploreda read                     # read every database source
 npx exploreda read orders returns      # read the sources named
 npx -p exploreda exploreda-dsl project .
