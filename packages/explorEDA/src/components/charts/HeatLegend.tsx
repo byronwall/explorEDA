@@ -7,12 +7,15 @@ export function HeatLegend({
   format,
   hasEmpty,
   hasInvalid,
+  fitted,
 }: {
   scale: HeatScale & { transform?: "sqrt" };
   metricLabel: string;
   format: (value: number) => string;
   hasEmpty: boolean;
   hasInvalid: boolean;
+  /** The ramp fits the filtered rows, so its colors move with filters. */
+  fitted?: boolean;
 }) {
   const [low, high] = scale.domain;
   const span = Math.max(Math.abs(low), Math.abs(high));
@@ -27,6 +30,9 @@ export function HeatLegend({
         />
         <span>{format(scale.kind === "diverging" ? span : high)}</span>
       </span>
+      {fitted && (
+        <span className="eda-heat-legend-key">fitted to filtered rows</span>
+      )}
       {scale.transform === "sqrt" && (
         <span className="eda-heat-legend-key">square-root color</span>
       )}

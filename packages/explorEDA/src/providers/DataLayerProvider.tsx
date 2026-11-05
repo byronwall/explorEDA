@@ -114,6 +114,7 @@ export const DISPLAY_ONLY_KEYS: ReadonlySet<keyof ChartSettings> = new Set<
   "note",
   "style",
   "composition",
+  "scaleTo",
 ] as (keyof ChartSettings)[]);
 
 const toVector3 = ({ x, y, z }: { x: number; y: number; z: number }) => ({

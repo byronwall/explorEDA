@@ -30,6 +30,7 @@ import {
   X,
 } from "lucide-react";
 import { ChartRenderer } from "./charts/ChartRenderer";
+import { SCALE_TO_TYPES, ScaleToChipSlot } from "./charts/ScaleTo";
 import { planPanelBody } from "./charts/panelBody";
 import {
   AxisTypographyProvider,
@@ -1113,6 +1114,9 @@ export function PlotChartPanel({
                 width={Math.max(1, panelWidth - 24)}
                 height={bodyHeight(autoLegendHeight)}
               />
+            )}
+            {!faceted && SCALE_TO_TYPES.has(settings.type) && (
+              <ScaleToChipSlot settings={settings} />
             )}
           </div>
         </ChartReadoutProvider>

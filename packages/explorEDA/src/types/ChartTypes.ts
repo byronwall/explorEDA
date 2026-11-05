@@ -78,6 +78,8 @@ export interface AxisSettings {
   max?: number;
 }
 
+export type ScaleTo = "all" | "filtered";
+
 export interface AxisLimits {
   min?: number;
   max?: number;
@@ -123,6 +125,12 @@ export interface BaseChartSettings {
    * other charts, and other charts never clear them.
    */
   localFilters?: Filter[];
+  /**
+   * Which rows set this chart's scales. All rows, the default, keeps lengths
+   * and colors still while other charts filter. Filtered fits the scales to
+   * the rows other charts leave.
+   */
+  scaleTo?: ScaleTo;
   /** Saved callouts and reference lines, on charts that draw them. */
   annotations?: ChartAnnotation[];
 
