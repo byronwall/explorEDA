@@ -129,6 +129,19 @@ A database source joins, filters, and charts like any other source. Its fields a
 
 Project text never holds a password. A connection line with `password=`, `url=`, or another setting that can hold a secret is refused, so the project stays safe to commit.
 
+## Chart a field from a related table
+
+When tables are related, a chart's field pickers list the fields of the tables a view can look up, under each table's name, after the view's own fields. On a store sales view related to items and stores, a row chart's **Data Field** picker offers **Item › I category** and **Store › S state**. Pick one, and explorEDA adds the lookup to the view's query, runs it, and sets the field. The query text gains one line:
+
+```text
+query @store-sales {
+  source store-sales
+  lookup item via=rel-store-sales-ss_item_sk-item-i_item_sk on=store-sales.ss_item_sk
+}
+```
+
+A lookup keeps one row per sales row, so only links where each row matches at most one record are listed. A link that would multiply the rows, such as from an item to its sales, shows as **More in Store sales: opens a new view**. That view has one row per related record, and this view keeps its rows.
+
 ## What a read keeps
 
 - **Every row, or none.** A read that fails keeps the last copy and says why beside the source.
