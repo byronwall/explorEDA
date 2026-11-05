@@ -254,7 +254,10 @@ function AddChartDialogContent({
                                   if (next.type === "bar") {
                                     next.forceString =
                                       option.key !== "histogram";
-                                    if (option.key === "histogram")
+                                    if (
+                                      option.key === "histogram" &&
+                                      !numericFields.includes(next.field)
+                                    )
                                       next.field = numericFields[0]!;
                                   }
                                   updateDraft(next);
@@ -308,7 +311,7 @@ function AddChartDialogContent({
                   <ChartRenderer
                     settings={preview}
                     onSettingsChange={
-                      preview.type === "map"
+                      preview.type === "map" || preview.type === "markdown"
                         ? (updates) =>
                             updateDraft({
                               ...settings,

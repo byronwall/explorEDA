@@ -55,10 +55,13 @@ export function Markdown({
   settings,
   width,
   height,
+  onSettingsChange,
 }: BaseChartProps<MarkdownSettings>) {
   const updateChart = useDataLayer((s) => s.updateChart);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
+  const onSettingsChangeRef = useRef(onSettingsChange);
+  onSettingsChangeRef.current = onSettingsChange;
 
   const slashMenu = useSlashMenu();
 
@@ -73,10 +76,14 @@ export function Markdown({
       handleKeyDown: (_view, event) => slashMenu.handleKeyDown(event),
     },
     onUpdate: ({ editor }) => {
-      updateChart(settingsRef.current.id, {
-        ...settingsRef.current,
-        content: editor.getHTML(),
-      });
+      const content = editor.getHTML();
+      // A preview, such as the add chart dialog, keeps the text in its draft.
+      if (onSettingsChangeRef.current) onSettingsChangeRef.current({ content });
+      else
+        updateChart(settingsRef.current.id, {
+          ...settingsRef.current,
+          content,
+        });
     },
   });
   slashMenu.bind(editor);

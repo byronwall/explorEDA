@@ -72,7 +72,9 @@ export function planSeriesBars({
     operation === "count"
       ? value.toLocaleString("en-US")
       : format(spec?.measureField ?? "", value);
-  const valueLabel = percent ? "Share of category total (%)" : metricLabel;
+  const valueLabel = percent
+    ? `Share within each ${getLabel(field)} (%)`
+    : metricLabel;
   const formatAxis = (value: number) =>
     percent ? `${Math.round(value * 10) / 10}%` : formatValue(value);
   // Categories and series over every row keep their slots, so bars do not

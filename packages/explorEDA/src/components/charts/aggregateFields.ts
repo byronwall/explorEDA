@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { aggregationLabel, type AggregateAggregation } from "@/lib/aggregates";
+import { rankMeasureFields } from "@/lib/fieldRanking";
 import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 
@@ -22,6 +23,7 @@ export function useMeasureFields(current?: string) {
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const calculations = useDataLayer((state) => state.calculations);
   const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldNames = useMemo(() => {
     void calculations;
     return getColumnNames();
@@ -43,5 +45,23 @@ export function useMeasureFields(current?: string) {
     }
     return numeric;
   }, [current, calculations, fieldNames, fieldProfiles, getColumnData]);
-  return { fieldNames, measureFields };
+  // The measure a new sum or average starts with: not a key such as an id.
+  const defaultMeasure = useMemo(
+    () => rankMeasureFields(measureFields, fieldProfiles)[0],
+    [measureFields, fieldProfiles]
+  );
+  // Summary names read as titles, so they use labels rather than field ids.
+  const aggregateName = (
+    aggregation: AggregateAggregation,
+    groupField: string,
+    measureField?: string,
+    entityField?: string
+  ) =>
+    getAggregateName(
+      aggregation,
+      getFieldLabel(groupField),
+      measureField && getFieldLabel(measureField),
+      entityField && getFieldLabel(entityField)
+    );
+  return { fieldNames, measureFields, defaultMeasure, aggregateName };
 }

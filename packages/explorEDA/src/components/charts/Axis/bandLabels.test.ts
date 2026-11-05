@@ -33,3 +33,16 @@ it("keeps every category when each slot holds a readable label", () => {
   const names = ["North America", "South America", "Europe", "Asia", "Oceania"];
   expect(labels(names, 300)).toHaveLength(5);
 });
+
+it("labels each of a few categories, shortened, when slots are narrow", () => {
+  const passers = [
+    "D.Prescott",
+    "J.Allen",
+    "J.Hurts",
+    "L.Jackson",
+    "P.Mahomes",
+  ];
+  const shown = labels(passers, 200);
+  expect(shown).toHaveLength(5);
+  expect(shown[0]!.startsWith("D.")).toBe(true);
+});

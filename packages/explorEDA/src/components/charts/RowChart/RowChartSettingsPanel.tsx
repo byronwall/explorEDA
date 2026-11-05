@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ONCE_PER_HELP, type AggregateSpec } from "@/lib/aggregates";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useEffect, useState } from "react";
-import { getAggregateName, useMeasureFields } from "../aggregateFields";
+import { useMeasureFields } from "../aggregateFields";
 
 const SELECT_CLASS = "h-9 rounded-md border-input bg-background px-2 text-sm";
 
@@ -34,7 +34,9 @@ export function RowChartSettingsPanel({
   const aggregate = settings.aggregateId
     ? aggregates.find((item) => item.id === settings.aggregateId)
     : undefined;
-  const { measureFields } = useMeasureFields(aggregate?.measureField);
+  const { measureFields, defaultMeasure, aggregateName } = useMeasureFields(
+    aggregate?.measureField
+  );
   const [error, setError] = useState<string>();
   const summaries = aggregates.filter(
     (item) => item.groupField === settings.field
@@ -54,11 +56,11 @@ export function RowChartSettingsPanel({
     setError(undefined);
     if (value === "new:sum" || value === "new:average") {
       const aggregation = value === "new:sum" ? "sum" : "average";
-      const measureField = measureFields[0];
+      const measureField = defaultMeasure;
       try {
         applySummary(
           addAggregate({
-            name: getAggregateName(aggregation, settings.field, measureField),
+            name: aggregateName(aggregation, settings.field, measureField),
             groupField: settings.field,
             aggregation,
             measureField,
@@ -77,7 +79,7 @@ export function RowChartSettingsPanel({
     if (!aggregate) return;
     try {
       const next = { ...aggregate, ...updates };
-      const name = getAggregateName(
+      const name = aggregateName(
         next.aggregation,
         next.groupField,
         next.measureField,
@@ -158,7 +160,7 @@ export function RowChartSettingsPanel({
                   aggregation: event.target
                     .value as AggregateSpec["aggregation"],
                   ...(event.target.value !== "count" && !aggregate.measureField
-                    ? { measureField: measureFields[0] }
+                    ? { measureField: defaultMeasure }
                     : {}),
                 })
               }
@@ -191,7 +193,7 @@ export function RowChartSettingsPanel({
             <ActionTooltip content={ONCE_PER_HELP}>
               <FieldSelector
                 label=""
-                placeholder="Every row"
+                placeholder="Every row counts"
                 value={aggregate.entityField ?? ""}
                 allowClear
                 onChange={(value) =>
@@ -277,7 +279,9 @@ export function RowChartSettingsPanel({
                 />
               </span>
             </ActionTooltip>
-            <Label htmlFor="colorField">Use as color field</Label>
+            <ActionTooltip content="Gives each category its own color from a shared scale. Split by adds bars per value instead.">
+              <Label htmlFor="colorField">Use as color field</Label>
+            </ActionTooltip>
           </div>
         </div>
         {settings.colorField && settings.colorScaleId && (

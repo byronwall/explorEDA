@@ -1,5 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { firstFreeSpotInView } from "./chartPlacement";
+import { firstFreeSpotInView, nextFreeSpot } from "./chartPlacement";
+
+describe("nextFreeSpot", () => {
+  it("fills the last row before starting a new one, never an older gap", () => {
+    const size = { w: 6, h: 4 };
+    const one = [{ x: 0, y: 0, w: 6, h: 4 }];
+    expect(nextFreeSpot(size, [], 12)).toEqual({ x: 0, y: 0, w: 6, h: 4 });
+    expect(nextFreeSpot(size, one, 12)).toEqual({ x: 6, y: 0, w: 6, h: 4 });
+    const gapAbove = [...one, { x: 0, y: 4, w: 12, h: 4 }];
+    expect(nextFreeSpot(size, gapAbove, 12)).toEqual({
+      x: 0,
+      y: 8,
+      w: 6,
+      h: 4,
+    });
+  });
+});
 
 describe("firstFreeSpotInView", () => {
   const size = { w: 6, h: 4 };

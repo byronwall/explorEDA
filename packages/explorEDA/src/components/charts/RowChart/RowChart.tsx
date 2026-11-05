@@ -47,7 +47,11 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import type { RowTrace } from "./RowTraceBody";
-import { poolAggregateRows, type AggregateResult } from "@/lib/aggregates";
+import {
+  poolAggregateRows,
+  rowsWithoutMeasure,
+  type AggregateResult,
+} from "@/lib/aggregates";
 import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
@@ -63,6 +67,9 @@ const TOP_N_ROW_FLOOR = 12;
 /** Each group's value, for statistics such as rule x=mean. */
 const summaryValues = (summary: AggregateResult) =>
   summary.rows.flatMap((row) => (row.value === undefined ? [] : [row.value]));
+
+/** Room the status line leaves for the Show all button. */
+const SHOW_ALL_WIDTH = 76;
 
 export function RowChart({
   settings,
@@ -509,8 +516,18 @@ export function RowChart({
   const fieldLabel = getFieldLabel(settings.field);
   const hoveredItem = displayCounts.find((item) => item.key === hovered);
   const liveRows = liveIds.length;
+  const leftOut = rowsWithoutMeasure(liveSummary);
+  // Other categories hide the tail, so the chart offers to show every one.
+  // More than fit still fold, and the status line says so.
+  const categoryCount = plan.visible.length + plan.other.length;
+  const showAll =
+    plan.other.length > 0 && !facetIds && settings.topN !== categoryCount
+      ? categoryCount
+      : undefined;
   const statusParts = [
     valueFilter && `${filterValues.length} categories selected`,
+    leftOut > 0 &&
+      `${leftOut.toLocaleString()} ${leftOut === 1 ? "row" : "rows"} without ${getFieldLabel(liveSummary!.spec.measureField ?? "")} left out`,
     plan.other.length > 0 &&
       `${plan.other.length} smaller categories in Other categories`,
     settings.topN && plan.visible.length < settings.topN && plan.other.length
@@ -815,9 +832,21 @@ export function RowChart({
         parts={statusParts}
         hint={statusHint}
         left={margin.left}
-        right={margin.right}
+        right={margin.right + (showAll ? SHOW_ALL_WIDTH : 0)}
         bottom={34}
       />
+      {showAll && (
+        <button
+          type="button"
+          className="eda-row-show-all absolute text-xs text-primary hover:underline"
+          style={{ right: margin.right, bottom: 34 }}
+          data-export="omit"
+          aria-label={`Show all ${showAll} categories`}
+          onClick={() => updateChart(settings.id, { topN: showAll })}
+        >
+          Show all {showAll}
+        </button>
+      )}
     </div>
   );
 }

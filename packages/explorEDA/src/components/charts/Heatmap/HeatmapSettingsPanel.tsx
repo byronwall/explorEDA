@@ -1,3 +1,4 @@
+import { rankMeasureFields } from "@/lib/fieldRanking";
 import { FieldSelector } from "@/components/FieldSelector";
 import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Label } from "@/components/ui/label";
@@ -33,6 +34,7 @@ export function HeatmapSettingsPanel({
 }: ChartSettingsPanelProps<HeatmapSettings>) {
   const getColumnNames = useDataLayer((state) => state.getColumnNames);
   const getColumnData = useDataLayer((state) => state.getColumnData);
+  const profiles = useDataLayer((state) => state.fieldProfiles);
   const calculations = useDataLayer((state) => state.calculations);
   const measureFields = useMemo(() => {
     void calculations;
@@ -86,7 +88,9 @@ export function HeatmapSettingsPanel({
             change({
               aggregation,
               ...(aggregation !== "count" && !settings.measureField
-                ? { measureField: measureFields[0] }
+                ? {
+                    measureField: rankMeasureFields(measureFields, profiles)[0],
+                  }
                 : {}),
             });
           }}

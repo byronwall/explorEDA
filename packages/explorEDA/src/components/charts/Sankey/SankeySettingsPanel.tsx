@@ -1,3 +1,4 @@
+import { rankMeasureFields } from "@/lib/fieldRanking";
 import { FieldSelector } from "@/components/FieldSelector";
 import { NumericInputEnter } from "@/components/NumericInputEnter";
 import { Button } from "@/components/ui/button";
@@ -213,7 +214,9 @@ export function SankeySettingsPanel({
             change({
               aggregation,
               ...(aggregation === "sum" && !settings.measureField
-                ? { measureField: measureFields[0] }
+                ? {
+                    measureField: rankMeasureFields(measureFields, profiles)[0],
+                  }
                 : {}),
             });
           }}

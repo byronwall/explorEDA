@@ -86,6 +86,44 @@ export const calculationFunctions: Record<string, CalculationFunction> = {
     minArgs: 1,
     evaluate: (...values) => Math.max(...values.map(numericValue)),
   },
+  round: {
+    description: "Round to a number of decimal places, 0 by default.",
+    syntax: "round(x, digits)",
+    minArgs: 1,
+    maxArgs: 2,
+    evaluate: (value, digits = 0) => {
+      const scale = 10 ** numericValue(digits);
+      return Math.round(numericValue(value) * scale) / scale;
+    },
+  },
+  floor: {
+    description: "Round down to a whole number.",
+    syntax: "floor(x)",
+    minArgs: 1,
+    maxArgs: 1,
+    evaluate: (value) => Math.floor(numericValue(value)),
+  },
+  ceil: {
+    description: "Round up to a whole number.",
+    syntax: "ceil(x)",
+    minArgs: 1,
+    maxArgs: 1,
+    evaluate: (value) => Math.ceil(numericValue(value)),
+  },
+  bin: {
+    description:
+      "Round down to a multiple of width, so bin(yards, 10) puts 37 in 30.",
+    syntax: "bin(x, width)",
+    minArgs: 2,
+    maxArgs: 2,
+    evaluate: (value, width) => {
+      const size = numericValue(width);
+      if (size <= 0) throw new Error("bin width must be more than 0");
+      // Round the quotient first so 0.3 / 0.1 does not fall to 2.
+      const steps = Math.floor(Number((numericValue(value) / size).toFixed(9)));
+      return Number((steps * size).toPrecision(12));
+    },
+  },
   count: {
     description: "Count supplied arguments, including missing values.",
     syntax: "count(x, y, …)",

@@ -1,3 +1,4 @@
+import { rankMeasureFields } from "@/lib/fieldRanking";
 import { useMemo } from "react";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Input } from "@/components/ui/input";
@@ -38,7 +39,7 @@ export function DonutSettingsPanel({
       ...settings,
       aggregation,
       ...(aggregation === "sum" && !settings.measureField
-        ? { measureField: measureFields[0] }
+        ? { measureField: rankMeasureFields(measureFields, profiles)[0] }
         : {}),
     });
 

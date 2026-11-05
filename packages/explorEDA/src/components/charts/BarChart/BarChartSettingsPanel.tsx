@@ -9,7 +9,7 @@ import { ONCE_PER_HELP, type AggregateAggregation } from "@/lib/aggregates";
 import { useColorScales } from "@/hooks/useColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useState } from "react";
-import { getAggregateName, useMeasureFields } from "../aggregateFields";
+import { useMeasureFields } from "../aggregateFields";
 import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 import {
   HistogramSettingsSection,
@@ -21,48 +21,94 @@ export function BarChartSettingsPanel({
   onSettingsChange,
 }: ChartSettingsPanelProps<BarChartSettings>) {
   const { getOrCreateScaleForField } = useColorScales();
+  const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const aggregate = useDataLayer((state) =>
     settings.aggregateId ? state.getAggregate(settings.aggregateId) : undefined
   );
   const additive = !aggregate || isAdditiveAggregation(aggregate.aggregation);
   const addAggregate = useDataLayer((state) => state.addAggregate);
   const updateAggregate = useDataLayer((state) => state.updateAggregate);
-  const { fieldNames, measureFields } = useMeasureFields(
-    aggregate?.measureField
-  );
+  const { fieldNames, measureFields, defaultMeasure, aggregateName } =
+    useMeasureFields(aggregate?.measureField);
   const [error, setError] = useState<string>();
   const stacked = Boolean(
     settings.seriesField &&
       settings.seriesLayout &&
       settings.seriesLayout !== "grouped"
   );
-  const seriesControl = (
+  // A series makes the field a category, so a histogram splits into panels
+  // instead and keeps its bins.
+  const histogramMode =
+    !aggregate &&
+    !settings.seriesField &&
+    !settings.forceString &&
+    measureFields.includes(settings.field);
+  const groupLabel = getFieldLabel(aggregate?.groupField ?? settings.field);
+  const seriesControl = histogramMode ? (
     <>
       <Label>Split by</Label>
-      <FieldSelector
-        label=""
-        placeholder="Series field"
-        value={settings.seriesField ?? ""}
-        allowClear
-        fields={fieldNames.filter(
-          (field) => field !== (aggregate?.groupField ?? settings.field)
-        )}
-        onChange={(field) =>
-          onSettingsChange({
-            ...settings,
-            seriesField: field || undefined,
-            colorField: field || undefined,
-            colorScaleId: field ? getOrCreateScaleForField(field) : undefined,
-            filters: settings.filters.filter(
-              (filter) => filter.field !== settings.seriesField
-            ),
-          })
-        }
-      />
+      <ActionTooltip content="A histogram splits into one panel per value, so each keeps its bins">
+        <div className="min-w-0">
+          <FieldSelector
+            label=""
+            placeholder="Panel field"
+            value={settings.facet?.enabled ? settings.facet.rowVariable : ""}
+            allowClear
+            fields={fieldNames.filter((field) => field !== settings.field)}
+            onChange={(field) =>
+              onSettingsChange({
+                ...settings,
+                facet: field
+                  ? {
+                      enabled: true,
+                      type: "wrap",
+                      rowVariable: field,
+                      columnCount: 2,
+                    }
+                  : { ...settings.facet, enabled: false },
+              })
+            }
+          />
+        </div>
+      </ActionTooltip>
+    </>
+  ) : (
+    <>
+      <Label>Split by</Label>
+      <ActionTooltip
+        content={`Adds a bar for each value of this field inside each ${groupLabel}, colored by it`}
+      >
+        <div className="min-w-0">
+          <FieldSelector
+            label=""
+            placeholder="Series field"
+            value={settings.seriesField ?? ""}
+            allowClear
+            fields={fieldNames.filter(
+              (field) => field !== (aggregate?.groupField ?? settings.field)
+            )}
+            onChange={(field) =>
+              onSettingsChange({
+                ...settings,
+                seriesField: field || undefined,
+                colorField: field || undefined,
+                colorScaleId: field
+                  ? getOrCreateScaleForField(field)
+                  : undefined,
+                filters: settings.filters.filter(
+                  (filter) => filter.field !== settings.seriesField
+                ),
+              })
+            }
+          />
+        </div>
+      </ActionTooltip>
       {settings.seriesField && (
         <>
           <Label htmlFor="bar-series-layout">Display</Label>
-          <ActionTooltip content="Grouped compares separate values. Stacked adds series. 100% shows each series as a share of its category total.">
+          <ActionTooltip
+            content={`Grouped puts series side by side. Stacked adds them up. 100% shows each series as a share of its ${groupLabel} total.`}
+          >
             <select
               id="bar-series-layout"
               className="h-9 rounded-md border-input bg-background px-2 text-sm"
@@ -82,7 +128,7 @@ export function BarChartSettingsPanel({
                 Stacked
               </option>
               <option value="percent" disabled={!additive}>
-                100%
+                100% within each {groupLabel}
               </option>
             </select>
           </ActionTooltip>
@@ -124,14 +170,14 @@ export function BarChartSettingsPanel({
   );
 
   const createAggregate = (aggregation: AggregateAggregation) => {
-    const measureField = measureFields[0];
+    const measureField = defaultMeasure;
     if (aggregation !== "count" && !measureField) {
       setError("Sum and average need a numeric measure field.");
       return;
     }
     try {
       const aggregate = addAggregate({
-        name: getAggregateName(aggregation, settings.field, measureField),
+        name: aggregateName(aggregation, settings.field, measureField),
         groupField: settings.field,
         aggregation,
         ...(aggregation === "count" ? {} : { measureField }),
@@ -161,7 +207,7 @@ export function BarChartSettingsPanel({
     const updateDefinition = (updates: Partial<typeof aggregate>) => {
       try {
         const next = { ...aggregate, ...updates };
-        const name = getAggregateName(
+        const name = aggregateName(
           next.aggregation,
           next.groupField,
           next.measureField,
@@ -233,7 +279,7 @@ export function BarChartSettingsPanel({
               updateDefinition({
                 aggregation: event.target.value as typeof aggregate.aggregation,
                 ...(event.target.value !== "count" && !aggregate.measureField
-                  ? { measureField: measureFields[0] }
+                  ? { measureField: defaultMeasure }
                   : {}),
               });
             }}
@@ -266,7 +312,7 @@ export function BarChartSettingsPanel({
           <ActionTooltip content={ONCE_PER_HELP}>
             <FieldSelector
               label=""
-              placeholder="Every row"
+              placeholder="Every row counts"
               value={aggregate.entityField ?? ""}
               allowClear
               onChange={(value) =>
@@ -302,7 +348,7 @@ export function BarChartSettingsPanel({
         {!settings.seriesField && (
           <>
             <Label htmlFor="bar-data-mode">Data mode</Label>
-            <ActionTooltip content="Histogram groups numeric values into intervals. Category count gives each distinct value its own bar.">
+            <ActionTooltip content="Histogram groups a numeric field into intervals. Category count gives each distinct value its own bar. Operation sets what each bar measures.">
               <select
                 id="bar-data-mode"
                 className="h-9 min-w-0 rounded border border-input bg-background px-2 text-sm"
@@ -319,7 +365,7 @@ export function BarChartSettingsPanel({
                     field:
                       event.target.value === "histogram" &&
                       !measureFields.includes(settings.field)
-                        ? measureFields[0]!
+                        ? defaultMeasure!
                         : settings.field,
                   })
                 }
@@ -360,24 +406,26 @@ export function BarChartSettingsPanel({
         />
 
         <Label htmlFor="bar-operation">Operation</Label>
-        <select
-          id="bar-operation"
-          className="h-9 rounded-md border-input bg-background px-2 text-sm"
-          defaultValue="category"
-          onChange={(event) => {
-            if (event.target.value !== "category") {
-              createAggregate(event.target.value as AggregateAggregation);
-            }
-          }}
-        >
-          <option value="category">Count rows</option>
-          <option value="sum" disabled={!measureFields.length}>
-            Sum
-          </option>
-          <option value="average" disabled={!measureFields.length || stacked}>
-            Average
-          </option>
-        </select>
+        <ActionTooltip content="What each bar measures: its number of rows, or the sum or average of a numeric field">
+          <select
+            id="bar-operation"
+            className="h-9 rounded-md border-input bg-background px-2 text-sm"
+            defaultValue="category"
+            onChange={(event) => {
+              if (event.target.value !== "category") {
+                createAggregate(event.target.value as AggregateAggregation);
+              }
+            }}
+          >
+            <option value="category">Count rows</option>
+            <option value="sum" disabled={!measureFields.length}>
+              Sum
+            </option>
+            <option value="average" disabled={!measureFields.length || stacked}>
+              Average
+            </option>
+          </select>
+        </ActionTooltip>
 
         {(settings.seriesField ||
           settings.forceString ||
@@ -406,11 +454,19 @@ export function BarChartSettingsPanel({
                   })
                 }
               />
-              <Label htmlFor="colorField">Use as color field</Label>
+              <ActionTooltip content="Gives each category its own color from a shared scale. Split by adds bars per value instead.">
+                <Label htmlFor="colorField">Use as color field</Label>
+              </ActionTooltip>
             </div>
           </div>
         )}
       </div>
+      {histogramMode && settings.facet?.enabled && (
+        <p className="text-xs text-muted-foreground">
+          Each value of {getFieldLabel(settings.facet.rowVariable)} gets its own
+          histogram panel on the grid.
+        </p>
+      )}
       {settings.seriesField && (
         <p className="text-xs text-muted-foreground">
           Group values are categories. Select a bar to filter its category and

@@ -28,6 +28,24 @@ export function firstFreeSpot(
 }
 
 /**
+ * The first free spot at or after the last chart's row, so new charts fill
+ * the row beside the last one before starting a new row. Reading order stays
+ * the order charts were added, which narrow grids rely on.
+ */
+export function nextFreeSpot(
+  size: { w: number; h: number },
+  occupied: ChartLayout[],
+  columnCount: number
+): ChartLayout {
+  const top = Math.max(0, ...occupied.map((item) => item.y));
+  return firstFreeSpot(
+    size,
+    [...occupied, { x: 0, y: 0, w: columnCount, h: top }],
+    columnCount
+  );
+}
+
+/**
  * The first free spot that fits inside the visible rows, so a new chart
  * starts where the user is looking. When none fits, it takes the top visible
  * row and the charts in its way move down.
