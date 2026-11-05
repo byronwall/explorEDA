@@ -74,3 +74,31 @@ it("traces individual observations, excluded inputs, and quartiles without chang
   expect(saved.charts[0].showObservations).toBe(true);
   expect(saved.charts[0].violinOverlay).toBe(true);
 });
+
+it("draws one box for missing groups, matching what its selection keeps", () => {
+  render(
+    <DataLayerProvider
+      charts={[{ ...settings, violinOverlay: false, showObservations: false }]}
+      data={[
+        { group: null, value: 1 },
+        { group: "", value: 2 },
+        { group: "A", value: 3 },
+        { group: "A", value: 4 },
+      ]}
+    >
+      <Harness />
+    </DataLayerProvider>
+  );
+  const boxes = [...document.querySelectorAll("[data-box-group]")];
+  expect(boxes.map((box) => box.getAttribute("data-box-group"))).toEqual([
+    "(missing)",
+    "A",
+  ]);
+  // Blank text and null are one missing group, so the box reads both rows.
+  expect(boxes[0]).toHaveAttribute(
+    "aria-label",
+    expect.stringMatching(/2 rows$/)
+  );
+  fireEvent.click(boxes[0]!);
+  expect(screen.getByLabelText("Matching")).toHaveTextContent(/^0,1$/);
+});

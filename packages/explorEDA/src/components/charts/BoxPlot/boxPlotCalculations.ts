@@ -108,11 +108,19 @@ export function calculateBoxPlotStats(
   };
 }
 
+/** The narrowest smoothing a violin draws with. */
+export const MIN_VIOLIN_BANDWIDTH = 0.1;
+
 export function calculateKernelDensity(
   data: number[],
-  bandwidth: number,
+  requestedBandwidth: number,
   numPoints: number = 100
 ): [number, number][] {
+  // A cleared or zero bandwidth would make every density NaN.
+  const bandwidth =
+    Number.isFinite(requestedBandwidth) && requestedBandwidth > 0
+      ? requestedBandwidth
+      : MIN_VIOLIN_BANDWIDTH;
   const sortedData = [...data].sort((a, b) => a - b);
   if (sortedData.length === 0) {
     return [];

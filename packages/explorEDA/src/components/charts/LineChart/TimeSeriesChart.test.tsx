@@ -236,3 +236,40 @@ it("keeps the period axis when a filter elsewhere leaves fewer periods", () => {
     ["2024-06-01", "empty", 0],
   ]);
 });
+
+function BrushHarness() {
+  const settings = useDataLayer((s) => s.charts[0]) as LineChartSettings;
+  return (
+    <>
+      <output aria-label="Filters">{JSON.stringify(settings.filters)}</output>
+      <LineChart settings={settings} width={650} height={340} />
+    </>
+  );
+}
+
+it("ends a brush at the right edge on the last period, not the one after", () => {
+  window.PointerEvent = MouseEvent as typeof PointerEvent;
+  const settings: LineChartSettings = {
+    ...chart,
+    time: { ...DEFAULT_TIME_SERIES, interval: "month" },
+  };
+  const { container } = render(
+    <DataLayerProvider
+      data={["01", "02", "03", "04"].map((month) => ({
+        Date: `2024-${month}-15`,
+        Amount: 1,
+      }))}
+      charts={[settings]}
+    >
+      <BrushHarness />
+    </DataLayerProvider>
+  );
+  const svg = container.querySelector("svg")!;
+  fireEvent.pointerDown(svg, { clientX: 100, clientY: 150, button: 0 });
+  fireEvent.pointerMove(svg, { clientX: 5000, clientY: 150, buttons: 1 });
+  fireEvent.pointerUp(svg, { clientX: 5000, clientY: 150 });
+  expect(JSON.parse(screen.getByLabelText("Filters").textContent!)).toEqual([
+    { type: "date-range", field: "Date", min: "2024-01-01", max: "2024-04-30" },
+  ]);
+  expect(container.querySelector(".eda-brush rect")).toBeInTheDocument();
+});

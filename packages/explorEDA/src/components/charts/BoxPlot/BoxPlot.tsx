@@ -2,6 +2,7 @@ import { annotationSlot, scaleFrame } from "../annotations/ChartAnnotations";
 import {
   finiteNumber,
   finiteNumbers,
+  isMissingValue,
   numericExclusionReason,
   parseNumber,
 } from "@/lib/valueParsing";
@@ -51,8 +52,10 @@ import {
   calculateBoxPlotStats,
   calculateKernelDensity,
   medianRange,
+  MIN_VIOLIN_BANDWIDTH,
   selectBoxGroup,
 } from "./boxPlotCalculations";
+import { ChartMessage } from "../ChartMessage";
 import { BoxPlotSettings } from "./definition";
 
 const Y_SCALE_PADDING = 0.1; // 10% padding for whiskers
@@ -109,11 +112,39 @@ export function BoxPlot({
   );
 
   const typography = useAxisTypography();
+  // Null and blank text are one missing group, as the value filter a click
+  // on it writes matches both.
+  const groupOf = (value: datum): datum =>
+    isMissingValue(value) ? null : categoryValue(value);
+  // Every row's values by group: the axis and the population order read them.
+  const allGroupValues = useMemo(() => {
+    const values = new Map<string, number[]>();
+    allData.forEach((value, index) => {
+      const number = finiteNumber(value);
+      if (number === undefined) return;
+      const group = settings.colorField
+        ? categoryLabel(groupOf(allGroupData[index]))
+        : "All Data";
+      if (!values.has(group)) values.set(group, []);
+      values.get(group)!.push(number);
+    });
+    return values;
+  }, [allData, allGroupData, settings.colorField]);
+  const hasNumbers = allGroupValues.size > 0;
+
   // The domain spans all rows, so linked filters keep the axis still.
   const yDomain = useMemo(() => {
     const values = finiteNumbers(allData);
-    const min = Math.min(...values);
-    const max = Math.max(...values);
+    let min = Math.min(...values);
+    let max = Math.max(...values);
+    if (settings.whiskerType === "stdDev") {
+      // Mean ± 2 deviations can lie past every value; the caps still show.
+      for (const data of allGroupValues.values()) {
+        const stats = calculateBoxPlotStats(data, "stdDev");
+        min = Math.min(min, stats.whiskerLow);
+        max = Math.max(max, stats.whiskerHigh);
+      }
+    }
     const padding = (max - min) * Y_SCALE_PADDING;
     return settings.yAxis.scaleType === "log"
       ? logDomain(values, settings.yAxis)
@@ -124,7 +155,7 @@ export function BoxPlot({
           ],
           settings.yAxis
         );
-  }, [allData, settings.yAxis]);
+  }, [allData, allGroupValues, settings.whiskerType, settings.yAxis]);
 
   // Value ticks read compactly, such as $15K, as on the bar chart, in one
   // notation across the axis.
@@ -182,7 +213,7 @@ export function BoxPlot({
     const groups = new Map<datum, number[]>();
 
     liveData.forEach((value, index) => {
-      const colorValue = categoryValue(colorFieldData[index]);
+      const colorValue = groupOf(colorFieldData[index]);
       const numValue = finiteNumber(value);
       if (numValue === undefined) return;
 
@@ -226,7 +257,10 @@ export function BoxPlot({
 
       const bandwidth = settings.autoBandwidth
         ? autoBandwidth
-        : settings.violinBandwidth;
+        : Math.max(
+            MIN_VIOLIN_BANDWIDTH,
+            finiteNumber(settings.violinBandwidth) ?? MIN_VIOLIN_BANDWIDTH
+          );
 
       return {
         group,
@@ -244,22 +278,12 @@ export function BoxPlot({
   // Create scales
   const xScale = useMemo(() => {
     const groups = settings.colorField
-      ? [...new Set(allGroupData.map(categoryLabel))]
+      ? [...new Set(allGroupData.map((value) => categoryLabel(groupOf(value))))]
       : ["All Data"];
 
     const medians = new Map<string, number>();
     if (settings.sortBy === "median") {
-      const values = new Map<string, number[]>();
-      allData.forEach((value, index) => {
-        const number = finiteNumber(value);
-        if (number === undefined) return;
-        const group = settings.colorField
-          ? categoryLabel(allGroupData[index])
-          : "All Data";
-        if (!values.has(group)) values.set(group, []);
-        values.get(group)!.push(number);
-      });
-      values.forEach((data, group) =>
+      allGroupValues.forEach((data, group) =>
         medians.set(
           group,
           calculateBoxPlotStats(data, settings.whiskerType).median
@@ -281,7 +305,7 @@ export function BoxPlot({
 
     return scale;
   }, [
-    allData,
+    allGroupValues,
     allGroupData,
     settings.colorField,
     innerWidth,
@@ -330,9 +354,7 @@ export function BoxPlot({
       }
     >();
     liveIds.forEach((sourceId, index) => {
-      const group = hasColorField
-        ? categoryValue(colorFieldData[index])
-        : "All Data";
+      const group = hasColorField ? groupOf(colorFieldData[index]) : "All Data";
       const key = categoryKey(group);
       const item = groups.get(key) ?? { group, contributors: [] };
       const input = liveData[index];
@@ -435,6 +457,15 @@ export function BoxPlot({
     },
     [settings.colorField, settings.filters, settings.id, updateChart]
   );
+
+  // An empty axis would show no ticks and no reason.
+  if (!hasNumbers) {
+    return (
+      <ChartMessage width={width} height={height}>
+        No numeric values in {yAxisLabel || settings.field}.
+      </ChartMessage>
+    );
+  }
 
   const format = (value: number) => formatFieldValue(settings.field, value);
   const formatGroup = (value: datum) =>

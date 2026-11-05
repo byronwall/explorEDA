@@ -310,9 +310,14 @@ export function planEcdf({
   const ticks = low === high ? [low] : scale.ticks(xTickCount);
   // Log ticks include every minor step; keep the ones that will not collide.
   const tickEvery = Math.max(1, Math.ceil(ticks.length / xTickCount));
+  // A tiny log decade such as 1e-9 would round to 0; it reads as an exponent.
+  const tickLabel = (value: number) =>
+    log && value !== 0 && Math.abs(value) < 0.001
+      ? value.toExponential()
+      : format(value);
   const xTicks = ticks
     .filter((_, index) => !log || index % tickEvery === 0)
-    .map((value) => ({ x: px(value), label: format(value) }));
+    .map((value) => ({ x: px(value), label: tickLabel(value) }));
   const yTicks = [0, 0.25, 0.5, 0.75, 1].map((share) => ({
     y: py(share),
     label: `${Math.round(share * 100)}%`,
