@@ -5,13 +5,20 @@ import { useGetAllIds, useGetLiveIds } from "./useGetLiveData";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 /** Chart types whose scales can fit the filtered rows instead of all rows. */
-export const SCALE_TO_TYPES = new Set<ChartSettings["type"]>([
+const SCALE_TO_TYPES = new Set<ChartSettings["type"]>([
   "heatmap",
   "calendar",
   "pivot",
   "bar",
   "waterfall",
+  "scatter-matrix",
+  "sankey",
 ]);
+
+/** Whether this chart has scales that can fit the filtered rows. A scatter's only ones are its marginal bars. */
+export const hasScaleTo = (settings: ChartSettings) =>
+  SCALE_TO_TYPES.has(settings.type) ||
+  (settings.type === "scatter" && Boolean(settings.marginals));
 
 export const scaleToOf = (settings: ChartSettings): ScaleTo =>
   settings.scaleTo ?? "all";
@@ -39,7 +46,7 @@ export function ScaleToSetting({
   settings: ChartSettings;
   onSettingChange: (key: string, value: unknown) => void;
 }) {
-  if (!SCALE_TO_TYPES.has(settings.type)) return null;
+  if (!hasScaleTo(settings)) return null;
   return (
     <section className="eda-chart-rows" aria-label="Scale to">
       <h3 className="text-xs font-semibold">Scale to</h3>

@@ -3,6 +3,7 @@ import { bisectRight } from "d3-array";
 import { categoryKey } from "@/lib/categories";
 import type { IdType } from "@/providers/DataLayerProvider";
 import type { Filter } from "@/types/FilterTypes";
+import type { datum } from "@/types/ChartTypes";
 import { buildScale } from "../Axis/axisPlan";
 import type { ScatterPlotSettings } from "./definition";
 import type { ScatterPlan } from "./scatterPlan";
@@ -69,7 +70,16 @@ export interface MarginalPlan {
  */
 export function planMarginals(
   settings: ScatterPlotSettings,
-  plan: ScatterPlan
+  plan: ScatterPlan,
+  /**
+   * Every row the chart can draw. Its bin counts set the bar length scale,
+   * so bars shrink instead of rescaling while other charts filter.
+   */
+  all?: {
+    ids: IdType[];
+    x: Record<IdType, datum>;
+    y: Record<IdType, datum>;
+  }
 ): MarginalPlan | undefined {
   if (!settings.marginals) return undefined;
   const binCount = settings.marginals.bins ?? DEFAULT_MARGINAL_BINS;
@@ -121,7 +131,21 @@ export function planMarginals(
       if (group) group.count++;
       else member.groups.set(key, { color: point.mappedColor, count: 1 });
     }
-    const axisMax = Math.max(1, ...members.map((item) => item.ids.length));
+    // The tallest bin over every row, unless the chart fits the filtered rows.
+    const allCounts = new Array<number>(binCount).fill(0);
+    if (all && settings.scaleTo !== "filtered")
+      for (const id of all.ids) {
+        const value = parseNumber(all[axis][id]);
+        if (!Number.isFinite(value) || value < low || value > high) continue;
+        allCounts[
+          Math.max(0, Math.min(binCount - 1, bisectRight(edges, value) - 1))
+        ]! += 1;
+      }
+    const axisMax = Math.max(
+      1,
+      ...members.map((item) => item.ids.length),
+      ...allCounts
+    );
     max[axis] = axisMax;
     const field = axis === "x" ? plan.xField : plan.yField;
     const label = axis === "x" ? plan.xDisplay : plan.yDisplay;
