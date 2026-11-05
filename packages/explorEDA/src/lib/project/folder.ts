@@ -446,6 +446,17 @@ export async function readProjectFolder(
   );
   for (const query of project.queries) {
     if (implicitQueries.includes(query.id)) continue;
+    // An unread or missing source has no fields yet; its own problem says so.
+    const reads = query.steps.flatMap((step) => {
+      if (step.kind === "source" || step.kind === "append")
+        return [step.sourceId];
+      if (step.kind !== "lookup" && step.kind !== "expand") return [];
+      const link = project.relationships.find(
+        (item) => item.id === step.relationshipId
+      );
+      return link ? [link.from.sourceId, link.to.sourceId] : [];
+    });
+    if (reads.some((id) => missingSources.includes(id))) continue;
     let diagnostics: AnalysisDiagnostic[] = [];
     try {
       diagnostics = evaluateAnalysisQuery(
