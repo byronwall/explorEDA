@@ -49,11 +49,12 @@ source @returns db=shop sql="select r.returnId, r.reason, o.amount from returns 
 relate @order-customer orders.customerId -> customers.customerId
 ```
 
-| Declaration           | Form                                                               | Notes                                                                                                             |
-| --------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| `connection`          | `connection @id driver=sqlite path=file`                           | `driver=duckdb` reads a DuckDB file the same way. `path=` is relative to the folder. An absolute path also works. |
-| `source` from a table | `source @id [key=field] db=connection table=name [limit=rows]`     | Write `schema.table` for a table outside the default schema.                                                      |
-| `source` from a query | `source @id [key=field] db=connection sql="select …" [limit=rows]` | Any query that returns rows. Write a newline as `\n`.                                                             |
+| Declaration           | Form                                                               | Notes                                                                                                                       |
+| --------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `connection`          | `connection @id driver=sqlite path=file`                           | `driver=duckdb` reads a DuckDB file the same way. `path=` is relative to the folder. An absolute path also works.           |
+| `source` from a table | `source @id [key=field] db=connection table=name [limit=rows]`     | Write `schema.table` for a table outside the default schema.                                                                |
+| `source` from a query | `source @id [key=field] db=connection sql="select …" [limit=rows]` | Any query that returns rows. Write a newline as `\n`.                                                                       |
+| `source` from a file  | `source @id [key=field] db=connection sql=@queries/returns.sql`    | Reads the query from a `.sql` file in the folder, so a long query keeps its lines. Editing the file makes the source stale. |
 
 ## PostgreSQL, MySQL, and SQL Server
 

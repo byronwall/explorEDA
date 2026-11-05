@@ -247,6 +247,28 @@ export async function readProjectFolder(
     connections = compiled.connections;
     databases = compiled.databases;
     problems.push(...withPath(projectPath, compiled.diagnostics));
+    // A query kept in a file reads as if the text held it, so a change to
+    // the file makes the source's snapshot stale.
+    for (const [id, database] of Object.entries(databases)) {
+      if (database.sqlFile === undefined) continue;
+      try {
+        databases[id] = {
+          ...database,
+          sql: await files.read(database.sqlFile),
+        };
+      } catch {
+        problems.push(
+          problem(
+            projectPath,
+            `${id} reads its SQL from ${database.sqlFile}, which doesn't exist.`,
+            {
+              subject: id,
+              suggestion: "Fix sql=@ or restore the file.",
+            }
+          )
+        );
+      }
+    }
   }
 
   // Analyses may bring their own sources; the project's win on a clash.

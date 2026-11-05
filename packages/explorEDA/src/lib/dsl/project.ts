@@ -39,7 +39,13 @@ export interface DatabaseSource {
   /** The connection's ID, written as `db=`. */
   connection: string;
   table?: string;
+  /** The query: as the text writes it, or as read from `sqlFile`. */
   sql?: string;
+  /**
+   * A file in the project folder that holds the query, written as
+   * `sql=@queries/orders.sql`. The folder reader puts its text in `sql`.
+   */
+  sqlFile?: string;
   /** The most rows a read may return; the default applies otherwise. */
   limit?: number;
 }
@@ -156,9 +162,15 @@ function databaseSettings(database: DatabaseSource | undefined): string[] {
     ...(database.table === undefined
       ? []
       : [`table=${encodeScalar(database.table)}`]),
-    ...(database.sql === undefined
-      ? []
-      : [`sql=${JSON.stringify(database.sql)}`]),
+    ...(database.sqlFile !== undefined
+      ? [
+          encodeScalar(database.sqlFile) === database.sqlFile
+            ? `sql=@${database.sqlFile}`
+            : `sql=${JSON.stringify(`@${database.sqlFile}`)}`,
+        ]
+      : database.sql === undefined
+        ? []
+        : [`sql=${JSON.stringify(database.sql)}`]),
     ...(database.limit === undefined ? [] : [`limit=${database.limit}`]),
   ];
 }
@@ -499,7 +511,10 @@ function compileDatabase(
 ): DatabaseSource | undefined {
   const connection = single(declaration, "db");
   const table = single(declaration, "table");
-  const sql = single(declaration, "sql");
+  const sqlText = single(declaration, "sql");
+  // sql=@queries/orders.sql reads the query from a file in the folder.
+  const sqlFile = sqlText?.startsWith("@") ? sqlText.slice(1) : undefined;
+  const sql = sqlFile === undefined ? sqlText : undefined;
   const limitText = single(declaration, "limit");
   if (connection === undefined) {
     for (const key of ["table", "sql", "limit"]) {
@@ -521,7 +536,14 @@ function compileDatabase(
       "Keep path= or db=."
     );
   }
-  if ((table === undefined) === (sql === undefined)) {
+  if (sqlFile === "") {
+    report(
+      declaration.span,
+      "sql=@ needs a file name after the @.",
+      "Write it as sql=@queries/orders.sql."
+    );
+  }
+  if ((table === undefined) === (sqlText === undefined)) {
     report(
       declaration.span,
       table === undefined
@@ -546,6 +568,7 @@ function compileDatabase(
     connection,
     ...(table === undefined ? {} : { table }),
     ...(sql === undefined || table !== undefined ? {} : { sql }),
+    ...(!sqlFile || table !== undefined ? {} : { sqlFile }),
     ...(limit === undefined ? {} : { limit }),
   };
 }

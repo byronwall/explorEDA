@@ -187,18 +187,52 @@ export function refreshSource(
   return read;
 }
 
+/** A source whose `sql=@file` names a file, with that file's query in `sql`. */
+async function withSqlFile(
+  sourceId: string,
+  database: DatabaseSource,
+  options: SourceOptions
+): Promise<DatabaseSource> {
+  const file = database.sqlFile;
+  if (file === undefined) {
+    return database;
+  }
+  const full = path.resolve(options.root, file);
+  const inside = path.relative(options.root, full);
+  if (
+    options.confined &&
+    (inside.startsWith("..") || path.isAbsolute(inside))
+  ) {
+    throw new SourceReadError(
+      "query",
+      `${sourceId} reads its SQL from ${file}, outside this project.`,
+      "Keep the SQL file in the project folder."
+    );
+  }
+  try {
+    return { ...database, sql: await fs.readFile(full, "utf8") };
+  } catch {
+    throw new SourceReadError(
+      "query",
+      `${sourceId} reads its SQL from ${file}, which doesn't exist.`,
+      "Fix sql=@ or restore the file."
+    );
+  }
+}
+
 async function readAndWrite(
   sourceId: string,
   options: SourceOptions
 ): Promise<SnapshotInfo> {
   const { connections, databases } = await projectDatabases(options.root);
-  const database: DatabaseSource | undefined = databases[sourceId];
-  if (!database) {
+  const declared: DatabaseSource | undefined = databases[sourceId];
+  if (!declared) {
     throw new SourceReadError(
       "unknown-source",
       `${sourceId} isn't a database source in this project.`
     );
   }
+  const database = await withSqlFile(sourceId, declared, options);
   const connection = findConnection(connections, database.connection);
   const { session, driver } = await openConnection(connection, options);
   try {

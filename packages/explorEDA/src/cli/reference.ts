@@ -38,8 +38,10 @@ Sources:
   source @id ["Name"] [key=field] path=<file.csv|file.json> { field lines }
   source @id [key=field] db=<connection> table=<name> [limit=rows]
   source @id [key=field] db=<connection> sql="select …" [limit=rows]
+  source @id [key=field] db=<connection> sql=@queries/orders.sql
   table= takes schema.table outside the default schema. sql= is any query
-  that returns rows; write a newline as \\n. A read keeps at most 100,000
+  that returns rows; write a newline as \\n, or keep a longer query in a .sql
+  file in the folder and name it with sql=@<path>. A read keeps at most 100,000
   rows unless limit= raises it. Fields and types come from the data, so
   field lines are optional: field <id> ["Label"] [string|number|boolean|date].
   A database source has no rows until it is read:

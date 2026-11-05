@@ -202,6 +202,30 @@ source @active db=warehouse sql="select id, region\\nfrom customers where active
       expect(exportProjectText(project, { connections, databases })).toBe(text);
     });
 
+    it("reads sql=@file as a query kept in a file", () => {
+      const withFile = text.replace(
+        'sql="select id, region\\nfrom customers where active"',
+        "sql=@queries/active.sql"
+      );
+      const result = compileProjectText(withFile);
+      expect(result.diagnostics).toEqual([]);
+      expect(result.databases.active).toEqual({
+        connection: "warehouse",
+        sqlFile: "queries/active.sql",
+      });
+      // The folder reader fills in sql; the text still names the file.
+      const databases = {
+        ...result.databases,
+        active: { ...result.databases.active!, sql: "select 1" },
+      };
+      expect(
+        exportProjectText(result.project, {
+          connections: result.connections,
+          databases,
+        })
+      ).toBe(withFile);
+    });
+
     it("refuses secrets in project text", () => {
       const { connections, diagnostics } = compileProjectText(`project @p
 connection @w driver=postgres host=h password=hunter2

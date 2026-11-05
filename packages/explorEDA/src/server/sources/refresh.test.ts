@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -130,6 +130,41 @@ describe("refreshing a database source", () => {
     expect(error.code).toBe("too-many-rows");
     expect(await readFile(path.join(root, snapshotPath("items")), "utf8")).toBe(
       before
+    );
+  });
+
+  it("reads sql=@file from the folder and goes stale when the file changes", async () => {
+    const project = PROJECT.replace(
+      'sql="select id, name from contract_items where id = 1"',
+      "sql=@queries/first.sql"
+    );
+    const sql = "select id, name\nfrom contract_items\nwhere id = 1\n";
+    await writeFile(path.join(root, "exploreda.eda"), project);
+    await mkdir(path.join(root, "queries"));
+    await writeFile(path.join(root, "queries/first.sql"), sql);
+    const info = await refreshSource("first", { root });
+    expect(info.rowCount).toBe(1);
+    const snapshot = await readFile(
+      path.join(root, snapshotPath("first")),
+      "utf8"
+    );
+    const load = (file: string) =>
+      readProjectFolder(
+        memoryProjectFiles({
+          "exploreda.eda": project,
+          "queries/first.sql": file,
+          [snapshotPath("first")]: snapshot,
+        })
+      );
+    expect((await load(sql)).staleSources).toEqual([]);
+    expect((await load(sql.replace("id = 1", "id = 2"))).staleSources).toEqual([
+      "first",
+    ]);
+
+    await rm(path.join(root, "queries/first.sql"));
+    const error = await failure(refreshSource("first", { root }));
+    expect(error.message).toBe(
+      "first reads its SQL from queries/first.sql, which doesn't exist."
     );
   });
 
