@@ -2980,6 +2980,14 @@ html {
   color: var(--destructive);
   font-size: 12px;
 }
+.eda-append-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
 .eda-schema-inspector-field,
 .eda-schema-inspector-section {
   display: flex;

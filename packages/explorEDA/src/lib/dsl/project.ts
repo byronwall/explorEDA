@@ -786,7 +786,7 @@ function compileStep(
       const match: Record<string, string> = {};
       for (const item of matchPair?.value.items ?? []) {
         const [base, own] = item.text.split(":");
-        if (!base || !own) {
+        if (!base || own === undefined) {
           report(
             matchPair!.span,
             `match=${item.text} needs both fields.`,

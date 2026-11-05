@@ -1,5 +1,6 @@
 import type {
   AggregateStep,
+  AppendStep,
   AnalysisFilterOperator,
   AnalysisField,
   AnalysisProject,
@@ -15,7 +16,10 @@ import type {
   SourceDefinition,
 } from "@/types/AnalysisProject";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
-import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
+import {
+  appendFieldMatch,
+  evaluateAnalysisQuery,
+} from "@/lib/analysis/evaluateProject";
 import { parseExpression } from "@/lib/calculations/parser/semantics";
 import {
   copyQuery,
@@ -363,6 +367,46 @@ export function calculateStep(
 }
 
 /** A filter after the query's output. */
+/**
+ * An append of another source under the query's rows, with `match` holding
+ * only the pairings that differ from what append lines up by itself.
+ */
+export function appendStep(
+  project: AnalysisProject,
+  query: AnalysisQuery,
+  sourceId: string,
+  field: string,
+  chosen: Record<string, string>
+): AppendStep {
+  const base = baseSourceOf(project, query);
+  const own = project.sources.find((item) => item.id === sourceId);
+  const auto = appendFieldMatch(
+    base?.fields.map((item) => item.id) ?? [],
+    own?.fields.map((item) => item.id) ?? []
+  );
+  const match = Object.fromEntries(
+    Object.entries(chosen).filter(([id, value]) => (auto[id] ?? "") !== value)
+  );
+  return {
+    id: query.steps.some((step) => step.id === sourceId)
+      ? newId("append")
+      : sourceId,
+    kind: "append",
+    inputStepId: query.outputStepId,
+    sourceId,
+    field,
+    ...(Object.keys(match).length ? { match } : {}),
+  };
+}
+
+/** The source a query's first step reads, whose fields an append fills. */
+export function baseSourceOf(project: AnalysisProject, query: AnalysisQuery) {
+  const first = query.steps.find((step) => step.kind === "source");
+  return first?.kind === "source"
+    ? project.sources.find((item) => item.id === first.sourceId)
+    : undefined;
+}
+
 export function filterStep(
   query: AnalysisQuery,
   fieldId: string,

@@ -18,8 +18,11 @@ import {
   relationshipDirection,
   sourceView,
 } from "@/components/project/queryEditing";
+import { appendFieldMatch } from "@/lib/analysis/evaluateProject";
 import {
+  appendStep,
   appendSteps,
+  baseSourceOf,
   calculateStep,
   expressionProblem,
   filterStep,
@@ -40,13 +43,17 @@ import {
 import { CommitInput, Field } from "./InspectorControls";
 import type { SchemaProjectEditing } from "./schemaEditing";
 
-type StepKindChoice = "follow" | "calculate" | "filter";
+type StepKindChoice = "follow" | "calculate" | "filter" | "append";
 
 const STEP_KIND_LABELS: Record<StepKindChoice, string> = {
   follow: "Use a relationship",
   calculate: "Calculate a field",
   filter: "Keep matching rows",
+  append: "Append rows from another table",
 };
+
+/** No field fills this one; the appended rows leave it empty. */
+const NO_FIELD = "__none";
 
 const VALUELESS = new Set<AnalysisFilterOperator>(["is-null", "is-not-null"]);
 
@@ -99,6 +106,13 @@ export function AddStep({
       )}
       {choice === "filter" && (
         <FilterForm
+          editing={editing}
+          query={query}
+          onDone={() => setChoice(undefined)}
+        />
+      )}
+      {choice === "append" && (
+        <AppendForm
           editing={editing}
           query={query}
           onDone={() => setChoice(undefined)}
@@ -399,6 +413,140 @@ function FilterForm({
       <Button type="button" size="sm" onClick={add} disabled={!draft.fieldId}>
         <Plus aria-hidden="true" />
         Add filter
+      </Button>
+    </>
+  );
+}
+
+/**
+ * Stacks another table's rows under the query's, such as web sales under
+ * catalog sales. Each of the first table's columns takes the other table's
+ * column of the same name, or of the same name after its prefix
+ * (ws_net_paid fills cs_net_paid); the list shows each pairing to change.
+ */
+function AppendForm({
+  editing,
+  query,
+  onDone,
+}: {
+  editing: SchemaProjectEditing;
+  query: AnalysisQuery;
+  onDone: () => void;
+}) {
+  const base = baseSourceOf(editing.project, query);
+  const choices = editing.project.sources.filter(
+    (source) =>
+      source.id !== base?.id &&
+      !query.steps.some(
+        (step) => step.kind === "append" && step.sourceId === source.id
+      )
+  );
+  const [sourceId, setSourceId] = useState(choices[0]?.id ?? "");
+  const [field, setField] = useState(
+    query.steps.flatMap((step) =>
+      step.kind === "append" ? [step.field] : []
+    )[0] ?? "channel"
+  );
+  const own = editing.project.sources.find((item) => item.id === sourceId);
+  const baseFields = base?.fields ?? [];
+  const auto = useMemo(
+    () =>
+      appendFieldMatch(
+        baseFields.map((item) => item.id),
+        own?.fields.map((item) => item.id) ?? []
+      ),
+    [baseFields, own]
+  );
+  const [edits, setEdits] = useState<Record<string, Record<string, string>>>(
+    {}
+  );
+  const chosen = { ...auto, ...edits[sourceId] };
+  if (!base || !choices.length) {
+    return (
+      <p className="eda-schema-inspector-hint">
+        Add another table first; its rows go under these.
+      </p>
+    );
+  }
+  const matched = baseFields.filter((item) => chosen[item.id]).length;
+  const add = () => {
+    const filled = Object.fromEntries(
+      baseFields.map((item) => [item.id, chosen[item.id] ?? ""])
+    );
+    const step = appendStep(
+      editing.project,
+      query,
+      sourceId,
+      field.trim() || "source",
+      filled
+    );
+    editing.onChange(appendSteps(editing.project, query, [step]));
+    onDone();
+  };
+  return (
+    <>
+      <Field label="Table">
+        <Select value={sourceId} onValueChange={setSourceId}>
+          <SelectTrigger aria-label="Table whose rows to append">
+            <SelectValue placeholder="Table" />
+          </SelectTrigger>
+          <SelectContent>
+            {choices.map((source) => (
+              <SelectItem key={source.id} value={source.id}>
+                {source.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </Field>
+      <Field label="Column that names each row's table">
+        <CommitInput
+          label="Column that names each row's table"
+          value={field}
+          onCommit={setField}
+        />
+      </Field>
+      <p className="eda-schema-inspector-hint">
+        {matched} of {baseFields.length} columns of {base.name} take a column of{" "}
+        {own?.name ?? "this table"}. Change a pairing below.
+      </p>
+      <div
+        className="eda-append-matches"
+        role="group"
+        aria-label="Column pairings"
+      >
+        {baseFields.map((item) => (
+          <Field key={item.id} label={item.id}>
+            <Select
+              value={chosen[item.id] || NO_FIELD}
+              onValueChange={(next) =>
+                setEdits((current) => ({
+                  ...current,
+                  [sourceId]: {
+                    ...current[sourceId],
+                    [item.id]: next === NO_FIELD ? "" : next,
+                  },
+                }))
+              }
+            >
+              <SelectTrigger aria-label={`Column that fills ${item.id}`}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NO_FIELD}>Leave empty</SelectItem>
+                {own?.fields.map((other) => (
+                  <SelectItem key={other.id} value={other.id}>
+                    {other.id}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+        ))}
+      </div>
+      <Button type="button" size="sm" onClick={add} disabled={!sourceId}>
+        <Plus aria-hidden="true" />
+        Append rows
       </Button>
     </>
   );
