@@ -53,6 +53,21 @@ describe("applyFilter", () => {
     expect(applyFilter("beta", filter)).toBe(false);
   });
 
+  it("matches text filters against the text of any present value", () => {
+    const contains = (value: string) => ({
+      type: "text" as const,
+      field: "value",
+      operator: "contains" as const,
+      value,
+    });
+    expect(applyFilter(1, contains("1"))).toBe(true);
+    expect(applyFilter(12.5, contains("2."))).toBe(true);
+    expect(applyFilter(true, contains("tru"))).toBe(true);
+    expect(applyFilter(2, contains("1"))).toBe(false);
+    expect(applyFilter(null, contains(""))).toBe(false);
+    expect(applyFilter("  ", contains(""))).toBe(false);
+  });
+
   it("applies inclusive ISO date ranges", () => {
     const filter = {
       type: "date-range" as const,

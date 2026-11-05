@@ -76,8 +76,8 @@ describe("buildFieldProfiles", () => {
       nullCount: 2,
       // Infinity and "n/a" are present but not measurable.
       excludedCount: 2,
-      // Every present value counts once, including the blank string.
-      uniqueCount: 7,
+      // Each measured number counts once; "1" and 1 are one value.
+      uniqueCount: 4,
       statistics: { min: 1, max: 4, median: 3, mean: 2.8, bins: [1, 1, 1, 2] },
     });
     expect(profile.statistics?.stdDev).toBeCloseTo(Math.sqrt(1.36));

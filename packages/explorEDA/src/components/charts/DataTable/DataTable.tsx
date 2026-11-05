@@ -16,7 +16,7 @@ import {
 } from "./DataTableContextMenu";
 import { DataTableToolbar } from "./DataTableToolbar";
 import { DataTableSettings } from "./definition";
-import { getFilteredRows, DataTableRow } from "./filteredRows";
+import { getFilteredRows, tableFieldTypes, DataTableRow } from "./filteredRows";
 import { getChartSummary } from "../chartAccessibility";
 import { isMissingValue } from "@/lib/valueParsing";
 import { fitColumnWidth, WIDTH_SAMPLE_ROWS } from "./columnWidths";
@@ -43,6 +43,11 @@ export function DataTable({
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
+  const fieldTypes = useMemo(
+    () => tableFieldTypes(fieldProfiles),
+    [fieldProfiles]
+  );
   const resolvedRows = useMemo(() => {
     void nonce;
     const source = rows ?? data;
@@ -130,9 +135,10 @@ export function DataTable({
               nonce: 0,
             }
           : liveItems,
-        settings
+        settings,
+        fieldTypes
       ),
-    [resolvedRows, rows, liveItems, settings]
+    [resolvedRows, rows, liveItems, settings, fieldTypes]
   );
 
   useEffect(() => {

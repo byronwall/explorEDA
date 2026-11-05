@@ -81,16 +81,17 @@ export function calculateValueStatistics(
 
   if (dataType === "numeric") {
     // Numeric fields share the eligibility rule used by charts and aggregates.
-    const uniqueValues = new Set<datum>();
+    // Distinct counts the measured numbers, so 1 and "1" are one value.
+    const uniqueValues = new Set<number>();
     const numbers = new Float64Array(totalCount);
     let numberCount = 0;
     let missingCount = 0;
     let sum = 0;
     for (const value of values) {
-      if (value != null) uniqueValues.add(value);
       if (typeof value === "number") {
         // Most numeric values are already numbers; skip the general checks.
         if (!Number.isFinite(value)) continue;
+        uniqueValues.add(value);
         numbers[numberCount] = value;
         numberCount += 1;
         sum += value;
@@ -102,6 +103,7 @@ export function calculateValueStatistics(
       }
       const number = finiteNumber(value);
       if (number === undefined) continue;
+      uniqueValues.add(number);
       numbers[numberCount] = number;
       numberCount += 1;
       sum += number;

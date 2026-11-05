@@ -5,6 +5,8 @@ import {
   categoryValue,
 } from "@/lib/categories";
 import { datum } from "@/types/FilterTypes";
+import { isMissingValue, timestampOf } from "@/lib/valueParsing";
+import type { DataType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import {
   PivotCell,
   PivotContributor,
@@ -50,12 +52,14 @@ function aggregate(name: string, values: datum[]): AggregateResult {
     return { value: values.length, includedIndexes, numericExclusions: [] };
   }
   if (name === "countUnique") {
-    values.forEach((_, index) => includedIndexes.add(index));
-    return {
-      value: new Set(values).size,
-      includedIndexes,
-      numericExclusions: [],
-    };
+    // Missing values are not a value, and 1 and "1" stay two values.
+    const keys = new Set<string>();
+    values.forEach((value, index) => {
+      if (isMissingValue(value)) return;
+      includedIndexes.add(index);
+      keys.add(categoryKey(value));
+    });
+    return { value: keys.size, includedIndexes, numericExclusions: [] };
   }
   if (name === "mode") {
     values.forEach((_, index) => includedIndexes.add(index));
@@ -111,19 +115,13 @@ function aggregate(name: string, values: datum[]): AggregateResult {
       numericExclusions: numeric.exclusions,
     };
   }
-  if (name === "min") {
-    return {
-      value: Math.min(...numbers),
-      includedIndexes,
-      numericExclusions: numeric.exclusions,
-    };
-  }
-  if (name === "max") {
-    return {
-      value: Math.max(...numbers),
-      includedIndexes,
-      numericExclusions: numeric.exclusions,
-    };
+  if (name === "min" || name === "max") {
+    // A loop, since spreading a large group into Math.min overflows the stack.
+    let value = numbers[0]!;
+    for (const number of numbers) {
+      if (name === "min" ? number < value : number > value) value = number;
+    }
+    return { value, includedIndexes, numericExclusions: numeric.exclusions };
   }
   if (name === "median") {
     const sorted = [...numbers].sort((a, b) => a - b);
@@ -148,15 +146,33 @@ function aggregate(name: string, values: datum[]): AggregateResult {
   };
 }
 
+/** The declared type of each field, so a date field orders by time. */
+export type PivotFieldTypes = Readonly<Record<string, DataType | undefined>>;
+
 /**
  * Orders grouping values so a pivot reads like a sorted report: numbers by
- * size, text in natural order ("2" before "10"), and missing values last.
+ * size, dates by time when the field is a datetime, text in natural order
+ * ("2" before "10"), and missing values last. In a date field, text that is
+ * not a date follows the dates.
  */
-export function compareCategories(left: datum, right: datum): number {
+export function compareCategories(
+  left: datum,
+  right: datum,
+  dates = false
+): number {
   const leftMissing = left == null || left === "";
   const rightMissing = right == null || right === "";
   if (leftMissing || rightMissing) {
     return Number(leftMissing) - Number(rightMissing);
+  }
+  if (dates) {
+    const leftTime = timestampOf(left);
+    const rightTime = timestampOf(right);
+    if (leftTime !== undefined && rightTime !== undefined) {
+      if (leftTime !== rightTime) return leftTime - rightTime;
+    } else if (leftTime !== undefined || rightTime !== undefined) {
+      return Number(leftTime === undefined) - Number(rightTime === undefined);
+    }
   }
   if (
     typeof left === "number" &&
@@ -177,7 +193,11 @@ export function compareCategories(left: datum, right: datum): number {
   return byType || categoryKey(left).localeCompare(categoryKey(right));
 }
 
-function generateHeaders(data: PivotInputRow[], field: string): PivotHeader[] {
+function generateHeaders(
+  data: PivotInputRow[],
+  field: string,
+  fieldTypes?: PivotFieldTypes
+): PivotHeader[] {
   if (!field) {
     return [];
   }
@@ -189,8 +209,9 @@ function generateHeaders(data: PivotInputRow[], field: string): PivotHeader[] {
       uniqueValues.set(key, value);
     }
   });
+  const dates = fieldTypes?.[field] === "datetime";
   return Array.from(uniqueValues.values())
-    .sort(compareCategories)
+    .sort((left, right) => compareCategories(left, right, dates))
     .map((value) => ({
       label: categoryLabel(value),
       field,
@@ -325,10 +346,11 @@ function generateRows(
   rowFields: string[],
   columnField: string,
   valueFields: PivotTableSettings["valueFields"],
-  withTotals: boolean
+  withTotals: boolean,
+  fieldTypes?: PivotFieldTypes
 ): PivotRow[] {
   const rows: PivotRow[] = [];
-  const columnHeaders = generateHeaders(data, columnField);
+  const columnHeaders = generateHeaders(data, columnField, fieldTypes);
   const rowGroups = new Map<string, PivotInputRow[]>();
   data.forEach((item) => {
     const keyString = JSON.stringify(
@@ -368,11 +390,13 @@ function generateRows(
     });
   });
   // Rows group by their first field, then the next, so outer values cluster.
+  const dates = rowFields.map((field) => fieldTypes?.[field] === "datetime");
   return rows.sort((left, right) => {
     for (let index = 0; index < left.keys.length; index += 1) {
       const order = compareCategories(
         left.keys[index]!.value,
-        right.keys[index]!.value
+        right.keys[index]!.value,
+        dates[index]
       );
       if (order !== 0) return order;
     }
@@ -394,9 +418,10 @@ function canTotal(valueFields: PivotTableSettings["valueFields"]) {
 
 export function calculatePivotData(
   data: PivotInputRow[],
-  settings: PivotTableSettings
+  settings: PivotTableSettings,
+  fieldTypes?: PivotFieldTypes
 ): PivotTableData {
-  const headers = generateHeaders(data, settings.columnField);
+  const headers = generateHeaders(data, settings.columnField, fieldTypes);
   const withTotals =
     settings.showTotals !== false && canTotal(settings.valueFields);
   const rows = generateRows(
@@ -404,7 +429,8 @@ export function calculatePivotData(
     settings.rowFields,
     settings.columnField,
     settings.valueFields,
-    withTotals
+    withTotals,
+    fieldTypes
   );
   // One row already is its own total.
   const totals =

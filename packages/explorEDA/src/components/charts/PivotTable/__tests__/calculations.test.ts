@@ -5,7 +5,7 @@ import {
   waitFor,
   within,
 } from "@testing-library/react";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { ChartRenderer } from "@/components/charts/ChartRenderer";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
@@ -235,6 +235,103 @@ describe("calculatePivotData", () => {
       result.rows[0]!.cells[0]!.contributors.map((item) => item.included)
     ).toEqual([true, true]);
   });
+  it("takes a min or max over very many rows", () => {
+    const result = calculatePivotData(
+      Array.from({ length: 200_000 }, (_, index) => ({
+        group: "all",
+        amount: index,
+      })),
+      settings({
+        rowFields: ["group"],
+        valueFields: [
+          { field: "amount", aggregation: "min" },
+          { field: "amount", aggregation: "max" },
+        ],
+      })
+    );
+
+    const [min, max] = result.rows[0]!.cells;
+    expect(min).toMatchObject({ status: "ok", value: 0 });
+    expect(max).toMatchObject({ status: "ok", value: 199_999 });
+  });
+
+  it("counts unique values without missing ones or duplicate keys", () => {
+    const result = calculatePivotData(
+      [
+        { group: "all", label: null },
+        { group: "all", label: undefined },
+        { group: "all", label: "x" },
+        { group: "all", label: "" },
+        { group: "all", label: " " },
+        { group: "all", label: "x" },
+        { group: "all", label: 1 },
+        { group: "all", label: "1" },
+      ],
+      settings({
+        rowFields: ["group"],
+        valueFields: [{ field: "label", aggregation: "countUnique" }],
+      })
+    );
+
+    expect(result.rows[0]!.cells[0]!.value).toBe(3);
+  });
+
+  it("orders date groups by time when the field is a datetime", () => {
+    const dates = [
+      "Mar 1 2024",
+      "Jan 5 2024",
+      "Feb 2 2024",
+      "12/1/2023",
+      "3/1/2023",
+    ];
+    const data = dates.map((when) => ({ when, amount: 1 }));
+    const pivot = settings({
+      rowFields: ["when"],
+      columnField: "when",
+      valueFields: [{ field: "amount", aggregation: "sum" }],
+    });
+
+    const byTime = calculatePivotData(data, pivot, { when: "datetime" });
+    expect(byTime.rows.map((row) => row.keys[0]!.value)).toEqual([
+      "3/1/2023",
+      "12/1/2023",
+      "Jan 5 2024",
+      "Feb 2 2024",
+      "Mar 1 2024",
+    ]);
+    expect(byTime.headers.map((header) => header.value)).toEqual([
+      "3/1/2023",
+      "12/1/2023",
+      "Jan 5 2024",
+      "Feb 2 2024",
+      "Mar 1 2024",
+    ]);
+    // Text that is not a date keeps its place after the dates.
+    const mixed = calculatePivotData(
+      [...data, { when: "unknown", amount: 1 }, { when: null, amount: 1 }],
+      pivot,
+      { when: "datetime" }
+    );
+    expect(mixed.rows.map((row) => row.keys[0]!.value)).toEqual([
+      "3/1/2023",
+      "12/1/2023",
+      "Jan 5 2024",
+      "Feb 2 2024",
+      "Mar 1 2024",
+      "unknown",
+      null,
+    ]);
+    // Without a type, the same text sorts as text.
+    expect(
+      calculatePivotData(data, pivot).rows.map((row) => row.keys[0]!.value)
+    ).toEqual([
+      "3/1/2023",
+      "12/1/2023",
+      "Feb 2 2024",
+      "Jan 5 2024",
+      "Mar 1 2024",
+    ]);
+  });
 });
 
 describe("pivotTableDefinition.validateSettings", () => {
@@ -320,6 +417,76 @@ describe("PivotTable rendering", () => {
     expect(screen.getByRole("alert")).toHaveTextContent(
       "Update this chart's settings"
     );
+  });
+
+  it("tells an aggregation failure apart from a single-value conflict", () => {
+    const chart = pivotTableDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    chart.rowFields = ["group"];
+    chart.valueFields = [
+      { field: "amount", aggregation: "singleValue" },
+      { field: "amount", aggregation: "bogus" as "sum" },
+    ];
+
+    render(
+      createElement(
+        DataLayerProvider,
+        {
+          data: [
+            { group: "A", amount: 1 },
+            { group: "A", amount: 2 },
+          ],
+          charts: [chart],
+        },
+        createElement(SavedPivotProbe)
+      )
+    );
+
+    expect(
+      screen.getByRole("button", { name: /^Conflict, inspect A/ })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^Unavailable, inspect A/ })
+    ).toBeInTheDocument();
+  });
+
+  it("keys two measures of one field apart", () => {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    const chart = pivotTableDefinition.createDefaultSettings({
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 4,
+    });
+    chart.rowFields = ["group"];
+    chart.columnField = "year";
+    chart.valueFields = [
+      { field: "amount", aggregation: "sum" },
+      { field: "amount", aggregation: "avg" },
+    ];
+
+    render(
+      createElement(
+        DataLayerProvider,
+        {
+          data: [
+            { group: "A", year: 2024, amount: 1 },
+            { group: "B", year: 2025, amount: 2 },
+          ],
+          charts: [chart],
+        },
+        createElement(SavedPivotProbe)
+      )
+    );
+
+    expect(
+      errors.mock.calls.filter((call) => String(call[0]).includes("same key"))
+    ).toEqual([]);
+    errors.mockRestore();
   });
 
   it("opens a contributor inspector and returns focus on Escape", async () => {

@@ -133,19 +133,26 @@ export function planMetricCard(
     const baseline = baselineResult.value;
     if (baseline !== undefined) {
       const value = result.value!;
-      if (!isAdditiveAggregation(settings.aggregation)) {
-        const delta = value - baseline;
+      if (
+        isAdditiveAggregation(settings.aggregation) &&
+        baseline > 0 &&
+        value >= 0 &&
+        value <= baseline
+      ) {
+        // A share only reads when every part adds toward a positive whole
+        // that the card's own rows do not exceed.
+        comparison = {
+          kind: "share",
+          share: value / baseline,
+          baselineText: format(baseline),
+        };
+      } else {
+        // A difference the format rounds away reads as no change, not "+0".
+        const delta = format(value) === format(baseline) ? 0 : value - baseline;
         comparison = {
           kind: "delta",
           delta,
           deltaText: `${delta < 0 ? "−" : "+"}${format(Math.abs(delta))}`,
-          baselineText: format(baseline),
-        };
-      } else if (baseline > 0 && value >= 0) {
-        // A share only reads when every part adds toward a positive whole.
-        comparison = {
-          kind: "share",
-          share: value / baseline,
           baselineText: format(baseline),
         };
       }

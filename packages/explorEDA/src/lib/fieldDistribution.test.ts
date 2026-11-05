@@ -39,6 +39,15 @@ describe("buildFieldDistribution", () => {
     });
   });
 
+  it("counts distinct numbers the way field profiles do", () => {
+    const values = column([1, "1", " ", 2, "2.0", null, "n/a"]);
+    const distribution = buildFieldDistribution(values, "numeric");
+    const profile = buildFieldProfile("value", values, "numeric");
+
+    expect(distribution.all.distinct).toBe(2);
+    expect(distribution.all.distinct).toBe(profile.uniqueCount);
+  });
+
   it("bins filtered rows inside the full-source bins", () => {
     const values = column(Array.from({ length: 200 }, (_, index) => index / 2));
     const filteredIds = new Set(
