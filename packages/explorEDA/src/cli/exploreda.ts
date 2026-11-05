@@ -156,9 +156,20 @@ async function main(args: string[]) {
   if (parsed.example) {
     const example = EXAMPLES[parsed.example];
     folder = path.resolve(example.to);
-    if (!existsSync(folder)) {
+    if (existsSync(folder)) {
+      console.log(`Opening the sample project already at ${folder}`);
+    } else {
       await copyFolder(path.resolve(here, "../examples", example.from), folder);
       console.log(`Copied the sample project to ${folder}`);
+    }
+    // A project skips subfolders that are projects, so the copy stays apart.
+    if (
+      existsSync(path.resolve("exploreda.eda")) ||
+      existsSync(path.resolve(".exploreda"))
+    ) {
+      console.log(
+        `It is a project of its own: ${path.resolve(".")} doesn't list its files.`
+      );
     }
   }
   if (!existsSync(folder) || !statSync(folder).isDirectory()) {

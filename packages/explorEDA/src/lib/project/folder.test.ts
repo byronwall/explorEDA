@@ -213,6 +213,24 @@ describe("project files", () => {
     });
   });
 
+  it("skips a copied example inside the folder", async () => {
+    const files = {
+      "exploreda.eda": "project @mine\nsource @a key=id path=a.csv\n",
+      "a.csv": "id\n1\n",
+      "notes.eda.md": "```eda\nrow a.id\n```\n",
+      "exploreda-example/exploreda.eda": "project @shop\n",
+      "exploreda-example/data/orders.csv": "id\n1\n",
+      "exploreda-example/overview.eda": "eda query=orders\n",
+      "copy/.exploreda/project.eda": "project @hidden\n",
+      "copy/forecast.eda.md": "# Forecast\n",
+    };
+    const folder = await readProjectFolder(memoryProjectFiles(files));
+    expect(folder.problems).toEqual([]);
+    expect(folder.dataFiles).toEqual(["a.csv"]);
+    expect(folder.analyses).toEqual([]);
+    expect(folder.notebooks.map((item) => item.path)).toEqual(["notes.eda.md"]);
+  });
+
   it("parses CSV cells into values", () => {
     expect(parseCsv('﻿a,b,c\n1,"x, y",\ntrue,2025-01-01,0\n')).toEqual([
       { a: 1, b: "x, y", c: null },

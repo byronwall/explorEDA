@@ -27,7 +27,12 @@ import {
   type NotebookReadResult,
 } from "@/lib/notebook";
 import { readAnalysisText, type AnalysisTextResult } from "./analysisText";
-import { isAbsolutePath, ProjectFileError, type ProjectFiles } from "./files";
+import {
+  isAbsolutePath,
+  ProjectFileError,
+  withoutNestedProjects,
+  type ProjectFiles,
+} from "./files";
 import { isDataFile, parseTable } from "./tables";
 import {
   isStaleSnapshot,
@@ -224,7 +229,8 @@ function withSnapshotTypes(
 export async function readProjectFolder(
   files: ProjectFiles
 ): Promise<ProjectFolder> {
-  const listed = await files.list();
+  // A copied example inside the folder is its own project, not this one's.
+  const listed = withoutNestedProjects(await files.list());
   const { layout, projectPath } = projectLayout(listed);
   const problems: ProjectProblem[] = [];
   const withPath = (path: string, items: DslDiagnostic[]) =>
