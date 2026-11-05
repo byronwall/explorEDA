@@ -170,7 +170,7 @@ export function PivotTableSettingsPanel({
           <Label htmlFor="pivotRowOrder">Row order</Label>
           <select
             id="pivotRowOrder"
-            className="h-9 rounded-md border-input bg-background px-2 text-sm"
+            className="block h-9 rounded-md border border-input bg-background px-2 text-sm"
             value={settings.rowOrder ?? "label"}
             onChange={(event) =>
               onSettingsChange({
