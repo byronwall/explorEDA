@@ -220,6 +220,16 @@
   padding-right: 4px;
 }
 
+.app-added {
+  margin: 0;
+  font-size: 12px;
+}
+
+.app-source-actions {
+  grid-column: 1 / -1;
+  padding: 2px 0 0;
+}
+
 .app-source .app-secret-form {
   margin: 6px 0 0;
 }

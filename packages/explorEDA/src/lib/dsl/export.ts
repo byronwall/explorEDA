@@ -339,6 +339,9 @@ export interface DslChartPart {
   children: string[];
 }
 
+/** The deprecated axis `min` and `max` mean nothing; text never writes them. */
+const AXIS_PLACEHOLDER = /^[xy]Axis\.(min|max)=/;
+
 /**
  * Writes the current dashboard as text that rebuilds it. Each chart is its
  * short form plus a path for every setting that differs from what the short
@@ -611,7 +614,7 @@ export function exportParts(
           (built as unknown as Record<string, unknown>)[key],
           (chart as unknown as Record<string, unknown>)[key],
           [key]
-        )
+        ).filter((pair) => !AXIS_PLACEHOLDER.test(pair))
       );
     }
     return [

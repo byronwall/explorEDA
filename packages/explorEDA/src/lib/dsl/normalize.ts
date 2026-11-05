@@ -39,7 +39,22 @@ export function normalizeChart<T extends SavedChart>(chart: T): T {
   const defaults = getChartDefinition(
     chart.type as ChartType
   ).createDefaultSettings(chart.layout, chart.field || undefined);
-  return { ...(fill(defaults, chart) as T), id: chart.id };
+  const filled = fill(defaults, chart) as T;
+  return {
+    ...filled,
+    id: chart.id,
+    xAxis: withoutPlaceholders(filled.xAxis),
+    yAxis: withoutPlaceholders(filled.yAxis),
+  };
+}
+
+/** An axis without the deprecated `min` and `max`, which mean nothing. */
+function withoutPlaceholders<A>(axis: A): A {
+  if (!isRecord(axis)) {
+    return axis;
+  }
+  const { min: _min, max: _max, ...rest } = axis;
+  return rest as A;
 }
 
 /** A saved dashboard with every chart normalized. */

@@ -21,6 +21,7 @@ import { unreadSources, visibleProblems, waitingFor } from "./databaseSources";
 import {
   DatabaseSourceItem,
   RefreshAll,
+  type ReadFailure,
   WaitingForData,
 } from "./DatabaseSourceViews";
 
@@ -59,6 +60,8 @@ export interface ProjectActions {
   upload?(file: File, path: string): Promise<void>;
   fetchUrl?(url: string): Promise<void>;
   refetch?(path: string): Promise<void>;
+  /** Removes a database source that couldn't be read. */
+  removeSource?(sourceId: string): Promise<void>;
   /** Reads database sources again; rejects with why one couldn't. */
   refreshSources?(sourceIds: string[]): Promise<void>;
   /** Checks a connection's password and keeps it outside the project. */
@@ -84,6 +87,7 @@ export function ProjectWorkspace({
   saver,
   saveState,
   notice,
+  readErrors = {},
   initialSelection,
   initialPanel,
   onSelect,
@@ -108,6 +112,8 @@ export function ProjectWorkspace({
   saver: FolderSaver;
   saveState: SaveState;
   notice?: string;
+  /** Each source's last failed read, by source ID. */
+  readErrors?: Record<string, ReadFailure>;
   initialSelection?: Selection;
   initialPanel?: OpenPanel;
   onSelect: (selection: Selection) => void;
@@ -456,6 +462,8 @@ export function ProjectWorkspace({
                     connection={database.connection}
                     rows={folder.tables[source.id]?.length ?? 0}
                     snapshot={folder.snapshots[source.id]}
+                    lastError={readErrors[source.id]}
+                    onRemove={readOnly ? undefined : actions.removeSource}
                     onRefresh={
                       readOnly || !actions.refreshSources
                         ? undefined
@@ -566,6 +574,7 @@ export function ProjectWorkspace({
             connections={[
               ...new Set(waiting.map((id) => folder.databases[id]!.connection)),
             ]}
+            lastError={waiting.map((id) => readErrors[id]).find(Boolean)}
             onRead={readOnly ? undefined : actions.refreshSources}
             onSaveSecret={readOnly ? undefined : actions.saveSecret}
           />

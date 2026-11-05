@@ -15,20 +15,41 @@ export function listWords(items: string[]) {
   return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
 }
 
-type ReadState =
-  | { status: "idle" }
-  | { status: "reading" }
-  | {
-      status: "failed";
-      message: string;
-      suggestion?: string;
-      /** Set when the failure is a connection asking for its password. */
-      needsSecret?: string;
-    };
+export interface ReadFailure {
+  status: "failed";
+  message: string;
+  suggestion?: string;
+  /** Set when the failure is a connection asking for its password. */
+  needsSecret?: string;
+}
+
+type ReadState = { status: "idle" } | { status: "reading" } | ReadFailure;
+
+/** A failed read: the server's message, and its fix when it gave one. */
+export function readFailure(error: unknown): ReadFailure {
+  const refresh = error instanceof RefreshError ? error : undefined;
+  return {
+    status: "failed",
+    message: error instanceof Error ? error.message : String(error),
+    ...(refresh?.suggestion ? { suggestion: refresh.suggestion } : {}),
+    ...(refresh?.code === "secret" && refresh.connection
+      ? { needsSecret: refresh.connection }
+      : {}),
+  };
+}
+
+/** A failed read in one sentence or two: what went wrong, then the fix. */
+export function readErrorText(error: unknown) {
+  const { message, suggestion } = readFailure(error);
+  return suggestion ? `${message} ${suggestion}` : message;
+}
 
 /** Runs a read and keeps what happened, for a button and its message. */
-export function useRead(read: (() => Promise<void>) | undefined) {
-  const [state, setState] = useState<ReadState>({ status: "idle" });
+export function useRead(
+  read: (() => Promise<void>) | undefined,
+  initial: ReadState = { status: "idle" }
+) {
+  const [state, setState] = useState<ReadState>(initial);
   const run = async () => {
     if (!read) {
       return;
@@ -38,15 +59,7 @@ export function useRead(read: (() => Promise<void>) | undefined) {
       await read();
       setState({ status: "idle" });
     } catch (error) {
-      const refresh = error instanceof RefreshError ? error : undefined;
-      setState({
-        status: "failed",
-        message: error instanceof Error ? error.message : String(error),
-        ...(refresh?.suggestion ? { suggestion: refresh.suggestion } : {}),
-        ...(refresh?.code === "secret" && refresh.connection
-          ? { needsSecret: refresh.connection }
-          : {}),
-      });
+      setState(readFailure(error));
     }
   };
   return { state, run };
@@ -173,13 +186,7 @@ export function RefreshAll({
     try {
       await onRefresh(sourceIds);
     } catch (error) {
-      onError(
-        `${error instanceof Error ? error.message : String(error)}${
-          error instanceof RefreshError && error.suggestion
-            ? ` ${error.suggestion}`
-            : ""
-        }`
-      );
+      onError(readErrorText(error));
     } finally {
       setReading(false);
     }
@@ -206,21 +213,28 @@ export function WaitingForData({
   analysis,
   sourceIds,
   connections,
+  lastError,
   onRead,
   onSaveSecret,
 }: {
   analysis: string;
   sourceIds: string[];
   connections: string[];
+  /** The last failed read of these sources, kept since the page opened. */
+  lastError?: ReadFailure;
   onRead?: (sourceIds: string[]) => Promise<void>;
   onSaveSecret?: (connectionId: string, secret: string) => Promise<void>;
 }) {
   const { state, run } = useRead(onRead ? () => onRead(sourceIds) : undefined);
   const them = sourceIds.length === 1 ? "it" : "them";
+  const shown = state.status === "idle" && lastError ? lastError : state;
   return (
     <div className="app-message">
       <h2>{analysis} needs its data</h2>
       <p>
+        {lastError && state.status === "idle"
+          ? `The last read of ${listWords(sourceIds)} failed. `
+          : null}
         It reads {listWords(sourceIds)} from {listWords(connections)}, which{" "}
         {sourceIds.length === 1 ? "hasn't" : "haven't"} been read yet.{" "}
         {onRead
@@ -236,10 +250,10 @@ export function WaitingForData({
         >
           {state.status === "reading"
             ? `Reading from ${listWords(connections)}…`
-            : `Read ${listWords(sourceIds)}`}
+            : `Read ${listWords(sourceIds)}${lastError ? " again" : ""}`}
         </button>
       )}
-      <ReadProblem state={state} onSaveSecret={onSaveSecret} onRetry={run} />
+      <ReadProblem state={shown} onSaveSecret={onSaveSecret} onRetry={run} />
     </div>
   );
 }
@@ -272,7 +286,9 @@ export function DatabaseSourceItem({
   connection,
   rows,
   snapshot,
+  lastError,
   onRefresh,
+  onRemove,
   onSaveSecret,
 }: {
   name: string;
@@ -280,12 +296,18 @@ export function DatabaseSourceItem({
   connection: string;
   rows: number;
   snapshot?: ProjectFolder["snapshots"][string];
+  /** The last read's failure, kept by the app across reloads. */
+  lastError?: ReadFailure;
   onRefresh?: (sourceId: string) => Promise<void>;
+  /** Removes a source that has never been read; offered after a failure. */
+  onRemove?: (sourceId: string) => Promise<void>;
   onSaveSecret?: (connectionId: string, secret: string) => Promise<void>;
 }) {
   const { state, run } = useRead(
-    onRefresh ? () => onRefresh(sourceId) : undefined
+    onRefresh ? () => onRefresh(sourceId) : undefined,
+    lastError
   );
+  const [removing, setRemoving] = useState(false);
   const ago = useReadAgo(snapshot?.readAt);
   const meta =
     state.status === "reading" ? (
@@ -294,7 +316,11 @@ export function DatabaseSourceItem({
       `${rows.toLocaleString()} rows · ${connection} · ${ago}`
     ) : (
       <>
-        <span className="app-status app-status-warning">Not read yet</span>
+        {state.status === "failed" ? (
+          <span className="app-status app-status-error">Couldn't read</span>
+        ) : (
+          <span className="app-status app-status-warning">Not read yet</span>
+        )}
         {` · ${connection}`}
       </>
     );
@@ -317,6 +343,40 @@ export function DatabaseSourceItem({
         </button>
       )}
       <ReadProblem state={state} onSaveSecret={onSaveSecret} onRetry={run} />
+      {onRemove && !snapshot && state.status === "failed" && (
+        <div className="app-item-actions app-source-actions">
+          {removing ? (
+            <>
+              <span className="app-muted">
+                Remove {sourceId} from the project?
+              </span>
+              <button
+                type="button"
+                className="app-button app-button-sm app-button-danger"
+                onClick={() => void onRemove(sourceId)}
+              >
+                Remove
+              </button>
+              <button
+                type="button"
+                className="app-button app-button-sm app-button-ghost"
+                onClick={() => setRemoving(false)}
+              >
+                Keep
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              className="app-button app-button-sm app-button-ghost"
+              aria-label={`Remove ${sourceId} from the project`}
+              onClick={() => setRemoving(true)}
+            >
+              Remove
+            </button>
+          )}
+        </div>
+      )}
     </li>
   );
 }

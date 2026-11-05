@@ -3,6 +3,7 @@ import { getChartDefinition } from "@/charts/registry";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
 import type { SavedChartSettings } from "@/types/SavedDataTypes";
+import { mergeWithDefaultSettings } from "@/utils/defaultSettings";
 import { compileDocument } from "./compile";
 import { exportDocument } from "./export";
 
@@ -207,6 +208,24 @@ table Revenue,Cost,"Net revenue"`,
     expect(text).toContain("scatter @fit x=Revenue y=margin color=Channel {");
     expect(text).toMatch(/layout \{\n {2}4: fit Channel\n/);
     expect(text).toContain("column Revenue width=140");
+  });
+
+  it("never writes the placeholder axis min and max", () => {
+    const start = compileDocument("bar Channel", { rows }).settings;
+    const [bar] = start.charts as SavedChartSettings[];
+    bar!.yAxis = { ...bar!.yAxis, min: 5, max: 7 };
+    // The Add-chart dialog merges the placeholders into every chart.
+    start.charts.push(
+      mergeWithDefaultSettings({
+        ...getChartDefinition("line").createDefaultSettings(
+          { x: 4, y: 0, w: 4, h: 4 },
+          "Revenue"
+        ),
+        id: "trend",
+      }) as never
+    );
+    const { text } = exportDocument(start, { rows });
+    expect(text).not.toMatch(/Axis\.(min|max)/);
   });
 
   it("carries the workspace theme and chart subtitles and notes", () => {
