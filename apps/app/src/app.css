@@ -805,6 +805,88 @@
   font-size: 12px;
 }
 
+/* Some of a wide table's columns, and a row filter, read as a query. */
+.app-column-picker {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.app-picker-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  min-width: 0;
+}
+
+.app-picker-head .app-button {
+  padding-left: 0;
+}
+
+.app-picker-title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.app-picker-count {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-picker-find {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.app-picker-find input {
+  flex: 1 1 140px;
+  min-width: 0;
+}
+
+.app-column-list .app-table-pick {
+  padding-right: 8px;
+}
+
+.app-column-list .app-table-name {
+  flex: 1 1 auto;
+}
+
+.app-pick-sql {
+  margin: 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.app-pick-sql code {
+  font-size: 11px;
+}
+
+/* A read running now: its rows so far, and Cancel. */
+.app-running-reads {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.app-running-read {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-read-stopped {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 12px;
+}
+
 /* Team server: sign-in, the project list, and the bar above a project. */
 .team-auth {
   display: grid;

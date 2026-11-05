@@ -293,4 +293,50 @@ describe("AddDatabase", () => {
     await screen.findByRole("checkbox", { name: "orders, table" });
     expect(saveSecret).toHaveBeenCalledWith("shop", "test-only");
   });
+
+  it("replaces a too-large source with the columns and rows picked", async () => {
+    const replaceSource = vi.fn(async () => {});
+    const act = actions({
+      replaceSource,
+      listTables: vi.fn(async () => [
+        { name: "plays", kind: "table" as const, rows: 49_665 },
+      ]),
+      tableColumns: vi.fn(async () =>
+        Array.from({ length: 50 }, (_, index) => ({
+          name: index === 1 ? "desc" : `c${index}`,
+          type: "TEXT",
+        }))
+      ),
+    });
+    render(
+      <AddDatabase
+        connections={[shop]}
+        sourceIds={["plays"]}
+        pick={{ sourceId: "plays", connection: "shop", table: "plays" }}
+        actions={act}
+        onClose={vi.fn()}
+      />
+    );
+    fireEvent.change(await screen.findByLabelText("Find a column in plays"), {
+      target: { value: "desc" },
+    });
+    fireEvent.click(screen.getByRole("checkbox", { name: /desc/ }));
+    fireEvent.change(screen.getByLabelText("Find a column in plays"), {
+      target: { value: "" },
+    });
+    fireEvent.click(screen.getByRole("checkbox", { name: /^c0/ }));
+    fireEvent.change(screen.getByLabelText("Only rows where (optional)"), {
+      target: { value: "c0 = 4" },
+    });
+    expect(screen.getByText("2 of 50 columns · 49,665 rows")).toBeTruthy();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Replace plays and read" })
+    );
+    await waitFor(() =>
+      expect(replaceSource).toHaveBeenCalledWith("plays", {
+        connection: "shop",
+        sql: 'select c0, "desc" from plays where c0 = 4',
+      })
+    );
+  });
 });

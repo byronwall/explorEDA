@@ -19,7 +19,11 @@ import { createAnalysisWorker } from "exploreda/analysis";
 import { AddData, fetchedLabel } from "./AddData";
 import type { FetchedRecord, ServerInfo, ThemePreference } from "./httpFiles";
 import type { FolderSaver, SaveState } from "./saver";
-import { AddDatabase, type AddDatabaseActions } from "./AddDatabase";
+import {
+  AddDatabase,
+  type AddDatabaseActions,
+  type PickTarget,
+} from "./AddDatabase";
 import { unreadSources, visibleProblems, waitingFor } from "./databaseSources";
 import {
   DatabaseSourceItem,
@@ -144,6 +148,8 @@ export function ProjectWorkspace({
   const [addingDatabase, setAddingDatabase] = useState(
     initialPanel?.addDatabase !== undefined
   );
+  // A too-large source the add-database panel is picking columns for.
+  const [pick, setPick] = useState<PickTarget>();
   const [selected, setSelectedState] = useState<Selection>(() =>
     initialSelection?.path &&
     [...folder.analyses, ...folder.notebooks].some(
@@ -479,7 +485,10 @@ export function ProjectWorkspace({
                   className="app-button app-button-sm app-button-ghost"
                   aria-expanded={addingDatabase}
                   aria-label="Add a table or query from a database"
-                  onClick={() => setAddingDatabase((open) => !open)}
+                  onClick={() => {
+                    setPick(undefined);
+                    setAddingDatabase((open) => !open);
+                  }}
                 >
                   Add database
                 </button>
@@ -499,11 +508,16 @@ export function ProjectWorkspace({
           {addData && adding && addData(() => setAdding(false))}
           {canAddDatabase && addingDatabase && (
             <AddDatabase
+              key={pick?.sourceId}
               connections={folder.connections}
               sourceIds={project.sources.map((source) => source.id)}
               initialConnection={initialPanel?.addDatabase || undefined}
+              pick={pick}
               actions={{ ...actions.database!, saveSecret: actions.saveSecret }}
-              onClose={() => setAddingDatabase(false)}
+              onClose={() => {
+                setPick(undefined);
+                setAddingDatabase(false);
+              }}
             />
           )}
           {refreshAllError && (
@@ -525,6 +539,21 @@ export function ProjectWorkspace({
                     snapshot={folder.snapshots[source.id]}
                     lastError={readErrors[source.id]}
                     onRemove={readOnly ? undefined : actions.removeSource}
+                    onPickColumns={
+                      canAddDatabase && database.table !== undefined
+                        ? () => {
+                            setPick({
+                              sourceId: source.id,
+                              connection: database.connection,
+                              table: database.table!,
+                              ...(database.limit
+                                ? { limit: database.limit }
+                                : {}),
+                            });
+                            setAddingDatabase(true);
+                          }
+                        : undefined
+                    }
                     onRefresh={
                       readOnly || !actions.refreshSources
                         ? undefined
