@@ -557,3 +557,37 @@ describe("live findings", () => {
     ).toEqual(["Yes", "Yes", "Yes", expect.not.stringMatching("Yes")]);
   });
 });
+
+describe("ExplorEdaNotebook with several queries", () => {
+  const text = [
+    "Orders {{orders}}, regions {{regions}}.",
+    "",
+    "```eda",
+    "eda query=orders",
+    "finding @orders count",
+    "row region @by-region",
+    "```",
+    "",
+    "```eda",
+    "eda query=regions",
+    "finding @regions count",
+    "row name @names",
+    "```",
+  ].join("\n");
+  const orders = [{ region: "East" }, { region: "West" }, { region: "East" }];
+  const regions = [{ name: "East" }, { name: "West" }];
+
+  it("charts each block from its own query's rows", () => {
+    const { container } = render(
+      <ExplorEdaNotebook text={text} data={orders} queries={{ regions }} />
+    );
+    const outputs = [
+      ...container.querySelectorAll<HTMLElement>("[data-chart-id]"),
+    ].map((item) => item.dataset.chartId);
+    expect(outputs).toEqual(["by-region", "names"]);
+    const value = (name: string) =>
+      container.querySelector(`[data-finding="${name}"]`);
+    expect(value("orders")).toHaveTextContent(/^3$/);
+    expect(value("regions")).toHaveTextContent(/^2$/);
+  });
+});

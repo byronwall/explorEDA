@@ -1,7 +1,10 @@
 /**
  * Builds a notebook's results. Every block's text compiles together as one
  * dashboard, so a definition in any block applies to the whole file in any
- * order. Prose lines compile as blank lines, which keeps every line number
+ * order. A block whose `eda query=` names another query can chart that
+ * query's rows instead: pass the queries that have their own rows as
+ * `groups`, and compile each one with `group`. Blocks of one query compile
+ * together, apart from the others. Prose lines compile as blank lines, which keeps every line number
  * the file's own: diagnostics and chart lines point straight into the file.
  *
  * A block whose text is broken doesn't take part. When the host passes the
@@ -51,10 +54,22 @@ export interface NotebookBlockResult {
 export interface NotebookCompileOptions extends DslCompileOptions {
   /** Each block's last text that compiled without an error, by block index. */
   lastValid?: Record<number, string>;
+  /**
+   * Queries that chart their own rows. A block whose `eda query=` names one
+   * of them, other than the notebook's first named query, belongs to it.
+   */
+  groups?: readonly string[];
+  /** The query whose blocks to compile; omit it for the notebook's own. */
+  group?: string;
 }
 
 export interface NotebookCompileResult {
   notebook: ParsedNotebook;
+  /**
+   * The query each block belongs to, by block index: "" for the notebook's
+   * own, or one of `groups`. Only the compiled group's blocks have results.
+   */
+  groups: string[];
   /** Every block's definitions and outputs as one dashboard. */
   settings: SavedDataStructure;
   blocks: NotebookBlockResult[];
@@ -73,6 +88,38 @@ export interface NotebookCompileResult {
 
 const GENERATED_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** The query each block names on its own `eda query=` line, if any. */
+export function blockQueries(notebook: ParsedNotebook) {
+  return notebook.blocks.map((block) => {
+    const eda = parseDocument(block.text).declarations.find(
+      (item) => item.keyword === "eda"
+    );
+    const pair = eda?.pairs.find((item) => item.key === "query");
+    return pair
+      ? {
+          id: pair.value.items[0]?.text ?? "",
+          line: pair.span.line + block.startLine - 1,
+          column: pair.span.column,
+        }
+      : undefined;
+  });
+}
+
+/**
+ * Each block's group: the query it names when that query is in `groups`
+ * and isn't the notebook's first named query, or "" for the notebook's own.
+ */
+export function blockGroups(
+  notebook: ParsedNotebook,
+  groups: readonly string[] = []
+): string[] {
+  const named = blockQueries(notebook);
+  const first = named.find(Boolean)?.id;
+  return named.map((query) =>
+    query && query.id !== first && groups.includes(query.id) ? query.id : ""
+  );
+}
 
 /** Problems a block's own text has, before it joins the others. */
 function blockProblems(block: NotebookBlock): DslDiagnostic[] {
@@ -141,16 +188,19 @@ export function compileNotebook(
   text: string,
   options: NotebookCompileOptions
 ): NotebookCompileResult {
-  const { lastValid = {}, ...compileOptions } = options;
+  const { lastValid = {}, groups, group = "", ...compileOptions } = options;
   const notebook = parseNotebook(text);
-  const own = new Map(
-    notebook.blocks.map((block) => [block.index, blockProblems(block)])
+  const groupOf = blockGroups(notebook, groups);
+  const mine = notebook.blocks.filter(
+    (block) => groupOf[block.index] === group
   );
+  const own = new Map(mine.map((block) => [block.index, blockProblems(block)]));
 
   const build = (frozen: Set<number>) => {
     const lines = compiledLines(
       notebook,
       (block) =>
+        own.has(block.index) &&
         !frozen.has(block.index) &&
         !own.get(block.index)!.some((item) => item.severity === "error")
     );
@@ -348,6 +398,7 @@ export function compileNotebook(
 
   return {
     notebook,
+    groups: groupOf,
     settings,
     blocks,
     diagnostics: fileDiagnostics,

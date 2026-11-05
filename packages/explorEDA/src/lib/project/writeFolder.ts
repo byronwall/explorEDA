@@ -49,7 +49,7 @@ export function projectFileText(
   const read = new Set(
     queries.flatMap((query) =>
       query.steps.flatMap((step) =>
-        step.kind === "source" ? [step.sourceId] : []
+        step.kind === "source" || step.kind === "append" ? [step.sourceId] : []
       )
     )
   );

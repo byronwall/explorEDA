@@ -39,7 +39,13 @@ export interface DatabaseSource {
   /** The connection's ID, written as `db=`. */
   connection: string;
   table?: string;
+  /** The query: as the text writes it, or as read from `sqlFile`. */
   sql?: string;
+  /**
+   * A file in the project folder that holds the query, written as
+   * `sql=@queries/orders.sql`. The folder reader puts its text in `sql`.
+   */
+  sqlFile?: string;
   /** The most rows a read may return; the default applies otherwise. */
   limit?: number;
 }
@@ -86,6 +92,8 @@ const CARDINALITIES = new Set([
   "many-to-many",
 ]);
 const DEFAULT_CARDINALITY = "many-to-one";
+/** The field an `append` step fills with each row's source. */
+const DEFAULT_APPEND_FIELD = "source";
 const OPERATORS: Record<string, AnalysisFilterOperator> = {
   "=": "eq",
   "!=": "neq",
@@ -156,9 +164,15 @@ function databaseSettings(database: DatabaseSource | undefined): string[] {
     ...(database.table === undefined
       ? []
       : [`table=${encodeScalar(database.table)}`]),
-    ...(database.sql === undefined
-      ? []
-      : [`sql=${JSON.stringify(database.sql)}`]),
+    ...(database.sqlFile !== undefined
+      ? [
+          encodeScalar(database.sqlFile) === database.sqlFile
+            ? `sql=@${database.sqlFile}`
+            : `sql=${JSON.stringify(`@${database.sqlFile}`)}`,
+        ]
+      : database.sql === undefined
+        ? []
+        : [`sql=${JSON.stringify(database.sql)}`]),
     ...(database.limit === undefined ? [] : [`limit=${database.limit}`]),
   ];
 }
@@ -215,6 +229,7 @@ function relationshipLine(relationship: RelationshipDefinition): string {
 function stepDefaultId(step: AnalysisStep): string | undefined {
   switch (step.kind) {
     case "source":
+    case "append":
       return step.sourceId;
     case "lookup":
     case "expand":
@@ -316,6 +331,18 @@ function stepLines(step: AnalysisStep, previous?: AnalysisStep): string[] {
         ].join(" "),
       ];
     }
+    case "append":
+      return [
+        [
+          "append",
+          ...id,
+          text(step.sourceId),
+          ...(step.field === DEFAULT_APPEND_FIELD
+            ? []
+            : [`field=${encodeScalar(step.field)}`]),
+          ...input,
+        ].join(" "),
+      ];
     case "aggregate":
       return block(
         ["aggregate", ...id].join(" "),
@@ -499,7 +526,10 @@ function compileDatabase(
 ): DatabaseSource | undefined {
   const connection = single(declaration, "db");
   const table = single(declaration, "table");
-  const sql = single(declaration, "sql");
+  const sqlText = single(declaration, "sql");
+  // sql=@queries/orders.sql reads the query from a file in the folder.
+  const sqlFile = sqlText?.startsWith("@") ? sqlText.slice(1) : undefined;
+  const sql = sqlFile === undefined ? sqlText : undefined;
   const limitText = single(declaration, "limit");
   if (connection === undefined) {
     for (const key of ["table", "sql", "limit"]) {
@@ -521,7 +551,14 @@ function compileDatabase(
       "Keep path= or db=."
     );
   }
-  if ((table === undefined) === (sql === undefined)) {
+  if (sqlFile === "") {
+    report(
+      declaration.span,
+      "sql=@ needs a file name after the @.",
+      "Write it as sql=@queries/orders.sql."
+    );
+  }
+  if ((table === undefined) === (sqlText === undefined)) {
     report(
       declaration.span,
       table === undefined
@@ -546,6 +583,7 @@ function compileDatabase(
     connection,
     ...(table === undefined ? {} : { table }),
     ...(sql === undefined || table !== undefined ? {} : { sql }),
+    ...(!sqlFile || table !== undefined ? {} : { sqlFile }),
     ...(limit === undefined ? {} : { limit }),
   };
 }
@@ -722,6 +760,23 @@ function compileStep(
       }
       return { id: explicitId ?? sourceId, kind: "source", sourceId };
     }
+    case "append": {
+      checkPairs(declaration, ["field", "from"], report);
+      const sourceId = parts[0]?.text;
+      if (!sourceId) {
+        return fail(
+          "An append step names a source.",
+          "Write it as append catalog-orders field=channel."
+        );
+      }
+      return {
+        id: explicitId ?? sourceId,
+        kind: "append",
+        inputStepId,
+        sourceId,
+        field: single(declaration, "field") ?? DEFAULT_APPEND_FIELD,
+      };
+    }
     case "lookup":
     case "expand": {
       const expand = declaration.keyword === "expand";
@@ -846,7 +901,7 @@ function compileStep(
     default:
       return fail(
         `${declaration.keyword} isn't a query step.`,
-        "Use source, lookup, expand, calc, filter, or aggregate."
+        "Use source, lookup, expand, calc, filter, aggregate, or append."
       );
   }
 }
@@ -1012,7 +1067,10 @@ function checkReferences(
         );
       }
       ids.add(step.id);
-      if (step.kind === "source" && !sources.has(step.sourceId)) {
+      if (
+        (step.kind === "source" || step.kind === "append") &&
+        !sources.has(step.sourceId)
+      ) {
         report(
           where(step),
           `No source is named ${step.sourceId}.`,

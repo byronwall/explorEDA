@@ -78,6 +78,8 @@ export function stepTitle(step: AnalysisStep, project: AnalysisProject) {
       return "Keep matching rows";
     case "aggregate":
       return "Group and summarize";
+    case "append":
+      return `Add the rows of ${sourceName(step.sourceId)}`;
   }
 }
 
@@ -93,6 +95,8 @@ export function stepDetail(
     case "lookup":
     case "expand":
       return undefined;
+    case "append":
+      return `${step.field} says which source each row came from`;
     case "calculate":
       return step.expression;
     case "filter": {

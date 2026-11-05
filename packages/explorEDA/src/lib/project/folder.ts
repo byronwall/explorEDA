@@ -27,7 +27,12 @@ import {
   type NotebookReadResult,
 } from "@/lib/notebook";
 import { readAnalysisText, type AnalysisTextResult } from "./analysisText";
-import { isAbsolutePath, ProjectFileError, type ProjectFiles } from "./files";
+import {
+  isAbsolutePath,
+  ProjectFileError,
+  withoutNestedProjects,
+  type ProjectFiles,
+} from "./files";
 import { isDataFile, parseTable } from "./tables";
 import {
   isStaleSnapshot,
@@ -224,7 +229,8 @@ function withSnapshotTypes(
 export async function readProjectFolder(
   files: ProjectFiles
 ): Promise<ProjectFolder> {
-  const listed = await files.list();
+  // A copied example inside the folder is its own project, not this one's.
+  const listed = withoutNestedProjects(await files.list());
   const { layout, projectPath } = projectLayout(listed);
   const problems: ProjectProblem[] = [];
   const withPath = (path: string, items: DslDiagnostic[]) =>
@@ -247,6 +253,28 @@ export async function readProjectFolder(
     connections = compiled.connections;
     databases = compiled.databases;
     problems.push(...withPath(projectPath, compiled.diagnostics));
+    // A query kept in a file reads as if the text held it, so a change to
+    // the file makes the source's snapshot stale.
+    for (const [id, database] of Object.entries(databases)) {
+      if (database.sqlFile === undefined) continue;
+      try {
+        databases[id] = {
+          ...database,
+          sql: await files.read(database.sqlFile),
+        };
+      } catch {
+        problems.push(
+          problem(
+            projectPath,
+            `${id} reads its SQL from ${database.sqlFile}, which doesn't exist.`,
+            {
+              subject: id,
+              suggestion: "Fix sql=@ or restore the file.",
+            }
+          )
+        );
+      }
+    }
   }
 
   // Analyses may bring their own sources; the project's win on a clash.

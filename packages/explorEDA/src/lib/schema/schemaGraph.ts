@@ -336,6 +336,7 @@ function queryLineage(
     const detail = stepDetail(step, project, inputFields(step.id)) ?? undefined;
     switch (step.kind) {
       case "source":
+      case "append":
         rows.push({
           id: rowId,
           kind: "step",

@@ -992,6 +992,7 @@ const STEP_ICONS = {
   calculate: Sigma,
   filter: Filter,
   aggregate: Sigma,
+  append: Database,
 } as const;
 
 function SchemaRowItem({

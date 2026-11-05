@@ -228,12 +228,16 @@ export function ProjectWorkspace({
   const allViews = useMemo(
     () => [
       ...[...views.values()].flat(),
-      ...folder.notebooks.map((item) => ({
-        id: viewId(item.path, 0),
-        name: item.result.settings.metadata.name || item.path,
-        queryId: item.result.queryId,
-        settings: item.result.settings,
-      })),
+      ...folder.notebooks.flatMap((item) =>
+        [item.result.queryId, ...Object.keys(item.result.queryRows)].map(
+          (queryId, index) => ({
+            id: viewId(item.path, index),
+            name: item.result.settings.metadata.name || item.path,
+            queryId,
+            settings: item.result.settings,
+          })
+        )
+      ),
     ],
     [views, folder.notebooks]
   );
@@ -639,6 +643,7 @@ export function ProjectWorkspace({
             key={notebook.path}
             text={notebookTexts.get(notebook.path) ?? notebook.text}
             data={notebook.result.rows}
+            queries={notebook.result.queryRows}
             name={notebook.result.settings.metadata.name}
             lastValid={notebookMemory?.(notebook.path)}
             onTextChange={

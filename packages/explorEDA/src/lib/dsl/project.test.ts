@@ -1,4 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
+import { memoryProjectFiles } from "@/lib/project/files";
+import { readProjectFolder } from "@/lib/project/folder";
 import { createShopFixture } from "@/test/fixtures/shopProject";
 import type { AnalysisProject } from "@/types/AnalysisProject";
 import { formatDsl } from "./format";
@@ -135,6 +138,73 @@ query @q glyph=Q {
     });
   });
 
+  it("stacks sources with append and evaluates each row from its source", async () => {
+    const text = `project @shop
+
+source @web key=id path=web.csv
+
+source @catalog key=id path=catalog.csv
+
+source @store key=id path=store.csv
+
+query @sales glyph=◆ {
+  source web
+  append catalog field=channel
+  append store field=channel
+}
+`;
+    const result = compileProjectText(text);
+    expect(result.diagnostics).toEqual([]);
+    expect(result.project.queries[0]!.steps[1]).toEqual({
+      id: "catalog",
+      kind: "append",
+      inputStepId: "web",
+      sourceId: "catalog",
+      field: "channel",
+    });
+    expect(formatDsl(text)).toBe(text);
+    expect(exportProjectText(result.project, { paths: result.paths })).toBe(
+      text
+    );
+    expect(
+      compileProjectText(text.replace(" field=channel", "")).project.queries[0]!
+        .steps[1]
+    ).toMatchObject({ field: "source" });
+
+    const folder = await readProjectFolder(
+      memoryProjectFiles({
+        "exploreda.eda": text,
+        "web.csv": "id,paid,promo\n1,10,yes\n2,20,no\n",
+        "catalog.csv": "id,paid\n1,30\n",
+        "store.csv": "id,paid,extra\n9,5,x\n",
+      })
+    );
+    expect(folder.problems).toEqual([]);
+    const evaluation = evaluateAnalysisQuery(
+      folder.project,
+      folder.tables,
+      "sales"
+    );
+    expect(evaluation.rows.map((row) => row.values)).toEqual([
+      { "web.id": 1, "web.paid": 10, "web.promo": "yes", channel: "web" },
+      { "web.id": 2, "web.paid": 20, "web.promo": "no", channel: "web" },
+      {
+        "web.id": 1,
+        "web.paid": 30,
+        "web.promo": undefined,
+        channel: "catalog",
+      },
+      { "web.id": 9, "web.paid": 5, "web.promo": undefined, channel: "store" },
+    ]);
+    // Each row still traces back to the source row it came from.
+    expect(evaluation.rows.map((row) => row.sourceRows[0]!.rowKey)).toEqual([
+      "web:number:1",
+      "web:number:2",
+      "catalog:number:1",
+      "store:number:9",
+    ]);
+  });
+
   it("points at references to things the project doesn't declare", () => {
     const { diagnostics } = compileProjectText(`project @p
 source @orders key=orderId {
@@ -200,6 +270,30 @@ source @active db=warehouse sql="select id, region\\nfrom customers where active
     it("writes them back exactly", () => {
       const { project, connections, databases } = compileProjectText(text);
       expect(exportProjectText(project, { connections, databases })).toBe(text);
+    });
+
+    it("reads sql=@file as a query kept in a file", () => {
+      const withFile = text.replace(
+        'sql="select id, region\\nfrom customers where active"',
+        "sql=@queries/active.sql"
+      );
+      const result = compileProjectText(withFile);
+      expect(result.diagnostics).toEqual([]);
+      expect(result.databases.active).toEqual({
+        connection: "warehouse",
+        sqlFile: "queries/active.sql",
+      });
+      // The folder reader fills in sql; the text still names the file.
+      const databases = {
+        ...result.databases,
+        active: { ...result.databases.active!, sql: "select 1" },
+      };
+      expect(
+        exportProjectText(result.project, {
+          connections: result.connections,
+          databases,
+        })
+      ).toBe(withFile);
     });
 
     it("refuses secrets in project text", () => {

@@ -31,6 +31,21 @@ export class ProjectFileError extends Error {
 /** Folders a project never lists. */
 export const SKIPPED_FOLDERS = new Set([".git", "node_modules"]);
 
+/**
+ * Leaves out the files of folders that are projects of their own, such as
+ * a copied example: a subfolder with its own `exploreda.eda` or
+ * `.exploreda/`.
+ */
+export function withoutNestedProjects(paths: readonly string[]): string[] {
+  const roots = paths.flatMap((path) => {
+    const match = /^(.+?)\/(?:exploreda\.eda$|\.exploreda\/)/.exec(path);
+    return match ? [`${match[1]}/`] : [];
+  });
+  return roots.length
+    ? paths.filter((path) => !roots.some((root) => path.startsWith(root)))
+    : [...paths];
+}
+
 /** True for a path that starts at a drive or the file-system root. */
 export function isAbsolutePath(path: string) {
   return /^([A-Za-z]:[\\/]|[\\/])/.test(path);

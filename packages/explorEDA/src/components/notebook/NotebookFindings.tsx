@@ -33,7 +33,7 @@ export function useNotebookFindings() {
 }
 
 /** Every finding's current result, from the workspace as it is now. */
-function useFindingResults() {
+export function useFindingResults() {
   const findings = useDataLayer((state) => state.findings);
   const charts = useDataLayer((state) => state.charts);
   const data = useDataLayer((state) => state.data);
@@ -98,11 +98,18 @@ function useFindingResults() {
  * finding's records in a popover beside the link that opened them.
  */
 export function NotebookFindingsProvider({
+  extra,
   children,
 }: {
+  /** Findings of the notebook's other queries; its own win a clash. */
+  extra?: ReadonlyMap<string, FindingResult>;
   children: ReactNode;
 }) {
-  const results = useFindingResults();
+  const own = useFindingResults();
+  const results = useMemo(
+    () => (extra?.size ? new Map([...extra, ...own]) : own),
+    [extra, own]
+  );
   const [open, setOpen] = useState<{
     id: string;
     revision: string;

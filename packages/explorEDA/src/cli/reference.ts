@@ -38,8 +38,10 @@ Sources:
   source @id ["Name"] [key=field] path=<file.csv|file.json> { field lines }
   source @id [key=field] db=<connection> table=<name> [limit=rows]
   source @id [key=field] db=<connection> sql="select …" [limit=rows]
+  source @id [key=field] db=<connection> sql=@queries/orders.sql
   table= takes schema.table outside the default schema. sql= is any query
-  that returns rows; write a newline as \\n. A read keeps at most 100,000
+  that returns rows; write a newline as \\n, or keep a longer query in a .sql
+  file in the folder and name it with sql=@<path>. A read keeps at most 100,000
   rows unless limit= raises it. Fields and types come from the data, so
   field lines are optional: field <id> ["Label"] [string|number|boolean|date].
   A database source has no rows until it is read:
@@ -62,6 +64,10 @@ Relationships and queries:
     aggregate @id [by=field,field] {  one row per group; a measure per line:
       sum @total orders.amount        also average, max, min, count @n [field]
     }
+    append catalog [field=channel]    another source's rows under these; its
+                                      fields fill the first source's fields of
+                                      the same name (web.paid), and field=
+                                      (default source) holds each row's source
   param @id ["Name"] type [required] [pick=source[.labelField]]
   Every source can be charted on its own: it gets a query of its name.
 
@@ -102,11 +108,20 @@ appear where the block sits.
   }
   \`\`\`
 
-- eda query=<id> picks the one query every block charts (a project query or
-  a source's own). Without it, the notebook charts the project's first query.
-  A notebook charts one query today.
+- eda query=<id> picks the query a block charts (a project query or a
+  source's own). The first one is the notebook's query: blocks without their
+  own eda query= chart it. Without one, the notebook charts the project's
+  first query.
+- A block can name another query to chart its rows:
+    \`\`\`eda
+    eda query=regions
+    row regions.region
+    \`\`\`
+  Each query's blocks work apart: aliases, calc, filter, and finding lines
+  reach only blocks of the same query, and charts of different queries never
+  share a selection. Prose can show any finding.
 - Fields are named <step>.<field>, as demand.actual; alias them for short
-  names. Aliases and calc lines in any block reach every block.
+  names. Aliases and calc lines in any block reach every block of its query.
 - A block can hold several charts; a block of only definitions shows them.
 - Two or more # headings split the notebook into sheets, one per heading.
 - finding @n count chart=@name, then {{n}} in prose, writes a live value.
