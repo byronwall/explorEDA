@@ -35,7 +35,42 @@ export function BarChartSettingsPanel({
       settings.seriesLayout &&
       settings.seriesLayout !== "grouped"
   );
-  const seriesControl = (
+  // A series makes the field a category, so a histogram splits into panels
+  // instead and keeps its bins.
+  const histogramMode =
+    !aggregate &&
+    !settings.seriesField &&
+    !settings.forceString &&
+    measureFields.includes(settings.field);
+  const seriesControl = histogramMode ? (
+    <>
+      <Label>Split by</Label>
+      <ActionTooltip content="A histogram splits into one panel per value, so each keeps its bins">
+        <div className="min-w-0">
+          <FieldSelector
+            label=""
+            placeholder="Panel field"
+            value={settings.facet?.enabled ? settings.facet.rowVariable : ""}
+            allowClear
+            fields={fieldNames.filter((field) => field !== settings.field)}
+            onChange={(field) =>
+              onSettingsChange({
+                ...settings,
+                facet: field
+                  ? {
+                      enabled: true,
+                      type: "wrap",
+                      rowVariable: field,
+                      columnCount: 2,
+                    }
+                  : { ...settings.facet, enabled: false },
+              })
+            }
+          />
+        </div>
+      </ActionTooltip>
+    </>
+  ) : (
     <>
       <Label>Split by</Label>
       <FieldSelector
