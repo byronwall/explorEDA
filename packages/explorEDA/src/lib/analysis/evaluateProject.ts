@@ -44,6 +44,72 @@ function assertNoFieldCollision(
   }
 }
 
+/** The field ids a calc, filter, or aggregate step reads from its input. */
+function stepFieldIds(step: AnalysisStep): string[] {
+  switch (step.kind) {
+    case "calculate":
+      try {
+        return parseExpression(step.expression).dependencies;
+      } catch {
+        return [];
+      }
+    case "filter":
+      return [step.fieldId];
+    case "aggregate":
+      return [
+        ...step.groupBy,
+        ...step.measures.flatMap((measure) => [
+          ...(measure.fieldId ? [measure.fieldId] : []),
+          ...(measure.entityFieldId ? [measure.entityFieldId] : []),
+        ]),
+      ];
+    default:
+      return [];
+  }
+}
+
+/**
+ * The fix for a field id the input lacks: the field it most likely means
+ * (`pg.pe` after an aggregate is `pe`, a calc is never `source.calc`), or
+ * the fields there are.
+ */
+export function unknownFieldFix(
+  name: string,
+  fields: readonly AnalysisField[]
+) {
+  const ids = fields.map((field) => field.id);
+  const short = name.slice(name.lastIndexOf(".") + 1);
+  const near =
+    ids.find((id) => id === short) ??
+    ids.find((id) => id.endsWith(`.${short}`)) ??
+    ids.find((id) => id.toLowerCase() === name.toLowerCase());
+  if (near) return `use ${near}`;
+  const shown = ids.slice(0, 20).join(", ");
+  return ids.length
+    ? `fields here: ${shown}${ids.length > 20 ? `, and ${ids.length - 20} more` : ""}`
+    : "this step's input has no fields";
+}
+
+/** One diagnostic per field a step names that its input rows lack. */
+function unknownFields(
+  step: AnalysisStep,
+  input: Frame,
+  diagnostics: AnalysisDiagnostic[]
+) {
+  // A missing source already says why its fields are gone.
+  if (!input.fields.length) return;
+  const known = new Set(input.fields.map((field) => field.id));
+  for (const id of new Set(stepFieldIds(step))) {
+    if (!id || known.has(id)) continue;
+    diagnostics.push({
+      code: "unknown-field",
+      message: `${id} isn't a field here; ${unknownFieldFix(id, input.fields)}.`,
+      stepId: step.id,
+      fieldId: id,
+    });
+  }
+}
+
 const stable = (value: AnalysisScalar) => `${typeof value}:${String(value)}`;
 const rowKey = (sourceId: string, key: AnalysisScalar, index: number) =>
   key == null ? `${sourceId}:row:${index}` : `${sourceId}:${stable(key)}`;
@@ -893,6 +959,7 @@ export function evaluateAnalysisQuery(
     const step = visit(id);
     const input =
       step.kind === "source" ? undefined : evaluate(step.inputStepId);
+    if (input) unknownFields(step, input, diagnostics);
     let result: Frame;
     switch (step.kind) {
       case "source":

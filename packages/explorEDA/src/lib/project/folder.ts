@@ -7,13 +7,16 @@
  * folder; an absolute path reads a file outside it.
  */
 import type {
+  AnalysisDiagnostic,
   AnalysisProject,
   AnalysisQuery,
   AnalysisSourceRow,
   SourceDefinition,
 } from "@/types/AnalysisProject";
+import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
 import { sourceFromRows } from "@/lib/analysis/sources";
 import type { DslDiagnostic } from "@/lib/dsl";
+import type { DslSpan } from "@/lib/dsl/parse";
 import {
   compileProjectText,
   labelFromId,
@@ -246,12 +249,14 @@ export async function readProjectFolder(
   const paths: Record<string, string> = {};
   let connections: ConnectionDefinition[] = [];
   let databases: Record<string, DatabaseSource> = {};
+  let spans = new Map<object, DslSpan>();
   if (projectPath) {
     const compiled = compileProjectText(await files.read(projectPath));
     project = compiled.project;
     Object.assign(paths, compiled.paths);
     connections = compiled.connections;
     databases = compiled.databases;
+    spans = compiled.spans;
     problems.push(...withPath(projectPath, compiled.diagnostics));
     // A query kept in a file reads as if the text held it, so a change to
     // the file makes the source's snapshot stale.
@@ -429,6 +434,49 @@ export async function readProjectFolder(
           subject: source.id,
           suggestion:
             "Name the field that identifies each row, as key=orderId.",
+        })
+      );
+    }
+  }
+
+  // A step that names a field its input lacks would read nulls; say so
+  // where the text names it. Fields don't depend on rows, so no rows.
+  const noRows = Object.fromEntries(
+    project.sources.map((source) => [source.id, []])
+  );
+  for (const query of project.queries) {
+    if (implicitQueries.includes(query.id)) continue;
+    let diagnostics: AnalysisDiagnostic[] = [];
+    try {
+      diagnostics = evaluateAnalysisQuery(
+        project,
+        noRows,
+        query.id
+      ).diagnostics;
+    } catch (error) {
+      const span = spans.get(query);
+      problems.push(
+        problem(
+          projectPath ?? PROJECT_FILE,
+          `${query.id} can't run: ${error instanceof Error ? error.message.split("\n")[0] : String(error)}`,
+          {
+            subject: query.id,
+            ...(span ? { line: span.line, column: span.column } : {}),
+          }
+        )
+      );
+      continue;
+    }
+    for (const item of diagnostics) {
+      if (item.code !== "unknown-field") continue;
+      const step = query.steps.find((each) => each.id === item.stepId);
+      const span = (step && spans.get(step)) ?? spans.get(query);
+      problems.push(
+        problem(projectPath ?? PROJECT_FILE, item.message, {
+          subject: `${query.id} ${item.stepId}`,
+          ...(span
+            ? { line: span.line, column: span.column, length: span.length }
+            : {}),
         })
       );
     }

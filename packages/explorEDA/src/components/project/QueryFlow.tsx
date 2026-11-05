@@ -37,6 +37,7 @@ const DIAGNOSTIC_TEXT: Record<
   "invalid-query": () => "Some inputs are invalid.",
   "calculation-error": (n) => `${rows(n)} could not be calculated.`,
   "missing-parameter": () => "Some inputs are not set.",
+  "unknown-field": () => "A field this step names isn't in its input.",
   "conflicting-entity-measure": (n) =>
     `${n === 1 ? "1 ID has" : `${n.toLocaleString()} IDs have`} different values, so a summary is unavailable.`,
 };

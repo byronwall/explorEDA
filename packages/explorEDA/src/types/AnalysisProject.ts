@@ -202,7 +202,8 @@ export interface AnalysisDiagnostic {
     | "invalid-query"
     | "calculation-error"
     | "missing-parameter"
-    | "conflicting-entity-measure";
+    | "conflicting-entity-measure"
+    | "unknown-field";
   message: string;
   stepId?: string;
   sourceId?: string;

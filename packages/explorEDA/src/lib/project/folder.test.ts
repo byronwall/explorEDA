@@ -160,6 +160,38 @@ hist orders.amount
       message: "No query is named nope.",
     });
   });
+
+  it("says which field a step means when it names one its rows lack", async () => {
+    const files = exampleFiles();
+    files["exploreda.eda"] += `
+query @per-channel "Per channel" glyph=▲ {
+  source orders
+  calc big = ["orders.amount"] > 100 ? 1 : 0
+  aggregate @pc by=orders.channel {
+    sum @total orders.amount
+    sum @bigs orders.big
+  }
+  aggregate @overall {
+    average @mean pc.total
+  }
+}
+`;
+    const folder = await readProjectFolder(memoryProjectFiles(files));
+    expect(
+      folder.problems.map(({ message, line }) => ({ message, line }))
+    ).toEqual([
+      {
+        message: "orders.big isn't a field here; use big.",
+        line: expect.any(Number),
+      },
+      {
+        message: "pc.total isn't a field here; use total.",
+        line: expect.any(Number),
+      },
+    ]);
+    const lines = files["exploreda.eda"]!.split("\n");
+    expect(lines[folder.problems[1]!.line - 1]).toContain("aggregate @overall");
+  });
 });
 
 describe("analysis text", () => {

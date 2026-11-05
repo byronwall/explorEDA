@@ -66,6 +66,8 @@ export interface ProjectTextResult {
   /** Source ID to the database it reads. */
   databases: Record<string, DatabaseSource>;
   diagnostics: DslDiagnostic[];
+  /** Where each declared item, query step included, sits in the text. */
+  spans: Map<object, DslSpan>;
 }
 
 /** Settings that hold secrets, which project text refuses. */
@@ -1259,5 +1261,5 @@ export function compileProjectText(
     );
   }
   checkReferences(project, spans, report, connections, databases, paths);
-  return { project, paths, connections, databases, diagnostics };
+  return { project, paths, connections, databases, diagnostics, spans };
 }
