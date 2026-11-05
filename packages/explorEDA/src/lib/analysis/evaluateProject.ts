@@ -963,6 +963,13 @@ function validateQuery(project: AnalysisProject, query: AnalysisQuery) {
   return { steps, visit };
 }
 
+/** The fields a query's rows are one per, when its output is an aggregate. */
+export function aggregatedBy(project: AnalysisProject, queryId?: string) {
+  const query = project.queries.find((item) => item.id === queryId);
+  const output = query?.steps.find((step) => step.id === query.outputStepId);
+  return output?.kind === "aggregate" ? output.groupBy : undefined;
+}
+
 export function evaluateAnalysisQuery(
   project: AnalysisProject,
   tables: Record<string, readonly AnalysisSourceRow[]>,

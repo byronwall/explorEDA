@@ -4,7 +4,10 @@
  * A block that names another query charts that query's rows, with the other
  * blocks that name it.
  */
-import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
+import {
+  aggregatedBy,
+  evaluateAnalysisQuery,
+} from "@/lib/analysis/evaluateProject";
 import type { DslDiagnostic } from "@/lib/dsl";
 import type {
   AnalysisProject,
@@ -93,10 +96,19 @@ export function readNotebookText(
   }
   const groups = Object.keys(queryRows);
   const options = { name: context.name, lastValid: context.lastValid, groups };
-  const main = compileNotebook(text, { ...options, rows });
+  const main = compileNotebook(text, {
+    ...options,
+    rows,
+    oneRowPer: aggregatedBy(project, queryId),
+  });
   // Each other query's blocks compile apart, against that query's rows.
   const others = groups.map((group) =>
-    compileNotebook(text, { ...options, rows: queryRows[group]!, group })
+    compileNotebook(text, {
+      ...options,
+      rows: queryRows[group]!,
+      group,
+      oneRowPer: aggregatedBy(project, group),
+    })
   );
   const all = [main, ...others];
   const blocks = main.blocks.map((block, index) => {

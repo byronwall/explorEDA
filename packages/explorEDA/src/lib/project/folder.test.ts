@@ -161,6 +161,35 @@ hist orders.amount
     });
   });
 
+  it("warns when a row chart counts a query's aggregated rows", async () => {
+    const files = exampleFiles();
+    files["exploreda.eda"] += `
+query @per-channel "Per channel" glyph=▲ {
+  source orders
+  aggregate @pc by=orders.channel {
+    sum @total orders.amount
+  }
+}
+`;
+    files["channels.eda.md"] = [
+      "```eda",
+      "eda query=per-channel",
+      "row orders.channel",
+      "group @by sum(total) by=orders.channel",
+      "row orders.channel group=by",
+      "```",
+    ].join("\n");
+    const folder = await readProjectFolder(memoryProjectFiles(files));
+    expect(folder.problems.map(({ message, line }) => [line, message])).toEqual(
+      [
+        [
+          3,
+          "The query's rows are one per orders.channel, so this row chart counts 1 for each bar.",
+        ],
+      ]
+    );
+  });
+
   it("says which field a step means when it names one its rows lack", async () => {
     const files = exampleFiles();
     files["exploreda.eda"] += `

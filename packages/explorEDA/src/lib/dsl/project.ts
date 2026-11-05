@@ -17,7 +17,11 @@ import type {
   RelationshipDefinition,
   SourceDefinition,
 } from "@/types/AnalysisProject";
-import type { DslDiagnostic } from "./compile";
+import {
+  DSL_CHART_KEYWORDS,
+  DSL_OTHER_KEYWORDS,
+  type DslDiagnostic,
+} from "./compile";
 import { parseDocument, type DslDeclaration, type DslSpan } from "./parse";
 import { encodeScalar } from "./paths";
 import { block } from "./print";
@@ -899,11 +903,21 @@ function compileStep(
           report(
             child.span,
             `${child.keyword} isn't a measure.`,
-            "Write a measure as sum @amount orders.amount, average @mean …, max @peak …, min @low …, or count @rows."
+            "Write a measure as sum @amount orders.amount, average @mean …, max @peak …, min @low …, or count @n."
           );
           continue;
         }
         checkPairs(child, ["label", "per"], report);
+        if (
+          DSL_CHART_KEYWORDS[measureId] ||
+          DSL_OTHER_KEYWORDS.includes(measureId)
+        ) {
+          report(
+            child.span,
+            `${measureId} is a reserved word in dashboard text, so a measure named ${measureId} can't be charted.`,
+            `Name it something else, such as ${measureId === "rows" ? "n" : `${measureId}Total`}.`
+          );
+        }
         const fieldId = words(child)[0]?.text;
         const entityFieldId = single(child, "per");
         measures.push({

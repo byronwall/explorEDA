@@ -43,6 +43,19 @@ function livePopulations(settings: ReturnType<typeof compile>["settings"]) {
 beforeAll(() => registerAllCharts());
 
 describe("compileDocument", () => {
+  it("sorts a table by an alias, and refuses a reserved word as an alias", () => {
+    const result = compile(
+      "rev:num=Revenue\nrows:cat=Channel\ntable Channel,rev sortBy=rev sortDirection=desc"
+    );
+    expect(result.settings.charts[0]).toMatchObject({
+      sortBy: "Revenue",
+      sortDirection: "desc",
+    });
+    expect(result.diagnostics[0]?.message).toBe(
+      "rows is a reserved word in dashboard text, so it can't name a field."
+    );
+  });
+
   it("splits bars by color= and says a row chart can't", () => {
     const result = compile(
       "bar Category color=Channel\nrow Category color=Channel"
