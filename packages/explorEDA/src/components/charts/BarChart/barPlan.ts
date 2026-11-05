@@ -171,6 +171,17 @@ export interface BarChartPlan {
   xScale: ScaleDescriptor;
   yScale: ScaleDescriptor;
   bars: BarMark[];
+  /** Faint all-row bars for categories with no rows after other filters. */
+  emptySlots: {
+    id: string;
+    label: string;
+    value: number;
+    x: number;
+    width: number;
+    y: number;
+    height: number;
+    fill: string;
+  }[];
   /** Bin boundaries in bin mode, lowest first. Range filters snap to them. */
   binEdges: number[];
   /**
@@ -453,12 +464,30 @@ export function planBarChart({
         : settings.categoryOrder === "value"
           ? sortByValue(result?.rows ?? [], allRowValue(mode, snapshot))
           : (result?.rows ?? []);
+  // The same categories over every row, in the order the bars use.
+  const domainRows = snapshot.domainAggregate?.rows ?? [];
+  const slotRows =
+    mode !== "aggregate"
+      ? []
+      : settings.categoryOrder === "label"
+        ? sortByLabel(domainRows, (row) => row.groupValue)
+        : settings.categoryOrder === "value"
+          ? sortByValue(domainRows, allRowValue(mode, snapshot))
+          : domainRows;
 
   // Y domain: every source row, so bars keep their scale while other charts
   // filter. An aggregate also takes its current values, so a filtered value
-  // past the all-row domain, such as a higher average, grows it to fit.
+  // past the all-row domain, such as a higher average, grows it to fit. A
+  // chart set to fit the filtered rows uses only the bars it draws.
+  const fitted = settings.scaleTo === "filtered";
   let domainValues: BarDomain["values"];
-  if (mode === "aggregate") {
+  if (fitted) {
+    domainValues = rows.flatMap((row) =>
+      typeof row.value === "number" && Number.isFinite(row.value)
+        ? [{ id: row.id, label: row.groupLabel, value: row.value }]
+        : []
+    );
+  } else if (mode === "aggregate") {
     const values = (items: AggregateResultRow[], prefix = "") =>
       items.flatMap((row) =>
         typeof row.value === "number" && Number.isFinite(row.value)
@@ -581,9 +610,16 @@ export function planBarChart({
     };
   } else {
     // Count rows hold every source category, so both modes band in row order.
+    // An aggregate keeps a slot for every category over all rows, so bars
+    // do not widen or shift as other charts filter groups out.
     const labels =
       mode === "aggregate"
-        ? rows.map((row) => row.groupLabel)
+        ? [
+            ...new Set([
+              ...(fitted ? [] : slotRows).map((row) => row.groupLabel),
+              ...rows.map((row) => row.groupLabel),
+            ]),
+          ]
         : rows.map((row) => categoryLabel(row.groupValue));
     xScale = scaleBand<string>()
       .domain(labels)
@@ -667,8 +703,9 @@ export function planBarChart({
       zero: true,
       hidden: labelHidden(yHidden, formatAxis(yField)),
       domainSource: {
-        population:
-          mode === "aggregate"
+        population: fitted
+          ? "rows after other filters (fitted to filtered rows)"
+          : mode === "aggregate"
             ? snapshot.domainAggregate
               ? "all source rows and the current aggregate result"
               : "the current aggregate result"
@@ -708,10 +745,23 @@ export function planBarChart({
         : []
     );
   // Counts over every source row, by bar row id, for the faint bars behind.
+  // An aggregate's faint bar is its summary over every row.
+  const allRowSummary = new Map(
+    domainRows.map((row) => [categoryKey(row.groupValue), row.value])
+  );
   const totals =
-    mode === "aggregate" || !showTotals
+    fitted || !showTotals
       ? undefined
-      : new Map(domainValues.map((item) => [item.id, item.value]));
+      : mode === "aggregate"
+        ? new Map(
+            rows.flatMap((row) => {
+              const value = allRowSummary.get(categoryKey(row.groupValue));
+              return typeof value === "number" && Number.isFinite(value)
+                ? [[row.id, value] as const]
+                : [];
+            })
+          )
+        : new Map(domainValues.map((item) => [item.id, item.value]));
   const bars: BarMark[] = [];
   const unplotted: BarChartPlan["unplotted"] = [];
   rows.forEach((row, order) => {
@@ -816,9 +866,36 @@ export function planBarChart({
       row,
     });
   });
+  // A category other charts filter out keeps its faint all-row bar, so its
+  // slot does not read as zero.
+  const shownLabels = new Set(rows.map((row) => row.groupLabel));
+  const emptySlots: BarChartPlan["emptySlots"] = [];
+  if (mode === "aggregate" && totals)
+    for (const row of slotRows) {
+      const band = xScale as ReturnType<typeof scaleBand<string>>;
+      const at = band(row.groupLabel);
+      if (
+        shownLabels.has(row.groupLabel) ||
+        at === undefined ||
+        typeof row.value !== "number" ||
+        !Number.isFinite(row.value)
+      )
+        continue;
+      emptySlots.push({
+        id: `empty:${row.id}`,
+        label: row.groupLabel,
+        value: row.value,
+        x: at,
+        width: band.bandwidth(),
+        y: Math.min(baseline, yScale(row.value)),
+        height: Math.abs(baseline - yScale(row.value)),
+        fill: getColor(row.groupValue) || DEFAULT_FILL,
+      });
+    }
 
   return {
     revision: snapshot.revision,
+    emptySlots,
     mode,
     width,
     height,

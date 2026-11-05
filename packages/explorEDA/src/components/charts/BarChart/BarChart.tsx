@@ -120,11 +120,23 @@ function HoverReadout({
           <b>{bar.valueText}</b>
         </span>
       )}
+      {plan.mode === "aggregate" && bar.total && (
+        <span className="eda-readout-item">
+          <span>All rows</span>
+          <b>
+            {bar.total.value.toLocaleString(undefined, {
+              maximumFractionDigits: 2,
+            })}
+          </b>
+        </span>
+      )}
       <span className="eda-readout-item">
         <span>Rows</span>
         <b>
           {rows.toLocaleString()}
-          {bar.total ? ` of ${bar.total.value.toLocaleString()}` : ""}
+          {bar.total && plan.mode !== "aggregate"
+            ? ` of ${bar.total.value.toLocaleString()}`
+            : ""}
         </b>
       </span>
       {bar.selectedPart && (
@@ -742,6 +754,22 @@ function SingleBarChart({
       >
         {limitMarks?.tints}
         <g>
+          {plan.emptySlots.map((slot) => (
+            <rect
+              key={slot.id}
+              x={slot.x}
+              y={slot.y}
+              width={slot.width}
+              height={slot.height}
+              rx={1.5}
+              pointerEvents="none"
+              aria-hidden="true"
+              style={{
+                fill: slot.fill,
+                fillOpacity: "var(--eda-flow-context)",
+              }}
+            />
+          ))}
           {plan.bars.map((bar) =>
             bar.total ? (
               <rect

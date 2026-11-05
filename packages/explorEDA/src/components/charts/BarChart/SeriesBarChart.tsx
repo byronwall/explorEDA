@@ -232,7 +232,8 @@ export function SeriesBarChart({
           {plan.legend.map((item) => (
             <span
               key={item.key}
-              className="inline-flex shrink-0 items-center gap-1"
+              className={`inline-flex shrink-0 items-center gap-1${item.count ? "" : " opacity-40"}`}
+              data-empty={item.count ? undefined : true}
             >
               <span
                 className="h-2 w-2 rounded-sm"
