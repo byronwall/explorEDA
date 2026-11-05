@@ -20,6 +20,7 @@ import {
   ColorSetting,
   NumberSetting,
   PairSetting,
+  FitSetting,
   Segmented,
 } from "./inspectorControls";
 
@@ -503,6 +504,11 @@ function ValueScaleProperties({
         value={scale.transform}
         options={TRANSFORMS}
         onChange={(transform) => onChange({ transform })}
+      />
+      <FitSetting
+        name={scale.name}
+        fit={scale.fit}
+        onChange={(fit) => onChange({ fit })}
       />
       <span className="eda-setting-label">Ramp</span>
       <div className="eda-composition-ramp">

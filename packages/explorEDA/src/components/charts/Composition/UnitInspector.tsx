@@ -63,6 +63,7 @@ import {
   ColorSetting,
   NumberSetting,
   PairSetting,
+  FitSetting,
   Segmented,
 } from "./inspectorControls";
 
@@ -1499,6 +1500,11 @@ function HorizonFields({
         ]}
         onChange={(domain) => onChange({ domain })}
       />
+      <FitSetting
+        name={mark.name}
+        fit={mark.fit}
+        onChange={(fit) => onChange({ fit })}
+      />
       <ColorSetting
         label="Above"
         value={mark.positive}
@@ -1554,6 +1560,11 @@ function DensityFields({
           },
         ]}
         onChange={(height) => onChange({ height })}
+      />
+      <FitSetting
+        name={mark.name}
+        fit={mark.fit}
+        onChange={(fit) => onChange({ fit })}
       />
       <span className="eda-setting-label">Smoothing</span>
       <div className="eda-composition-color">
@@ -1941,6 +1952,11 @@ function StackFields({
         value={mark.inset}
         onChange={(inset) => onChange({ inset })}
       />
+      <FitSetting
+        name={mark.name}
+        fit={mark.fit}
+        onChange={(fit) => onChange({ fit })}
+      />
     </>
   );
 }
@@ -2051,6 +2067,11 @@ function BarFields({
         max={400}
         value={mark.labelMinWidth}
         onChange={(labelMinWidth) => onChange({ labelMinWidth })}
+      />
+      <FitSetting
+        name={mark.name}
+        fit={mark.fit}
+        onChange={(fit) => onChange({ fit })}
       />
     </>
   );

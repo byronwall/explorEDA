@@ -136,15 +136,25 @@ describe("bar marks", () => {
     const old = sideBySide.filter((node) => node.instanceKey === "Old");
     expect(old.map((node) => node.height)).toEqual([10, 10]);
     expect(old.every((node) => node.x >= 40)).toBe(true);
-    // Filtering to 1900 leaves Old with one bar and shrinks the axis.
+    // Filtering to 1900 leaves Old with one bar. The axis holds at every
+    // row's extent unless the mark fits the filtered rows.
+    const youngMale = (nodes: RectNode[]) =>
+      nodes.find(
+        (node) => node.instanceKey === "Young" && node.glyph!.bin.key === "Male"
+      )!.width;
+    // Pixels per person on the length axis.
+    const perPerson = (nodes: RectNode[], people: number) =>
+      youngMale(nodes) / people;
     const filtered = rects(pyramid(), [0, 1, 2]);
     expect(filtered.filter((node) => node.instanceKey === "Old")).toHaveLength(
       1
     );
-    const young = filtered.find(
-      (node) => node.instanceKey === "Young" && node.glyph!.bin.key === "Male"
-    )!;
-    expect(young.width).toBeGreaterThan(90);
+    expect(perPerson(filtered, 40)).toBeCloseTo(
+      perPerson(rects(pyramid()), 90)
+    );
+    expect(
+      youngMale(rects(pyramid({ fit: "filtered" }), [0, 1, 2]))
+    ).toBeGreaterThan(90);
     // A window on the unit does the same without a filter.
     const windowed = rects(
       pyramid({}, { window: { field: "Year", min: "1900", max: "1900" } })

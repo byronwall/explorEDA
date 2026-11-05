@@ -774,7 +774,7 @@ function resolveRampLegend(
         changes = true;
       }
       const value = summary ? summary.change! : node.glyph.value;
-      max = Math.max(max, Math.abs(value));
+      max = Math.max(max, Math.abs(value), node.glyph.scaleMax ?? 0);
       min = Math.min(min, value);
     }
   }

@@ -30,6 +30,8 @@ The first release is accepted. A slide-app paste was not separately checked; rep
 
 ## Milestone 2: Keep scales stable through filtering
 
+**Built 2026-11-04** as the top layer of the stable-scales PR stack (https://github.com/byronwall/explorEDA/pull/610 is the bottom). The same stack makes the main app's charts hold their scales too. The opt-in field is `fit: "filtered"` on value scales and on bar, stack, horizon, and density marks.
+
 Compute every extent above from all rows in the population by default. Keep drawing marks from the filtered rows.
 
 - Strip value scales: held maxima from `allIds` with the same aggregation as the drawn glyphs, shared or per repeat.

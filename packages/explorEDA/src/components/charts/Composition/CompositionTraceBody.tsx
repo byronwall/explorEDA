@@ -265,7 +265,11 @@ export function CompositionTraceBody({ trace }: { trace: CompositionTrace }) {
               {glyph.value.name} · {glyph.value.transform} ·{" "}
               {glyph.value.domain === "shared"
                 ? "shared by every repeat"
-                : "fit to this repeat"}
+                : "fit to this repeat"}{" "}
+              ·{" "}
+              {glyph.value.fit === "filtered"
+                ? "fitted to the filtered rows"
+                : "over all rows, so filters keep its colors"}
             </TraceReadout>
           )}
         </TraceSection>
