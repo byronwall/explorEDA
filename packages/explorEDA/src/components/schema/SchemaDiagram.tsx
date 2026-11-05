@@ -615,11 +615,13 @@ export function SchemaDiagram({
           type="button"
           variant="outline"
           size="sm"
-          tooltip="Add every dashed link as a relationship. Select one line to see its matches first."
+          className="eda-schema-text-button"
+          aria-label={`Accept ${suggestions.length} suggested ${suggestions.length === 1 ? "link" : "links"}`}
+          tooltip="Add every dashed, suggested link as a relationship. Select one line to see its matches first."
           onClick={acceptAll}
         >
           <Link2 aria-hidden="true" />
-          Accept {suggestions.length} suggested{" "}
+          Accept {suggestions.length}{" "}
           {suggestions.length === 1 ? "link" : "links"}
         </Button>
       )}
@@ -628,7 +630,7 @@ export function SchemaDiagram({
           type="button"
           variant="outline"
           size="sm"
-          className="eda-schema-add-source"
+          className="eda-schema-add-source eda-schema-text-button"
           tooltip="Add a table from a file; relate it to these tables next"
           onClick={onAddSource}
         >

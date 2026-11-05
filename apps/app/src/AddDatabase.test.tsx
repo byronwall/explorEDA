@@ -153,15 +153,23 @@ describe("AddDatabase", () => {
     );
   });
 
-  it("adds several tables and opens the largest", async () => {
+  it("adds several tables and opens the one whose keys point at the rest", async () => {
     const act = actions({
       listTables: vi.fn(async () => [
         { name: "item", kind: "table" as const, rows: 18000 },
         { name: "store_sales", kind: "table" as const, rows: 28694 },
+        { name: "date_dim", kind: "table" as const, rows: 73049 },
         { name: "inventory", kind: "table" as const, rows: 188400 },
       ]),
       addSources: vi.fn(async () => {}),
-      tableColumns: vi.fn(async () => [{ name: "i_item_sk", type: "INTEGER" }]),
+      tableColumns: vi.fn(async (_connection: string, table: string) =>
+        table === "store_sales"
+          ? [
+              { name: "ss_item_sk", type: "INTEGER" },
+              { name: "ss_sold_date_sk", type: "INTEGER" },
+            ]
+          : [{ name: `${table[0]}_${table}_sk`, type: "INTEGER" }]
+      ),
     });
     render(
       <AddDatabase
@@ -179,13 +187,19 @@ describe("AddDatabase", () => {
     fireEvent.click(
       screen.getByRole("checkbox", { name: "store_sales, table, 28,694 rows" })
     );
-    expect(
-      (
-        screen.getByLabelText(
-          "Which table is one row of your analysis?"
-        ) as HTMLSelectElement
-      ).value
-    ).toBe("store_sales");
+    fireEvent.click(
+      screen.getByRole("checkbox", { name: "date_dim, table, 73,049 rows" })
+    );
+    // Not the largest: the table with the most keys.
+    await waitFor(() =>
+      expect(
+        (
+          screen.getByLabelText(
+            "Which table is one row of your analysis?"
+          ) as HTMLSelectElement
+        ).value
+      ).toBe("store_sales")
+    );
     // A table over the read limit says so, with the fix.
     fireEvent.click(
       screen.getByRole("checkbox", {
@@ -193,14 +207,10 @@ describe("AddDatabase", () => {
       })
     );
     fireEvent.click(
-      screen.getByRole("button", { name: /Read up to 200,000 rows/ })
-    );
-    fireEvent.change(
-      screen.getByLabelText("Which table is one row of your analysis?"),
-      { target: { value: "store_sales" } }
+      screen.getByRole("button", { name: "Raise its limit to 200,000" })
     );
     fireEvent.click(
-      screen.getByRole("button", { name: "Add 3 tables and read" })
+      screen.getByRole("button", { name: "Add 4 tables and read" })
     );
     await waitFor(() =>
       expect(act.addSources).toHaveBeenCalledWith(
@@ -209,6 +219,10 @@ describe("AddDatabase", () => {
           {
             sourceId: "store-sales",
             database: { connection: "shop", table: "store_sales" },
+          },
+          {
+            sourceId: "date-dim",
+            database: { connection: "shop", table: "date_dim" },
           },
           {
             sourceId: "inventory",

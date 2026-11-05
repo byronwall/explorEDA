@@ -583,7 +583,10 @@ export function ProjectWorkspace({
               type="button"
               className="app-item app-links"
               onClick={() =>
-                workspace.current?.openSchema?.(viewSource(project, view))
+                // With links to review, the whole diagram shows first.
+                workspace.current?.openSchema?.(
+                  proposals.length ? undefined : viewSource(project, view)
+                )
               }
             >
               <span>Tables and links</span>

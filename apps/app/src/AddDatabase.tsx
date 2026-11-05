@@ -297,6 +297,9 @@ function NewConnectionForm({
 
 const count = (value: number) => value.toLocaleString("en-US");
 
+/** A column that holds another table's key, such as `ss_item_sk`. */
+const KEY_NAME = /(_sk|_id|_key|Id)$/;
+
 /** A limit above a table's row count, rounded so it reads easily. */
 const roomyLimit = (rows: number) =>
   Math.ceil(rows / DEFAULT_ROW_LIMIT) * DEFAULT_ROW_LIMIT;
@@ -320,6 +323,20 @@ function SourcePicker({
   const [expanded, setExpanded] = useState<string>();
   const [limits, setLimits] = useState<Record<string, number>>({});
   const [chosenMain, setMain] = useState<string>();
+  const [columns, setColumns] = useState<
+    Record<string, TableColumn[] | string>
+  >({});
+  const loadColumns = (table: string) => {
+    if (!actions.tableColumns || columns[table]) return;
+    actions.tableColumns(connection, table).then(
+      (list) => setColumns((previous) => ({ ...previous, [table]: list })),
+      (error: unknown) =>
+        setColumns((previous) => ({
+          ...previous,
+          [table]: error instanceof Error ? error.message : String(error),
+        }))
+    );
+  };
   const [sql, setSql] = useState("");
   const [name, setName] = useState("");
   const load = useRead(async () => {
@@ -327,12 +344,25 @@ function SourcePicker({
   });
   const byName = new Map((tables ?? []).map((item) => [item.name, item]));
   const several = mode === "table" && checked.length > 1;
-  // The table one analysis row is: the user's pick, or the largest.
+  // The table one analysis row is: the user's pick, or the one that
+  // reads, the table with the most keys that point at other tables, then
+  // the largest. Tables over the read limit come last.
+  const keyCount = (table: string) => {
+    const list = columns[table];
+    return Array.isArray(list)
+      ? list.filter((column) => KEY_NAME.test(column.name)).length
+      : 0;
+  };
+  const fits = (table: string) =>
+    (byName.get(table)?.rows ?? 0) <= (limits[table] ?? DEFAULT_ROW_LIMIT);
   const main =
     chosenMain && checked.includes(chosenMain)
       ? chosenMain
       : [...checked].sort(
-          (a, b) => (byName.get(b)?.rows ?? 0) - (byName.get(a)?.rows ?? 0)
+          (a, b) =>
+            Number(fits(b)) - Number(fits(a)) ||
+            keyCount(b) - keyCount(a) ||
+            (byName.get(b)?.rows ?? 0) - (byName.get(a)?.rows ?? 0)
         )[0];
   const database = (table: string): DatabaseSource => ({
     connection,
@@ -393,6 +423,7 @@ function SourcePicker({
         : [...previous, table]
     );
     setExpanded(table);
+    loadColumns(table);
   };
   const overLimit = checked.filter(
     (table) =>
@@ -457,18 +488,21 @@ function SourcePicker({
               {shown.map((item) => (
                 <TableItem
                   key={item.name}
-                  connection={connection}
                   table={item}
                   checked={checked.includes(item.name)}
                   expanded={expanded === item.name}
                   limit={limits[item.name]}
-                  columns={actions.tableColumns}
+                  columns={
+                    actions.tableColumns ? columns[item.name] : undefined
+                  }
+                  canExpand={Boolean(actions.tableColumns)}
                   onToggle={() => toggle(item.name)}
-                  onExpand={() =>
+                  onExpand={() => {
+                    loadColumns(item.name);
                     setExpanded((open) =>
                       open === item.name ? undefined : item.name
-                    )
-                  }
+                    );
+                  }}
                 />
               ))}
               {!shown.length && (
@@ -484,8 +518,8 @@ function SourcePicker({
             const rows = byName.get(table)!.rows!;
             return (
               <p key={table} className="app-limit-note" role="status">
-                {table} has {count(rows)} rows, more than the{" "}
-                {count(DEFAULT_ROW_LIMIT)} a read keeps.{" "}
+                {table} has {count(rows)} rows, over the{" "}
+                {count(DEFAULT_ROW_LIMIT)} a read takes.{" "}
                 <button
                   type="button"
                   className="app-button app-button-sm app-button-ghost"
@@ -496,8 +530,7 @@ function SourcePicker({
                     }))
                   }
                 >
-                  Read up to {count(roomyLimit(rows))} rows (limit=
-                  {roomyLimit(rows)})
+                  Raise its limit to {count(roomyLimit(rows))}
                 </button>{" "}
                 or read part of it with A query.
               </p>
@@ -588,32 +621,27 @@ function SourcePicker({
 
 /** One table to check, with its size, and its columns when expanded. */
 function TableItem({
-  connection,
   table,
   checked,
   expanded,
   limit = DEFAULT_ROW_LIMIT,
   columns,
+  canExpand,
   onToggle,
   onExpand,
 }: {
-  connection: string;
   table: DatabaseTable;
   checked: boolean;
   expanded: boolean;
   limit?: number;
-  columns?: AddDatabaseActions["tableColumns"];
+  /** Its columns once listed, or why they couldn't be. */
+  columns?: TableColumn[] | string;
+  canExpand: boolean;
   onToggle: () => void;
   onExpand: () => void;
 }) {
-  const [list, setList] = useState<TableColumn[]>();
-  const [failed, setFailed] = useState<string>();
-  useEffect(() => {
-    if (!expanded || list || !columns) return;
-    columns(connection, table.name).then(setList, (error: unknown) =>
-      setFailed(error instanceof Error ? error.message : String(error))
-    );
-  }, [expanded, list, columns, connection, table.name]);
+  const failed = typeof columns === "string" ? columns : undefined;
+  const list = Array.isArray(columns) ? columns : undefined;
   const over = table.rows !== undefined && table.rows > limit;
   return (
     <li className="app-table-item" data-checked={checked || undefined}>
@@ -624,17 +652,22 @@ function TableItem({
           aria-label={`${table.name}, ${table.kind}${table.rows === undefined ? "" : `, ${count(table.rows)} rows`}${over ? ", over the read limit" : ""}`}
           onChange={onToggle}
         />
-        <span className="app-table-name">{table.name}</span>
-        {table.kind === "view" && (
-          <span className="app-badge app-badge-warning">view</span>
-        )}
-        {table.rows !== undefined && (
-          <span className="app-table-rows" data-over={over || undefined}>
-            {count(table.rows)} rows{over ? " · over limit" : ""}
-          </span>
-        )}
+        <span className="app-table-text">
+          <span className="app-table-name">{table.name}</span>
+          {(table.rows !== undefined || table.kind === "view") && (
+            <span className="app-table-rows" data-over={over || undefined}>
+              {[
+                table.kind === "view" ? "view" : "",
+                table.rows === undefined ? "" : `${count(table.rows)} rows`,
+                over ? `over the ${count(limit)} limit` : "",
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </span>
+          )}
+        </span>
       </label>
-      {columns && (
+      {canExpand && (
         <button
           type="button"
           className="app-table-expand"
@@ -645,7 +678,7 @@ function TableItem({
           <span aria-hidden="true">{expanded ? "▾" : "▸"}</span>
         </button>
       )}
-      {expanded && columns && (
+      {expanded && canExpand && (
         <div className="app-table-columns">
           {failed ? (
             <p className="app-source-error">{failed}</p>

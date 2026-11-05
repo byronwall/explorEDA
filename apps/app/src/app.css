@@ -374,6 +374,11 @@
   .app-item .app-muted {
     display: none;
   }
+
+  /* Suggested links still need review on a phone. */
+  .app-links:has(.app-suggested) .app-muted {
+    display: inline;
+  }
 }
 
 .app-save {
@@ -670,19 +675,24 @@
   background: var(--accent);
 }
 
+.app-form label.app-table-pick,
 .app-table-pick {
   display: flex;
   align-items: center;
   gap: 8px;
   min-width: 0;
-  padding: 4px 8px;
+  padding: 4px 0 4px 8px;
+  color: var(--foreground);
   font-size: 13px;
   cursor: pointer;
 }
 
-.app-table-pick input {
+.app-form .app-table-pick input {
   flex: none;
+  width: 14px;
+  height: 14px;
   margin: 0;
+  padding: 0;
   accent-color: var(--primary);
 }
 
@@ -692,8 +702,14 @@
   outline-offset: 1px;
 }
 
-.app-table-name {
+.app-table-text {
+  display: grid;
   flex: 1 1 auto;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.app-table-name {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -705,7 +721,6 @@
 }
 
 .app-table-rows {
-  flex: none;
   color: var(--muted-foreground);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
@@ -717,7 +732,7 @@
 }
 
 .app-table-expand {
-  width: 28px;
+  width: 24px;
   height: 26px;
   border: 0;
   border-radius: 4px;
@@ -773,6 +788,8 @@
 
 .app-limit-note .app-button {
   height: auto;
+  white-space: normal;
+  text-align: left;
   padding: 0 4px;
   color: var(--foreground);
   text-decoration: underline;

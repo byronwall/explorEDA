@@ -170,9 +170,9 @@ export function proposeLinks({
       id: `rel-${from.sourceId}-${from.fieldId}-${to.sourceId}-${to.fieldId}`,
       from,
       to,
-      cardinality: unique(from.sourceId, from.fieldId)
-        ? "one-to-one"
-        : "many-to-one",
+      // A unique from field in a few rows is often chance, and a lookup
+      // reads many-to-one the same way; the user can change it.
+      cardinality: "many-to-one",
       reason,
       ...counts,
     });

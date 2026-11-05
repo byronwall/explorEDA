@@ -821,8 +821,8 @@ function SuggestionBody({
           ? "The database declares this foreign key."
           : "The field names match, and so do their values."}{" "}
         {suggestion.matched.toLocaleString("en-US")} of{" "}
-        {suggestion.total.toLocaleString("en-US")} {from} rows find a {to} row.{" "}
-        {CARDINALITY_LABELS[suggestion.cardinality]}.
+        {suggestion.total.toLocaleString("en-US")} {from} rows find a match in{" "}
+        {to}. {CARDINALITY_LABELS[suggestion.cardinality]}.
       </p>
       <div className="eda-schema-inspector-actions">
         <Button

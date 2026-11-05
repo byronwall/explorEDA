@@ -3121,12 +3121,13 @@ html {
   align-items: center;
   gap: 2px;
 }
-.eda-schema-controls button:not(.eda-schema-add-source) {
+.eda-schema-controls button:not(.eda-schema-text-button) {
   width: 30px;
   height: 30px;
 }
-.eda-schema-add-source {
-  margin-right: 8px;
+.eda-schema-text-button {
+  flex: none;
+  margin-right: 6px;
 }
 .eda-schema-zoom {
   min-width: 3.25em;
