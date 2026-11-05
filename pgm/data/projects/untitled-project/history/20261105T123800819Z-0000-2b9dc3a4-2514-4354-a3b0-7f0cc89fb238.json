@@ -1,0 +1,12 @@
+{
+  "id": "2b9dc3a4-2514-4354-a3b0-7f0cc89fb238",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d5dbfb",
+    "label": "Agent token ...d5dbfb"
+  },
+  "createdAt": "2026-11-05T12:38:00.819Z",
+  "summary": "Updated metadata for \"Markdown typed in the Add-chart dialog is lost\".",
+  "nodeIds": ["page-markdown-typed-in-the-add-chart-dialog-is-lost"]
+}

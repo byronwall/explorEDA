@@ -1,0 +1,12 @@
+{
+  "id": "16a230e0-1bc2-45f2-9159-818b21291c3c",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:41fc21",
+    "label": "Agent token ...41fc21"
+  },
+  "createdAt": "2026-11-05T12:38:01.524Z",
+  "summary": "Changed \"Histogram plus Split by makes a 99-bar chart\" status to needs-review.",
+  "nodeIds": ["page-histogram-plus-split-by-makes-a-99-bar-chart"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "b1841299-48fe-4e54-9b20-4b906c6c28f9",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:302705",
+    "label": "Agent token ...302705"
+  },
+  "createdAt": "2026-11-05T12:37:56.718Z",
+  "summary": "Updated metadata for \"Default measure and group skip key and ID fields\".",
+  "nodeIds": ["page-default-measure-and-group-skip-key-and-id-fields"]
+}

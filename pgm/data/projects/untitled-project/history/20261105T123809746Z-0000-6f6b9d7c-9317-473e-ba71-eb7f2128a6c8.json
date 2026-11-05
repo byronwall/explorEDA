@@ -1,0 +1,12 @@
+{
+  "id": "6f6b9d7c-9317-473e-ba71-eb7f2128a6c8",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:aecb31",
+    "label": "Agent token ...aecb31"
+  },
+  "createdAt": "2026-11-05T12:38:09.746Z",
+  "summary": "Updated metadata for \"Sample size beside a rate\".",
+  "nodeIds": ["page-sample-size-beside-a-rate"]
+}

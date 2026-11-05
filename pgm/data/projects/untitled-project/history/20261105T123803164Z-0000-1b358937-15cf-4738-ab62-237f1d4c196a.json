@@ -1,0 +1,12 @@
+{
+  "id": "1b358937-15cf-4738-ab62-237f1d4c196a",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:aa6206",
+    "label": "Agent token ...aa6206"
+  },
+  "createdAt": "2026-11-05T12:38:03.164Z",
+  "summary": "Changed \"Say when missing values drop out of a sum\" status to needs-review.",
+  "nodeIds": ["page-say-when-missing-values-drop-out-of-a-sum"]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "159c503e-904f-4a85-8e27-de7a1a9c4dfb",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:138809",
+    "label": "Agent token ...138809"
+  },
+  "createdAt": "2026-11-05T12:38:24.743Z",
+  "summary": "Created \"One undo step for a related-field pick\" under \"Combine tables without SQL\".",
+  "nodeIds": [
+    "page-one-undo-step-for-a-related-field-pick",
+    "area-combine-tables-without-sql"
+  ]
+}

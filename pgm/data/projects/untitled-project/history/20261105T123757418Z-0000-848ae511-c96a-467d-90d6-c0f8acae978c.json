@@ -1,0 +1,12 @@
+{
+  "id": "848ae511-c96a-467d-90d6-c0f8acae978c",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7c68ec",
+    "label": "Agent token ...7c68ec"
+  },
+  "createdAt": "2026-11-05T12:37:57.418Z",
+  "summary": "Changed \"Formulas accept labels and unqualified names\" status to needs-review.",
+  "nodeIds": ["page-formulas-accept-labels-and-unqualified-names"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "0aaf3c36-aa62-43c6-b399-336316f91c56",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:cfa68a",
+    "label": "Agent token ...cfa68a"
+  },
+  "createdAt": "2026-11-05T12:37:42.021Z",
+  "summary": "Updated metadata for \"Compare two same-shape sources (union)\".",
+  "nodeIds": ["page-compare-two-same-shape-sources-union"]
+}

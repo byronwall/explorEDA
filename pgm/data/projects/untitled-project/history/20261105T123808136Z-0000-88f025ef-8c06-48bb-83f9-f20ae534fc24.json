@@ -1,0 +1,12 @@
+{
+  "id": "88f025ef-8c06-48bb-83f9-f20ae534fc24",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0893f9",
+    "label": "Agent token ...0893f9"
+  },
+  "createdAt": "2026-11-05T12:38:08.136Z",
+  "summary": "Updated metadata for \"Ratio and share measures\".",
+  "nodeIds": ["page-ratio-and-share-measures"]
+}

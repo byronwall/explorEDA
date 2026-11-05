@@ -1,0 +1,12 @@
+{
+  "id": "37bfcac0-a4fe-474d-a50f-ec7761e96cbf",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:e2635f",
+    "label": "Agent token ...e2635f"
+  },
+  "createdAt": "2026-11-05T12:38:04.080Z",
+  "summary": "Updated metadata for \"Make the 'Other categories' tail reachable\".",
+  "nodeIds": ["page-make-the-other-categories-tail-reachable"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "07978937-ac09-4316-88eb-ed5391631c89",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:b7227c",
+    "label": "Agent token ...b7227c"
+  },
+  "createdAt": "2026-11-05T12:37:51.829Z",
+  "summary": "Updated metadata for \"Failed source should not linger as 'Not read yet'\".",
+  "nodeIds": ["page-failed-source-should-not-linger-as-not-read-yet"]
+}

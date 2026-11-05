@@ -1,0 +1,12 @@
+{
+  "id": "aacbf9f0-2d5b-43a9-81a9-a4729dfa1084",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:fd8f59",
+    "label": "Agent token ...fd8f59"
+  },
+  "createdAt": "2026-11-05T12:38:05.703Z",
+  "summary": "Updated metadata for \"Scatter point labels\".",
+  "nodeIds": ["page-scatter-point-labels"]
+}

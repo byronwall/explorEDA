@@ -1,0 +1,12 @@
+{
+  "id": "24f2d297-369a-46d8-84eb-bcdacacec33b",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:3b9408",
+    "label": "Agent token ...3b9408"
+  },
+  "createdAt": "2026-11-05T12:38:04.904Z",
+  "summary": "Updated metadata for \"Clearer chart setting labels\".",
+  "nodeIds": ["page-clearer-chart-setting-labels"]
+}

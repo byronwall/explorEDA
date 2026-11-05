@@ -1,0 +1,12 @@
+{
+  "id": "e270a9a1-200a-48e9-a683-e1ace69f9a78",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:16e432",
+    "label": "Agent token ...16e432"
+  },
+  "createdAt": "2026-11-05T12:37:50.197Z",
+  "summary": "Updated metadata for \"Copied examples inside a project pollute it\".",
+  "nodeIds": ["page-copied-examples-inside-a-project-pollute-it"]
+}

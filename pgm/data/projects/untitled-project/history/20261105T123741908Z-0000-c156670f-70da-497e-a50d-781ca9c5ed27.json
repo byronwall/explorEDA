@@ -1,0 +1,12 @@
+{
+  "id": "c156670f-70da-497e-a50d-781ca9c5ed27",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:cfa68a",
+    "label": "Agent token ...cfa68a"
+  },
+  "createdAt": "2026-11-05T12:37:41.908Z",
+  "summary": "Changed \"Compare two same-shape sources (union)\" status to needs-review.",
+  "nodeIds": ["page-compare-two-same-shape-sources-union"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "604f123c-52b0-445c-8894-a0543886ef7c",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:97da4c",
+    "label": "Agent token ...97da4c"
+  },
+  "createdAt": "2026-11-05T12:38:10.563Z",
+  "summary": "Updated metadata for \"Test the DuckDB install path from a clean npx install\".",
+  "nodeIds": ["page-test-the-duckdb-install-path-from-a-clean-npx-install"]
+}

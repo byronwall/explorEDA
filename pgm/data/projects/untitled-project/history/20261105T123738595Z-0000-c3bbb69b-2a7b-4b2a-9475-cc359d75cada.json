@@ -1,0 +1,12 @@
+{
+  "id": "c3bbb69b-2a7b-4b2a-9475-cc359d75cada",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7dccb1",
+    "label": "Agent token ...7dccb1"
+  },
+  "createdAt": "2026-11-05T12:37:38.595Z",
+  "summary": "Changed \"Show 'Use a relationship' where people look\" status to needs-review.",
+  "nodeIds": ["page-show-use-a-relationship-where-people-look"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "46887931-50de-436a-9e95-e17df9b5fc2a",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0fc2aa",
+    "label": "Agent token ...0fc2aa"
+  },
+  "createdAt": "2026-11-05T12:37:55.898Z",
+  "summary": "Updated metadata for \"Accessible names on Add-database table buttons\".",
+  "nodeIds": ["page-accessible-names-on-add-database-table-buttons"]
+}

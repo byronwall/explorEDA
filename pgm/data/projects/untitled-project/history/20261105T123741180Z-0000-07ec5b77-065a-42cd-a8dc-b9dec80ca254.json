@@ -1,0 +1,12 @@
+{
+  "id": "07ec5b77-065a-42cd-a8dc-b9dec80ca254",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:267c0a",
+    "label": "Agent token ...267c0a"
+  },
+  "createdAt": "2026-11-05T12:37:41.180Z",
+  "summary": "Updated metadata for \"Pick the grain when adding database tables\".",
+  "nodeIds": ["page-pick-the-grain-when-adding-database-tables"]
+}

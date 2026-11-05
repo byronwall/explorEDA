@@ -1,0 +1,12 @@
+{
+  "id": "ceaedd02-06e0-4d72-8363-b023e711f4e4",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:27a798",
+    "label": "Agent token ...27a798"
+  },
+  "createdAt": "2026-11-05T12:37:58.257Z",
+  "summary": "Changed \"New charts fill the next free spot\" status to needs-review.",
+  "nodeIds": ["page-new-charts-fill-the-next-free-spot"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "eca436f2-be4e-4e7c-b9f4-1f4fd8965f4c",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:e2635f",
+    "label": "Agent token ...e2635f"
+  },
+  "createdAt": "2026-11-05T12:38:03.974Z",
+  "summary": "Changed \"Make the 'Other categories' tail reachable\" status to needs-review.",
+  "nodeIds": ["page-make-the-other-categories-tail-reachable"]
+}

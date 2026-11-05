@@ -1,0 +1,15 @@
+{
+  "id": "1162ae60-4ebb-43a1-ad22-5e01bc644b26",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:028179",
+    "label": "Agent token ...028179"
+  },
+  "createdAt": "2026-11-05T12:38:23.292Z",
+  "summary": "Created \"Open the column picker in the main area\" under \"Errors and reads\".",
+  "nodeIds": [
+    "page-open-the-column-picker-in-the-main-area",
+    "area-errors-and-reads"
+  ]
+}

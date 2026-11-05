@@ -1,0 +1,12 @@
+{
+  "id": "0c10c052-4a52-44f2-8f80-154a438a5b8d",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f89a47",
+    "label": "Agent token ...f89a47"
+  },
+  "createdAt": "2026-11-05T12:38:06.510Z",
+  "summary": "Updated metadata for \"Box plot skips category labels\".",
+  "nodeIds": ["page-box-plot-skips-category-labels"]
+}

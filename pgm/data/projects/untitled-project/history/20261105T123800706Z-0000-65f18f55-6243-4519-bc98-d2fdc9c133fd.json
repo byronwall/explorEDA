@@ -1,0 +1,12 @@
+{
+  "id": "65f18f55-6243-4519-bc98-d2fdc9c133fd",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d5dbfb",
+    "label": "Agent token ...d5dbfb"
+  },
+  "createdAt": "2026-11-05T12:38:00.706Z",
+  "summary": "Changed \"Markdown typed in the Add-chart dialog is lost\" status to needs-review.",
+  "nodeIds": ["page-markdown-typed-in-the-add-chart-dialog-is-lost"]
+}

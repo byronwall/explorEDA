@@ -1,0 +1,12 @@
+{
+  "id": "425ab92d-6079-46b5-a015-408d1ce4f2c8",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7ddc8d",
+    "label": "Agent token ...7ddc8d"
+  },
+  "createdAt": "2026-11-05T12:37:54.277Z",
+  "summary": "Updated metadata for \"Columns and row counts in Add database\".",
+  "nodeIds": ["page-columns-and-row-counts-in-add-database"]
+}

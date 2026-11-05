@@ -1,0 +1,12 @@
+{
+  "id": "37b7dabc-0011-4b90-b890-62eb13828f82",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5b0396",
+    "label": "Agent token ...5b0396"
+  },
+  "createdAt": "2026-11-05T12:37:59.979Z",
+  "summary": "Updated metadata for \"Short chart titles\".",
+  "nodeIds": ["page-short-chart-titles"]
+}

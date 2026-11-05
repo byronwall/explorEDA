@@ -1,0 +1,12 @@
+{
+  "id": "e1e80e5d-46e2-4410-bcfd-5110cc7da191",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:3b9408",
+    "label": "Agent token ...3b9408"
+  },
+  "createdAt": "2026-11-05T12:38:04.787Z",
+  "summary": "Changed \"Clearer chart setting labels\" status to needs-review.",
+  "nodeIds": ["page-clearer-chart-setting-labels"]
+}

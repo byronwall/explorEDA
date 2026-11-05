@@ -1,0 +1,12 @@
+{
+  "id": "daaa3e4c-3387-49e9-9c57-e33e9d132817",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:16e432",
+    "label": "Agent token ...16e432"
+  },
+  "createdAt": "2026-11-05T12:37:50.087Z",
+  "summary": "Changed \"Copied examples inside a project pollute it\" status to needs-review.",
+  "nodeIds": ["page-copied-examples-inside-a-project-pollute-it"]
+}

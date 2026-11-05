@@ -1,0 +1,12 @@
+{
+  "id": "745505f7-8f78-45c4-a034-ce1eeae9ad77",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:609c52",
+    "label": "Agent token ...609c52"
+  },
+  "createdAt": "2026-11-05T12:37:47.627Z",
+  "summary": "Changed \"exploreda-dsl fields crashes on snapshot JSON\" status to needs-review.",
+  "nodeIds": ["page-exploreda-dsl-fields-crashes-on-snapshot-json"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "7512206a-a5e9-4cdf-8db0-5d37474b6471",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:472359",
+    "label": "Agent token ...472359"
+  },
+  "createdAt": "2026-11-05T12:37:52.645Z",
+  "summary": "Updated metadata for \"Column picker when a read is over the byte cap\".",
+  "nodeIds": ["page-column-picker-when-a-read-is-over-the-byte-cap"]
+}

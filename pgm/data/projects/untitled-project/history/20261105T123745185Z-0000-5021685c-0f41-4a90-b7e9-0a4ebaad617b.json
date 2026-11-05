@@ -1,0 +1,12 @@
+{
+  "id": "5021685c-0f41-4a90-b7e9-0a4ebaad617b",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:b9177f",
+    "label": "Agent token ...b9177f"
+  },
+  "createdAt": "2026-11-05T12:37:45.185Z",
+  "summary": "Changed \"exploreda-dsl reference project and notebook\" status to needs-review.",
+  "nodeIds": ["page-exploreda-dsl-reference-project-and-notebook"]
+}
