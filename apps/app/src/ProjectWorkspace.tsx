@@ -574,6 +574,7 @@ export function ProjectWorkspace({
             connections={[
               ...new Set(waiting.map((id) => folder.databases[id]!.connection)),
             ]}
+            lastError={waiting.map((id) => readErrors[id]).find(Boolean)}
             onRead={readOnly ? undefined : actions.refreshSources}
             onSaveSecret={readOnly ? undefined : actions.saveSecret}
           />

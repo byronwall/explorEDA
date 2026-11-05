@@ -213,21 +213,28 @@ export function WaitingForData({
   analysis,
   sourceIds,
   connections,
+  lastError,
   onRead,
   onSaveSecret,
 }: {
   analysis: string;
   sourceIds: string[];
   connections: string[];
+  /** The last failed read of these sources, kept since the page opened. */
+  lastError?: ReadFailure;
   onRead?: (sourceIds: string[]) => Promise<void>;
   onSaveSecret?: (connectionId: string, secret: string) => Promise<void>;
 }) {
   const { state, run } = useRead(onRead ? () => onRead(sourceIds) : undefined);
   const them = sourceIds.length === 1 ? "it" : "them";
+  const shown = state.status === "idle" && lastError ? lastError : state;
   return (
     <div className="app-message">
       <h2>{analysis} needs its data</h2>
       <p>
+        {lastError && state.status === "idle"
+          ? `The last read of ${listWords(sourceIds)} failed. `
+          : null}
         It reads {listWords(sourceIds)} from {listWords(connections)}, which{" "}
         {sourceIds.length === 1 ? "hasn't" : "haven't"} been read yet.{" "}
         {onRead
@@ -243,10 +250,10 @@ export function WaitingForData({
         >
           {state.status === "reading"
             ? `Reading from ${listWords(connections)}…`
-            : `Read ${listWords(sourceIds)}`}
+            : `Read ${listWords(sourceIds)}${lastError ? " again" : ""}`}
         </button>
       )}
-      <ReadProblem state={state} onSaveSecret={onSaveSecret} onRetry={run} />
+      <ReadProblem state={shown} onSaveSecret={onSaveSecret} onRetry={run} />
     </div>
   );
 }
