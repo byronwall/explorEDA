@@ -19,7 +19,6 @@ export function CalendarSettingsPanel({
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const profiles = useDataLayer((state) => state.fieldProfiles);
   const calculations = useDataLayer((state) => state.calculations);
-  const profiles = useDataLayer((state) => state.fieldProfiles);
   const { dateFields, measureFields } = useMemo(() => {
     void calculations;
     const names = getColumnNames();
