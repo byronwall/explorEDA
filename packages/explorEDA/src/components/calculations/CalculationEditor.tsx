@@ -20,6 +20,7 @@ import {
   type CalculationDefinition,
 } from "@/lib/calculations/CalculationState";
 import { parseExpression } from "@/lib/calculations/parser/semantics";
+import { resolveFieldReferences } from "@/lib/calculations/fieldReferences";
 import { useDataLayer, type DatumObject } from "@/providers/DataLayerProvider";
 import {
   getChartFields,
@@ -160,7 +161,14 @@ export function CalculationEditorProvider({
       try {
         const candidate = {
           resultColumnName: draft.name.trim(),
-          expression: parseExpression(draft.expression),
+          expression: parseExpression(
+            resolveFieldReferences(
+              draft.expression,
+              getColumnNames()
+                .filter((name) => name !== selected)
+                .map((id) => ({ id, label: getFieldLabel(id) }))
+            )
+          ),
         };
         const manager = new CalculationManager(data, [
           ...calculations.filter((calc) => calc.resultColumnName !== selected),
@@ -176,7 +184,7 @@ export function CalculationEditorProvider({
       }
     }, 220);
     return () => clearTimeout(timer);
-  }, [visible, previewKey, data, calculations]);
+  }, [visible, previewKey, data, calculations, getColumnNames, getFieldLabel]);
   const current = preview?.key === previewKey ? preview : undefined;
   const checking =
     !current && Boolean(draft.name.trim() && draft.expression.trim());
