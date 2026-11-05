@@ -17,6 +17,29 @@ function Live() {
   );
 }
 
+it("says when no row's measure can be summed instead of drawing slivers", () => {
+  const chart: SankeySettings = {
+    ...sankeyDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    id: "flow",
+    stages: ["Channel", "Status"],
+    aggregation: "sum",
+    measureField: "Amount",
+  };
+  render(
+    <DataLayerProvider
+      data={[
+        { Channel: "Web", Status: "Kept", Amount: -1 },
+        { Channel: "Store", Status: "Kept", Amount: "n/a" },
+      ]}
+      charts={[chart]}
+    >
+      <Live />
+    </DataLayerProvider>
+  );
+  expect(screen.getByText(/No usable values of Amount/)).toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: /^Channel: / })).toBeNull();
+});
+
 it("selects nodes and links by click and keyboard, and moves focus across stages", () => {
   const chart: SankeySettings = {
     ...sankeyDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),

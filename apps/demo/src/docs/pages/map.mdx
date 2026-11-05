@@ -8,7 +8,7 @@
 ## How it reads
 
 - **Points** use the coordinates in each row. Points can be sized by a field and labeled.
-- **Regions** join rows to polygon keys and summarize a measure for each region. Pick World countries (joined by ISO alpha-3, alpha-2, or numeric code), US states (postal or FIPS code), or US counties (FIPS code), or import your own GeoJSON. The feature key must match the row key exactly, in value and type.
+- **Regions** join rows to polygon keys and summarize a measure for each region. Pick World countries (joined by ISO alpha-3, alpha-2, or numeric code), US states (postal or FIPS code), or US counties (FIPS code), or import your own GeoJSON. A row joins the feature whose key reads the same: a number and its text (`6` and `"6"`), case, and surrounding spaces all count as one key.
 - **Picking a level**: switching a map to Region mode looks for a column of country, state, or county codes and starts on the matching boundaries. Zoom a country map into the US and it shows states, then counties, when the data has those columns. A `region()` calculation can add them from coordinates.
 - **Layers**: the layers button under the map hides or shows the points, writes point labels beside them (up to 150 points), draws reference outlines such as states or districts beneath the points, and switches the basemap between automatic, outline only, and none. Outlines are not selectable, and hiding points keeps the selection.
 - **Crowded maps**: every point is drawn by default, so global patterns stay visible. Turn on Group in the layers popover to draw, above 2,000 points, counted circles in the most common color of their points; zoom in to split them, and click one to select its rows.

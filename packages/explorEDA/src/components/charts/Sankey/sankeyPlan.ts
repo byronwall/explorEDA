@@ -408,7 +408,21 @@ export function planSankey(input: SankeyPlanInput): SankeyPlan {
       .sort((a, b) => rankOf(a) - rankOf(b)),
     otherCount: ranks[index]!.other.length,
   }));
-  const padding = Math.max(2, Math.min(12, plotHeight * 0.04));
+  // A node with rows but no usable measure still needs a visible sliver.
+  const minHeight = 1;
+  // Gaps shrink when a stage holds so many nodes that the usual padding and
+  // the slivers alone would run past the plot.
+  const mostNodes = Math.max(
+    0,
+    ...stagePlans.map((stage) => stage.nodes.length)
+  );
+  const padding = Math.min(
+    Math.max(2, Math.min(12, plotHeight * 0.04)),
+    Math.max(
+      0,
+      (plotHeight - minHeight * mostNodes) / Math.max(1, mostNodes - 1)
+    )
+  );
   const scale = Math.max(
     0,
     Math.min(
@@ -417,7 +431,13 @@ export function planSankey(input: SankeyPlanInput): SankeyPlan {
           (total, node) => total + node.weight,
           0
         );
-        const room = plotHeight - padding * Math.max(0, stage.nodes.length - 1);
+        // Slivers take their height outside the scale, so a stage of many
+        // zero-weight nodes still fits.
+        const slivers = stage.nodes.filter((node) => node.weight <= 0).length;
+        const room =
+          plotHeight -
+          padding * Math.max(0, stage.nodes.length - 1) -
+          minHeight * slivers;
         return weight > 0 ? room / weight : Infinity;
       }),
       Infinity
@@ -435,8 +455,6 @@ export function planSankey(input: SankeyPlanInput): SankeyPlan {
         }).unitHeight || Infinity;
   const fit = Math.min(scale, stableScale);
   const k = Number.isFinite(fit) ? fit : 0;
-  // A node with rows but no usable measure still needs a visible sliver.
-  const minHeight = 1;
   for (const stage of stagePlans) {
     const used =
       stage.nodes.reduce(

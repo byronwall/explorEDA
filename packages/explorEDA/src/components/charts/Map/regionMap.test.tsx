@@ -154,9 +154,10 @@ it("joins typed keys once, preserves metric states and holes, and fits date-line
   expect(a.area).toBeLessThan(
     planRegionMap(settings, snapshot, solid, 800, 500).regions[0]!.area
   );
-  expect(plan.unmatched.map((row) => row.sourceId)).toEqual([4, 5, 6]);
+  expect(plan.unmatched.map((row) => row.sourceId)).toEqual([4, 5]);
+  // Text and number spellings of one key join the same feature.
   expect(plan.regions.find((region) => region.key === 1)?.sourceIds).toEqual([
-    7,
+    6, 7,
   ]);
   expect(plan.regions.find((region) => region.key === "Zero")?.state).toBe(
     "value"
@@ -210,6 +211,88 @@ it("joins typed keys once, preserves metric states and holes, and fits date-line
     planRegionMap({ ...settings, view }, snapshot, dateAsset, 390, 500)
       .regions[0]!.path
   ).not.toBe("");
+});
+
+it("joins keys across number and text spellings, case, and spacing", () => {
+  const byId: GeometryAsset = {
+    id: "fips",
+    name: "FIPS",
+    source: "Fixture GeoJSON",
+    geometry: {
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Feature",
+          id: 6,
+          properties: {},
+          geometry: { type: "Polygon", coordinates: [box(0, 0, 10, 10)] },
+        },
+        {
+          type: "Feature",
+          id: "Texas",
+          properties: {},
+          geometry: { type: "Polygon", coordinates: [box(20, 0, 30, 10)] },
+        },
+      ],
+    },
+  };
+  const keys = ["6", 6, " Texas", "texas", "Utah"];
+  const joined = planRegionMap(
+    { ...settings, geometryAssetId: byId.id, featureKey: "@id" },
+    {
+      ...snapshot,
+      allIds: keys.map((_, id) => id),
+      chartIds: keys.map((_, id) => id),
+      filteredIds: keys.map((_, id) => id),
+      columns: {
+        region: Object.fromEntries(keys.map((key, id) => [id, key])),
+        value: Object.fromEntries(keys.map((_, id) => [id, 1])),
+      },
+    },
+    byId,
+    800,
+    500
+  );
+  const six = joined.regions.find((region) => region.key === 6)!;
+  const texas = joined.regions.find((region) => region.key === "Texas")!;
+  expect(six.sourceIds).toEqual([0, 1]);
+  expect(texas.sourceIds).toEqual([2, 3]);
+  expect(joined.unmatched.map((row) => row.sourceId)).toEqual([4]);
+  // The filter keeps the rows' own spellings, so it selects exactly those rows.
+  const sixFilters = regionFilters(settings, six);
+  expect(sixFilters).toEqual([
+    { type: "value", field: "region", values: ["6", 6] },
+  ]);
+  expect(regionFilters(settings, texas)).toEqual([
+    { type: "value", field: "region", values: [" Texas", "texas"] },
+  ]);
+  const selected = planRegionMap(
+    {
+      ...settings,
+      geometryAssetId: byId.id,
+      featureKey: "@id",
+      filters: sixFilters,
+    },
+    {
+      ...snapshot,
+      allIds: keys.map((_, id) => id),
+      chartIds: keys.map((_, id) => id),
+      filteredIds: keys.map((_, id) => id),
+      columns: {
+        region: Object.fromEntries(keys.map((key, id) => [id, key])),
+        value: Object.fromEntries(keys.map((_, id) => [id, 1])),
+      },
+    },
+    byId,
+    800,
+    500
+  );
+  expect(
+    selected.regions.map((region) => [region.key, region.selected])
+  ).toEqual([
+    [6, true],
+    ["Texas", false],
+  ]);
 });
 
 function Workspace() {
@@ -282,7 +365,7 @@ it("selects exact joined rows, traces unmatched inputs, and restores shared geom
     "No rows"
   );
   fireEvent.change(screen.getByRole("spinbutton", { name: "Source row ID" }), {
-    target: { value: "6" },
+    target: { value: "4" },
   });
   fireEvent.click(screen.getByRole("button", { name: "Find row" }));
   expect(screen.getByLabelText("Region map trace")).toHaveTextContent(

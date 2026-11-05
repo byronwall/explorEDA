@@ -157,14 +157,27 @@ export function planHierarchy({
   let incompleteCount = 0;
 
   for (const id of snapshot.liveIds) {
-    const path: HierarchyNode[] = [root];
+    // Resolve every level first, so a row that stops at a missing level
+    // leaves no empty node behind for the levels it passed.
+    const steps: { field: string; missing: boolean; value: datum }[] = [];
     for (const field of levels) {
       const raw = snapshot.levelData[field]?.[id];
       const missing = isMissingValue(raw);
       if (missing && !showMissing) {
         break;
       }
-      const value = missing ? null : categoryValue(raw);
+      steps.push({
+        field,
+        missing,
+        value: missing ? null : categoryValue(raw),
+      });
+    }
+    if (steps.length < levels.length) {
+      incompleteCount += 1;
+      continue;
+    }
+    const path: HierarchyNode[] = [root];
+    for (const { field, missing, value } of steps) {
       const key = missing ? "missing" : categoryKey(value);
       const parent = path[path.length - 1]!;
       const nodeId = `${parent.id}/${key}`;
@@ -182,10 +195,6 @@ export function planHierarchy({
         parent.children.push(node);
       }
       path.push(node);
-    }
-    if (path.length <= levels.length) {
-      incompleteCount += 1;
-      continue;
     }
     const input = sum ? snapshot.measureData[id] : undefined;
     const reason = sum ? measureReason(input) : undefined;

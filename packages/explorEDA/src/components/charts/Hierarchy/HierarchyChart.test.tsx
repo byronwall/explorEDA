@@ -103,6 +103,32 @@ it("moves focus with the arrow keys and selects with Enter", () => {
   expect(filters()).toHaveLength(2);
 });
 
+it("keeps the tab stop on a drawn box when the selected one is too small", () => {
+  const chart: HierarchySettings = {
+    ...hierarchyDefinition.createDefaultSettings({ x: 0, y: 0, w: 6, h: 4 }),
+    id: "tree",
+    levels: ["Region"],
+    filters: [{ type: "value", field: "Region", values: ["South"] }],
+  };
+  render(
+    <DataLayerProvider
+      data={[
+        ...Array.from({ length: 1999 }, () => ({ Region: "North" })),
+        { Region: "South" },
+      ]}
+      charts={[chart]}
+    >
+      <Live />
+    </DataLayerProvider>
+  );
+  expect(screen.getByText(/1 box too small to draw/)).toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: /^South/ })).toBeNull();
+  expect(screen.getByRole("button", { name: /^North/ })).toHaveAttribute(
+    "tabindex",
+    "0"
+  );
+});
+
 it("picks readable text on light and dark fills", () => {
   expect(textOn("#1b4f8a")).toBe("#fff");
   expect(textOn("#f2d64b")).toBe("#1b1f24");

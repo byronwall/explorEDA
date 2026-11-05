@@ -304,6 +304,77 @@ describe("planScatterMatrix", () => {
     expect(filterOffsets(plan.fields[0]!, [filter])).toBeDefined();
   });
 
+  it("shows a numeric range filter as a span and ignores a value filter", () => {
+    const plan = planScatterMatrix({
+      settings: settings(FIELDS),
+      snapshot,
+      width: 800,
+      height: 800,
+    });
+    const field = plan.fields[0]!;
+    expect(field.axis.kind).toBe("numeric");
+    const axis = field.axis as Extract<typeof field.axis, { kind: "numeric" }>;
+    // A released brush saves a range filter; the diagonal shows it as a span.
+    const filter = offsetFilter(field, [20, 60]);
+    expect(filter.type).toBe("range");
+    const span = filterOffsets(field, [filter])!;
+    expect(span[0]).toBeCloseTo(20, 5);
+    expect(span[1]).toBeCloseTo(60, 5);
+    // An open end reaches the end of the axis.
+    const [low, high] = axis.scale.domain() as [number, number];
+    expect(
+      filterOffsets(field, [{ type: "range", field: field.field, max: 40 }])
+    ).toEqual([axis.scale(low), axis.scale(40)]);
+    expect(
+      filterOffsets(field, [{ type: "range", field: field.field, min: 40 }])
+    ).toEqual([axis.scale(40), axis.scale(high)]);
+    // A value filter on a numeric field has no span and never throws.
+    expect(
+      filterOffsets(field, [
+        { type: "value", field: field.field, values: [40] },
+      ])
+    ).toBeUndefined();
+  });
+
+  it("gives each histogram bar a filter that selects exactly its rows", () => {
+    const ids = Array.from({ length: 21 }, (_, index) => index);
+    const values: MatrixSnapshot = {
+      allIds: ids,
+      liveIds: ids,
+      columns: {
+        // Every value sits on a bin edge: 0, 0.5, 1, …, 10 over 20 bins.
+        x: Object.fromEntries(ids.map((id) => [id, id / 2])),
+        day: Object.fromEntries(
+          ids.map((id) => [
+            id,
+            new Date(Date.UTC(2024, 0, 1 + id)).toISOString().slice(0, 10),
+          ])
+        ),
+      },
+      types: { x: "numeric", day: "datetime" },
+    };
+    const plan = planScatterMatrix({
+      settings: settings(["x", "day"]),
+      snapshot: values,
+      width: 400,
+      height: 400,
+    });
+    for (const column of [0, 1]) {
+      const field = plan.fields[column]!;
+      const data = values.columns[field.field]!;
+      const bars = plan.cells.find(
+        (cell) => cell.row === column && cell.column === column
+      )!.bars!;
+      expect(bars).toHaveLength(20);
+      expect(bars[0]!.total).toBe(1);
+      expect(bars[19]!.total).toBe(2);
+      for (const bar of bars) {
+        const matching = ids.filter((id) => applyFilter(data[id], bar.filter));
+        expect(matching).toHaveLength(bar.total);
+      }
+    }
+  });
+
   it("replaces the previous selection with a new brush", () => {
     const current = settings(FIELDS, [
       { type: "range", field: "bill_length_mm", min: 1, max: 2 },

@@ -221,6 +221,58 @@ describe("planParallelCoordinates", () => {
     expect(result.axes.map((axis) => axis.field)).not.toContain("kind");
   });
 
+  it("draws no lines when a rejected axis leaves fewer than two", () => {
+    const wide = Array.from({ length: 60 }, (_, index) => index);
+    const result = planParallelCoordinates({
+      settings: {
+        ...settings(),
+        axes: [
+          { field: "a", inverted: false },
+          { field: "kind", inverted: false },
+        ],
+      },
+      width: 600,
+      height: 300,
+      snapshot: {
+        ...snapshot(wide),
+        allIds: wide,
+        columns: {
+          a: Object.fromEntries(wide.map((i) => [i, i])),
+          kind: Object.fromEntries(wide.map((i) => [i, `v${i}`])),
+        },
+      },
+      getFieldLabel: (field) => field,
+    });
+    expect(result.rejected.map((item) => item.field)).toEqual(["kind"]);
+    expect(result.axes).toHaveLength(1);
+    expect(result.lines).toEqual([]);
+    expect(result.selectedCount).toBe(0);
+  });
+
+  it("treats blank text as a missing category value", () => {
+    const result = planParallelCoordinates({
+      settings: settings(),
+      width: 600,
+      height: 300,
+      snapshot: {
+        ...snapshot(),
+        columns: {
+          ...snapshot().columns,
+          kind: { 0: "x", 1: "", 2: "  ", 3: null, 4: "y" },
+        },
+      },
+      getFieldLabel: (field) => field,
+    });
+    const kind = result.axes.find((axis) => axis.field === "kind")!;
+    expect(kind.categories.map((category) => category.label)).toEqual([
+      "x",
+      "y",
+    ]);
+    // Rows 1 to 3 have no band; row 2 also lacks b.
+    expect(kind.missing).toBe(3);
+    expect(result.lines.map((line) => line.id)).toEqual([0, 4]);
+  });
+
   it("finds the nearest line and traces its vertices", () => {
     const result = plan([{ type: "range", field: "a", min: 4, max: 5 }]);
     const line = result.lines.find((item) => item.id === 3)!;

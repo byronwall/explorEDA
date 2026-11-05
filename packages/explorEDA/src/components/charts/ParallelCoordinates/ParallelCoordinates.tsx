@@ -1,10 +1,7 @@
 import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { Button } from "@/components/ui/button";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-} from "../ChartStatusLine";
+import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage } from "../ChartMessage";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { categoryKey, categoryValue } from "@/lib/categories";
@@ -486,6 +483,20 @@ export function ParallelCoordinates({
     return (
       <ChartMessage width={width} height={height}>
         Choose at least two fields for the axes in chart settings.
+      </ChartMessage>
+    );
+  }
+  if (plan.axes.length < 2) {
+    // A rejected axis leaves too few to draw a line between.
+    return (
+      <ChartMessage width={width} height={height}>
+        {plan.rejected
+          .map(
+            (item) =>
+              `${item.label} has ${item.count} values, too many for an axis.`
+          )
+          .join(" ")}{" "}
+        Choose a different field in chart settings.
       </ChartMessage>
     );
   }
