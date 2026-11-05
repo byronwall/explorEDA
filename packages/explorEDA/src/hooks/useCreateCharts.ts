@@ -59,7 +59,10 @@ export function useCreateCharts() {
       type === "donut"
         ? categories[0]
         : numeric[0]) ||
-      profiles[0]?.name ||
+      rankGroupFields(
+        profiles.map((profile) => profile.name),
+        profiles
+      )[0] ||
       "";
     const settings = definition.createDefaultSettings(layout, selectedField);
     if (settings.type === "scatter" || settings.type === "3d-scatter") {
