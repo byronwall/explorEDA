@@ -583,19 +583,26 @@ export function RowChart({
     plan.other.length > 0 && !facetIds && settings.topN !== categoryCount
       ? categoryCount
       : undefined;
+  // A chart too short for its Top N folds the rest; say so before anything
+  // a narrow status line could cut.
+  const tooShort = Boolean(
+    settings.topN && plan.visible.length < settings.topN && plan.other.length
+  );
   const statusParts = [
+    tooShort &&
+      `Top ${settings.topN} needs a taller chart: top ${plan.visible.length} shown, ${plan.other.length} in Other categories`,
     valueFilter && `${filterValues.length} categories selected`,
     // Faded bars need their reason first, before a narrow chart cuts it.
     faded && `faded: fewer than ${SMALL_SAMPLE} rows`,
     leftOut > 0 &&
       `${leftOut.toLocaleString()} ${leftOut === 1 ? "row" : "rows"} without ${getFieldLabel(liveSummary!.spec.measureField ?? "")} left out`,
-    plan.other.length > 0 &&
+    !tooShort &&
+      plan.other.length > 0 &&
       `${plan.other.length} smaller categories in Other categories`,
-    settings.topN && plan.visible.length < settings.topN && plan.other.length
-      ? `Top ${settings.topN} needs a taller chart; showing the top ${plan.visible.length}`
-      : Boolean(settings.topN) &&
-        displayCounts.length > fitRows &&
-        `Rows compressed to show the top ${settings.topN}`,
+    !tooShort &&
+      Boolean(settings.topN) &&
+      displayCounts.length > fitRows &&
+      `Rows compressed to show the top ${settings.topN}`,
   ];
   // A bar runs from zero to its value, on either side.
   const zero = xScale(0);

@@ -112,6 +112,9 @@ function cellName(cell: PivotCell, rowHeaders: PivotHeader[]): string {
     .join(" · ");
 }
 
+/** The most rows a pivot draws; a Total row still covers every row. */
+export const MAX_PIVOT_ROWS = 500;
+
 export function PivotTable({
   settings,
   width,
@@ -351,6 +354,12 @@ export function PivotTable({
 
   const valueCount = settings.valueFields.length;
   const columnCount = settings.columnField ? pivotData.headers.length : 1;
+  // Thousands of groups would freeze the page; show a capped, ranked part.
+  const shownRows = pivotData.rows.slice(
+    0,
+    Math.min(settings.topN ?? MAX_PIVOT_ROWS, MAX_PIVOT_ROWS)
+  );
+  const hiddenRows = pivotData.rows.length - shownRows.length;
   const hasTotalColumn = pivotData.rows.some((row) => row.total);
   const valueColumnCount =
     valueCount * columnCount + (hasTotalColumn ? valueCount : 0);
@@ -546,8 +555,8 @@ export function PivotTable({
           )}
         </thead>
         <tbody>
-          {pivotData.rows.map((row: PivotRow, rowIndex) => {
-            const previous = pivotData.rows[rowIndex - 1];
+          {shownRows.map((row: PivotRow, rowIndex) => {
+            const previous = shownRows[rowIndex - 1];
             // Outer group values print once, at the top of their group.
             const repeats = row.keys.map(
               (_, index) =>
@@ -590,6 +599,20 @@ export function PivotTable({
               </tr>
             );
           })}
+          {hiddenRows > 0 && (
+            <tr>
+              <td
+                colSpan={settings.rowFields.length + valueColumnCount}
+                className="eda-pivot-more text-muted-foreground"
+              >
+                {hiddenRows.toLocaleString()} more{" "}
+                {hiddenRows === 1 ? "row" : "rows"}
+                {settings.topN
+                  ? ` below the top ${settings.topN.toLocaleString()}.`
+                  : `. Sort by value and set Top N to rank them.`}
+              </td>
+            </tr>
+          )}
           {pivotData.rows.length === 0 && (
             <tr>
               <td

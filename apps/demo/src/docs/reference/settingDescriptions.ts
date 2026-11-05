@@ -116,6 +116,9 @@ export const CHART_SETTINGS: Readonly<
       "Adds a Total row, and a Total column when a column field is set. On unless false.",
     shadeCells:
       "Tints each value cell by its size within its measure. On unless false.",
+    rowOrder:
+      "Row order: label (the default) sorts by the row fields; value ranks rows by the first measure, largest first.",
+    topN: "Shows only this many rows. The Total row still covers every row. A table draws at most 500 rows.",
   },
   "data-table": {
     field: "Not read by this chart type.",

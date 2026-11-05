@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { X } from "lucide-react";
+import { TopNInput } from "../RowChart/RowChartSettingsPanel";
 
 const AGGREGATION_OPTIONS: Array<{
   label: string;
@@ -63,6 +64,8 @@ export function PivotTableSettingsPanel({
         <div className="max-w-[400px]">
           <FieldSelector
             label="Column Field"
+            placeholder="None: one row per group"
+            allowClear
             value={settings.columnField}
             onChange={(value) =>
               onSettingsChange({ ...settings, columnField: value })
@@ -160,6 +163,37 @@ export function PivotTableSettingsPanel({
             + Add Value Field
           </button>
         </div>
+      </div>
+
+      <div className="flex max-w-[400px] flex-wrap items-end gap-3">
+        <div className="space-y-1">
+          <Label htmlFor="pivotRowOrder">Row order</Label>
+          <select
+            id="pivotRowOrder"
+            className="h-9 rounded-md border-input bg-background px-2 text-sm"
+            value={settings.rowOrder ?? "label"}
+            onChange={(event) =>
+              onSettingsChange({
+                ...settings,
+                rowOrder: event.target.value as "label" | "value",
+              })
+            }
+          >
+            <option value="label">A to Z</option>
+            <option value="value">Largest first</option>
+          </select>
+        </div>
+        <ActionTooltip content="Show only this many rows, such as the top 10 when rows are ordered by value. The Total row still covers every row.">
+          <div className="space-y-1">
+            <Label htmlFor="pivot-top-n">Top N</Label>
+            <TopNInput
+              id="pivot-top-n"
+              placeholder="All"
+              value={settings.topN}
+              onChange={(topN) => onSettingsChange({ ...settings, topN })}
+            />
+          </div>
+        </ActionTooltip>
       </div>
 
       <div className="max-w-[400px] space-y-3">

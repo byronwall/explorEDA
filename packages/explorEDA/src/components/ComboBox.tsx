@@ -24,6 +24,8 @@ interface ComboBoxProps<T> {
   options: T[];
   onChange: (value: T | undefined) => void;
   optionToString?: (option: T) => string;
+  /** More text a search matches, such as a field's column name. */
+  optionKeywords?: (option: T) => string[];
   optionToNode?: (option: T) => React.ReactNode;
   placeholder?: string;
   className?: string;
@@ -38,6 +40,7 @@ export function ComboBox<T>({
   options,
   onChange,
   optionToString = (option) => String(option),
+  optionKeywords,
   optionToNode,
   placeholder = "Select option...",
   className,
@@ -86,6 +89,7 @@ export function ComboBox<T>({
                       setOpen(false);
                     }}
                     value={optionToString(option)}
+                    keywords={optionKeywords?.(option)}
                   >
                     <Check
                       className={cn(

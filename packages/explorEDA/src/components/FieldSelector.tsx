@@ -52,6 +52,8 @@ export function FieldSelector({
             options={fieldOptions}
             onChange={(option) => onChange(option?.value || value)}
             optionToString={(option) => getFieldLabel(option.value)}
+            // A search for air_y finds air_yards by its column name too.
+            optionKeywords={(option) => [option.value]}
             aria-label={label || placeholder}
             optionToNode={(option) => <FieldOptionLabel field={option.value} />}
             placeholder={placeholder}

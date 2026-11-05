@@ -432,6 +432,16 @@ export function calculatePivotData(
     withTotals,
     fieldTypes
   );
+  if (settings.rowOrder === "value") {
+    // The first measure across the row's columns ranks it, largest first.
+    const rank = (row: PivotRow) => {
+      const value = (row.total ?? row.cells)[0]?.value;
+      return typeof value === "number" && Number.isFinite(value)
+        ? value
+        : -Infinity;
+    };
+    rows.sort((left, right) => rank(right) - rank(left));
+  }
   // One row already is its own total.
   const totals =
     withTotals && rows.length > 1

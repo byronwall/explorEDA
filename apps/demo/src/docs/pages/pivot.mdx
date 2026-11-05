@@ -8,6 +8,9 @@
 ## How it reads
 
 - Row fields group the rows, outermost first. A column field spreads one more grouping across columns.
+- The column field is optional. Clear it for one row per group: a plain summary table.
+- **Row order** set to **Largest first** ranks the rows by the first value field. With **Top N**, the table shows only that many rows, such as the top 10 items by sales; the Total row still covers every row.
+- A table draws at most 500 rows, and a last line counts the rest.
 - Click a column heading to filter every other chart to that value.
 - Each value field is a field with an aggregation: sum, count, average, minimum, maximum, median, mode, standard deviation, variance, unique count, or single value.
 - **Totals** adds a Total row, and a Total column when a column field is set. Each total recomputes its aggregate over every row it covers.
