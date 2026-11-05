@@ -199,6 +199,42 @@ it("compares a filtered card with the same metric over every row", () => {
   ).toBeUndefined();
 });
 
+it("reads a delta that rounds away as no change", () => {
+  const plan = planMetricCard(
+    { ...metric, aggregation: "average" },
+    {
+      revision: "test",
+      liveIds: [0, 1],
+      allIds: [0, 1, 2],
+      measureData: { 0: 1.0001, 1: 1.0001, 2: 1 },
+    },
+    (field) => field,
+    formatFieldValue
+  );
+  expect(plan.valueText).toBe("1");
+  expect(plan.comparison).toMatchObject({ kind: "delta", delta: 0 });
+});
+
+it("falls back to a delta when a sum is more than the total of all rows", () => {
+  const plan = planMetricCard(
+    { ...metric, aggregation: "sum" },
+    {
+      revision: "test",
+      liveIds: [0],
+      allIds: [0, 1],
+      measureData: { 0: 10, 1: -5 },
+    },
+    (field) => field,
+    formatFieldValue
+  );
+  expect(plan.comparison).toMatchObject({
+    kind: "delta",
+    delta: 5,
+    deltaText: "+5",
+    baselineText: "5",
+  });
+});
+
 it("sums one agreeing amount per declared entity and traces every row", () => {
   const entityMetric: MetricCardSettings = {
     ...metric,

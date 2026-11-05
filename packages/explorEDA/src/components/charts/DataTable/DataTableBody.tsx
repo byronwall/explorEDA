@@ -8,7 +8,7 @@ import { highlightMatches } from "./highlightMatches";
 import { HEADER_HEIGHT } from "./DataTableHeader";
 
 import { DataTableSettings } from "./definition";
-import { DataTableRow, getFilteredRows } from "./filteredRows";
+import { DataTableRow, getFilteredRows, tableFieldTypes } from "./filteredRows";
 
 interface DataTableBodyProps {
   settings: DataTableSettings;
@@ -56,8 +56,15 @@ export function DataTableBody({
   const liveItems = useDataLayer((state) => state.getLiveItems(settings));
 
   const filteredByColumns = useMemo(
-    () => rows ?? getFilteredRows(data, liveItems, settings),
-    [rows, data, liveItems, settings]
+    () =>
+      rows ??
+      getFilteredRows(
+        data,
+        liveItems,
+        settings,
+        tableFieldTypes(fieldProfiles)
+      ),
+    [rows, data, liveItems, settings, fieldProfiles]
   );
 
   const sortedData = filteredByColumns;

@@ -93,7 +93,8 @@ function displayCellValue(cell: PivotCell): string {
     return "No rows";
   }
   if (cell.status === "error") {
-    return "Conflict";
+    // Only a single value can conflict; any other failure is not a conflict.
+    return cell.aggregation === "singleValue" ? "Conflict" : "Unavailable";
   }
   if (cell.status === "invalid") {
     return "No valid numbers";
@@ -125,8 +126,17 @@ export function PivotTable({
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
   const updateChart = useDataLayer((state) => state.updateChart);
   void fieldSettings;
+  // Date groups order by time, so each grouping field's type is read.
+  const fieldTypes = useMemo(
+    () =>
+      Object.fromEntries(
+        (fieldProfiles ?? []).map((profile) => [profile.name, profile.dataType])
+      ),
+    [fieldProfiles]
+  );
 
   const allLiveIds = useGetLiveIds(settings);
   const everyId = useGetAllIds(settings);
@@ -162,13 +172,14 @@ export function PivotTable({
           });
           return row;
         }),
-        settings
+        settings,
+        fieldTypes
       );
 
     const live = pivotOf(inFacet(allLiveIds));
     const shadeAll = !fitted && settings.shadeCells !== false;
     return [live, shadeAll ? pivotOf(inFacet(everyId)) : undefined] as const;
-  }, [facetIds, allLiveIds, everyId, fitted, settings, getColumnData]);
+  }, [facetIds, allLiveIds, everyId, fitted, settings, getColumnData, fieldTypes]);
 
   const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
@@ -386,7 +397,7 @@ export function PivotTable({
     const name = cellName(cell, rowHeaders);
     return (
       <td
-        key={`${cell.key.isTotal ? "total" : cell.key.columnField}-${categoryKey(cell.key.columnValue)}-${cell.key.valueField}`}
+        key={`${cell.key.isTotal ? "total" : cell.key.columnField}-${categoryKey(cell.key.columnValue)}-${cell.key.valueField}-${cell.aggregation}`}
         className={cn(
           total && "eda-pivot-total",
           total === "column" && index === 0 && "eda-pivot-total-start",

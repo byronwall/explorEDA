@@ -51,8 +51,9 @@ export function applyFilter(
       }
       break;
     case "text":
-      if (typeof value === "string") {
-        const lower = value.toLowerCase();
+      // A number or boolean matches by the text it shows as.
+      if (!isMissingValue(value)) {
+        const lower = String(value).toLowerCase();
         const search = filter.value.toLowerCase();
 
         switch (filter.operator) {

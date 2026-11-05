@@ -511,7 +511,11 @@ export function buildFieldDistribution(
         values: numbers.length,
         missing: missingCount,
         excluded: rows.length - missingCount - numbers.length,
-        distinct: countDistinct(rows.map(([, value]) => value)),
+        // A numeric field counts distinct numbers, as its profile does.
+        distinct:
+          dataType === "numeric"
+            ? new Set(numbers).size
+            : countDistinct(rows.map(([, value]) => value)),
       };
       return { numbers, counts };
     };

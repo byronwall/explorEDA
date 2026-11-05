@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/popover";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { DataTableSettings } from "./definition";
-import { DataTableRow, getFilteredRows } from "./filteredRows";
+import { DataTableRow, getFilteredRows, tableFieldTypes } from "./filteredRows";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { FieldPicker } from "@/components/FieldList/FieldPicker";
 import { pickColumns } from "./columnOps";
@@ -31,8 +31,11 @@ export function DataTableToolbar({
   const updateChart = useDataLayer((state) => state.updateChart);
   const data = useDataLayer((state) => state.data);
   const liveItems = useDataLayer((state) => state.getLiveItems(settings));
+  const fieldProfiles = useDataLayer((state) => state.fieldProfiles);
 
-  const filteredData = rows ?? getFilteredRows(data, liveItems, settings);
+  const filteredData =
+    rows ??
+    getFilteredRows(data, liveItems, settings, tableFieldTypes(fieldProfiles));
   const handleSearch = (globalSearch: string) => {
     if (onSettingsChange) onSettingsChange({ globalSearch });
     else updateChart(settings.id, { globalSearch });
