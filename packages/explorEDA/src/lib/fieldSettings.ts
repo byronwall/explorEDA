@@ -293,6 +293,11 @@ export function formatTimestamp(time: number): string {
   return `${date} ${clock}`;
 }
 
+/** A value that rounds to zero reads 0, never -0, -$0.00, or -0.0%. */
+export function withoutNegativeZero(text: string): string {
+  return /^-[^1-9]*$/.test(text) ? text.slice(1) : text;
+}
+
 /** A field named for years, such as "year", "fiscal_year", or "gaps.year". */
 const YEAR_FIELD = /(^|[\s_.-])years?($|[\s_.-])/i;
 
@@ -300,8 +305,19 @@ export function formatFieldValue(
   field: string,
   value: datum,
   settings: FieldSettings = {},
-  /** Short numbers such as $46.5K, for legends and other tight labels. */
-  { compact = false }: { compact?: boolean } = {}
+  {
+    compact = false,
+    reference,
+  }: {
+    /** Short numbers such as $46.5K, for legends and other tight labels. */
+    compact?: boolean;
+    /**
+     * The largest value shown beside this one, such as an axis end. Compact
+     * labels choose one notation from it, so an axis reads $8K beside $10K,
+     * never $8,000 beside $10K.
+     */
+    reference?: number;
+  } = {}
 ): string {
   if (value == null) {
     return "—";
@@ -364,23 +380,32 @@ export function formatFieldValue(
       numberValue < 3000
     )
       return String(numberValue);
-    const short = compact && Math.abs(numberValue) >= 10_000;
+    const short =
+      compact &&
+      Math.max(
+        Math.abs(numberValue),
+        Number.isFinite(reference) ? Math.abs(reference!) : 0
+      ) >= 10_000;
+    // A short label keeps about three figures, so 4,467 sits beside 12K and
+    // 41.3 beside 3.23, not 4,467.02. A field's precision never widens it.
+    const shortDigits =
+      Math.abs(numberValue) >= 100 ? 0 : Math.abs(numberValue) >= 10 ? 1 : 2;
     const options: Intl.NumberFormatOptions = short
-      ? { notation: "compact", maximumFractionDigits: 1 }
+      ? {
+          notation: "compact",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 1,
+        }
       : {
-          // A short label keeps about three figures, so 4,467 sits beside
-          // 12K and 41.3 beside 3.23, not 4,467.02.
-          maximumFractionDigits:
-            precision ??
-            (!compact
-              ? 3
-              : Math.abs(numberValue) >= 100
-                ? 0
-                : Math.abs(numberValue) >= 10
-                  ? 1
-                  : 2),
-          minimumFractionDigits: precision,
+          maximumFractionDigits: compact
+            ? Math.min(precision ?? shortDigits, shortDigits)
+            : (precision ?? 3),
+          minimumFractionDigits:
+            compact && precision !== undefined
+              ? Math.min(precision, shortDigits)
+              : precision,
         };
+
     if (format === "currency") {
       options.style = "currency";
       options.currency = /^[A-Z]{3}$/.test(settings.currency ?? "")
@@ -389,7 +414,9 @@ export function formatFieldValue(
     } else if (format === "percent") {
       options.style = "percent";
     }
-    const text = new Intl.NumberFormat("en-US", options).format(numberValue);
+    const text = withoutNegativeZero(
+      new Intl.NumberFormat("en-US", options).format(numberValue)
+    );
     return settings.unit ? `${text} ${settings.unit}` : text;
   }
 

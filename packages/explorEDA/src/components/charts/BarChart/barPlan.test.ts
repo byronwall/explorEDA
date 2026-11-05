@@ -264,3 +264,13 @@ describe("planBarChart", () => {
     expect(bars.axes.x.ticks.shown).toEqual(["A", "B"]);
   });
 });
+
+describe("narrow bars", () => {
+  it("says why the plot is empty when every bar is too narrow to draw", () => {
+    const values = Array.from({ length: 600 }, (_, i) => `c${i}`);
+    const result = plan("cat", values, { extra: { forceString: true } });
+    expect(result.bars).toHaveLength(0);
+    expect(result.notice).toMatch(/Widen this chart/);
+    expect(plan("cat", ["a", "b"]).notice).toBeUndefined();
+  });
+});

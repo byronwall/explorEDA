@@ -5,6 +5,7 @@ import {
   convertFieldValue,
   formatFieldValue,
   getFieldSettingsError,
+  withoutNegativeZero,
 } from "./fieldSettings";
 import { buildFieldProfiles } from "./fieldProfiles";
 
@@ -158,5 +159,50 @@ describe("year fields", () => {
     expect(formatFieldValue("year", 1960.5)).toBe("1,960.5");
     expect(formatFieldValue("year", 12000)).toBe("12,000");
     expect(formatFieldValue("year", 1960, { format: "number" })).toBe("1,960");
+  });
+});
+
+describe("compact labels", () => {
+  const dollars = {
+    format: "currency" as const,
+    currency: "USD",
+    precision: 2,
+  };
+
+  it("never widens a short label with the field precision", () => {
+    expect(formatFieldValue("v", 1000, dollars, { compact: true })).toBe(
+      "$1,000"
+    );
+    expect(formatFieldValue("v", 15.5, dollars, { compact: true })).toBe(
+      "$15.5"
+    );
+    expect(formatFieldValue("v", 3.23, dollars, { compact: true })).toBe(
+      "$3.23"
+    );
+    expect(formatFieldValue("v", 1000, dollars)).toBe("$1,000.00");
+  });
+
+  it("takes one notation from the reference value", () => {
+    expect(
+      formatFieldValue("v", 8000, dollars, { compact: true, reference: 12000 })
+    ).toBe("$8K");
+    expect(
+      formatFieldValue("v", 500, dollars, { compact: true, reference: 12000 })
+    ).toBe("$500");
+    expect(
+      formatFieldValue("v", 8000, dollars, { compact: true, reference: 9000 })
+    ).toBe("$8,000");
+  });
+});
+
+describe("negative zero", () => {
+  it("reads as zero in every format", () => {
+    expect(formatFieldValue("v", -0.0001)).toBe("0");
+    expect(
+      formatFieldValue("v", -2.78e-17, { format: "currency", currency: "USD" })
+    ).toBe("$0.00");
+    expect(formatFieldValue("v", -1e-7, { format: "percent" })).toBe("0%");
+    expect(formatFieldValue("v", -0.5)).toBe("-0.5");
+    expect(withoutNegativeZero("-0.10")).toBe("-0.10");
   });
 });

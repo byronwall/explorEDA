@@ -7,6 +7,7 @@ export function numericBins(all: number[], values: number[], count: number) {
   // never straddles a gap between two possible values.
   const integer = all.every(Number.isInteger);
   let min: number;
+  let max: number;
   let size: number;
   let step: number;
   if (integer) {
@@ -14,13 +15,15 @@ export function numericBins(all: number[], values: number[], count: number) {
     step = Math.ceil(span / requested);
     size = Math.ceil(span / step);
     min = low - 0.5;
+    max = min + size * step;
   } else {
     min = low === high ? low - 0.5 : low;
-    const max = low === high ? high + 0.5 : high;
+    // The last edge is the data maximum itself, never `min + size * step`,
+    // which float rounding can leave just below it and drop the maximum.
+    max = low === high ? high + 0.5 : high;
     size = requested;
     step = (max - min) / size;
   }
-  const max = min + size * step;
   const bins = Array.from({ length: size }, (_, i) => {
     const start = min + i * step;
     const end = i === size - 1 ? max : min + (i + 1) * step;
@@ -133,6 +136,45 @@ export function binRangeFilter(
     range.max < last - tolerance
     ? { min: range.min, max: range.max, maxExclusive: true }
     : { min: range.min, max: range.max };
+}
+
+/**
+ * The range an engineering histogram's brush selects. Bins snap as on any
+ * histogram; a brush that reaches past the first or last edge keeps that
+ * coverage tail too, and one wholly past an edge selects the tail alone.
+ */
+export function histogramBrushRange(
+  edges: number[],
+  raw: { min: number; max: number },
+  wholeNumbers = false
+): {
+  min?: number;
+  max?: number;
+  minExclusive?: boolean;
+  maxExclusive?: boolean;
+} {
+  const first = edges[0];
+  const last = edges.at(-1);
+  if (first === undefined || last === undefined || edges.length < 2) return raw;
+  if (raw.min >= last) return { min: last, minExclusive: true };
+  if (raw.max <= first) return { max: first, maxExclusive: true };
+  const inner = binRangeFilter(
+    edges,
+    snapRangeToBins(edges, {
+      min: Math.max(first, raw.min),
+      max: Math.min(last, raw.max),
+    }),
+    wholeNumbers
+  );
+  return {
+    ...(raw.min < first ? {} : { min: inner.min }),
+    ...(raw.max > last
+      ? {}
+      : {
+          max: inner.max,
+          ...(inner.maxExclusive ? { maxExclusive: true } : {}),
+        }),
+  };
 }
 
 /** True when two ranges have the same bounds within bin-edge tolerance. */

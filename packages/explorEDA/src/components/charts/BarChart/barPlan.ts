@@ -78,7 +78,8 @@ export interface BarPlanInput {
   getFieldLabel: (field: string) => string;
   formatFieldValue?: (field: string, value: datum) => string;
   /** Formats value-axis ticks, which can be shorter than readout values. */
-  formatAxisValue?: (field: string, value: datum) => string;
+  /** Writes an axis tick; `reference` is the axis end, for one notation. */
+  formatAxisValue?: (field: string, value: datum, reference?: number) => string;
   /** Bottom margin kept under the X axis title for a status line. */
   footer?: number;
   /** Whether bars show their count over every source row. Facets do not. */
@@ -194,6 +195,8 @@ export interface BarChartPlan {
   histogram?: HistogramPlan;
   /** Rows without a finite value have no bar. */
   unplotted: { row: AggregateResultRow; reason: string }[];
+  /** Why the plot is empty although rows exist, such as bars too narrow. */
+  notice?: string;
   domain: BarDomain;
   zeroBaseline: number;
   scopeNote: string;
@@ -573,6 +576,18 @@ export function planBarChart({
         ? "Count"
         : getFieldLabel(spec.measureField ?? "Measure")
       : "");
+  const yReference = Math.max(Math.abs(yDomain[0]), Math.abs(yDomain[1]));
+  const format = (field: string | undefined) => (value: string | number) =>
+    field && formatFieldValue
+      ? formatFieldValue(field, value)
+      : formatTick(value);
+  const formatAxis = (field: string | undefined, reference?: number) =>
+    field && formatAxisValue
+      ? (value: string | number) => formatAxisValue(field, value, reference)
+      : (value: string | number) =>
+          field && formatFieldValue
+            ? formatFieldValue(field, value)
+            : formatTick(value, reference);
   const { margin, policy } = planChartMargin({
     margin: settings.margin,
     width,
@@ -581,6 +596,8 @@ export function planBarChart({
     hasYLabel: Boolean(yLabel),
     yTickFontSize: settings.yAxis.tickFontSize,
     xTickFontSize: settings.xAxis.tickFontSize,
+    yScaleType: settings.yAxis.scaleType,
+    yFormat: formatAxis(yField, yReference),
     typography,
   });
   margin.bottom += footer;
@@ -631,14 +648,6 @@ export function planBarChart({
     .range([plotHeight, 0]);
   const baseline = yScale(0);
 
-  const format = (field: string | undefined) => (value: string | number) =>
-    field && formatFieldValue
-      ? formatFieldValue(field, value)
-      : formatTick(value);
-  const formatAxis = (field: string | undefined) =>
-    field && formatAxisValue
-      ? (value: string | number) => formatAxisValue(field, value)
-      : format(field);
   const symlog = (label: string, type?: string) =>
     [label, type === "symlog" && "symlog"].filter(Boolean).join(" · ");
   // Bars past a bound are cut off at the edge; the axis says how many.
@@ -697,11 +706,11 @@ export function planBarChart({
       tickFontSize: settings.yAxis.tickFontSize,
       labelFontSize: settings.yAxis.labelFontSize,
       grid: settings.yAxis.grid ?? true,
-      format: formatAxis(yField),
+      format: formatAxis(yField, yReference),
       label: symlog(yLabel, settings.yAxis.scaleType),
       labelSource: settings.yAxisLabel ? "chart-setting" : "field-label",
       zero: true,
-      hidden: labelHidden(yHidden, formatAxis(yField)),
+      hidden: labelHidden(yHidden, formatAxis(yField, yReference)),
       domainSource: {
         population: fitted
           ? "rows after other filters (fitted to filtered rows)"
@@ -764,6 +773,7 @@ export function planBarChart({
         : new Map(domainValues.map((item) => [item.id, item.value]));
   const bars: BarMark[] = [];
   const unplotted: BarChartPlan["unplotted"] = [];
+  let tooNarrow = 0;
   rows.forEach((row, order) => {
     if (typeof row.value !== "number" || !Number.isFinite(row.value)) {
       unplotted.push({
@@ -785,12 +795,19 @@ export function planBarChart({
       bin = { start, end, closed: row.bin.closed ?? order === rows.length - 1 };
       x = linear(start);
       const span = linear(end) - x;
-      if (span < 1) return;
+      if (span < 1) {
+        tooNarrow++;
+        return;
+      }
       barWidth = Math.max(0, span - 1);
     } else {
       const band = xScale as ReturnType<typeof scaleBand<string>>;
       const at = band(row.groupLabel);
-      if (at === undefined || band.bandwidth() < 1) return;
+      if (at === undefined) return;
+      if (band.bandwidth() < 1) {
+        tooNarrow++;
+        return;
+      }
       x = at;
       barWidth = band.bandwidth();
     }
@@ -919,6 +936,10 @@ export function planBarChart({
       !rows[0]!.groupLabel.startsWith("["),
     groupOrder: rows.map((row) => row.groupLabel),
     unplotted,
+    notice:
+      tooNarrow > 0 && bars.length === 0
+        ? "Widen this chart or filter another view to make each bar visible."
+        : undefined,
     domain: {
       population:
         mode !== "aggregate"
