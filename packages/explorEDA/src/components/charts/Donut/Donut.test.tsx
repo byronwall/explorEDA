@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
+import type { DatumObject } from "@/providers/DataLayerProvider";
 import { compileDocument } from "@/lib/dsl/compile";
 import { exportDocument } from "@/lib/dsl/export";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
@@ -51,7 +52,10 @@ function Harness() {
   );
 }
 
-function renderDonut(chart: DonutSettings = settings, data = rows) {
+function renderDonut(
+  chart: DonutSettings = settings,
+  data: DatumObject[] = rows
+) {
   return render(
     <DataLayerProvider charts={[chart]} data={data}>
       <Harness />
@@ -72,6 +76,17 @@ describe("Donut", () => {
     expect(
       screen.getByRole("list", { name: "channel legend" })
     ).toHaveTextContent("Web58%Store25%Other17%");
+  });
+
+  it("shows shares that add up to 100%", () => {
+    renderDonut(
+      { ...settings, aggregation: "count", measureField: undefined, topN: 6 },
+      [{ channel: "Web" }, { channel: "Store" }, { channel: "Phone" }]
+    );
+    expect(
+      screen.getByRole("list", { name: "channel legend" })
+    ).toHaveTextContent("Web34%Store33%Phone33%");
+    expect(screen.getByRole("button", { name: "Web: 1, 34%" })).toBeVisible();
   });
 
   it("selects a slice, Other's members, and clears from empty space", () => {

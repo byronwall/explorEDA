@@ -44,12 +44,30 @@ const PERIOD_NAMES: Record<RetentionPeriod, string> = {
   month: "Month",
 };
 
-export function cohortLabel(start: number, period: RetentionPeriod) {
+/**
+ * A cohort's name from its period start. Day and week cohorts name the year
+ * only when asked, since cohorts in one year read better without it.
+ */
+export function cohortLabel(
+  start: number,
+  period: RetentionPeriod,
+  withYear = false
+) {
   return new Date(start).toLocaleDateString("en-US", {
     timeZone: "UTC",
     month: "short",
-    ...(period === "month" ? { year: "numeric" } : { day: "numeric" }),
+    ...(period === "month"
+      ? { year: "numeric" }
+      : { day: "numeric", ...(withYear ? { year: "numeric" } : {}) }),
   });
+}
+
+/** Whether the cohorts start in more than one year, so labels need the year. */
+export function cohortsSpanYears(cohorts: readonly { start: number }[]) {
+  const years = new Set(
+    cohorts.map((cohort) => new Date(cohort.start).getUTCFullYear())
+  );
+  return years.size > 1;
 }
 
 export function Retention({
@@ -119,6 +137,7 @@ export function Retention({
 
   const entityLabel = getFieldLabel(entityField);
   const periodName = PERIOD_NAMES[period];
+  const withYear = cohortsSpanYears(plan?.cohorts ?? []);
   const findCell = (id: string) => {
     for (const cohort of plan?.cohorts ?? []) {
       const cell = cohort.cells.find((item) => item.id === id);
@@ -140,7 +159,7 @@ export function Retention({
           kind: "retention-cell",
           id,
           revision: currentRevision,
-          cohortLabel: cohortLabel(found.cohort.start, period),
+          cohortLabel: cohortLabel(found.cohort.start, period, withYear),
           cohortSize: found.cohort.size,
           cell: found.cell,
           periodName,
@@ -171,7 +190,7 @@ export function Retention({
             .map((cell) => ({
               kind: "retention-cell",
               id: cell.id,
-              label: `${cohortLabel(cohort.start, period)}, ${periodName} ${cell.period}`,
+              label: `${cohortLabel(cohort.start, period, withYear)}, ${periodName} ${cell.period}`,
             }))
         ),
     };
@@ -248,7 +267,7 @@ export function Retention({
     const isSelected = selectedId === cell.id;
     const isTraced = traced === cell.id;
     const dimmed = selectedId !== undefined && !isSelected;
-    const label = `${cohortLabel(cohort.start, period)} cohort, ${periodName} ${cell.period}: ${retentionPercent(cell.rate)}, ${cell.active.toLocaleString()} of ${cohort.size.toLocaleString()}${cell.partial ? ", partial period" : ""}`;
+    const label = `${cohortLabel(cohort.start, period, withYear)} cohort, ${periodName} ${cell.period}: ${retentionPercent(cell.rate)}, ${cell.active.toLocaleString()} of ${cohort.size.toLocaleString()}${cell.partial ? ", partial period" : ""}`;
     return (
       <g key={cell.id} opacity={dimmed ? 0.35 : 1}>
         <rect
@@ -348,7 +367,7 @@ export function Retention({
   const statusParts = [
     `${plan.entities.toLocaleString()} entered in ${plan.cohorts.length} ${plan.cohorts.length === 1 ? "cohort" : "cohorts"}`,
     selectedCell &&
-      `${selectedCell.cell.active.toLocaleString()} selected: ${cohortLabel(selectedCell.cohort.start, period)}, ${periodName} ${selectedCell.cell.period}`,
+      `${selectedCell.cell.active.toLocaleString()} selected: ${cohortLabel(selectedCell.cohort.start, period, withYear)}, ${periodName} ${selectedCell.cell.period}`,
     hidden > 0 && `newest ${cohorts.length} of ${plan.cohorts.length} shown`,
     ...plan.excluded.map(
       (item) => `${item.count.toLocaleString()} ${item.reason}`
@@ -370,7 +389,7 @@ export function Retention({
         <ChartReadout fallbackClassName="eda-chart-readout-inline">
           <span className="eda-readout-item">
             <span>Cohort</span>
-            <b>{cohortLabel(hoveredCell.cohort.start, period)}</b>
+            <b>{cohortLabel(hoveredCell.cohort.start, period, withYear)}</b>
           </span>
           <span className="eda-readout-item">
             <span>{periodName}</span>
@@ -474,7 +493,7 @@ export function Retention({
                   dominantBaseline="central"
                 >
                   <text x={8} y={y + rowHeight / 2} className="fill-foreground">
-                    {cohortLabel(cohort.start, period)}
+                    {cohortLabel(cohort.start, period, withYear)}
                   </text>
                   <text
                     x={8 + labelWidth + sizeWidth}

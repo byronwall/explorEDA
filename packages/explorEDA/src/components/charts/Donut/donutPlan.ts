@@ -50,6 +50,34 @@ const GROUP = "category";
 const MEASURE = "measure";
 
 /**
+ * Percent labels for shares of one whole, rounded by largest remainder so
+ * the shown numbers total 100 when the shares do. A share under one percent
+ * keeps a decimal instead of reading as 0% or 1%.
+ */
+export function sharePercents(shares: readonly number[]): string[] {
+  const points = shares.map((share) => share * 100);
+  const whole = points.map(Math.floor);
+  let left = Math.round(points.reduce((sum, value) => sum + value, 0));
+  left -= whole.reduce((sum, value) => sum + value, 0);
+  const byRemainder = points
+    .map((value, index) => ({ index, remainder: value - whole[index]! }))
+    .sort((a, b) => b.remainder - a.remainder || a.index - b.index);
+  for (const { index } of byRemainder) {
+    if (left <= 0) break;
+    whole[index]! += 1;
+    left -= 1;
+  }
+  return shares.map((share, index) =>
+    share > 0 && share < 0.01
+      ? share.toLocaleString("en-US", {
+          style: "percent",
+          maximumFractionDigits: 1,
+        })
+      : `${whole[index]!.toLocaleString("en-US")}%`
+  );
+}
+
+/**
  * Shares of a whole: the filtered rows, reduced by category with the shared
  * grouped aggregate. The largest categories get their own slices and the
  * rest pool into Other, which reduces their rows again. A negative part or

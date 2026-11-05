@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { datum } from "@/types/ChartTypes";
-import { planDonut, type DonutInput } from "./donutPlan";
+import { planDonut, sharePercents, type DonutInput } from "./donutPlan";
 
 const rows: Record<string, datum>[] = [
   { channel: "Web", revenue: 50 },
@@ -86,5 +86,28 @@ describe("planDonut", () => {
 
   it("draws nothing when no rows pass the other filters", () => {
     expect(planDonut(input({ ids: [] }))).toEqual({ slices: [], total: 0 });
+  });
+});
+
+describe("sharePercents", () => {
+  it("rounds shares so the shown percentages total 100", () => {
+    expect(sharePercents([1 / 3, 1 / 3, 1 / 3])).toEqual(["34%", "33%", "33%"]);
+    expect(sharePercents([0.5, 0.25, 0.125, 0.125])).toEqual([
+      "50%",
+      "25%",
+      "13%",
+      "12%",
+    ]);
+    expect(sharePercents([70 / 120, 30 / 120, 20 / 120])).toEqual([
+      "58%",
+      "25%",
+      "17%",
+    ]);
+    expect(sharePercents([1])).toEqual(["100%"]);
+  });
+
+  it("keeps a decimal for a slice under one percent", () => {
+    expect(sharePercents([0.996, 0.004])).toEqual(["100%", "0.4%"]);
+    expect(sharePercents([0.5, 0.5, 0])).toEqual(["50%", "50%", "0%"]);
   });
 });

@@ -202,7 +202,21 @@ function fullYear(text: string): number {
   return year < 50 ? 2000 + year : 1900 + year;
 }
 
-function monthNameDate(text: string): number {
+/** The finest unit date text names: a month, a day, or an instant with a time. */
+type DateUnit = "month" | "day" | "instant";
+
+interface ParsedDate {
+  time: number;
+  unit: DateUnit;
+}
+
+const NOT_A_DATE: ParsedDate = { time: NaN, unit: "instant" };
+
+function dated(time: number, timeText: string | undefined): ParsedDate {
+  return { time, unit: timeText === undefined ? "day" : "instant" };
+}
+
+function monthNameDate(text: string): ParsedDate {
   // Jan 15 2025, January 15, 2025, 15 Jan 2025, Wed, 15 Jan 2025 08:00:00 GMT
   const tokens = text.split(/[\s,]+/).filter(Boolean);
   if (tokens[0] && WEEKDAY.test(tokens[0])) tokens.shift();
@@ -212,15 +226,61 @@ function monthNameDate(text: string): number {
   const monthText = firstMonth?.[1] ?? secondMonth?.[1];
   const dayText = firstMonth ? second : first;
   if (!monthText || !/^\d{1,2}$/.test(dayText) || !/^\d{4}$/.test(yearText)) {
-    return NaN;
+    return NOT_A_DATE;
   }
   const month = MONTHS.indexOf(monthText.slice(0, 3).toLowerCase()) + 1;
-  return calendarTime(
-    Number(yearText),
-    month,
-    Number(dayText),
-    timeOfDay(rest.length ? rest.join(" ") : undefined)
+  const timeText = rest.length ? rest.join(" ") : undefined;
+  return dated(
+    calendarTime(Number(yearText), month, Number(dayText), timeOfDay(timeText)),
+    timeText
   );
+}
+
+function parseDate(value: string, preset?: DatePreset): ParsedDate {
+  const text = value.trim();
+
+  const iso = ISO.exec(text);
+  if (iso) {
+    const [, year, month, day, time] = iso;
+    if (day === undefined && time !== undefined) return NOT_A_DATE;
+    const stamp = calendarTime(
+      Number(year),
+      Number(month),
+      Number(day ?? 1),
+      timeOfDay(time)
+    );
+    return day === undefined
+      ? { time: stamp, unit: "month" }
+      : dated(stamp, time);
+  }
+  if (preset === "iso") return NOT_A_DATE;
+
+  const yearLast = YEAR_LAST.exec(text);
+  if (yearLast) {
+    const [, first, second, year, time] = yearLast;
+    if (preset !== undefined && year!.length !== 4) return NOT_A_DATE;
+    const dayFirst = preset === "day-month-year";
+    return dated(
+      calendarTime(
+        fullYear(year!),
+        Number(dayFirst ? second : first),
+        Number(dayFirst ? first : second),
+        timeOfDay(time)
+      ),
+      time
+    );
+  }
+  if (preset !== undefined) return NOT_A_DATE;
+
+  const yearFirst = YEAR_FIRST.exec(text);
+  if (yearFirst) {
+    const [, year, month, day, time] = yearFirst;
+    return dated(
+      calendarTime(Number(year), Number(month), Number(day), timeOfDay(time)),
+      time
+    );
+  }
+  return monthNameDate(text);
 }
 
 /**
@@ -229,59 +289,21 @@ function monthNameDate(text: string): number {
  * days like 2025-02-30, and reads every form without an offset as UTC.
  */
 export function parseDateText(value: string, preset?: DatePreset): number {
-  const text = value.trim();
-
-  const iso = ISO.exec(text);
-  if (iso) {
-    const [, year, month, day, time] = iso;
-    if (day === undefined && time !== undefined) return NaN;
-    return calendarTime(
-      Number(year),
-      Number(month),
-      Number(day ?? 1),
-      timeOfDay(time)
-    );
-  }
-  if (preset === "iso") return NaN;
-
-  const yearLast = YEAR_LAST.exec(text);
-  if (yearLast) {
-    const [, first, second, year, time] = yearLast;
-    if (preset !== undefined && year!.length !== 4) return NaN;
-    const dayFirst = preset === "day-month-year";
-    return calendarTime(
-      fullYear(year!),
-      Number(dayFirst ? second : first),
-      Number(dayFirst ? first : second),
-      timeOfDay(time)
-    );
-  }
-  if (preset !== undefined) return NaN;
-
-  const yearFirst = YEAR_FIRST.exec(text);
-  if (yearFirst) {
-    const [, year, month, day, time] = yearFirst;
-    return calendarTime(
-      Number(year),
-      Number(month),
-      Number(day),
-      timeOfDay(time)
-    );
-  }
-  return monthNameDate(text);
+  return parseDate(value, preset).time;
 }
 
 /**
- * A date filter bound. A date-only upper bound such as 2025-01-31 covers that
- * whole day.
+ * A date filter bound. An upper bound without a time covers the whole unit
+ * it names: 2025-01-31 or 1/31/2025 reaches the end of that day, and
+ * 2025-01 the end of January.
  */
 export function dateBound(text: string, end = false): number {
-  const trimmed = text.trim();
-  return parseDateText(
-    end && /^\d{4}-\d{2}-\d{2}$/.test(trimmed)
-      ? `${trimmed}T23:59:59.999Z`
-      : trimmed
-  );
+  const { time, unit } = parseDate(text);
+  if (!end || unit === "instant" || !Number.isFinite(time)) return time;
+  const next = new Date(time);
+  if (unit === "month") next.setUTCMonth(next.getUTCMonth() + 1);
+  else next.setUTCDate(next.getUTCDate() + 1);
+  return next.getTime() - 1;
 }
 
 /** True when text reads as a date under {@link parseDateText}. */

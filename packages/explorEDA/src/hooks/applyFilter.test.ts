@@ -81,4 +81,19 @@ describe("applyFilter", () => {
     expect(applyFilter("2026-01-01T23:30:00", filter)).toBe(true);
     expect(applyFilter("2026-01-02T00:30:00+02:00", filter)).toBe(true);
   });
+
+  it("covers the whole period a date-only bound names", () => {
+    const months = {
+      type: "date-range" as const,
+      field: "created",
+      min: "2024-01",
+      max: "2024-06",
+    };
+    expect(applyFilter("2024-06-15", months)).toBe(true);
+    expect(applyFilter("2024-06-30T23:00:00Z", months)).toBe(true);
+    expect(applyFilter("2024-07-01", months)).toBe(false);
+    const slashes = { ...months, min: "01/01/2024", max: "06/30/2024" };
+    expect(applyFilter("2024-06-30T12:00:00Z", slashes)).toBe(true);
+    expect(applyFilter("2024-07-01T00:00:00Z", slashes)).toBe(false);
+  });
 });

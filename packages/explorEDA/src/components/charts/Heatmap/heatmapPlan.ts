@@ -394,9 +394,11 @@ export function planHeatmap({
     settings.colorDomain
   );
   const total = values.reduce((sum, value) => sum + value, 0);
+  // A share of the total means something only when every shown value adds to
+  // it; the color ends say nothing about that.
   const additive =
     isAdditiveAggregation(settings.aggregation) &&
-    scale.domain[0] >= 0 &&
+    values.every((value) => value >= 0) &&
     total > 0;
 
   const rowFilter = settings.filters.find(

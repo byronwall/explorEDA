@@ -184,7 +184,9 @@ describe("planHeatmap", () => {
   it("places values on the scale and picks text that reads on the fill", () => {
     const result = plan({ aggregation: "sum", measureField: "Revenue" });
     expect(cell(result, "North", "Web").position).toBe(1);
-    expect(cell(result, "South", "Store").position).toBeCloseTo(-4 / 15);
+    // Each side of a diverging scale stretches to its own end.
+    expect(cell(result, "South", "Store").position).toBe(-1);
+    expect(cell(result, "East", "Web").position).toBeCloseTo(3 / 15);
     expect(heatText(1)).toBe("var(--eda-heat-text-strong)");
     expect(heatText(0.2)).toBe("var(--eda-heat-text-weak)");
   });
@@ -208,6 +210,23 @@ describe("planHeatmap", () => {
         "Web"
       ).share
     ).toBeUndefined();
+    // Color ends say nothing about the values: a negative sum under a fixed
+    // low end of 0 still has no share, and a count keeps its share under a
+    // negative low end.
+    expect(
+      cell(
+        plan({
+          aggregation: "sum",
+          measureField: "Revenue",
+          colorDomain: { min: 0 },
+        }),
+        "North",
+        "Web"
+      ).share
+    ).toBeUndefined();
+    expect(
+      cell(plan({ colorDomain: { min: -1 } }), "North", "Web").share
+    ).toBeCloseTo(2 / 6);
   });
 
   it("selects a whole row or column from its label, and clears it on a second click", () => {

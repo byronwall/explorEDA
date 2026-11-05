@@ -101,6 +101,28 @@ describe("Timeline", () => {
     );
   });
 
+  it("leaves a row that ends before it starts out of the window, as the chart does", () => {
+    const data = [...rows, { room: "C", start: at(13), end: at(12) }];
+    const column = (field: string) =>
+      Object.fromEntries(
+        data.map((row, id) => [id, row[field as keyof typeof row]])
+      );
+    const matches = timelineDefinition.getFilterFunction(
+      {
+        ...settings,
+        filters: [
+          { type: "date-range", field: "start", max: at(15) },
+          { type: "date-range", field: "end", min: at(12) },
+        ],
+      },
+      column
+    );
+    expect(data.map((_, id) => id).filter(matches)).toEqual([1, 2, 3, 4]);
+    // Without a window the chart selects nothing, so every row passes.
+    const none = timelineDefinition.getFilterFunction(settings, column);
+    expect(data.map((_, id) => id).filter(none)).toEqual([0, 1, 2, 3, 4, 5]);
+  });
+
   it("selects one row on a bar click and traces it", () => {
     const { container } = renderTimeline();
     const open = container.querySelector("[data-interval='3']")!;

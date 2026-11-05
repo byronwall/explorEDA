@@ -32,17 +32,11 @@ import type { TraceSource } from "../trace/traceTypes";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import type { DonutSettings } from "./definition";
 import type { DonutTrace } from "./DonutTraceBody";
-import { planDonut, type DonutSlice } from "./donutPlan";
+import { planDonut, sharePercents, type DonutSlice } from "./donutPlan";
 
 const OTHER_COLOR = "var(--muted-foreground)";
 /** Below this width the legend moves under the ring. */
 const SIDE_LEGEND_MIN_WIDTH = 420;
-
-const percent = (share: number) =>
-  share.toLocaleString("en-US", {
-    style: "percent",
-    maximumFractionDigits: share > 0 && share < 0.01 ? 1 : 0,
-  });
 
 export function Donut({
   settings,
@@ -140,6 +134,10 @@ export function Donut({
     ? `Sum of ${getFieldLabel(measureField)}`
     : "Count of rows";
   const fieldLabel = getFieldLabel(settings.field);
+  // Rounded together, so the legend's percentages add up to 100.
+  const percents = sharePercents(plan.slices.map((slice) => slice.share));
+  const percent = (slice: DonutSlice) =>
+    percents[plan.slices.indexOf(slice)] ?? "";
   const sliceLabel = (slice: DonutSlice) =>
     slice.key === "__other" || slice.value == null
       ? slice.label
@@ -221,7 +219,7 @@ export function Donut({
           measure: measureName,
           amountText: format(slice.amount),
           totalText: format(plan.total),
-          shareText: percent(slice.share),
+          shareText: percent(slice),
           memberTexts: (slice.members ?? []).map((member) =>
             format(member.amount)
           ),
@@ -332,7 +330,7 @@ export function Donut({
           </span>
           <span className="eda-readout-item">
             <span>Share</span>
-            <b>{percent(hoveredSlice.share)}</b>
+            <b>{percent(hoveredSlice)}</b>
           </span>
         </ChartReadout>
       )}
@@ -356,7 +354,7 @@ export function Donut({
                   d={sliceArc(item) ?? undefined}
                   role="button"
                   tabIndex={0}
-                  aria-label={`${sliceLabel(slice)}: ${format(slice.amount)}, ${percent(slice.share)}`}
+                  aria-label={`${sliceLabel(slice)}: ${format(slice.amount)}, ${percent(slice)}`}
                   aria-pressed={selected}
                   className="chart-mark eda-donut-slice cursor-pointer"
                   data-selected={selected || undefined}
@@ -408,7 +406,7 @@ export function Donut({
                     {sliceLabel(slice)}
                   </span>
                   <span className="eda-donut-legend-share">
-                    {percent(slice.share)}
+                    {percent(slice)}
                   </span>
                 </button>
               </li>
