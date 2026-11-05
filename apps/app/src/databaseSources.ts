@@ -9,7 +9,7 @@ export function querySources(project: AnalysisProject, queryId: string) {
   const query = project.queries.find((item) => item.id === queryId);
   const sources = new Set<string>();
   for (const step of query?.steps ?? []) {
-    if (step.kind === "source") {
+    if (step.kind === "source" || step.kind === "append") {
       sources.add(step.sourceId);
     } else if (step.kind === "lookup" || step.kind === "expand") {
       const relationship = project.relationships.find(

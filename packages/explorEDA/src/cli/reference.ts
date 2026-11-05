@@ -64,6 +64,10 @@ Relationships and queries:
     aggregate @id [by=field,field] {  one row per group; a measure per line:
       sum @total orders.amount        also average, max, min, count @n [field]
     }
+    append catalog [field=channel]    another source's rows under these; its
+                                      fields fill the first source's fields of
+                                      the same name (web.paid), and field=
+                                      (default source) holds each row's source
   param @id ["Name"] type [required] [pick=source[.labelField]]
   Every source can be charted on its own: it gets a query of its name.
 

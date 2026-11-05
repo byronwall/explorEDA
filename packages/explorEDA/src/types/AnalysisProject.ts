@@ -102,13 +102,28 @@ export interface AggregateStep {
   measures: AggregateMeasure[];
 }
 
+/**
+ * Stacks another source's rows under the rows so far. Its fields fill the
+ * fields of the same name from the first source; `field` names each row's
+ * source.
+ */
+export interface AppendStep {
+  id: string;
+  kind: "append";
+  inputStepId: string;
+  sourceId: string;
+  /** The field that holds each row's source ID, such as `source`. */
+  field: string;
+}
+
 export type AnalysisStep =
   | SourceStep
   | LookupStep
   | ExpandStep
   | CalculateStep
   | FilterStep
-  | AggregateStep;
+  | AggregateStep
+  | AppendStep;
 
 export interface AnalysisQuery {
   id: string;

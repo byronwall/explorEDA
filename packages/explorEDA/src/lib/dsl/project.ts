@@ -92,6 +92,8 @@ const CARDINALITIES = new Set([
   "many-to-many",
 ]);
 const DEFAULT_CARDINALITY = "many-to-one";
+/** The field an `append` step fills with each row's source. */
+const DEFAULT_APPEND_FIELD = "source";
 const OPERATORS: Record<string, AnalysisFilterOperator> = {
   "=": "eq",
   "!=": "neq",
@@ -227,6 +229,7 @@ function relationshipLine(relationship: RelationshipDefinition): string {
 function stepDefaultId(step: AnalysisStep): string | undefined {
   switch (step.kind) {
     case "source":
+    case "append":
       return step.sourceId;
     case "lookup":
     case "expand":
@@ -328,6 +331,18 @@ function stepLines(step: AnalysisStep, previous?: AnalysisStep): string[] {
         ].join(" "),
       ];
     }
+    case "append":
+      return [
+        [
+          "append",
+          ...id,
+          text(step.sourceId),
+          ...(step.field === DEFAULT_APPEND_FIELD
+            ? []
+            : [`field=${encodeScalar(step.field)}`]),
+          ...input,
+        ].join(" "),
+      ];
     case "aggregate":
       return block(
         ["aggregate", ...id].join(" "),
@@ -745,6 +760,23 @@ function compileStep(
       }
       return { id: explicitId ?? sourceId, kind: "source", sourceId };
     }
+    case "append": {
+      checkPairs(declaration, ["field", "from"], report);
+      const sourceId = parts[0]?.text;
+      if (!sourceId) {
+        return fail(
+          "An append step names a source.",
+          "Write it as append catalog-orders field=channel."
+        );
+      }
+      return {
+        id: explicitId ?? sourceId,
+        kind: "append",
+        inputStepId,
+        sourceId,
+        field: single(declaration, "field") ?? DEFAULT_APPEND_FIELD,
+      };
+    }
     case "lookup":
     case "expand": {
       const expand = declaration.keyword === "expand";
@@ -869,7 +901,7 @@ function compileStep(
     default:
       return fail(
         `${declaration.keyword} isn't a query step.`,
-        "Use source, lookup, expand, calc, filter, or aggregate."
+        "Use source, lookup, expand, calc, filter, aggregate, or append."
       );
   }
 }
@@ -1035,7 +1067,10 @@ function checkReferences(
         );
       }
       ids.add(step.id);
-      if (step.kind === "source" && !sources.has(step.sourceId)) {
+      if (
+        (step.kind === "source" || step.kind === "append") &&
+        !sources.has(step.sourceId)
+      ) {
         report(
           where(step),
           `No source is named ${step.sourceId}.`,

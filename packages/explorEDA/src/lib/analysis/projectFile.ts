@@ -348,6 +348,7 @@ export function validateAnalysisProjectFile(value: AnalysisProjectFile): void {
           "calculate",
           "filter",
           "aggregate",
+          "append",
         ].includes(step.kind)
       )
         throw new Error(`Step ${id} has an unsupported operation`);
@@ -456,6 +457,13 @@ export function validateAnalysisProjectFile(value: AnalysisProjectFile): void {
             throw new Error(
               `Filter ${step.id} has an invalid parameter reference`
             );
+        } else if (step.kind === "append") {
+          if (
+            typeof step.field !== "string" ||
+            !value.project.sources.some((item) => item.id === step.sourceId)
+          )
+            throw new Error(`Append ${step.id} has invalid fields`);
+          if (!fields.has(step.field)) fields.set(step.field, {});
         } else {
           if (!Array.isArray(step.groupBy) || !Array.isArray(step.measures))
             throw new Error(`Aggregate ${step.id} has invalid fields`);
@@ -517,6 +525,7 @@ export function validateAnalysisProjectFile(value: AnalysisProjectFile): void {
           "calculate",
           "filter",
           "aggregate",
+          "append",
         ].includes(step.kind)
       )
         throw new Error(
@@ -524,7 +533,10 @@ export function validateAnalysisProjectFile(value: AnalysisProjectFile): void {
         );
       if (step.kind !== "source" && !ids.has(step.inputStepId))
         throw new Error(`Step ${step.id} references a missing input`);
-      if (step.kind === "source" && !sourceIds.has(step.sourceId))
+      if (
+        (step.kind === "source" || step.kind === "append") &&
+        !sourceIds.has(step.sourceId)
+      )
         throw new Error(`Step ${step.id} references a missing source`);
       if (
         (step.kind === "lookup" || step.kind === "expand") &&

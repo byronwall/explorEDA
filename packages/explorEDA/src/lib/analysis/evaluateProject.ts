@@ -20,6 +20,7 @@ import type {
   AnalysisStage,
   AnalysisStep,
   AggregateStep,
+  AppendStep,
   CalculateStep,
   FilterStep,
   LookupStep,
@@ -437,6 +438,83 @@ function expandedFrame(
   };
 }
 
+/**
+ * The input's rows, then the appended source's rows under them. A field
+ * from the input's first source takes the appended row's field of the same
+ * name; `step.field` says which source each row came from.
+ */
+function appendFrame(
+  step: AppendStep,
+  input: Frame,
+  project: AnalysisProject,
+  tables: Record<string, readonly AnalysisSourceRow[]>,
+  diagnostics: AnalysisDiagnostic[]
+): Frame {
+  const source = project.sources.find((item) => item.id === step.sourceId);
+  const table = tables[step.sourceId];
+  const labeled = input.fields.some((field) => field.id === step.field);
+  const fields = labeled
+    ? input.fields
+    : [
+        ...input.fields,
+        {
+          id: step.field,
+          name: step.field.charAt(0).toUpperCase() + step.field.slice(1),
+          type: "string" as const,
+          origin: { stepId: step.id },
+        },
+      ];
+  // An earlier append already labeled the rows so far.
+  const rows = labeled
+    ? input.rows
+    : input.rows.map((row) => {
+        const values = {
+          ...row.values,
+          [step.field]: row.sourceRows[0]?.sourceId,
+        };
+        return { ...row, values, data: values };
+      });
+  if (!source || !table) {
+    diagnostics.push({
+      code: "missing-source",
+      message: `Source ${step.sourceId} is unavailable`,
+      stepId: step.id,
+      sourceId: step.sourceId,
+    });
+    return { rows, fields };
+  }
+  const first = input.fields.find(
+    (field) => field.origin && "sourceId" in field.origin
+  )?.origin;
+  const base = first && "sourceId" in first ? first.sourceId : undefined;
+  const own = new Set(source.fields.map((field) => field.id));
+  const filled = fields.flatMap((field) =>
+    field.origin &&
+    "sourceId" in field.origin &&
+    field.origin.sourceId === base &&
+    own.has(field.origin.fieldId)
+      ? [[field.id, field.origin.fieldId] as const]
+      : []
+  );
+  const refs = sourceReferences(source, table, step.id, diagnostics);
+  const appended = table.map((data, index) => {
+    const values: Record<string, AnalysisScalar> = Object.fromEntries(
+      fields.map((field) => [field.id, undefined])
+    );
+    for (const [id, fieldId] of filled) values[id] = data[fieldId];
+    values[step.field] = source.id;
+    const ref = refs[index]!;
+    return {
+      key: ref.rowKey,
+      values,
+      data: values,
+      sourceRows: [ref],
+      contributors: [ref],
+    };
+  });
+  return { rows: [...rows, ...appended], fields };
+}
+
 function calculateFrame(
   step: CalculateStep,
   input: Frame,
@@ -755,7 +833,7 @@ function validateQuery(project: AnalysisProject, query: AnalysisQuery) {
   visit(query.outputStepId);
   for (const step of query.steps)
     if (
-      step.kind === "source" &&
+      (step.kind === "source" || step.kind === "append") &&
       !project.sources.some((source) => source.id === step.sourceId)
     )
       throw new Error(`Unknown source ${step.sourceId}`);
@@ -841,6 +919,9 @@ export function evaluateAnalysisQuery(
       case "aggregate":
         result = aggregateFrame(step, input!, diagnostics);
         break;
+      case "append":
+        result = appendFrame(step, input!, project, tables, diagnostics);
+        break;
     }
     const inputCount = input?.rows.length ?? result.rows.length;
     const previousUnit =
@@ -894,8 +975,14 @@ export function evaluateAnalysisQuery(
   const stepIds = new Set(stages.map((stage) => stage.stepId));
   const sourceIds = new Set(
     query.steps
-      .filter((step) => stepIds.has(step.id) && step.kind === "source")
-      .map((step) => (step.kind === "source" ? step.sourceId : ""))
+      .filter(
+        (step) =>
+          stepIds.has(step.id) &&
+          (step.kind === "source" || step.kind === "append")
+      )
+      .map((step) =>
+        step.kind === "source" || step.kind === "append" ? step.sourceId : ""
+      )
   );
   const relationshipIds = new Set(
     query.steps
