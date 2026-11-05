@@ -108,6 +108,18 @@ describe("planSankey", () => {
     ]);
   });
 
+  it("keeps one unit's height and each value's color while other charts filter", () => {
+    const all = plan();
+    const filtered = plan({}, [0, 1]);
+    expect(filtered.unitHeight).toBe(all.unitHeight);
+    const color = (result: typeof all, label: string) =>
+      result.nodes.find((node) => node.label === label)!.color;
+    expect(color(filtered, "B")).toBe(color(all, "B"));
+    expect(plan({ scaleTo: "filtered" }, [0, 1]).unitHeight).toBeGreaterThan(
+      all.unitHeight
+    );
+  });
+
   it("sums a measure and leaves out negative and non-numeric values with reasons", () => {
     const result = plan({ aggregation: "sum", measureField: "amount" });
     expect(result.totalWeight).toBe(17);

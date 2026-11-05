@@ -191,10 +191,16 @@ function ScatterPoints({
     fits.plan,
     fits.summary,
   ]);
-  const marginals = useMemo(
-    () => planMarginals(settings, plan),
-    [settings, plan]
-  );
+  const marginals = useMemo(() => {
+    const facet = snapshot.facetIds && new Set(snapshot.facetIds);
+    return planMarginals(settings, plan, {
+      ids: facet
+        ? snapshot.allIds.filter((id) => facet.has(id))
+        : snapshot.allIds,
+      x: snapshot.xData,
+      y: snapshot.yData,
+    });
+  }, [settings, plan, snapshot]);
   const [hoveredMarginalId, setHoveredMarginalId] = useState<string>();
   const hex = useMemo(
     () => planHexbins(settings, snapshot, plan),

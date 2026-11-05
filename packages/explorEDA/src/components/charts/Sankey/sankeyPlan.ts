@@ -92,6 +92,8 @@ export interface SankeyStage {
 
 export interface SankeyPlan {
   revision: string;
+  /** Pixels for one unit of flow. */
+  unitHeight: number;
   width: number;
   height: number;
   margin: { top: number; right: number; bottom: number; left: number };
@@ -146,15 +148,16 @@ function measureReason(value: datum) {
   return Number(value) < 0 ? "Negative values cannot be a flow" : undefined;
 }
 
-export function planSankey({
-  settings,
-  width,
-  height,
-  snapshot,
-  getFieldLabel,
-  formatFieldValue,
-  unit = "rows",
-}: SankeyPlanInput): SankeyPlan {
+export function planSankey(input: SankeyPlanInput): SankeyPlan {
+  const {
+    settings,
+    width,
+    height,
+    snapshot,
+    getFieldLabel,
+    formatFieldValue,
+    unit = "rows",
+  } = input;
   const stages = settings.stages.filter(Boolean);
   const sum = settings.aggregation === "sum" && Boolean(settings.measureField);
   const showMissing = settings.missingStages === "show";
@@ -420,7 +423,18 @@ export function planSankey({
       Infinity
     )
   );
-  const k = Number.isFinite(scale) ? scale : 0;
+  // Every row's flow sets the height of one unit, so filtered flows thin
+  // instead of growing to fill the plot, unless the chart fits the filtered rows.
+  const stableScale =
+    settings.scaleTo === "filtered" || snapshot.liveIds === snapshot.allIds
+      ? Infinity
+      : planSankey({
+          ...input,
+          settings: { ...settings, scaleTo: "filtered", filters: [] },
+          snapshot: { ...snapshot, liveIds: snapshot.allIds },
+        }).unitHeight || Infinity;
+  const fit = Math.min(scale, stableScale);
+  const k = Number.isFinite(fit) ? fit : 0;
   // A node with rows but no usable measure still needs a visible sliver.
   const minHeight = 1;
   for (const stage of stagePlans) {
@@ -445,10 +459,11 @@ export function planSankey({
     : null;
   const colorIndex = new Map<string, string>();
   for (const stage of stagePlans) {
-    stage.nodes.forEach((node, index) => {
+    stage.nodes.forEach((node) => {
       const fallback =
         snapshot.themeColors?.categorical ?? defaultCategoricalColors;
-      let color = fallback[index % fallback.length]!;
+      // Rank over every row, so a value keeps its color while others filter out.
+      let color = fallback[rankOf(node) % fallback.length]!;
       if (node.kind !== "value") {
         color = "#8a94a3";
       } else if (stage.index === 0 && resolve) {
@@ -559,6 +574,7 @@ export function planSankey({
       count,
     })),
     liveCount: snapshot.liveIds.length,
+    unitHeight: k,
     flowLegend:
       settings.flowColor === "first"
         ? legendNodes.map((node) => ({

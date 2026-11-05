@@ -493,6 +493,35 @@ function planDiagonalBars(
   return { bars, barIndex };
 }
 
+/** The tallest diagonal bar over every source row. */
+function allRowMaxBar(field: MatrixField, snapshot: MatrixSnapshot) {
+  const data = snapshot.columns[field.field] ?? {};
+  const axis = field.axis;
+  const counts = new Map<number, number>();
+  const add = (index: number) =>
+    counts.set(index, (counts.get(index) ?? 0) + 1);
+  if (axis.kind === "band" && field.bands) {
+    for (const id of snapshot.allIds) {
+      const index = bandOf(field.bands, data[id]);
+      if (index >= 0) add(index);
+    }
+  } else if (axis.kind === "numeric") {
+    const [low, high] = axis.bounds;
+    const width = (high > low ? high - low : 1) / HISTOGRAM_BINS;
+    for (const id of snapshot.allIds) {
+      const value = continuousValue(field.kind, data[id]);
+      if (value === undefined) continue;
+      add(
+        Math.min(
+          HISTOGRAM_BINS - 1,
+          Math.max(0, Math.floor((value - low) / width))
+        )
+      );
+    }
+  }
+  return Math.max(0, ...counts.values());
+}
+
 /** A continuous filter between two values: a number range or a date range. */
 export function rangeFilter(
   field: MatrixField,
@@ -662,7 +691,13 @@ export function planMatrixLayout({
           const { bars, barIndex } = planDiagonalBars(a, snapshot);
           cell.bars = bars;
           cell.barIndex = barIndex;
-          cell.maxBar = Math.max(1, ...cell.bars.map((bar) => bar.total));
+          // The tallest bar over every row sets the height, so bars shrink
+          // instead of rescaling while other charts filter.
+          cell.maxBar = Math.max(
+            1,
+            ...cell.bars.map((bar) => bar.total),
+            settings.scaleTo === "filtered" ? 0 : allRowMaxBar(a, snapshot)
+          );
         }
       } else {
         for (let i = 0; i < liveIds.length; i++) {
