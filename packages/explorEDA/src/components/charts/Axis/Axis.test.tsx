@@ -208,7 +208,7 @@ describe("planAxes", () => {
         format: String,
       },
     });
-    expect(plan.y.ticks.shown.length).toBeLessThan(20);
+    expect(plan.y.ticks.shown.length).toBeLessThanOrEqual(20);
     expect(plan.y.ticks.shown[0]).toBe("c0");
   });
 

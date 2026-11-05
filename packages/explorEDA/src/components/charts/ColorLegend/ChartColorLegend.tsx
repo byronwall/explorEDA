@@ -41,6 +41,33 @@ export function inScaleOrder<T>(
     .map(({ item }) => item);
 }
 
+/**
+ * How many legend items fit on one line of `room` pixels, from their label
+ * text, when a "+N more" disclosure follows the ones that do not. Widths are
+ * estimates from the legend's type sizes; none fits when the room is gone.
+ */
+export function legendItemsThatFit(
+  labels: readonly string[],
+  countWidth: number,
+  room: number
+): number {
+  const itemWidth = (label: string) =>
+    // Padding, swatch, two gaps, the label (clamped by its max width), the
+    // count column, and the gap to the next item.
+    10 + 8 + 10 + Math.min(150, label.length * 6.6) + countWidth * 6 + 4;
+  const total = labels.reduce((sum, label) => sum + itemWidth(label), 0);
+  if (total <= room) return labels.length;
+  const more = 64;
+  let used = more;
+  let fits = 0;
+  for (const label of labels) {
+    if (used + itemWidth(label) > room) break;
+    used += itemWidth(label);
+    fits++;
+  }
+  return fits;
+}
+
 interface ChartColorLegendProps {
   settings: ChartSettings;
   width: number;
@@ -228,7 +255,18 @@ function ChartColorLegendBody({
   const inspectLegend = (id: string) => traceApi?.inspect(owner, "legend", id);
 
   if (!scale) return null;
-  const colorScale = (
+  const countWidth = liveIds.length.toLocaleString().length;
+  // The legend has one line. Items that fit stay on it; the rest sit behind
+  // a "+N more" disclosure, so no value is hidden without a sign.
+  const shownOnLine =
+    scale.type === "categorical"
+      ? legendItemsThatFit(
+          shownCategories.map((value) => labelFor(value)),
+          countWidth,
+          width - 24 - getFieldLabel(field).length * 7 - 8
+        )
+      : shownCategories.length;
+  const colorScale = (categories: datum[]) => (
     <ColorScale
       scale={scale}
       width={legendWidth}
@@ -241,8 +279,8 @@ function ChartColorLegendBody({
           ? new Map(plannedItems.map((item) => [item.id, item.count]))
           : counts
       }
-      categories={shownCategories}
-      countWidth={liveIds.length.toLocaleString().length}
+      categories={categories}
+      countWidth={countWidth}
       selected={selected}
       formatValue={labelFor}
       onToggle={(value) => {
@@ -302,10 +340,22 @@ function ChartColorLegendBody({
       {scale.type === "categorical" && shownCategories.length > 8 ? (
         <details className="eda-legend-disclosure">
           <summary>Show {shownCategories.length} values</summary>
-          <div className="eda-legend-disclosure-content">{colorScale}</div>
+          <div className="eda-legend-disclosure-content">
+            {colorScale(shownCategories)}
+          </div>
         </details>
+      ) : shownOnLine < shownCategories.length ? (
+        <>
+          {colorScale(shownCategories.slice(0, shownOnLine))}
+          <details className="eda-legend-disclosure is-rest">
+            <summary>+{shownCategories.length - shownOnLine} more</summary>
+            <div className="eda-legend-disclosure-content">
+              {colorScale(shownCategories.slice(shownOnLine))}
+            </div>
+          </details>
+        </>
       ) : (
-        colorScale
+        colorScale(shownCategories)
       )}
     </div>
   );

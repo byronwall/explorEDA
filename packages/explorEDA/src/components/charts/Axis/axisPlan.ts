@@ -429,11 +429,9 @@ function planAxis(
           )
         )
       : axis === "y" && band
-        ? // Stacked category labels need a line of height each.
-          Math.max(
-            1,
-            Math.ceil((tickFontSize * 1.2 + 2) / Math.max(1, scale.step()))
-          )
+        ? // Stacked category labels overlap once a row is shorter than the
+          // type; a row chart packs rows to its height and keeps every name.
+          Math.max(1, Math.ceil(tickFontSize / Math.max(1, scale.step())))
         : 1;
   const shown = band
     ? candidates.filter((_, index) => index % stride === 0)
