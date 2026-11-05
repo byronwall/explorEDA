@@ -5,11 +5,13 @@ import { exampleGroups } from "../demos/exampleIndex";
 import { examples } from "../demos/examples";
 import { SectionHeading } from "../landing/SectionHeading";
 import { SiteNav } from "../landing/SiteNav";
+import { usePageTitle } from "../pageTitle";
 import { ExampleCardGrid } from "./ExampleCard";
 
 /** Every example on one page, grouped by kind, with a jump link to each group. */
 export function ExamplesIndex() {
   const { hash } = useLocation();
+  usePageTitle("All examples");
   useEffect(() => {
     const target = hash ? document.getElementById(hash.slice(1)) : null;
     if (target) {
