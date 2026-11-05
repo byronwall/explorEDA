@@ -380,7 +380,7 @@ it("says why a saved Top N folds rows in a short chart", () => {
   );
   expect(
     screen.getByText(
-      /^Top 30 needs a taller chart: top \d+ shown, \d+ in Other categories/
+      /^Top 30 needs a taller chart · \d+ smaller categories in Other categories/
     )
   ).toBeTruthy();
 });
