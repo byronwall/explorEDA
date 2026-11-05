@@ -343,6 +343,8 @@ export const CHART_SETTINGS: Readonly<
   scatter: {
     xField: "Field on the X axis.",
     yField: "Field on the Y axis.",
+    labelField:
+      "Field whose value labels each point. Labels that would cover another label or point are left out; past 500 points, none show.",
     field: "Not read by scatter plots; the axes use xField and yField.",
     display:
       "Points, rectangular density bins, hexagon bins, or smoothed density contours.",

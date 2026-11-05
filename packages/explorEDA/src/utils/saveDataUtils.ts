@@ -586,6 +586,9 @@ function isChart(value: unknown): boolean {
         (value.sizeField === undefined ||
           (typeof value.sizeField === "string" &&
             value.sizeField.length > 0)) &&
+        (value.labelField === undefined ||
+          (typeof value.labelField === "string" &&
+            value.labelField.length > 0)) &&
         (value.maxBubbleRadius === undefined ||
           (isFiniteNumber(value.maxBubbleRadius) &&
             value.maxBubbleRadius >= 6 &&

@@ -112,6 +112,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "field",
     "filters",
     "hexbin",
+    "labelField",
     "layout",
     "localFilters",
     "scaleTo",

@@ -345,10 +345,12 @@ row Channel group=byChannel topN=2`,
     const { settings, diagnostics } = compileDocument(
       `group @margin sum(Revenue) by=Channel denominatorField=Cost
 row Channel group=margin valueFormat=plain valueDecimals=2
-bar Channel share=true`,
+bar Channel share=true
+scatter x=Revenue y=Cost labelField=Channel`,
       { rows }
     );
     expect(diagnostics).toEqual([]);
+    expect(settings.charts[2]).toMatchObject({ labelField: "Channel" });
     expect(settings.aggregates?.[0]).toMatchObject({
       aggregation: "sum",
       measureField: "Revenue",

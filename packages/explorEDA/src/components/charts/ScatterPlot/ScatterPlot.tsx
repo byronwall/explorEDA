@@ -34,6 +34,8 @@ import {
   type MarginalTrace,
 } from "./marginalPlan";
 import { useScatterData } from "./useScatterData";
+import { useDataLayer } from "@/providers/DataLayerProvider";
+import { POINT_LABEL_SIZE, placePointLabels } from "./pointLabels";
 import { ChartReadout } from "../ChartReadout";
 import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import {
@@ -115,6 +117,43 @@ function ScatterPoints({
     [settings, snapshot, width, height, typography]
   );
   const fits = useScatterFits(settings, snapshot, plan);
+  const getColumnData = useDataLayer((s) => s.getColumnData);
+  const formatFieldValue = useDataLayer((s) => s.formatFieldValue);
+  const nonce = useDataLayer((s) => s.nonce);
+  const pointLabels = useMemo(() => {
+    void nonce;
+    const field = settings.labelField;
+    if (
+      !field ||
+      settings.display === "hexbin" ||
+      settings.display === "contour"
+    )
+      return [];
+    const column = getColumnData(field);
+    return placePointLabels(
+      plan.points.map((point) => {
+        const value = column[point.sourceId as number];
+        return {
+          id: point.id,
+          x: point.x,
+          y: point.y,
+          r: point.radius,
+          text: value == null ? "" : formatFieldValue(field, value),
+        };
+      }),
+      (text) => typography.measure(text, POINT_LABEL_SIZE),
+      plan.plotWidth,
+      plan.plotHeight
+    );
+  }, [
+    settings.labelField,
+    settings.display,
+    plan,
+    getColumnData,
+    formatFieldValue,
+    typography,
+    nonce,
+  ]);
   const connections = useMemo(
     () => planConnections(settings, snapshot, plan),
     [settings, snapshot, plan]
@@ -577,6 +616,7 @@ function ScatterPoints({
             }}
             annotations={annotationSlot(settings, annotationFrame)}
             fitMarks={fits.marks}
+            pointLabels={pointLabels}
             bubblePoints={plan.size ? plan.points : undefined}
             surface={
               surfaceMode && (
