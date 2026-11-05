@@ -1,4 +1,16 @@
-import { isAdditiveAggregation } from "@/lib/aggregates";
+import {
+  SMALL_SAMPLE,
+  isAdditiveSpec,
+  poolAggregateRows,
+  rowsWithoutMeasure,
+  type AggregateResult,
+} from "@/lib/aggregates";
+import {
+  rateIsFraction,
+  resolveValueFormat,
+  significant,
+  valueFormatters,
+} from "../valueFormat";
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import {
   annotationSlot,
@@ -47,11 +59,6 @@ import {
 } from "../trace/ChartTraceScope";
 import type { TraceSource } from "../trace/traceTypes";
 import type { RowTrace } from "./RowTraceBody";
-import {
-  poolAggregateRows,
-  rowsWithoutMeasure,
-  type AggregateResult,
-} from "@/lib/aggregates";
 import { ChartReadout } from "../ChartReadout";
 import {
   ChartStatusLine,
@@ -142,20 +149,40 @@ export function RowChart({
   ]);
   const measureField =
     spec && spec.aggregation !== "count" ? spec.measureField : undefined;
+  const rate = summarized && spec?.denominatorField ? spec : undefined;
+  // Shares divide counts or sums by their total; rates and averages have none.
+  const share = Boolean(settings.share) && (!spec || isAdditiveSpec(spec));
+  const valueFormat = resolveValueFormat(
+    { ...settings, share },
+    Boolean(rate && allSummary && rateIsFraction(allSummary.rows))
+  );
+  const formatters = valueFormat
+    ? valueFormatters(valueFormat, settings.valueDecimals)
+    : undefined;
+  // Rates and averages keep 3 significant digits, so 0.685 and 0.694 differ.
+  const precise =
+    rate ||
+    (spec?.aggregation === "average" &&
+      measureField &&
+      !hasFieldDisplayFormat(fieldSettings[measureField]));
   const formatMeasure = (value: number | undefined) =>
     value === undefined
       ? "—"
-      : measureField
-        ? formatValue(
-            measureField,
-            value,
-            // Zero reads as $0 beside $20K, not $0.00, as on vertical bars.
-            value === 0
-              ? { ...fieldSettings[measureField], precision: 0 }
-              : fieldSettings[measureField],
-            { compact: true }
-          )
-        : value.toLocaleString();
+      : formatters
+        ? formatters.label(value)
+        : precise
+          ? significant(value)
+          : measureField
+            ? formatValue(
+                measureField,
+                value,
+                // Zero reads as $0 beside $20K, not $0.00, as on vertical bars.
+                value === 0
+                  ? { ...fieldSettings[measureField], precision: 0 }
+                  : fieldSettings[measureField],
+                { compact: true }
+              )
+            : value.toLocaleString();
   const valueText = (count: number | undefined, rows: number) =>
     count === undefined
       ? rows === 0
@@ -166,7 +193,9 @@ export function RowChart({
     ? `${
         spec.aggregation === "count"
           ? "Count of rows"
-          : `${spec.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(spec.measureField ?? "")}`
+          : spec.denominatorField
+            ? `Sum of ${getFieldLabel(spec.measureField ?? "")} ÷ sum of ${getFieldLabel(spec.denominatorField)}`
+            : `${spec.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(spec.measureField ?? "")}`
       }${spec.entityField ? `, once per ${getFieldLabel(spec.entityField)}` : ""}`
     : "";
 
@@ -258,7 +287,7 @@ export function RowChart({
     settings.localFilters,
     allIds,
   ]);
-  const displayCounts = useMemo(
+  const counted = useMemo(
     () => [
       ...plan.visible.map((item) => ({
         ...item,
@@ -269,6 +298,7 @@ export function RowChart({
             : categoryLabel(item.value),
         count: summarized ? item.current : item.sourceIds.length,
         rows: item.sourceIds.length,
+        n: item.live?.sampleSize,
         other: false,
         members: [item],
       })),
@@ -291,6 +321,7 @@ export function RowChart({
                 (sum, item) => sum + item.sourceIds.length,
                 0
               ),
+              n: undefined,
               other: true,
               members: plan.other,
             },
@@ -299,6 +330,21 @@ export function RowChart({
     ],
     [plan, summarized, fieldSettings, settings.field, formatFieldValue]
   );
+  // A share divides each value by the sum over every category, Other too.
+  const displayCounts = useMemo(() => {
+    if (!share) return counted;
+    const sum = (key: "count" | "total") =>
+      counted.reduce((total, item) => total + (item[key] ?? 0), 0);
+    const live = sum("count");
+    const all = sum("total");
+    return counted.map((item) => ({
+      ...item,
+      count:
+        item.count === undefined || live === 0 ? undefined : item.count / live,
+      total:
+        item.total === undefined || all === 0 ? undefined : item.total / all,
+    }));
+  }, [counted, share]);
   const source = useMemo((): TraceSource => {
     const currentRevision = `${revision.split(":")[0]}:${settings.field}:${settings.aggregateId ?? ""}:${chartHeight}:${plan.other.length}:${plan.categories.map((item) => item.sourceIds.join(",")).join(";")}`;
     return {
@@ -398,12 +444,21 @@ export function RowChart({
   const themeColors = useThemeColors();
   const yLabels = displayCounts.map((d) => d.label);
   const axisFields = getChartAxisFields(settings);
-  const xAxisLabel =
-    summarized && spec && !settings.xAxisLabel
-      ? measureField
-        ? getFieldLabel(measureField)
-        : "Count"
-      : getChartAxisLabel(axisFields.x, settings.xAxisLabel, getFieldLabel);
+  const measureLabel =
+    summarized && spec
+      ? spec.denominatorField
+        ? `${getFieldLabel(spec.measureField ?? "")} ÷ ${getFieldLabel(spec.denominatorField)}`
+        : measureField
+          ? getFieldLabel(measureField)
+          : "Count"
+      : "Rows";
+  const xAxisLabel = settings.xAxisLabel
+    ? settings.xAxisLabel
+    : share
+      ? `Share of ${measureLabel === "Count" ? "rows" : measureLabel.toLowerCase()}`
+      : summarized && spec
+        ? measureLabel
+        : getChartAxisLabel(axisFields.x, settings.xAxisLabel, getFieldLabel);
   const tickSize = settings.yAxis.tickFontSize ?? typography.tickSize;
   // Category names claim their measured width, never less than the estimate.
   const requestedLabelMargin = Math.max(
@@ -515,6 +570,10 @@ export function RowChart({
   );
   const fieldLabel = getFieldLabel(settings.field);
   const hoveredItem = displayCounts.find((item) => item.key === hovered);
+  const hoveredRows = counted.find((item) => item.key === hovered);
+  // A rate or average over a few rows looks as solid as one over many.
+  const small = (n: number | undefined) => n !== undefined && n < SMALL_SAMPLE;
+  const faded = displayCounts.some((item) => small(item.n));
   const liveRows = liveIds.length;
   const leftOut = rowsWithoutMeasure(liveSummary);
   // Other categories hide the tail, so the chart offers to show every one.
@@ -530,6 +589,7 @@ export function RowChart({
       `${leftOut.toLocaleString()} ${leftOut === 1 ? "row" : "rows"} without ${getFieldLabel(liveSummary!.spec.measureField ?? "")} left out`,
     plan.other.length > 0 &&
       `${plan.other.length} smaller categories in Other categories`,
+    faded && `faded: fewer than ${SMALL_SAMPLE} rows`,
     settings.topN && plan.visible.length < settings.topN && plan.other.length
       ? `Top ${settings.topN} needs a taller chart; showing the top ${plan.visible.length}`
       : Boolean(settings.topN) &&
@@ -546,7 +606,7 @@ export function RowChart({
   // filtered count or sum. An average, max, or min, or a value the faint bar would hide,
   // marks it with a tick instead.
   const contextAsTick = (count: number | undefined, total: number) =>
-    (spec !== undefined && !isAdditiveAggregation(spec.aggregation)) ||
+    (spec !== undefined && !isAdditiveSpec(spec)) ||
     !(
       count === undefined ||
       count === 0 ||
@@ -573,6 +633,12 @@ export function RowChart({
                 <span>{spec.name}</span>
                 <b>{valueText(hoveredItem.count, hoveredItem.rows)}</b>
               </span>
+              {hoveredItem.n !== undefined && (
+                <span className="eda-readout-item">
+                  <span>n</span>
+                  <b>{hoveredItem.n.toLocaleString()}</b>
+                </span>
+              )}
               <span className="eda-readout-item">
                 <span>All rows</span>
                 <b>{valueText(hoveredItem.total, 1)}</b>
@@ -586,8 +652,8 @@ export function RowChart({
             <span className="eda-readout-item">
               <span>Rows</span>
               <b>
-                {(hoveredItem.count ?? 0).toLocaleString()} of{" "}
-                {(hoveredItem.total ?? 0).toLocaleString()}
+                {(hoveredRows?.count ?? 0).toLocaleString()} of{" "}
+                {(hoveredRows?.total ?? 0).toLocaleString()}
               </b>
             </span>
           )}
@@ -595,10 +661,13 @@ export function RowChart({
             <span className="eda-readout-item">
               <span>Share</span>
               <b>
-                {((hoveredItem.count ?? 0) / liveRows).toLocaleString("en-US", {
-                  style: "percent",
-                  maximumFractionDigits: 1,
-                })}
+                {((hoveredRows?.count ?? 0) / liveRows).toLocaleString(
+                  "en-US",
+                  {
+                    style: "percent",
+                    maximumFractionDigits: 1,
+                  }
+                )}
               </b>
             </span>
           )}
@@ -649,6 +718,12 @@ export function RowChart({
         })}
         settings={chartSettings}
         onClearPlot={() => updateChart(settings.id, { filters: [] })}
+        xTickFormatter={
+          formatters
+            ? (value) =>
+                typeof value === "number" ? formatters.tick(value) : value
+            : undefined
+        }
         yTickFormatter={(value) =>
           yLabelsByKey.get(String(value)) ?? String(value)
         }
@@ -726,7 +801,7 @@ export function RowChart({
             />
           )}
           {displayCounts.map(
-            ({ key, label, value, count, rows, other, members }) => {
+            ({ key, label, value, count, rows, n, other, members }) => {
               let isFiltered = true;
               if (valueFilter) {
                 isFiltered = members.some((item) =>
@@ -762,7 +837,7 @@ export function RowChart({
                   aria-label={
                     summarized && spec
                       ? `${label}, ${spec.name}: ${valueText(count, rows)}`
-                      : `${label}: ${(count ?? 0).toLocaleString()} rows`
+                      : `${label}: ${rows.toLocaleString()} rows`
                   }
                   aria-pressed={
                     other
@@ -795,7 +870,8 @@ export function RowChart({
                   }`}
                   style={{
                     fill: color,
-                    opacity: valueFilter && !isFiltered ? 0.3 : 1,
+                    opacity:
+                      valueFilter && !isFiltered ? 0.3 : small(n) ? 0.4 : 1,
                   }}
                   onClick={(event) => {
                     if (event.altKey) inspect(key);

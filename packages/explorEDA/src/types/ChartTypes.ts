@@ -4,6 +4,7 @@ import { Filter } from "./FilterTypes";
 import type { ChartAnnotation } from "@/lib/annotations/types";
 
 import { BarChartSettings } from "@/components/charts/BarChart/definition";
+import type { ValueDisplaySettings } from "@/components/charts/valueFormat";
 import { DataTableSettings } from "@/components/charts/DataTable/definition";
 import { MarkdownSettings } from "@/components/charts/Markdown/definition";
 import { PivotTableSettings } from "@/components/charts/PivotTable/definition";
@@ -141,7 +142,9 @@ export interface BaseChartSettings {
   yGridLines: number;
 }
 
-export interface RowChartSettings extends BaseChartSettings {
+export interface RowChartSettings
+  extends BaseChartSettings,
+    ValueDisplaySettings {
   type: "row";
   minRowHeight: number;
   maxRowHeight: number;

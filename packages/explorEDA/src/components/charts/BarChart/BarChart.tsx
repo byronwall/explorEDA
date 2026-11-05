@@ -19,7 +19,11 @@ import {
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { useGetColumnData, useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
-import { rowsWithoutMeasure, type AggregateResult } from "@/lib/aggregates";
+import {
+  SMALL_SAMPLE,
+  rowsWithoutMeasure,
+  type AggregateResult,
+} from "@/lib/aggregates";
 import {
   barAt,
   planBarChart,
@@ -112,14 +116,15 @@ function HoverReadout({
 }) {
   const bar = plan.bars.find((item) => item.id === id);
   if (!bar) return null;
-  const rows = plan.mode === "aggregate" ? bar.row.rowCount : bar.value;
+  const rows =
+    plan.mode === "aggregate" || plan.shared ? bar.row.rowCount : bar.value;
   return (
     <ChartReadout fallbackClassName="eda-chart-readout-inline">
       <span className="eda-readout-item">
         <span>{plan.fieldLabel}</span>
         <b>{barLabel(bar, format, Boolean(plan.histogram))}</b>
       </span>
-      {plan.mode === "aggregate" && (
+      {(plan.mode === "aggregate" || plan.shared) && (
         <span className="eda-readout-item">
           <span>{plan.valueLabel}</span>
           <b>{bar.valueText}</b>
@@ -133,6 +138,12 @@ function HoverReadout({
               maximumFractionDigits: 2,
             })}
           </b>
+        </span>
+      )}
+      {bar.row.sampleSize !== undefined && (
+        <span className="eda-readout-item">
+          <span>n</span>
+          <b>{bar.row.sampleSize.toLocaleString()}</b>
         </span>
       )}
       <span className="eda-readout-item">
@@ -532,7 +543,8 @@ function SingleBarChart({
   const anyDimmed = plan.bars.some((bar) => bar.opacity < 1);
   const rowsOf = (bars: BarMark[]) =>
     bars.reduce(
-      (total, bar) => total + (isAggregate ? bar.row.rowCount : bar.value),
+      (total, bar) =>
+        total + (isAggregate || plan.shared ? bar.row.rowCount : bar.value),
       0
     );
   const rangeFilter = settings.filters.find(
@@ -593,6 +605,8 @@ function SingleBarChart({
         plan.notice,
         leftOut > 0 &&
           `${leftOut.toLocaleString()} ${leftOut === 1 ? "row" : "rows"} without ${getFieldLabel(liveAggregate!.spec.measureField ?? "")} left out`,
+        plan.bars.some((bar) => bar.faded) &&
+          `faded: fewer than ${SMALL_SAMPLE} rows`,
       ];
   const statusHint =
     !selectionText &&
@@ -814,9 +828,10 @@ function SingleBarChart({
         </g>
         <g>
           {plan.bars.map((bar) => {
-            const measureLabel = isAggregate
-              ? bar.valueText
-              : `${bar.value.toLocaleString()} records${bar.total ? ` of ${bar.total.value.toLocaleString()}` : ""}`;
+            const measureLabel =
+              isAggregate || plan.shared
+                ? bar.valueText
+                : `${bar.value.toLocaleString()} records${bar.total ? ` of ${bar.total.value.toLocaleString()}` : ""}`;
             const clickable = selectable || plan.mode === "bin";
             const isHovered = hovered.id === bar.id;
             const outlined =
@@ -841,7 +856,12 @@ function SingleBarChart({
                 className={`chart-mark eda-bar ${clickable ? "cursor-pointer" : ""}`}
                 style={{
                   fill: bar.fill,
-                  opacity: isHovered && !bar.selectedPart ? 1 : bar.opacity,
+                  opacity:
+                    isHovered && !bar.selectedPart
+                      ? 1
+                      : bar.faded
+                        ? Math.min(bar.opacity, 0.4)
+                        : bar.opacity,
                   stroke: outlined
                     ? "var(--foreground)"
                     : isHovered

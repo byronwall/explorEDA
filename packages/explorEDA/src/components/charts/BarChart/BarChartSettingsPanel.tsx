@@ -1,4 +1,5 @@
-import { isAdditiveAggregation } from "@/lib/aggregates";
+import { isAdditiveSpec } from "@/lib/aggregates";
+import { ValueDisplayControls } from "../ValueDisplayControls";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -25,11 +26,27 @@ export function BarChartSettingsPanel({
   const aggregate = useDataLayer((state) =>
     settings.aggregateId ? state.getAggregate(settings.aggregateId) : undefined
   );
-  const additive = !aggregate || isAdditiveAggregation(aggregate.aggregation);
+  const additive = !aggregate || isAdditiveSpec(aggregate);
   const addAggregate = useDataLayer((state) => state.addAggregate);
   const updateAggregate = useDataLayer((state) => state.updateAggregate);
-  const { fieldNames, measureFields, defaultMeasure, aggregateName } =
-    useMeasureFields(aggregate?.measureField);
+  const {
+    fieldNames,
+    measureFields,
+    defaultMeasure,
+    defaultDenominator,
+    aggregateName,
+  } = useMeasureFields(aggregate?.measureField);
+  // Series bars and engineering histograms keep their own value display.
+  const valueControls = !settings.seriesField && (
+    <ValueDisplayControls
+      id="bar-value"
+      settings={settings}
+      shareable={additive && !settings.histogram}
+      onChange={(updates) =>
+        onSettingsChange({ ...settings, ...updates, yAxisLabel: "" })
+      }
+    />
+  );
   const [error, setError] = useState<string>();
   const stacked = Boolean(
     settings.seriesField &&
@@ -169,18 +186,28 @@ export function BarChartSettingsPanel({
     </>
   );
 
-  const createAggregate = (aggregation: AggregateAggregation) => {
+  const createAggregate = (choice: AggregateAggregation | "rate") => {
+    const aggregation = choice === "rate" ? "sum" : choice;
     const measureField = defaultMeasure;
+    const denominatorField =
+      choice === "rate" ? defaultDenominator(measureField) : undefined;
     if (aggregation !== "count" && !measureField) {
-      setError("Sum and average need a numeric measure field.");
+      setError("Sum, average, and rate need a numeric measure field.");
       return;
     }
     try {
       const aggregate = addAggregate({
-        name: aggregateName(aggregation, settings.field, measureField),
+        name: aggregateName(
+          aggregation,
+          settings.field,
+          measureField,
+          undefined,
+          denominatorField
+        ),
         groupField: settings.field,
         aggregation,
         ...(aggregation === "count" ? {} : { measureField }),
+        ...(denominatorField ? { denominatorField } : {}),
       });
       onSettingsChange({
         ...settings,
@@ -211,7 +238,8 @@ export function BarChartSettingsPanel({
           next.aggregation,
           next.groupField,
           next.measureField,
-          next.entityField
+          next.entityField,
+          next.denominatorField
         );
         updateAggregate(settings.aggregateId!, { ...updates, name });
         onSettingsChange({
@@ -222,7 +250,8 @@ export function BarChartSettingsPanel({
               : (next.measureField ?? next.groupField),
           ...(settings.title === aggregate.name ? { title: name } : {}),
           ...(next.aggregation !== aggregate.aggregation ||
-          next.measureField !== aggregate.measureField
+          next.measureField !== aggregate.measureField ||
+          next.denominatorField !== aggregate.denominatorField
             ? { yAxisLabel: "" }
             : {}),
           // A new group field makes the old group selection meaningless.
@@ -262,43 +291,59 @@ export function BarChartSettingsPanel({
           />
 
           <Label htmlFor="bar-operation">Operation</Label>
-          <select
-            id="bar-operation"
-            className="h-9 rounded-md border-input bg-background px-2 text-sm"
-            value={aggregate.aggregation}
-            onChange={(event) => {
-              if (event.target.value === "category") {
-                onSettingsChange({
-                  ...settings,
-                  field: aggregate.groupField,
-                  aggregateId: undefined,
-                  ...(settings.title === aggregate.name ? { title: "" } : {}),
-                });
-                return;
+          <ActionTooltip content="What each bar measures. Rate divides the sum of one field by the sum of another in each group, such as completions ÷ attempts; it never averages row ratios.">
+            <select
+              id="bar-operation"
+              className="h-9 rounded-md border-input bg-background px-2 text-sm"
+              value={
+                aggregate.denominatorField ? "rate" : aggregate.aggregation
               }
-              updateDefinition({
-                aggregation: event.target.value as typeof aggregate.aggregation,
-                ...(event.target.value !== "count" && !aggregate.measureField
-                  ? { measureField: defaultMeasure }
-                  : {}),
-              });
-            }}
-          >
-            {!settings.seriesField && (
-              <option value="category">Category counts / bins</option>
-            )}
-            <option value="count">Count rows</option>
-            <option value="sum" disabled={!measureFields.length}>
-              Sum
-            </option>
-            <option value="average" disabled={!measureFields.length || stacked}>
-              Average
-            </option>
-          </select>
+              onChange={(event) => {
+                if (event.target.value === "category") {
+                  onSettingsChange({
+                    ...settings,
+                    field: aggregate.groupField,
+                    aggregateId: undefined,
+                    ...(settings.title === aggregate.name ? { title: "" } : {}),
+                  });
+                  return;
+                }
+                const value = event.target.value;
+                const measureField = aggregate.measureField ?? defaultMeasure;
+                updateDefinition({
+                  aggregation: (value === "rate"
+                    ? "sum"
+                    : value) as typeof aggregate.aggregation,
+                  ...(value !== "count" ? { measureField } : {}),
+                  denominatorField:
+                    value === "rate"
+                      ? defaultDenominator(measureField)
+                      : undefined,
+                });
+              }}
+            >
+              {!settings.seriesField && (
+                <option value="category">Category counts / bins</option>
+              )}
+              <option value="count">Count rows</option>
+              <option value="sum" disabled={!measureFields.length}>
+                Sum
+              </option>
+              <option
+                value="average"
+                disabled={!measureFields.length || stacked}
+              >
+                Average
+              </option>
+              <option value="rate" disabled={!measureFields.length || stacked}>
+                Rate (sum ÷ sum)
+              </option>
+            </select>
+          </ActionTooltip>
 
           {aggregate.aggregation !== "count" && (
             <>
-              <Label>Measure</Label>
+              <Label>{aggregate.denominatorField ? "Sum of" : "Measure"}</Label>
               <FieldSelector
                 label=""
                 placeholder="Measure"
@@ -308,6 +353,21 @@ export function BarChartSettingsPanel({
               />
             </>
           )}
+          {aggregate.denominatorField && (
+            <>
+              <Label>Divided by</Label>
+              <FieldSelector
+                label=""
+                placeholder="Denominator"
+                value={aggregate.denominatorField}
+                fields={measureFields}
+                onChange={(value) =>
+                  updateDefinition({ denominatorField: value })
+                }
+              />
+            </>
+          )}
+          {valueControls}
           <Label>Once per</Label>
           <ActionTooltip content={ONCE_PER_HELP}>
             <FieldSelector
@@ -406,14 +466,16 @@ export function BarChartSettingsPanel({
         />
 
         <Label htmlFor="bar-operation">Operation</Label>
-        <ActionTooltip content="What each bar measures: its number of rows, or the sum or average of a numeric field">
+        <ActionTooltip content="What each bar measures: its number of rows, the sum or average of a numeric field, or a rate that divides one sum by another">
           <select
             id="bar-operation"
             className="h-9 rounded-md border-input bg-background px-2 text-sm"
             defaultValue="category"
             onChange={(event) => {
               if (event.target.value !== "category") {
-                createAggregate(event.target.value as AggregateAggregation);
+                createAggregate(
+                  event.target.value as AggregateAggregation | "rate"
+                );
               }
             }}
           >
@@ -424,8 +486,12 @@ export function BarChartSettingsPanel({
             <option value="average" disabled={!measureFields.length || stacked}>
               Average
             </option>
+            <option value="rate" disabled={!measureFields.length || stacked}>
+              Rate (sum ÷ sum)
+            </option>
           </select>
         </ActionTooltip>
+        {valueControls}
 
         {(settings.seriesField ||
           settings.forceString ||

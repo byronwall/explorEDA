@@ -1,6 +1,10 @@
 import { isChartAnnotations } from "@/lib/annotations/validate";
 import { isDateText } from "@/lib/valueParsing";
-import { isAdditiveAggregation, isAggregation } from "@/lib/aggregates";
+import {
+  isAdditiveAggregation,
+  isAdditiveSpec,
+  isAggregation,
+} from "@/lib/aggregates";
 import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import { isGeometryAsset } from "@/lib/geometryAssets";
 import { isSavedTheme } from "@/lib/themes";
@@ -347,7 +351,11 @@ function isAggregateSpec(value: unknown): value is AggregateSpec {
         value.measureField.trim().length > 0)) &&
     (value.aggregation === "count" ||
       (typeof value.measureField === "string" &&
-        value.measureField.trim().length > 0))
+        value.measureField.trim().length > 0)) &&
+    (value.denominatorField === undefined ||
+      (value.aggregation === "sum" &&
+        typeof value.denominatorField === "string" &&
+        value.denominatorField.trim().length > 0))
   );
 }
 
@@ -504,6 +512,20 @@ function isHistogram(value: unknown): boolean {
   );
 }
 
+/** Share, number format, and decimals on row and bar charts. */
+function isValueDisplay(value: Record<string, unknown>) {
+  return (
+    (value.share === undefined || typeof value.share === "boolean") &&
+    (value.valueFormat === undefined ||
+      value.valueFormat === "percent" ||
+      value.valueFormat === "plain") &&
+    (value.valueDecimals === undefined ||
+      (Number.isInteger(value.valueDecimals) &&
+        (value.valueDecimals as number) >= 0 &&
+        (value.valueDecimals as number) <= 6))
+  );
+}
+
 function isChart(value: unknown): boolean {
   if (!isRecord(value)) {
     return false;
@@ -520,10 +542,12 @@ function isChart(value: unknown): boolean {
         (value.aggregateId === undefined ||
           typeof value.aggregateId === "string") &&
         (value.topN === undefined ||
-          (Number.isInteger(value.topN) && (value.topN as number) > 0))
+          (Number.isInteger(value.topN) && (value.topN as number) > 0)) &&
+        isValueDisplay(value)
       );
     case "bar":
       return (
+        isValueDisplay(value) &&
         (value.binCount === undefined || isFiniteNumber(value.binCount)) &&
         (value.histogram === undefined || isHistogram(value.histogram)) &&
         (value.forceString === undefined ||
@@ -1178,7 +1202,7 @@ export function validateSavedData(data: unknown): data is SavedDataStructure {
   );
   const nonAdditiveIds = new Set(
     (data.aggregates ?? [])
-      .filter((aggregate) => !isAdditiveAggregation(aggregate.aggregation))
+      .filter((aggregate) => !isAdditiveSpec(aggregate))
       .map((aggregate) => aggregate.id)
   );
   if (

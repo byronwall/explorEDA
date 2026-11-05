@@ -4,13 +4,20 @@ import { rankMeasureFields } from "@/lib/fieldRanking";
 import { finiteNumber } from "@/lib/valueParsing";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 
-/** The default name of a grouped summary, such as "Sum of Revenue by Region". */
+/**
+ * The default name of a grouped summary, such as "Sum of Revenue by Region",
+ * or "Returns ÷ Sales by Region" for a rate.
+ */
 export function getAggregateName(
   aggregation: AggregateAggregation,
   groupField: string,
   measureField?: string,
-  entityField?: string
+  entityField?: string,
+  denominatorField?: string
 ) {
+  if (denominatorField) {
+    return `${measureField ?? ""} ÷ ${denominatorField}${entityField ? ` once per ${entityField}` : ""} by ${groupField}`;
+  }
   if (aggregation === "count") {
     return `Count${entityField ? ` distinct ${entityField}` : ""} by ${groupField}`;
   }
@@ -46,22 +53,34 @@ export function useMeasureFields(current?: string) {
     return numeric;
   }, [current, calculations, fieldNames, fieldProfiles, getColumnData]);
   // The measure a new sum or average starts with: not a key such as an id.
-  const defaultMeasure = useMemo(
-    () => rankMeasureFields(measureFields, fieldProfiles)[0],
+  const ranked = useMemo(
+    () => rankMeasureFields(measureFields, fieldProfiles),
     [measureFields, fieldProfiles]
   );
+  const defaultMeasure = ranked[0];
+  // A new rate divides by the next best measure.
+  const defaultDenominator = (numerator?: string) =>
+    ranked.find((field) => field !== numerator) ?? numerator;
   // Summary names read as titles, so they use labels rather than field ids.
   const aggregateName = (
     aggregation: AggregateAggregation,
     groupField: string,
     measureField?: string,
-    entityField?: string
+    entityField?: string,
+    denominatorField?: string
   ) =>
     getAggregateName(
       aggregation,
       getFieldLabel(groupField),
       measureField && getFieldLabel(measureField),
-      entityField && getFieldLabel(entityField)
+      entityField && getFieldLabel(entityField),
+      denominatorField && getFieldLabel(denominatorField)
     );
-  return { fieldNames, measureFields, defaultMeasure, aggregateName };
+  return {
+    fieldNames,
+    measureFields,
+    defaultMeasure,
+    defaultDenominator,
+    aggregateName,
+  };
 }

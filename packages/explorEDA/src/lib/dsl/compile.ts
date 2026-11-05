@@ -1357,16 +1357,22 @@ export function compileDocument(
       const valid =
         spec.groupField &&
         isAggregation(spec.aggregation) &&
-        (spec.aggregation === "count" || spec.measureField);
+        (spec.aggregation === "count" || spec.measureField) &&
+        (spec.denominatorField === undefined || spec.aggregation === "sum");
       if (!valid) {
         report(
           "error",
           "setting-ignored",
           declaration.span,
-          `${subject} needs by=, and a field to measure unless it counts, so it was skipped.`,
+          spec.denominatorField !== undefined && spec.aggregation !== "sum"
+            ? `${subject} divides by ${spec.denominatorField}, which only a sum can do, so it was skipped.`
+            : `${subject} needs by=, and a field to measure unless it counts, so it was skipped.`,
           {
             subject,
-            suggestion: "Write it as group @byRegion sum(Revenue) by=Region.",
+            suggestion:
+              spec.denominatorField !== undefined
+                ? "Write a rate as group @rate sum(Completions) by=Passer denominatorField=Attempts."
+                : "Write it as group @byRegion sum(Revenue) by=Region.",
           }
         );
         continue;

@@ -7,7 +7,12 @@ import { useColorScales } from "@/hooks/useColorScales";
 import { ChartSettingsPanelProps, RowChartSettings } from "@/types/ChartTypes";
 import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 import { Input } from "@/components/ui/input";
-import { ONCE_PER_HELP, type AggregateSpec } from "@/lib/aggregates";
+import {
+  ONCE_PER_HELP,
+  isAdditiveSpec,
+  type AggregateSpec,
+} from "@/lib/aggregates";
+import { ValueDisplayControls } from "../ValueDisplayControls";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { useEffect, useState } from "react";
 import { useMeasureFields } from "../aggregateFields";
@@ -34,9 +39,8 @@ export function RowChartSettingsPanel({
   const aggregate = settings.aggregateId
     ? aggregates.find((item) => item.id === settings.aggregateId)
     : undefined;
-  const { measureFields, defaultMeasure, aggregateName } = useMeasureFields(
-    aggregate?.measureField
-  );
+  const { measureFields, defaultMeasure, defaultDenominator, aggregateName } =
+    useMeasureFields(aggregate?.measureField);
   const [error, setError] = useState<string>();
   const summaries = aggregates.filter(
     (item) => item.groupField === settings.field
@@ -54,16 +58,29 @@ export function RowChartSettingsPanel({
     });
   const chooseMeasure = (value: string) => {
     setError(undefined);
-    if (value === "new:sum" || value === "new:average") {
-      const aggregation = value === "new:sum" ? "sum" : "average";
+    if (
+      value === "new:sum" ||
+      value === "new:average" ||
+      value === "new:rate"
+    ) {
+      const aggregation = value === "new:average" ? "average" : "sum";
       const measureField = defaultMeasure;
+      const denominatorField =
+        value === "new:rate" ? defaultDenominator(measureField) : undefined;
       try {
         applySummary(
           addAggregate({
-            name: aggregateName(aggregation, settings.field, measureField),
+            name: aggregateName(
+              aggregation,
+              settings.field,
+              measureField,
+              undefined,
+              denominatorField
+            ),
             groupField: settings.field,
             aggregation,
             measureField,
+            ...(denominatorField ? { denominatorField } : {}),
           })
         );
       } catch (cause) {
@@ -83,7 +100,8 @@ export function RowChartSettingsPanel({
         next.aggregation,
         next.groupField,
         next.measureField,
-        next.entityField
+        next.entityField,
+        next.denominatorField
       );
       updateAggregate(aggregate.id, { ...updates, name });
       onSettingsChange({
@@ -145,34 +163,49 @@ export function RowChartSettingsPanel({
             <option value="new:average" disabled={!measureFields.length}>
               New average of a field…
             </option>
+            <option value="new:rate" disabled={!measureFields.length}>
+              New rate (sum ÷ sum)…
+            </option>
           </select>
         </ActionTooltip>
 
         {aggregate && (
           <>
             <Label htmlFor="row-operation">Operation</Label>
-            <select
-              id="row-operation"
-              className={SELECT_CLASS}
-              value={aggregate.aggregation}
-              onChange={(event) =>
-                updateDefinition({
-                  aggregation: event.target
-                    .value as AggregateSpec["aggregation"],
-                  ...(event.target.value !== "count" && !aggregate.measureField
-                    ? { measureField: defaultMeasure }
-                    : {}),
-                })
-              }
-            >
-              <option value="count">Count rows</option>
-              <option value="sum" disabled={!measureFields.length}>
-                Sum
-              </option>
-              <option value="average" disabled={!measureFields.length}>
-                Average
-              </option>
-            </select>
+            <ActionTooltip content="Rate divides the sum of one field by the sum of another in each category, such as completions ÷ attempts. It never averages row ratios.">
+              <select
+                id="row-operation"
+                className={SELECT_CLASS}
+                value={
+                  aggregate.denominatorField ? "rate" : aggregate.aggregation
+                }
+                onChange={(event) => {
+                  const value = event.target.value;
+                  const measureField = aggregate.measureField ?? defaultMeasure;
+                  updateDefinition({
+                    aggregation: (value === "rate"
+                      ? "sum"
+                      : value) as AggregateSpec["aggregation"],
+                    ...(value !== "count" ? { measureField } : {}),
+                    denominatorField:
+                      value === "rate"
+                        ? defaultDenominator(measureField)
+                        : undefined,
+                  });
+                }}
+              >
+                <option value="count">Count rows</option>
+                <option value="sum" disabled={!measureFields.length}>
+                  Sum
+                </option>
+                <option value="average" disabled={!measureFields.length}>
+                  Average
+                </option>
+                <option value="rate" disabled={!measureFields.length}>
+                  Rate (sum ÷ sum)
+                </option>
+              </select>
+            </ActionTooltip>
             {aggregate.aggregation !== "count" && (
               <>
                 <Label>
@@ -185,6 +218,20 @@ export function RowChartSettingsPanel({
                   fields={measureFields}
                   onChange={(value) =>
                     updateDefinition({ measureField: value })
+                  }
+                />
+              </>
+            )}
+            {aggregate.denominatorField && (
+              <>
+                <Label>Divided by</Label>
+                <FieldSelector
+                  label=""
+                  placeholder="Denominator"
+                  value={aggregate.denominatorField}
+                  fields={measureFields}
+                  onChange={(value) =>
+                    updateDefinition({ denominatorField: value })
                   }
                 />
               </>
@@ -210,6 +257,13 @@ export function RowChartSettingsPanel({
             )}
           </>
         )}
+
+        <ValueDisplayControls
+          id="row-value"
+          settings={settings}
+          shareable={!aggregate || isAdditiveSpec(aggregate)}
+          onChange={(updates) => onSettingsChange({ ...settings, ...updates })}
+        />
 
         <Label htmlFor="row-top-n">Top N</Label>
         <ActionTooltip content="Show this many of the largest categories and gather the rest in Other, at every chart size. Leave empty to show as many as fit.">

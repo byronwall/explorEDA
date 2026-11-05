@@ -1,4 +1,5 @@
-import { aggregationLabel, isAdditiveAggregation } from "@/lib/aggregates";
+import { aggregationLabel, isAdditiveSpec } from "@/lib/aggregates";
+import { significant } from "../valueFormat";
 import { scaleBand } from "d3-scale";
 import { applyFilter } from "@/hooks/applyFilter";
 import type { AggregateResult } from "@/lib/aggregates";
@@ -64,14 +65,19 @@ export function planSeriesBars({
   const layout = settings.seriesLayout ?? "grouped";
   const stacked = layout !== "grouped";
   const percent = layout === "percent";
+  const rate = spec?.denominatorField;
   const metricLabel =
     operation === "count"
       ? "Row count"
-      : `${aggregationLabel(operation)} of ${getLabel(spec?.measureField ?? "")}`;
+      : rate
+        ? `${getLabel(spec?.measureField ?? "")} ÷ ${getLabel(rate)}`
+        : `${aggregationLabel(operation)} of ${getLabel(spec?.measureField ?? "")}`;
   const formatValue = (value: number) =>
     operation === "count"
       ? value.toLocaleString("en-US")
-      : format(spec?.measureField ?? "", value);
+      : rate
+        ? significant(value)
+        : format(spec?.measureField ?? "", value);
   const valueLabel = percent
     ? `Share within each ${getLabel(field)} (%)`
     : metricLabel;
@@ -239,8 +245,8 @@ export function planSeriesBars({
     .domain(boundedDomain(domain, settings.yAxis))
     .range([plotHeight, 0]);
   const notice =
-    stacked && !isAdditiveAggregation(operation)
-      ? `Choose count or sum to stack series. Compare ${operation === "average" ? "averages" : operation === "max" ? "maxima" : "minima"} with grouped bars.`
+    stacked && spec && !isAdditiveSpec(spec)
+      ? `Choose count or sum to stack series. Compare ${rate ? "rates" : operation === "average" ? "averages" : operation === "max" ? "maxima" : "minima"} with grouped bars.`
       : percent && rows.some(({ row }) => (row.value ?? 0) < 0)
         ? "100% bars need nonnegative series totals. Choose stacked bars to compare signed totals."
         : legend.length > 20

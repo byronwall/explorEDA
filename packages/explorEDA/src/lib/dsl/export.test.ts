@@ -6,6 +6,7 @@ import type { SavedChartSettings } from "@/types/SavedDataTypes";
 import { mergeWithDefaultSettings } from "@/utils/defaultSettings";
 import { compileDocument } from "./compile";
 import { exportDocument } from "./export";
+import { validateSavedData } from "@/utils/saveDataUtils";
 
 const rows = [
   {
@@ -338,6 +339,40 @@ row Channel group=byChannel topN=2`,
       aggregateId: "byChannel",
       topN: 2,
     });
+  });
+
+  it("round-trips a rate, a share, and a number format", () => {
+    const { settings, diagnostics } = compileDocument(
+      `group @margin sum(Revenue) by=Channel denominatorField=Cost
+row Channel group=margin valueFormat=plain valueDecimals=2
+bar Channel share=true`,
+      { rows }
+    );
+    expect(diagnostics).toEqual([]);
+    expect(settings.aggregates?.[0]).toMatchObject({
+      aggregation: "sum",
+      measureField: "Revenue",
+      denominatorField: "Cost",
+    });
+    expect(settings.charts[0]).toMatchObject({
+      valueFormat: "plain",
+      valueDecimals: 2,
+    });
+    expect(settings.charts[1]).toMatchObject({ share: true });
+    expect(validateSavedData(settings)).toBe(true);
+    // A rate needs a sum; saves that say otherwise are rejected.
+    expect(
+      validateSavedData({
+        ...settings,
+        aggregates: [{ ...settings.aggregates![0]!, aggregation: "average" }],
+      })
+    ).toBe(false);
+
+    const { text, omitted, rebuilt } = roundTrip(settings);
+    expect(omitted).toEqual([]);
+    expect(text).toContain("denominatorField=Cost");
+    expect(rebuilt.settings.aggregates).toEqual(settings.aggregates);
+    expect(meaning(rebuilt.settings).charts).toEqual(meaning(settings).charts);
   });
 
   it("warns when the summary groups a different field", () => {

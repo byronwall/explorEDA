@@ -31,6 +31,16 @@ const AGGREGATION_LABELS: Record<AggregateAggregation, string> = {
   min: "Min",
 };
 
+/**
+ * Whether a summary's group values add up. A rate divides two sums, so its
+ * groups neither stack nor share a total.
+ */
+export function isAdditiveSpec(
+  spec: Pick<AggregateSpec, "aggregation" | "denominatorField">
+) {
+  return isAdditiveAggregation(spec.aggregation) && !spec.denominatorField;
+}
+
 export function aggregationLabel(aggregation: AggregateAggregation): string {
   return AGGREGATION_LABELS[aggregation];
 }
@@ -61,7 +71,15 @@ export interface AggregateSpec {
   /** Counts each value once, and uses one measure value per value. */
   entityField?: string;
   aggregation: AggregateAggregation;
+  /**
+   * Makes a sum a rate: each group's sum of `measureField` divided by its sum
+   * of this field, never an average of row ratios. Needs `aggregation: "sum"`.
+   */
+  denominatorField?: string;
 }
+
+/** Rates and averages over fewer rows than this draw faded. */
+export const SMALL_SAMPLE = 10;
 
 /** Tooltip for the "Once per" control on grouped summaries and metric cards. */
 export const ONCE_PER_HELP =
@@ -79,6 +97,8 @@ export interface AggregateContributor {
   included: boolean;
   exclusionReason?: string;
   entityKey?: datum;
+  /** The row's denominator, for a rate. */
+  denominator?: datum;
 }
 
 export interface AggregateResultRow {
@@ -87,6 +107,11 @@ export interface AggregateResultRow {
   groupLabel: string;
   value: number | undefined;
   rowCount: number;
+  /**
+   * The rows a rate or average rests on: rows with a number, and for a rate,
+   * a denominator other than zero.
+   */
+  sampleSize?: number;
   contributors: AggregateContributor[];
   identityIssues?: {
     entityKey?: datum;
@@ -152,6 +177,41 @@ export function numericInputs(values: datum[]): {
   return { inputs, exclusions };
 }
 
+const NO_DENOMINATOR = "Denominator is not a number";
+
+/** Sum of numerators over sum of denominators, for rows that have both. */
+function rateValues(
+  numerators: datum[],
+  denominators: datum[]
+): ReturnType<typeof aggregateValues> & { sampleSize: number } {
+  const included = new Set<number>();
+  const exclusions: NumericExclusion[] = [];
+  let top = 0;
+  let bottom = 0;
+  let sampleSize = 0;
+  numerators.forEach((input, index) => {
+    const reason =
+      numericExclusionReason(input) ??
+      (numericExclusionReason(denominators[index]) && NO_DENOMINATOR);
+    if (reason) {
+      exclusions.push({ index, reason });
+      return;
+    }
+    const denominator = parseNumber(denominators[index]);
+    top += parseNumber(input);
+    bottom += denominator;
+    if (denominator !== 0) sampleSize++;
+    included.add(index);
+  });
+  return {
+    // No denominator means no rate, rather than infinity.
+    value: included.size && bottom !== 0 ? top / bottom : undefined,
+    included,
+    exclusions,
+    sampleSize,
+  };
+}
+
 function aggregateValues(
   aggregation: AggregateAggregation,
   values: datum[]
@@ -196,15 +256,19 @@ const IDENTITY_REASONS = new Set([MISSING_ID, CONFLICTING_ID, REPEATED_ID]);
  */
 export function summarizeGroup(
   group: AggregateInputRow[],
-  spec: Pick<AggregateSpec, "aggregation" | "measureField" | "entityField">,
+  spec: Pick<
+    AggregateSpec,
+    "aggregation" | "measureField" | "entityField" | "denominatorField"
+  >,
   rawInputs: Record<number, datum> = {},
   exclusionReasons: Record<number, string> = {}
 ): Pick<
   AggregateResultRow,
-  "value" | "rowCount" | "contributors" | "identityIssues"
+  "value" | "rowCount" | "sampleSize" | "contributors" | "identityIssues"
 > {
   const measureOf = (row: AggregateInputRow) =>
     spec.measureField ? row[spec.measureField] : undefined;
+  const denominatorField = spec.denominatorField;
   const entityField = spec.entityField;
   const contributor = (
     row: AggregateInputRow,
@@ -219,6 +283,7 @@ export function summarizeGroup(
       ? undefined
       : (exclusionReasons[row.__ID] ?? exclusionReason),
     ...(entityField ? { entityKey: row[entityField] } : {}),
+    ...(denominatorField ? { denominator: row[denominatorField] } : {}),
   });
 
   // Each unit is one row, or every row of one entity.
@@ -257,10 +322,14 @@ export function summarizeGroup(
     }
   }
 
-  const result = aggregateValues(
-    spec.aggregation,
-    units.map((rows) => measureOf(rows[0]!))
-  );
+  const measures = units.map((rows) => measureOf(rows[0]!));
+  const result: ReturnType<typeof aggregateValues> & { sampleSize?: number } =
+    denominatorField
+      ? rateValues(
+          measures,
+          units.map((rows) => rows[0]![denominatorField])
+        )
+      : aggregateValues(spec.aggregation, measures);
   const exclusionByIndex = new Map(
     result.exclusions.map((exclusion) => [exclusion.index, exclusion.reason])
   );
@@ -280,6 +349,11 @@ export function summarizeGroup(
   return {
     value: conflicted ? undefined : result.value,
     rowCount: units.length,
+    ...(result.sampleSize !== undefined
+      ? { sampleSize: result.sampleSize }
+      : spec.aggregation === "average"
+        ? { sampleSize: result.included.size }
+        : {}),
     contributors,
     ...(identityIssues.length ? { identityIssues } : {}),
   };
@@ -324,10 +398,13 @@ export function calculateGroupedAggregate(
  */
 export function poolAggregateRows(
   rows: readonly AggregateResultRow[],
-  spec: Pick<AggregateSpec, "aggregation" | "measureField" | "entityField">
+  spec: Pick<
+    AggregateSpec,
+    "aggregation" | "measureField" | "entityField" | "denominatorField"
+  >
 ): Pick<
   AggregateResultRow,
-  "value" | "rowCount" | "contributors" | "identityIssues"
+  "value" | "rowCount" | "sampleSize" | "contributors" | "identityIssues"
 > {
   const inputs: AggregateInputRow[] = [];
   const rawInputs: Record<number, datum> = {};
@@ -338,6 +415,9 @@ export function poolAggregateRows(
         __ID: item.sourceId,
         ...(spec.measureField ? { [spec.measureField]: item.input } : {}),
         ...(spec.entityField ? { [spec.entityField]: item.entityKey } : {}),
+        ...(spec.denominatorField
+          ? { [spec.denominatorField]: item.denominator }
+          : {}),
       });
       if ("rawInput" in item) rawInputs[item.sourceId] = item.rawInput;
       // Identity reasons depend on the pooled rows, so they are worked out again.
