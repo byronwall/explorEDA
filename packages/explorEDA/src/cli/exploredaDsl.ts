@@ -15,6 +15,7 @@ import type { GeometryAsset } from "@/lib/geometryAssets";
 import type { datum } from "@/types/ChartTypes";
 import { parseCsv } from "@/lib/project/tables";
 import { readProjectFolder } from "@/lib/project/folder";
+import { parseSnapshot, SNAPSHOT_FORMAT } from "@/lib/project/snapshots";
 import {
   compileNotebook,
   formatNotebook,
@@ -25,7 +26,7 @@ import { nodeProjectFiles } from "@/node/projectFiles";
 const USAGE = `Usage:
   exploreda-dsl check <dashboard.eda> --data <rows.csv|rows.json> [--json]
   exploreda-dsl check <notebook.eda.md> [--data <rows.csv|rows.json>] [--json]
-  exploreda-dsl fields --data <rows.csv|rows.json>
+  exploreda-dsl fields --data <rows.csv|rows.json|snapshot.json>
   exploreda-dsl fmt <dashboard.eda|notebook.eda.md> [--write]
   exploreda-dsl project <folder> [--json]
   exploreda-dsl reference [chart-type]
@@ -34,6 +35,7 @@ check   builds the dashboard (every view) and lists each problem with a fix.
         A notebook without --data reads its project's data.
         Exits 0 when complete, 1 when partial, 2 when nothing builds.
 fields  lists the fields, types, and example values to write against.
+        --data also takes a database source's .exploreda/snapshots file.
 project loads a project folder (exploreda.eda, its data, every analysis
         .eda file, and every .eda.md notebook) and builds each against the
         data it names.
@@ -42,7 +44,11 @@ fmt     indents by brace depth and tidies spacing; --write saves the file.
         In a notebook it formats only the eda blocks.
 reference  prints the grammar, or every setting a chart type takes.`;
 
-/** Rows, plus map shapes when the file is a saved explorEDA analysis. */
+/**
+ * Rows from a CSV, a JSON array, a database source's snapshot, or a saved
+ * explorEDA analysis (with its map shapes). Throws a one-line reason when
+ * the file is none of these.
+ */
 function readSource(path: string): {
   rows: Array<Record<string, datum>>;
   geometryAssets?: GeometryAsset[];
@@ -52,9 +58,33 @@ function readSource(path: string): {
     return { rows: parseCsv(text) as Array<Record<string, datum>> };
   }
   const json = JSON.parse(text);
-  return Array.isArray(json)
-    ? { rows: json }
-    : { rows: json.data, geometryAssets: json.settings?.geometryAssets };
+  if (Array.isArray(json)) {
+    return { rows: json };
+  }
+  if (json?.format === SNAPSHOT_FORMAT) {
+    return { rows: parseSnapshot(text).rows };
+  }
+  if (Array.isArray(json?.data)) {
+    return { rows: json.data, geometryAssets: json.settings?.geometryAssets };
+  }
+  throw new Error(
+    "it isn't an array of rows, a database snapshot, or a saved analysis."
+  );
+}
+
+/** `--data`'s rows, or undefined after one line saying why it can't be read. */
+function loadData(path: string) {
+  if (!existsSync(path)) {
+    console.error(`Can't read ${path}: there is no such file.`);
+    return undefined;
+  }
+  try {
+    return readSource(path);
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    console.error(`Can't read ${path}: ${reason.replace(/\s+/g, " ")}`);
+    return undefined;
+  }
 }
 
 async function checkProject(folder: string, json: boolean) {
@@ -161,7 +191,11 @@ async function checkNotebook(
   registerAllCharts();
   let result;
   if (dataPath) {
-    const { rows, geometryAssets } = readSource(dataPath);
+    const source = loadData(dataPath);
+    if (!source) {
+      return 66;
+    }
+    const { rows, geometryAssets } = source;
     result = compileNotebook(readFileSync(path, "utf8"), {
       rows,
       geometryAssets,
@@ -264,7 +298,11 @@ function main(args: string[]): number | Promise<number> {
     console.error(USAGE);
     return 64;
   }
-  const { rows, geometryAssets } = readSource(dataPath);
+  const source = loadData(dataPath);
+  if (!source) {
+    return 66;
+  }
+  const { rows, geometryAssets } = source;
   if (command === "fields") {
     for (const field of describeDslSource(rows)) {
       console.log(
