@@ -3,7 +3,7 @@
 You are testing explorEDA, a data exploration tool, as a first-time user. Do the task the way a real user would. We want honest product feedback, not a polished result. Getting stuck is a valid outcome if you report it well.
 
 - Tools: `<bin>/exploreda` (opens a project folder in the browser app; run `--help`) and `<bin>/exploreda-dsl` (a command-line tool for project text; run it with no arguments for help). Public docs: https://exploreda.dev/docs
-- Start the app with `<bin>/exploreda <your folder> --no-open --port <your port>` as a background command, without a trailing `&`. It prints a link with a token. Open that link in the built-in browser (tools named mcp**Claude_Browser**\*). Other testers share that browser: first call tabs_create, then pass your tabId on every browser call. Never close or navigate other tabs. If tabs_create fails, say so in your report.
+- Start the app with `<bin>/exploreda <your folder> --no-open --port <your port>` as a background command, without a trailing `&`. It prints a link with a token. Open that link in the built-in browser (tools named `mcp__Claude_Browser__*`). Other testers share that browser: first call tabs_create, then pass your tabId on every browser call. Never close or navigate other tabs. If tabs_create fails, say so in your report.
 - Do not read explorEDA's source code. If you are truly blocked and read it anyway, say why, and keep what you learned before and after apart in your report.
 - Do not edit files outside your folder. Do not install anything globally. If explorEDA itself tells you to install something, you may do so inside your folder.
 - Spend at most about 30 minutes. If you are stuck on one problem for about 10 minutes, write it down and try another route or stop.
