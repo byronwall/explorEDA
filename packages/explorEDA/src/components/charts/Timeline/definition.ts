@@ -1,6 +1,6 @@
 import { ChartGantt as TimelineIcon } from "lucide-react";
 import { applyFilter } from "@/hooks/applyFilter";
-import { dateBound, isMissingValue } from "@/lib/valueParsing";
+import { dateBound, isMissingValue, timestampOf } from "@/lib/valueParsing";
 import type { BaseChartSettings, ChartDefinition } from "@/types/ChartTypes";
 import type { DateRangeFilter, Filter } from "@/types/FilterTypes";
 import { DEFAULT_CHART_SETTINGS } from "@/utils/defaultSettings";
@@ -93,6 +93,15 @@ export const timelineDefinition: ChartDefinition<TimelineSettings> = {
     Boolean(settings.field && settings.startField && settings.endField),
   getFilterFunction: (settings, fieldGetter) => {
     const starts = fieldGetter(settings.startField);
+    const ends = fieldGetter(settings.endField);
+    // The chart leaves out a row that ends before it starts, so a window
+    // leaves it out too. Without filters the chart selects nothing.
+    const inverted = (id: number) => {
+      if (!settings.filters.length) return false;
+      const start = timestampOf(starts[id]);
+      const end = timestampOf(ends[id]);
+      return start !== undefined && end !== undefined && end < start;
+    };
     const filters = settings.filters.map((filter) => ({
       filter,
       values: fieldGetter(filter.field),
@@ -103,6 +112,7 @@ export const timelineDefinition: ChartDefinition<TimelineSettings> = {
         filter.max === undefined,
     }));
     return (id) =>
+      !inverted(id) &&
       filters.every(
         ({ filter, values, open }) =>
           applyFilter(values[id], filter) ||

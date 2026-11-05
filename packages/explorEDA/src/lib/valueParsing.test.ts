@@ -196,6 +196,25 @@ describe("parseDateText", () => {
     );
   });
 
+  it("closes any date-only upper bound at the end of the unit it names", () => {
+    const endOfDay = (year: number, month: number, day: number) =>
+      Date.UTC(year, month - 1, day, 23, 59, 59, 999);
+    expect(dateBound("2024-06", true)).toBe(endOfDay(2024, 6, 30));
+    expect(dateBound("2024-02", true)).toBe(endOfDay(2024, 2, 29));
+    expect(dateBound("2024-12", true)).toBe(endOfDay(2024, 12, 31));
+    expect(dateBound("2024-06")).toBe(Date.UTC(2024, 5, 1));
+    expect(dateBound("06/30/2024", true)).toBe(endOfDay(2024, 6, 30));
+    expect(dateBound("2024/06/30", true)).toBe(endOfDay(2024, 6, 30));
+    expect(dateBound("Jun 30, 2024", true)).toBe(endOfDay(2024, 6, 30));
+    expect(dateBound("30 Jun 2024", true)).toBe(endOfDay(2024, 6, 30));
+    // A time names an instant, whatever its form.
+    expect(dateBound("06/30/2024 12:00", true)).toBe(Date.UTC(2024, 5, 30, 12));
+    expect(dateBound("Jun 30 2024 8:00 PM", true)).toBe(
+      Date.UTC(2024, 5, 30, 20)
+    );
+    expect(dateBound("not a date", true)).toBeNaN();
+  });
+
   it("treats numbers and Dates as timestamps", () => {
     expect(timestampOf(0)).toBe(0);
     expect(timestampOf(new Date(5))).toBe(5);

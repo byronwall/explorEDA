@@ -26,7 +26,7 @@ See [six years of messages by month](/examples/message-log-heatmap) and [every s
 
 ## Color
 
-By default, color runs across the shown cells' range over all rows, diverging around 0 when the values cross it. Filtering in other charts empties cells but keeps each value's color. Set **Scale to** to filtered rows to fit the colors to the rows other charts leave; the legend then says "fitted to filtered rows".
+By default, color runs across the shown cells' range over all rows, diverging around 0 when the values cross it. Each side of a diverging scale stretches to its own end, and the legend shows both ends. Filtering in other charts empties cells but keeps each value's color. Set **Scale to** to filtered rows to fit the colors to the rows other charts leave; the legend then says "fitted to filtered rows".
 
 - **Color ends** fix the low and high values, so a value keeps its color whatever the filters show. Values past an end take the end's color. Set only one end to fix just that side.
 - **Square-root color** spreads small values apart, which helps when a few cells are far larger than the rest. Zero stays the lowest color, and negative values mirror positive ones.

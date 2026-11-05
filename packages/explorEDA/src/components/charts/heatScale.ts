@@ -20,6 +20,8 @@ export interface HeatDomain {
  * Plans the scale over the values on show, diverging around 0 when they cross
  * it. A fixed end replaces the shown extreme on its side, so a value keeps its
  * color whatever the filters show; values past an end take the end's color.
+ * A diverging scale stretches each side to its own end, so the legend shows
+ * the real ends.
  */
 export function planHeatScale(
   values: number[],
@@ -31,14 +33,16 @@ export function planHeatScale(
   /** Which ends came from settings rather than the values. */
   fixed: { min: boolean; max: boolean };
 } {
-  const low = fixed.min ?? (values.length ? Math.min(...values) : 0);
-  const high = fixed.max ?? (values.length ? Math.max(...values) : 0);
+  const lowEnd = fixed.min ?? (values.length ? Math.min(...values) : 0);
+  const highEnd = fixed.max ?? (values.length ? Math.max(...values) : 0);
+  // A fixed end past the shown values on the wrong side still bounds them.
+  const low = Math.min(lowEnd, highEnd);
+  const high = Math.max(lowEnd, highEnd);
   const diverging = low < 0 && high > 0;
   const t = (value: number) =>
     fixed.transform === "sqrt"
       ? Math.sign(value) * Math.sqrt(Math.abs(value))
       : value;
-  const span = Math.max(Math.abs(t(low)), Math.abs(t(high))) || 1;
   const clamp = (value: number, min: number, max: number) =>
     Math.max(min, Math.min(max, value));
   return {
@@ -46,12 +50,12 @@ export function planHeatScale(
     domain: [low, high],
     transform: fixed.transform,
     fixed: { min: fixed.min !== undefined, max: fixed.max !== undefined },
-    position: (value) =>
-      diverging
-        ? clamp(t(value) / span, -1, 1)
-        : high === low
-          ? 0.6
-          : clamp((t(value) - t(low)) / (t(high) - t(low)), 0, 1),
+    position: (raw) => {
+      const value = clamp(raw, low, high);
+      if (diverging)
+        return value < 0 ? -(t(value) / t(low)) : t(value) / t(high);
+      return high === low ? 0.6 : (t(value) - t(low)) / (t(high) - t(low));
+    },
   };
 }
 
@@ -99,8 +103,7 @@ export function describeHeatPosition(
 function describePlain(position: number, scale: HeatScale) {
   const [low, high] = scale.domain;
   if (scale.kind === "diverging") {
-    const span = Math.max(Math.abs(low), Math.abs(high));
-    return `${percent(position)} of the way from 0 to ${round(position < 0 ? -span : span)} on a diverging scale`;
+    return `${percent(position)} of the way from 0 to ${round(position < 0 ? low : high)} on a diverging scale`;
   }
   return `${percent(position)} of the way from ${round(low)} to ${round(high)}`;
 }

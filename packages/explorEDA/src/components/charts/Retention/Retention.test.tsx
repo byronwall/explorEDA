@@ -7,7 +7,7 @@ import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { stringifySavedData, validateSavedData } from "@/utils/saveDataUtils";
 import { ChartTraceScope } from "../trace/ChartTraceScope";
 import { ChartTracePanel } from "../trace/ChartTracePanel";
-import { Retention } from "./Retention";
+import { Retention, cohortLabel, cohortsSpanYears } from "./Retention";
 import { retentionDefinition, type RetentionSettings } from "./definition";
 
 beforeAll(registerAllCharts);
@@ -86,6 +86,42 @@ describe("Retention", () => {
     ]);
     expect(container.querySelector(".eda-chart-status")).toHaveTextContent(
       "3 entered in 2 cohorts · 1 without the entry event"
+    );
+  });
+
+  it("names the year in cohort labels when the cohorts span more than one", () => {
+    expect(cohortLabel(Date.UTC(2025, 0, 6), "week")).toBe("Jan 6");
+    expect(cohortLabel(Date.UTC(2025, 0, 6), "week", true)).toBe("Jan 6, 2025");
+    expect(cohortLabel(Date.UTC(2025, 0, 1), "month", true)).toBe("Jan 2025");
+    expect(
+      cohortsSpanYears([
+        { start: Date.UTC(2025, 0, 6) },
+        { start: Date.UTC(2025, 5, 2) },
+      ])
+    ).toBe(false);
+    expect(
+      cohortsSpanYears([
+        { start: Date.UTC(2020, 0, 6) },
+        { start: Date.UTC(2025, 0, 6) },
+      ])
+    ).toBe(true);
+    const { container } = render(
+      <DataLayerProvider
+        charts={[settings]}
+        data={[
+          ...rows,
+          { user: "e", event: "signup", at: "2020-01-06T09:00:00Z" },
+          { user: "e", event: "session", at: "2020-01-14T09:00:00Z" },
+        ]}
+      >
+        <Harness />
+      </DataLayerProvider>
+    );
+    expect(cells(container)).toEqual(
+      expect.arrayContaining([
+        "Jan 6, 2020 cohort, Week 1: 100%, 1 of 1",
+        "Jan 6, 2025 cohort, Week 1: 100%, 2 of 2",
+      ])
     );
   });
 

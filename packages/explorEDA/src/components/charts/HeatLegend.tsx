@@ -18,17 +18,16 @@ export function HeatLegend({
   fitted?: boolean;
 }) {
   const [low, high] = scale.domain;
-  const span = Math.max(Math.abs(low), Math.abs(high));
   return (
     <div className="eda-heat-legend">
       <span className="eda-heat-legend-metric">{metricLabel}</span>
       <span className="eda-heat-legend-scale">
-        <span>{format(scale.kind === "diverging" ? -span : low)}</span>
+        <span>{format(low)}</span>
         <span
           className="eda-heat-legend-ramp"
           style={{ background: heatRamp(scale.kind) }}
         />
-        <span>{format(scale.kind === "diverging" ? span : high)}</span>
+        <span>{format(high)}</span>
       </span>
       {fitted && (
         <span className="eda-heat-legend-key">fitted to filtered rows</span>
