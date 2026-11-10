@@ -281,7 +281,7 @@ const shell = (body) =>
 
 /** One article's text and links, readable before the chart app loads. */
 export function dailyHtml(template, entry, text) {
-  const url = `${SITE}/daily/${entry.slug}`;
+  const url = `${SITE}/daily/${entry.slug}/`;
   const prose = corpusLinks(text, entry.textPath)
     .replace(
       /^```eda\s*\n[\s\S]*?^```\s*$/gm,
@@ -298,7 +298,7 @@ export function dailyHtml(template, entry, text) {
       : `<h1>${escape(entry.title)}</h1>`;
   return head(template, entry.title, entry.summary, url).replace(
     '<div id="root"></div>',
-    `<div id="root">${shell(`<a href="/daily">Daily data viz</a>${title}${markdown.render(prose)}`)}</div>`
+    `<div id="root">${shell(`<a href="/daily/">Daily data viz</a>${title}${markdown.render(prose)}`)}</div>`
   );
 }
 
@@ -351,13 +351,13 @@ export function dailyCorpus() {
       const links = index.entries
         .map(
           (entry) =>
-            `<li><a href="/daily/${entry.slug}">${escape(entry.title)}</a> — ${escape(entry.kind)}</li>`
+            `<li><a href="/daily/${entry.slug}/">${escape(entry.title)}</a> — ${escape(entry.kind)}</li>`
         )
         .join("\n");
       const description = `${index.entries.length} notebooks, compositions, and dashboards over real datasets.`;
       await writeFile(
         path.join(output, "daily/index.html"),
-        head(template, "Daily data viz", description, `${SITE}/daily`).replace(
+        head(template, "Daily data viz", description, `${SITE}/daily/`).replace(
           '<div id="root"></div>',
           `<div id="root">${shell(`<a href="/examples">All examples</a><h1>Daily data viz</h1><p>${escape(description)}</p><ul>${links}</ul>`)}</div>`
         )
@@ -372,8 +372,8 @@ export function dailyCorpus() {
         `${SITE}/examples`,
         `${SITE}/docs`,
         ...docs,
-        `${SITE}/daily`,
-        ...index.entries.map((entry) => `${SITE}/daily/${entry.slug}`),
+        `${SITE}/daily/`,
+        ...index.entries.map((entry) => `${SITE}/daily/${entry.slug}/`),
       ];
       await writeFile(
         path.join(output, "sitemap.xml"),

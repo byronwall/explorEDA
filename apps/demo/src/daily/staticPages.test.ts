@@ -21,7 +21,7 @@ describe("static daily articles", () => {
     expect(html).toContain('href="/daily-viz/projects/co2/fields.json"');
     expect(html).not.toContain("line x=year");
     expect(html).toContain(
-      'rel="canonical" href="https://exploreda.dev/daily/test"'
+      'rel="canonical" href="https://exploreda.dev/daily/test/"'
     );
   });
 });
