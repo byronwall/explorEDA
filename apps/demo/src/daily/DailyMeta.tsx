@@ -12,7 +12,7 @@ export function DailyMeta({
   const { pathname } = useLocation();
   useEffect(() => {
     const previousTitle = document.title;
-    const pageUrl = `https://exploreda.dev${pathname}`;
+    const pageUrl = `https://exploreda.dev${pathname.replace(/\/+$/, "")}/`;
     const restore: Array<() => void> = [];
     for (const [attribute, key, value] of [
       ["name", "description", description],

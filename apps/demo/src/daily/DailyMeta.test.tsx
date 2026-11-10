@@ -13,10 +13,10 @@ it("sets article metadata and restores the host metadata on exit", () => {
   expect(document.title).toBe("An example · explorEDA");
   expect(
     document.querySelector('link[rel="canonical"]')?.getAttribute("href")
-  ).toBe("https://exploreda.dev/daily/example");
+  ).toBe("https://exploreda.dev/daily/example/");
   expect(
     document.querySelector('meta[property="og:url"]')?.getAttribute("content")
-  ).toBe("https://exploreda.dev/daily/example");
+  ).toBe("https://exploreda.dev/daily/example/");
   unmount();
   expect(document.title).toBe(original);
   expect(document.querySelector('link[rel="canonical"]')).toBeNull();
