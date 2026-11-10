@@ -7,6 +7,7 @@ import { SITE } from "./dailyLinks.mjs";
 type Prerender = {
   render: (url: string) => Promise<string>;
   catalogue: readonly { topic: string; title: string; lede: string }[];
+  examples: readonly { id: string; title: string; description: string }[];
 };
 
 const INDEX_DESCRIPTION =
@@ -22,7 +23,7 @@ const EXAMPLES_DESCRIPTION =
  * GitHub Pages serves `docs/bar.html` at `/docs/bar` and redirects a folder
  * to its trailing slash, so each page is a `.html` file. `/docs` gets both
  * `docs.html` and `docs/index.html`, because a `docs/` folder exists too.
- * `/examples/<id>` stays on the 404.html fallback.
+ * Each example also gets a `.html` file, so direct links return HTTP 200.
  */
 export function docsPrerender(): Plugin {
   let root = "";
@@ -53,7 +54,7 @@ export function docsPrerender(): Plugin {
         },
       });
       try {
-        const { render, catalogue } = (await server.ssrLoadModule(
+        const { render, catalogue, examples } = (await server.ssrLoadModule(
           "/src/docs/prerender.tsx"
         )) as Prerender;
         const template = await readFile(
@@ -75,10 +76,20 @@ export function docsPrerender(): Plugin {
             await page(`/docs/${topic}`, title, lede)
           );
         }
-        await writeFile(
-          path.join(outDir, "examples.html"),
-          await page("/examples", "All examples", EXAMPLES_DESCRIPTION)
+        await mkdir(path.join(outDir, "examples"), { recursive: true });
+        for (const { id, title, description } of examples) {
+          await writeFile(
+            path.join(outDir, "examples", `${id}.html`),
+            await page(`/examples/${id}`, title, description)
+          );
+        }
+        const exampleIndex = await page(
+          "/examples",
+          "All examples",
+          EXAMPLES_DESCRIPTION
         );
+        await writeFile(path.join(outDir, "examples.html"), exampleIndex);
+        await writeFile(path.join(outDir, "examples/index.html"), exampleIndex);
       } finally {
         await server.close();
       }
