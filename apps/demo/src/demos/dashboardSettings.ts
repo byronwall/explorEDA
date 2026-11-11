@@ -1038,7 +1038,6 @@ export const timeSeriesDashboard = dashboard(
           from: 1717200000000,
           to: 1725062400000,
           label: "Summer sale",
-          display: "bracket",
         },
       ],
     },
