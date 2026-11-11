@@ -88,6 +88,11 @@ export type LiveWorkspaceSpec = LiveExampleBase & {
    * workspace. `chart` names the chart in `savedData`.
    */
   surface?: { kind: "settings"; chart: string };
+  /**
+   * Keeps the workspace toolbar and status bar, for a page about them.
+   * Other examples show only their charts.
+   */
+  chrome?: boolean;
   notebook?: undefined;
 };
 
@@ -729,6 +734,7 @@ export const liveExamples = {
     data: SHOP,
     savedData: emptySelectionDashboard,
     exampleId: "empty-selection",
+    chrome: true,
     shotAlt:
       "Two row charts with no rows, and the Recover rows panel listing each filter with the rows it brings back.",
     steps: [
@@ -746,6 +752,7 @@ export const liveExamples = {
       "shop-channel": [6, 0, 6],
     }),
     exampleId: "shop-operations",
+    chrome: true,
     shotAlt: "Two row charts with the workspace toolbar and row count.",
     steps: [
       { click: "Home: 168 rows" },
@@ -762,6 +769,7 @@ export const liveExamples = {
     data: SHOP,
     savedData: focus(shopDashboard, { "shop-channel": [0, 0, 6] }),
     exampleId: "shop-operations",
+    chrome: true,
     shotAlt: "A row chart of sales channels beside the workspace toolbar.",
     steps: [
       { click: "Fields" },
@@ -807,12 +815,17 @@ export const liveExamples = {
     data: "/datasets/scatter-trace.csv",
     savedData: focus(scatterTraceDashboard, { "trace-scatter": [0, 0, 12, 6] }),
     exampleId: "scatter-trace",
+    chrome: true,
     shotAlt: "A scatter plot whose axes are calculated fields.",
     steps: [{ click: "Calculations" }, { expectText: "Net sales" }],
   },
 } satisfies Record<string, LiveExampleSpec>;
 
-/** Height that fits a layout's grid rows plus the workspace toolbar and count. */
+/**
+ * Height that fits a layout's grid rows, plus the workspace toolbar and
+ * status bar when the example keeps them. A loaded workspace sizes itself;
+ * this holds its place while it loads.
+ */
 export function liveExampleHeight(spec: LiveExampleSpec) {
   if (spec.notebook !== undefined) {
     return spec.height;
@@ -823,43 +836,8 @@ export function liveExampleHeight(spec: LiveExampleSpec) {
   const rows = Math.max(
     ...spec.savedData.charts.map(({ layout }) => layout.y + layout.h)
   );
-  const rowHeight = spec.savedData.gridSettings.rowHeight;
-  return rows * (rowHeight + 10) + 70;
-}
-
-/** A step as an instruction for the reader. */
-export function describeStep(spec: LiveExampleSpec, step: LiveStep): string {
-  if ("brush" in step) {
-    const chart = (
-      spec.notebook === undefined ? spec.savedData.charts : []
-    ).find(({ id }) => id === step.brush.chart);
-    return `Drag across “${chart?.title ?? step.brush.chart}” from ${step.brush.from} to ${step.brush.to}.`;
-  }
-  if ("select" in step) {
-    return `Set “${step.select.label}” to “${step.select.option}”.`;
-  }
-  if ("expectText" in step) {
-    return `It reads “${step.expectText}”.`;
-  }
-  if ("choose" in step) {
-    return `Choose “${step.choose}”.`;
-  }
-  if ("link" in step) {
-    return `Follow “${step.link}”.`;
-  }
-  if ("expectPopover" in step) {
-    return `The records show “${step.expectPopover}”.`;
-  }
-  if ("click" in step) {
-    return `Click “${step.click}”.`;
-  }
-  if ("expectMark" in step) {
-    return `A bar now reads “${step.expectMark}”.`;
-  }
-  if ("expectChip" in step) {
-    return `The filter reads “${step.expectChip}”.`;
-  }
-  return `The workspace shows ${step.expectRows.toLocaleString("en-US")} rows.`;
+  const { rowHeight, containerPadding } = spec.savedData.gridSettings;
+  return rows * rowHeight + containerPadding * 2 + (spec.chrome ? 100 : 0);
 }
 
 export type LiveExampleId = keyof typeof liveExamples;

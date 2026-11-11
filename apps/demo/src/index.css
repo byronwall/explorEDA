@@ -89,6 +89,25 @@
     0 24px 60px -28px color-mix(in oklab, var(--brand-navy) 35%, transparent);
 }
 
+/* A docs live example shows its charts and nothing else. The toolbar and
+   status bar stay for the pages about them (`data-docs-chrome`). The
+   controls line keeps its drawers, so chart actions that open one work. */
+.docs-live:not([data-docs-chrome]) .eda-workspace-toolbar,
+.docs-live:not([data-docs-chrome]) .eda-workspace-status {
+  display: none;
+}
+.docs-live:not([data-docs-chrome]) .eda-workspace-controls {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+.docs-live[data-docs-chrome] {
+  padding: 0 8px;
+}
+.docs-live .eda-notebook-output {
+  padding: 12px;
+}
+
 .landing-drop-overlay {
   background: var(--background);
 }
