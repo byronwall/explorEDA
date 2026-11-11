@@ -75,10 +75,14 @@ export function PlannedGrid({
   plan,
   interactive = false,
   activeId,
+  hitsOnly = false,
 }: {
   plan: ChartAxesPlan;
   interactive?: boolean;
   activeId?: string | null;
+  /** Draw only the hit targets and the active line; the visible grid is
+   * drawn elsewhere, under marks painted on a canvas. */
+  hitsOnly?: boolean;
 }) {
   const guides = [...plan.x.gridGuides, ...plan.y.gridGuides];
   if (!guides.length) return null;
@@ -90,11 +94,13 @@ export function PlannedGrid({
     >
       {guides.map((guide) => (
         <g key={guide.id}>
-          <line
-            {...guide.line}
-            pointerEvents="none"
-            style={guide.id === activeId ? activeLine : undefined}
-          />
+          {(!hitsOnly || guide.id === activeId) && (
+            <line
+              {...guide.line}
+              pointerEvents="none"
+              style={guide.id === activeId ? activeLine : undefined}
+            />
+          )}
           {interactive && (
             <line
               {...guide.line}

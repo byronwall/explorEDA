@@ -27,6 +27,7 @@ import { planContours, type ContourTrace } from "./contourPlan";
 import { SurfaceLayer, SurfaceLegend } from "./SurfaceLayer";
 import { STATUS_LINE_HEIGHT } from "../ChartStatusLine";
 import { buildScale } from "../Axis/axisPlan";
+import { PlannedGrid } from "../Axis/AxisLayer";
 import {
   marginalBinFilters,
   marginalRangeFilter,
@@ -397,6 +398,7 @@ function ScatterPoints({
   const hoveredText =
     hoveredPoint && scatterHoverReadout(plan, snapshot, settings, hoveredPoint);
 
+  const canvasPoints = !surfaceMode && !plan.size;
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -416,7 +418,7 @@ function ScatterPoints({
     ctx.rect(0, 0, plan.plotWidth, plan.plotHeight);
     ctx.clip();
     // Density surfaces and bubbles draw after the grid in SVG.
-    if (surfaceMode || plan.size) return;
+    if (!canvasPoints) return;
     for (const point of plan.points) {
       ctx.fillStyle = point.color;
       ctx.globalAlpha = point.opacity;
@@ -428,7 +430,7 @@ function ScatterPoints({
         ctx.stroke();
       } else ctx.fill();
     }
-  }, [plan, width, height, surfaceMode]);
+  }, [plan, width, height, canvasPoints]);
 
   // Title glyph widths vary by font, so move each badge to the rendered end.
   const rootRef = useRef<HTMLDivElement>(null);
@@ -581,6 +583,24 @@ function ScatterPoints({
     >
       {plan.populations.facet > 0 ? (
         <>
+          {canvasPoints && (
+            // Grid lines sit under the points painted on the canvas.
+            <svg
+              className="absolute inset-0 pointer-events-none"
+              width={width}
+              height={height}
+              aria-hidden="true"
+            >
+              <svg
+                x={plan.margin.left}
+                y={plan.margin.top}
+                width={plan.clipWidth}
+                height={plan.clipHeight}
+              >
+                <PlannedGrid plan={plan.axes} />
+              </svg>
+            </svg>
+          )}
           <canvas
             ref={canvasRef}
             className="absolute inset-0 pointer-events-none"
@@ -588,6 +608,7 @@ function ScatterPoints({
           />
           <ScatterSvg
             plan={plan}
+            gridBelow={canvasPoints}
             hoveredId={
               hoveredId ??
               (activeSelection?.kind === "point" ? activeSelection.id : null)

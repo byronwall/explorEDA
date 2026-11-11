@@ -445,7 +445,10 @@ export function ScatterSvg({
   onInspectConnection,
   annotations,
   pointLabels = [],
+  gridBelow = false,
 }: {
+  /** The visible grid sits under a canvas; draw only its hit targets. */
+  gridBelow?: boolean;
   /** Text beside points, placed so labels never overlap. */
   pointLabels?: PointLabel[];
   /** Paths joining points in order, drawn under the fits. */
@@ -747,6 +750,7 @@ export function ScatterSvg({
           <PlannedGrid
             plan={plan.axes}
             interactive
+            hitsOnly={gridBelow}
             activeId={hoveredGuideId ?? selectedId}
           />
         </g>
