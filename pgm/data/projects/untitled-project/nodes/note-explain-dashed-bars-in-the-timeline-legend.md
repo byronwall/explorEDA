@@ -2,10 +2,11 @@
 id: note-explain-dashed-bars-in-the-timeline-legend
 label: Explain dashed bars in the timeline legend
 type: note
-status: planned
+status: implemented
 priority: medium
 parent: area-1-work-now
 metadata:
+  implementation: Legend adds a dashed 'No end' swatch when rows have no end (fdbk-1111/labels).
   purpose: Dashed bars appear to mean 'no end' (footer says '3 with no end'). Add a legend entry for the dashed style.
 images:
   - id: a6ce1b29-26f8-449b-8996-8c711aa6a7eb

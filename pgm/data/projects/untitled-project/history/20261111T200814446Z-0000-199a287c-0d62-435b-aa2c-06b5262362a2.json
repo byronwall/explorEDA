@@ -1,0 +1,12 @@
+{
+  "id": "199a287c-0d62-435b-aa2c-06b5262362a2",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a4ba66",
+    "label": "Agent token ...a4ba66"
+  },
+  "createdAt": "2026-11-11T20:08:14.446Z",
+  "summary": "Changed \"Joint missingness: dots use a different blue, not black\" status to implemented.",
+  "nodeIds": ["note-joint-missingness-dots-use-a-different-blue-not-black"]
+}

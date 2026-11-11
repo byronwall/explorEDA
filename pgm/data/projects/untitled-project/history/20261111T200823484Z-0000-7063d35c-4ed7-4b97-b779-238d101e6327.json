@@ -1,0 +1,12 @@
+{
+  "id": "7063d35c-4ed7-4b97-b779-238d101e6327",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5c9ffa",
+    "label": "Agent token ...5c9ffa"
+  },
+  "createdAt": "2026-11-11T20:08:23.484Z",
+  "summary": "Updated metadata for \"Link the timeline composition to an example\".",
+  "nodeIds": ["note-link-the-timeline-composition-to-an-example"]
+}

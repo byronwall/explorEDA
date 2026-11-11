@@ -1,0 +1,12 @@
+{
+  "id": "5bdf0581-b335-4efa-bb83-b7e707ee82a2",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:780226",
+    "label": "Agent token ...780226"
+  },
+  "createdAt": "2026-11-11T20:08:08.208Z",
+  "summary": "Changed \"Shift+Z clears all filters\" status to implemented.",
+  "nodeIds": ["note-shift-z-clears-all-filters"]
+}

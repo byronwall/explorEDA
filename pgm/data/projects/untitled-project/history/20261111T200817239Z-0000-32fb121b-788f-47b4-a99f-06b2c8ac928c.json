@@ -1,0 +1,12 @@
+{
+  "id": "32fb121b-788f-47b4-a99f-06b2c8ac928c",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d12806",
+    "label": "Agent token ...d12806"
+  },
+  "createdAt": "2026-11-11T20:08:17.239Z",
+  "summary": "Updated metadata for \"Scatter matrix scale shows one value\".",
+  "nodeIds": ["note-scatter-matrix-scale-shows-one-value"]
+}

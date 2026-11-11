@@ -1,0 +1,12 @@
+{
+  "id": "58af5dbc-437c-49bd-a969-c9d3caaabe88",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8836b1",
+    "label": "Agent token ...8836b1"
+  },
+  "createdAt": "2026-11-11T20:08:07.413Z",
+  "summary": "Updated metadata for \"Docs examples reset on refresh (no local persistence)\".",
+  "nodeIds": ["note-docs-examples-reset-on-refresh-no-local-persistence"]
+}

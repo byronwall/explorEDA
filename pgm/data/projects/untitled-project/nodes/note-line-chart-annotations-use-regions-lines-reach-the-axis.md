@@ -2,10 +2,11 @@
 id: note-line-chart-annotations-use-regions-lines-reach-the-axis
 label: "Line chart annotations: use regions, lines reach the axis"
 type: note
-status: planned
+status: implemented
 priority: low
 parent: area-1-work-now
 metadata:
+  implementation: Summer sale is a shaded band that reaches the axis, not a bracket (fdbk-1111/docs).
   purpose: Prefer region annotations in the line chart example. Where a line annotation stays, extend it down to the x axis.
 images:
   - id: 0f098584-2bad-4139-a6e4-32a4eec30980

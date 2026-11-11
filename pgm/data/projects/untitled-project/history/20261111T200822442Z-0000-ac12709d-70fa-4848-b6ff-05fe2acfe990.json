@@ -1,0 +1,12 @@
+{
+  "id": "ac12709d-70fa-4848-b6ff-05fe2acfe990",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d0c67b",
+    "label": "Agent token ...d0c67b"
+  },
+  "createdAt": "2026-11-11T20:08:22.442Z",
+  "summary": "Changed \"Heatmap: add a transpose (flip rows and columns) button\" status to needs-review.",
+  "nodeIds": ["note-heatmap-add-a-transpose-flip-rows-and-columns-button"]
+}

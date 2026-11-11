@@ -2,10 +2,11 @@
 id: note-link-the-timeline-composition-to-an-example
 label: Link the timeline composition to an example
 type: note
-status: planned
+status: implemented
 priority: low
 parent: area-1-work-now
 metadata:
+  implementation: Timeline docs link to the Supreme Court seats example (fdbk-1111/docs).
   purpose: Where the timeline docs mention composition, link to an example that uses it.
 images:
   - id: cd2dfe06-5b2b-43c4-917c-327a5a4a8e1a

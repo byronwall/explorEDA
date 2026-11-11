@@ -1,0 +1,12 @@
+{
+  "id": "ff19da10-ee1a-472f-9833-175e1ade2525",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9f6950",
+    "label": "Agent token ...9f6950"
+  },
+  "createdAt": "2026-11-11T20:08:10.046Z",
+  "summary": "Updated metadata for \"Chart title underline appears and disappears\".",
+  "nodeIds": ["note-chart-title-underline-appears-and-disappears"]
+}

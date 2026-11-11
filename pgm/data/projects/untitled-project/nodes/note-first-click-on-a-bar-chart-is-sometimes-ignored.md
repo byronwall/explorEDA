@@ -2,10 +2,11 @@
 id: note-first-click-on-a-bar-chart-is-sometimes-ignored
 label: First click on a bar chart is sometimes ignored
 type: note
-status: planned
+status: needs-review
 priority: high
 parent: area-1-work-now
 metadata:
+  implementation: "Not reproduced: first clicks filtered in 3 of 3 real-mouse runs. Mouse focus no longer re-sets hover between press and release (fdbk-1111/interactions). Reopen with steps if it recurs."
   purpose: "Reproduce on a fresh page load. Byron suspects focus: the first click focuses instead of selecting. Intermittent."
 images:
   - id: ee290b8f-a2ad-4f17-b9e0-6f36a81226ab

@@ -2,10 +2,11 @@
 id: note-heatmap-add-a-transpose-flip-rows-and-columns-button
 label: "Heatmap: add a transpose (flip rows and columns) button"
 type: note
-status: planned
+status: needs-review
 priority: medium
 parent: area-1-work-now
 metadata:
+  implementation: "Swap rows and columns works for category heatmaps (fdbk-1111/zoom-transpose). Date-binned columns cannot swap: rows have no date binning. The message-log case needs row date binning, a separate feature."
   purpose: Add a quick action that swaps X and Y on the heatmap.
 images:
   - id: 69c7f2e5-ab69-4ecc-bfa7-7ceaaf421cb8

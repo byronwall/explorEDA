@@ -1,0 +1,12 @@
+{
+  "id": "c915eb2f-ff30-4230-a65d-a32350de70d3",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5e4f1c",
+    "label": "Agent token ...5e4f1c"
+  },
+  "createdAt": "2026-11-11T20:08:05.530Z",
+  "summary": "Changed \"View switch arrow causes layout shift\" status to implemented.",
+  "nodeIds": ["note-view-switch-arrow-causes-layout-shift"]
+}

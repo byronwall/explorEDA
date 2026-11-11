@@ -1,0 +1,12 @@
+{
+  "id": "7f2402c2-6def-48ec-ab01-b1db9d962b55",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8836b1",
+    "label": "Agent token ...8836b1"
+  },
+  "createdAt": "2026-11-11T20:08:07.275Z",
+  "summary": "Changed \"Docs examples reset on refresh (no local persistence)\" status to implemented.",
+  "nodeIds": ["note-docs-examples-reset-on-refresh-no-local-persistence"]
+}

@@ -2,10 +2,11 @@
 id: note-grid-lines-draw-on-top-of-marks
 label: Grid lines draw on top of marks
 type: note
-status: planned
+status: implemented
 priority: high
 parent: area-1-work-now
 metadata:
+  implementation: Canvas scatter points paint over an SVG grid underneath (fdbk-1111/rendering).
   purpose: Render grid lines (including the symlog grid line hit targets) below the marks in every chart. Seen on 'Revenue and margin per order' scatter.
 images:
   - id: 9cd98601-6764-4bc0-b379-0d9d581147df

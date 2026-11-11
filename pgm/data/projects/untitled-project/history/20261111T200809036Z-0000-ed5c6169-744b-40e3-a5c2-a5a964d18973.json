@@ -1,0 +1,14 @@
+{
+  "id": "ed5c6169-744b-40e3-a5c2-a5a964d18973",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:aacfc8",
+    "label": "Agent token ...aacfc8"
+  },
+  "createdAt": "2026-11-11T20:08:09.036Z",
+  "summary": "Changed \"Hover readout and hover highlight do not clear on mouse leave\" status to implemented.",
+  "nodeIds": [
+    "note-hover-readout-and-hover-highlight-do-not-clear-on-mouse-leave"
+  ]
+}

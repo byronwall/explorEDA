@@ -1,0 +1,12 @@
+{
+  "id": "7ca06948-02d1-4db1-bd38-9daf42b99ba7",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:01ea45",
+    "label": "Agent token ...01ea45"
+  },
+  "createdAt": "2026-11-11T20:08:04.784Z",
+  "summary": "Updated metadata for \"Refresh flashes the home page before the example loads\".",
+  "nodeIds": ["note-refresh-flashes-the-home-page-before-the-example-loads"]
+}

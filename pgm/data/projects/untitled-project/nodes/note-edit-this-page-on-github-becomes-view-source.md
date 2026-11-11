@@ -2,10 +2,11 @@
 id: note-edit-this-page-on-github-becomes-view-source
 label: "'Edit this page on GitHub' becomes 'View source'"
 type: note
-status: planned
+status: implemented
 priority: medium
 parent: area-1-work-now
 metadata:
+  implementation: Docs footer link reads 'View source' (fdbk-1111/demo-shell).
   purpose: Change the docs footer link text to 'View source'.
 images:
   - id: e9e9ab38-4701-47ce-a301-743d2a92cd05

@@ -2,10 +2,11 @@
 id: note-y-axis-label-truncates-with-space-left
 label: Y-axis label truncates with space left
 type: note
-status: planned
+status: implemented
 priority: medium
 parent: area-1-work-now
 metadata:
+  implementation: Axis titles fit by measured width and may use part of the margin (fdbk-1111/rendering).
   purpose: "'Share of regional order...' truncates though there is room. Fix the width calculation for rotated axis titles."
 images:
   - id: 545dc0ff-8d9b-4339-ab8f-7ec7f8b59edc

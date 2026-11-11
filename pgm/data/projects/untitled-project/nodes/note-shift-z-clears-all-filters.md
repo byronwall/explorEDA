@@ -2,10 +2,11 @@
 id: note-shift-z-clears-all-filters
 label: Shift+Z clears all filters
 type: note
-status: planned
+status: implemented
 priority: high
 parent: area-1-work-now
 metadata:
+  implementation: Shift+Z clears all filters; listed in the shortcut sheet and the clear button tooltip (fdbk-1111/interactions).
   purpose: Bind Shift+Z to 'Clear all filters' and list it in the shortcut sheet. C stays 'Clear chart filters'. Shift+C did nothing.
 images:
   - id: 1f21a6eb-8de5-48ef-8b54-4c0e060ef76d

@@ -1,0 +1,12 @@
+{
+  "id": "10d5c3e7-0f31-4b75-9a96-4b6973764ca4",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:de9d01",
+    "label": "Agent token ...de9d01"
+  },
+  "createdAt": "2026-11-11T20:08:19.714Z",
+  "summary": "Changed \"Allow a larger chart title size\" status to implemented.",
+  "nodeIds": ["note-allow-a-larger-chart-title-size"]
+}
