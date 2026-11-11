@@ -234,10 +234,7 @@ export function SavedViewTabs({
                 role="tab"
                 aria-selected={selected}
                 tabIndex={selected ? 0 : -1}
-                className={cn(
-                  "h-7 max-w-[14rem] truncate rounded-md px-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  selected && "font-medium"
-                )}
+                className="h-7 max-w-[14rem] truncate rounded-md px-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => onSelect(tab.id)}
                 onDoubleClick={() => {
                   if (selected && !readOnly) {
@@ -270,6 +267,10 @@ export function SavedViewTabs({
               >
                 {tab.name}
               </button>
+              {!selected && !readOnly && (
+                // Holds the options button's space so tabs keep their width.
+                <span className="-ml-1 mr-0.5 size-6 shrink-0" aria-hidden />
+              )}
               {selected && !readOnly && (
                 <DropdownMenu>
                   <ActionTooltip content="View options: rename, duplicate, move, export, or delete this view">

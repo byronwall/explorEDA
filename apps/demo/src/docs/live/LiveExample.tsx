@@ -152,7 +152,7 @@ export function LiveExample({
                 className="size-1.5 rounded-full bg-[var(--eda-dsl-string)] shadow-[0_0_0_3px_color-mix(in_oklab,var(--eda-dsl-string)_20%,transparent)]"
               />
             )}
-            {wide ? "Live example · edits stay on this page" : "Screenshot"}
+            {wide ? "Live example" : "Screenshot"}
           </span>
           <div className="ml-auto flex items-center gap-1">
             {wide && (
@@ -166,7 +166,7 @@ export function LiveExample({
                 }}
               >
                 <RotateCcw aria-hidden="true" />
-                Start over
+                Reset
               </Button>
             )}
             <Button asChild variant="ghost" size="sm">
