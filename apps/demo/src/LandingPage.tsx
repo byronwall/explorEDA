@@ -545,6 +545,9 @@ export function LandingPage() {
             >
               {isExamplesIndex ? (
                 <ExamplesIndex />
+              ) : routeExampleId !== null && !loadError ? (
+                // An example URL waits for its data; the home page never shows.
+                <div className="min-h-[60vh]" aria-hidden="true" />
               ) : showDocs ? (
                 <Suspense fallback={null}>
                   <DocsSite />

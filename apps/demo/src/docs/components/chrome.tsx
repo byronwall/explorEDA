@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ArrowLeft, ArrowRight, ChevronRight, PencilLine } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronRight, FileCode } from "lucide-react";
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import type { DocsPage } from "../catalogue";
@@ -114,8 +114,8 @@ export function PageFooter({
         href={`${SOURCE_BASE}${topic}.mdx`}
         className="inline-flex items-center gap-1.5 rounded-sm text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
-        <PencilLine aria-hidden="true" className="size-3.5" />
-        Edit this page on GitHub
+        <FileCode aria-hidden="true" className="size-3.5" />
+        View source
       </a>
       {(previous || next) && (
         <nav
