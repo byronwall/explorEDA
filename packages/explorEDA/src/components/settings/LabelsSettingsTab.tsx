@@ -1,4 +1,9 @@
 import { ChartSettings, type ChartStyleOverrides } from "@/types/ChartTypes";
+import { useEffect, useState } from "react";
+import {
+  COMPACT_TYPOGRAPHY,
+  readThemeTypography,
+} from "../charts/chartTypography";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -24,6 +29,19 @@ export function LabelsSettingsTab({
   onSettingChange,
 }: LabelsSettingsTabProps) {
   const style = settings.style ?? {};
+  // The theme's sizes, read from the chart, so empty fields show what they follow.
+  const [theme, setTheme] = useState(COMPACT_TYPOGRAPHY);
+  useEffect(() => {
+    const panel = document.querySelector(`[data-chart-id="${settings.id}"]`);
+    if (panel) setTheme(readThemeTypography(panel));
+  }, [settings.id]);
+  const themeSize = {
+    titleSize: theme.headlineSize,
+    subtitleSize: theme.subtitleSize,
+  };
+  const weightName =
+    WEIGHTS.find(([, weight]) => weight === theme.headlineWeight)?.[0] ??
+    String(theme.headlineWeight);
   const setStyle = (key: keyof ChartStyleOverrides, value?: number) => {
     const next = { ...style, [key]: value };
     if (value === undefined) delete next[key];
@@ -35,14 +53,14 @@ export function LabelsSettingsTab({
     what: string
   ) => (
     <ActionTooltip
-      content={`${what} size in px for this chart. Leave it empty to follow the workspace theme.`}
+      content={`${what} size in px for this chart. Leave it empty to follow the workspace theme (${themeSize[key]} px).`}
     >
       <Input
         id={id}
         type="number"
         min={8}
         max={64}
-        placeholder="Theme"
+        placeholder={`Theme · ${themeSize[key]}`}
         value={style[key] ?? ""}
         onChange={(e) => {
           if (!e.target.value) setStyle(key, undefined);
@@ -100,7 +118,9 @@ export function LabelsSettingsTab({
           size="sm"
           className="grid w-full grid-cols-4"
         >
-          <ActionTooltip content="Follow the workspace theme's title weight.">
+          <ActionTooltip
+            content={`Follow the workspace theme's title weight (${weightName}).`}
+          >
             <ToggleGroupItem
               value="theme"
               aria-label="Theme"

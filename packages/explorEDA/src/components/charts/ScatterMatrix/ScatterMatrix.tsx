@@ -1228,7 +1228,9 @@ function CorrelationCell({
         fontSize={fontSize * 0.6}
         className="fill-muted-foreground"
       >
-        {METHOD_NAMES[method]}
+        {/* The method name waits in the tooltip. */}
+        <title>{`${METHOD_NAMES[method]} correlation`}</title>
+        Correlation
       </text>
       <text
         x={cell.x + size / 2}

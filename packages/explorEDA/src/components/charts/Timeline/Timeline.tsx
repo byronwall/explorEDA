@@ -177,8 +177,11 @@ export function Timeline({
     trace?.selection?.owner === owner ? Number(trace.selection.id) : undefined;
 
   const labelWidth = Math.round(Math.min(120, Math.max(56, width * 0.16)));
+  const openCount = plan?.intervals.filter((item) => item.open).length ?? 0;
+  // The legend row names the colors and the dashed bars with no end.
+  const showLegend = Boolean(colorField) || openCount > 0;
   const margin = {
-    top: colorField ? LEGEND_HEIGHT + 4 : 6,
+    top: showLegend ? LEGEND_HEIGHT + 4 : 6,
     left: 8 + labelWidth + 8,
     right: 14,
     bottom: AXIS_HEIGHT + STATUS_LINE_HEIGHT + 6,
@@ -273,7 +276,6 @@ export function Timeline({
   const selectedCount = hasSelection
     ? plan.intervals.filter(isSelected).length
     : 0;
-  const openCount = plan.intervals.filter((item) => item.open).length;
   const statusParts = [
     hasSelection
       ? `${selectedCount.toLocaleString()} of ${plan.intervals.length.toLocaleString()} rows selected`
@@ -340,7 +342,7 @@ export function Timeline({
           )}
         </ChartReadout>
       )}
-      {legend.length > 0 && (
+      {showLegend && (
         <div
           className="absolute flex items-center gap-3 overflow-hidden whitespace-nowrap text-[11px] text-muted-foreground"
           style={{
@@ -349,7 +351,9 @@ export function Timeline({
             right: margin.right,
             height: LEGEND_HEIGHT,
           }}
-          aria-label={`${getFieldLabel(colorField!)} legend`}
+          aria-label={
+            colorField ? `${getFieldLabel(colorField)} legend` : "Legend"
+          }
         >
           {legend.map((item) => (
             <span key={item.key} className="inline-flex items-center gap-1">
@@ -361,6 +365,15 @@ export function Timeline({
               {item.label}
             </span>
           ))}
+          {openCount > 0 && (
+            <span className="inline-flex items-center gap-1">
+              <span
+                className="inline-block h-2.5 w-4 rounded-sm border border-dashed border-current opacity-70"
+                aria-hidden="true"
+              />
+              No end
+            </span>
+          )}
         </div>
       )}
       <svg

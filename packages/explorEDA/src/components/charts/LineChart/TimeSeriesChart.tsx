@@ -214,14 +214,14 @@ export function TimeSeriesChart({
   // The dots stay as hit and keyboard targets and show when active.
   const denseMarks =
     marks.length / Math.max(1, plan.series.length) > DENSE_PERIODS;
-  const periodText =
+  const period =
     time.interval === "day"
-      ? "Daily"
+      ? "day"
       : time.interval === "week"
-        ? "Weekly"
+        ? "week"
         : time.interval === "year"
-          ? "Yearly"
-          : "Monthly";
+          ? "year"
+          : "month";
 
   return (
     <div className="relative" style={{ width, height }}>
@@ -229,8 +229,11 @@ export function TimeSeriesChart({
         className="absolute inset-x-2 top-1 flex h-10 items-start gap-2 overflow-auto text-xs"
         aria-label="Time series legend"
       >
-        <span className="shrink-0 text-muted-foreground">
-          {periodText} · UTC
+        <span
+          className="shrink-0 text-muted-foreground"
+          title={`Rows group into ${period}s by their UTC date`}
+        >
+          One point per {period}
         </span>
         {!(settings.colorField === time.splitField && settings.colorScaleId) &&
           plan.legendSeries.map((series) => (

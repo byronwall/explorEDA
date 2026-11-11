@@ -66,6 +66,7 @@ function SettingRow({ type, row }: { type: string; row: Row }) {
         {kind !== "unset" && (
           <code
             aria-label={`New chart: ${formatDefault(row.defaultValue)}`}
+            title={`Default for a new chart: ${formatDefault(row.defaultValue)}`}
             className={cn(
               "rounded bg-muted px-1.5 font-mono text-[0.75rem] tabular-nums",
               KIND_CLASS[kind]
@@ -190,7 +191,7 @@ export function SettingsReference({ type }: { type: string }) {
           open={query ? true : undefined}
           className="group/shared rounded-lg border border-border bg-card open:bg-transparent open:p-0 [&[open]>summary]:mb-4"
         >
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-4 py-2.5 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-open/shared:border group-open/shared:border-border group-open/shared:bg-card [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-lg px-4 py-2.5 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring group-open/shared:bg-muted [&::-webkit-details-marker]:hidden">
             <span>
               Shared settings
               <span className="ml-2 font-normal text-muted-foreground">
