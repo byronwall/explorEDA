@@ -1,4 +1,5 @@
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { keyboardFocused } from "../keyboardFocus";
 import { annotationSlot, scaleFrame } from "../annotations/ChartAnnotations";
 import { useAxisTypography } from "../chartTypography";
 import { useCallback, useId, useMemo, useRef, useState } from "react";
@@ -313,6 +314,10 @@ export function SeriesBarChart({
               aria-description="Enter selects this category and series. Alt-Enter inspects its records. Arrow keys move between bars."
               className="cursor-pointer outline-none focus-visible:stroke-[var(--ring)] focus-visible:stroke-2"
               onPointerEnter={() => setActiveId(bar.id)}
+              onPointerLeave={(event) => {
+                if (!keyboardFocused(event.currentTarget))
+                  setActiveId(undefined);
+              }}
               onFocus={() => setActiveId(bar.id)}
               onClick={(event) => {
                 event.stopPropagation();

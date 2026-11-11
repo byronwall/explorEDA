@@ -1,4 +1,5 @@
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { keyboardFocused } from "../keyboardFocus";
 import { useAxisTypography } from "../chartTypography";
 import { categoryEqual, categoryIncludes } from "@/lib/categories";
 import type { datum } from "@/types/ChartTypes";
@@ -874,7 +875,13 @@ function SingleBarChart({
                   // reads as open rather than as one more bin.
                   strokeDasharray: bar.tail && !outlined ? "3 2" : undefined,
                 }}
-                onFocus={() => setHovered({ id: bar.id, altKey: false })}
+                onFocus={(event) => {
+                  // A mouse press focuses the bar too; only keyboard focus
+                  // holds the readout after the pointer leaves.
+                  if (keyboardFocused(event.currentTarget)) {
+                    setHovered({ id: bar.id, altKey: false });
+                  }
+                }}
                 onBlur={() => setHovered({ id: null, altKey: false })}
                 onKeyDown={(event) => {
                   if (event.key !== "Enter" && event.key !== " ") return;

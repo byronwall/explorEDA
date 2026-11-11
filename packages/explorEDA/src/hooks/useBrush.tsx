@@ -73,7 +73,12 @@ export function useBrush({
     const [x, y] = position(event);
     if (x < 0 || x > innerWidth || y < 0 || y > innerHeight) return;
     event.stopPropagation();
-    event.currentTarget.focus({ preventScroll: true });
+    // A press focuses the chart for Escape, but shows no keyboard focus.
+    // TS's FocusOptions lacks focusVisible, which Chrome and Firefox read.
+    event.currentTarget.focus({
+      preventScroll: true,
+      focusVisible: false,
+    } as FocusOptions);
     let edges = "";
     let inside = false;
     if (extent) {
