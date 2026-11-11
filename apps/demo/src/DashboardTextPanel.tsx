@@ -48,6 +48,9 @@ function DiagnosticItem({
   onShow: (item: DslDiagnostic) => void;
 }) {
   const Icon = item.severity === "error" ? CircleX : AlertTriangle;
+  // The icon and its line label share the severity color.
+  const tone =
+    item.severity === "error" ? "text-destructive" : "text-[var(--warning)]";
   return (
     <li>
       <button
@@ -57,15 +60,12 @@ function DiagnosticItem({
       >
         <Icon
           aria-hidden="true"
-          className={cn(
-            "mt-0.5 size-3.5 shrink-0",
-            item.severity === "error"
-              ? "text-destructive"
-              : "text-[var(--warning)]"
-          )}
+          className={cn("mt-0.5 size-3.5 shrink-0", tone)}
         />
         <span className="min-w-0">
-          <span className="font-medium tabular-nums">Line {item.line}</span>
+          <span className={cn("font-medium tabular-nums", tone)}>
+            Line {item.line}
+          </span>
           <span className="sr-only">
             {item.severity === "error" ? " error" : " warning"}
           </span>{" "}

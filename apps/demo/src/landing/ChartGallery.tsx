@@ -32,10 +32,7 @@ export function ChartGallery() {
             key={topic}
             className="group relative -mx-2.5 flex items-start gap-2.5 rounded-lg px-2.5 py-2 transition-colors duration-150 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring hover:bg-muted"
           >
-            <Icon
-              aria-hidden="true"
-              className="mt-0.5 size-4 shrink-0 text-site-ink transition-colors duration-150 group-hover:text-site-accent"
-            />
+            <Icon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
             <div className="min-w-0">
               <h3 className="text-sm font-semibold leading-snug">
                 <Link

@@ -34,6 +34,7 @@ Run `pnpm check:ui` to reject native title attributes, SVG `<title>` elements, a
 
 ## Tooltips and field details
 
+- An icon beside text takes the color of that text. Set the color on their shared parent and let the icon use `currentColor`. Only a color swatch, a field type icon, or a status mark whose color is the information keeps its own color.
 - Give each icon button an accessible action name.
 - Use `ActionTooltip` or `Button tooltip` for important icon actions. The shared delay is 140 ms.
 - Open tooltips on pointer hover only. Focus return must not open them. Keep accessible names and keyboard focus indicators.

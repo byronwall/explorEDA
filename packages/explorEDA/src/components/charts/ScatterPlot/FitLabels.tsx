@@ -148,6 +148,7 @@ export function FitLabels({
         data-fit-id={fit.id}
         className="eda-fit-label"
         data-active={activeId === fit.id || undefined}
+        data-warning={fit.outcome.ok ? undefined : ""}
         aria-label={`${name}: ${fit.outcome.ok ? summary : `unavailable. ${fit.outcome.reason}`}. Alt-Enter traces it.`}
         onPointerEnter={() => onActive(fit.id)}
         onPointerLeave={() => onActive(undefined)}
@@ -171,10 +172,7 @@ export function FitLabels({
             />
           </svg>
         ) : (
-          <TriangleAlert
-            className="size-3 shrink-0 text-warning"
-            aria-hidden="true"
-          />
+          <TriangleAlert className="size-3 shrink-0" aria-hidden="true" />
         )}
         <span className="truncate">
           {named && <span className="font-medium">{fit.label}: </span>}
@@ -195,12 +193,10 @@ export function FitLabels({
       <li
         tabIndex={0}
         className="eda-fit-label"
+        data-warning=""
         aria-label={`${text}. ${notice}`}
       >
-        <TriangleAlert
-          className="size-3 shrink-0 text-warning"
-          aria-hidden="true"
-        />
+        <TriangleAlert className="size-3 shrink-0" aria-hidden="true" />
         <span className="truncate">{text}</span>
       </li>
     </ActionTooltip>

@@ -104,7 +104,7 @@ function PickCard({
         <h3 className="flex items-baseline gap-2 font-semibold">
           <Icon
             aria-hidden="true"
-            className="size-4 shrink-0 translate-y-0.5 text-docs-accent"
+            className="size-4 shrink-0 translate-y-0.5"
           />
           <Link className={stretchedLinkClass} to={docsPath(page.topic)}>
             {page.title}
@@ -164,21 +164,16 @@ function PathList() {
           <li key={title} className="group relative">
             <Link
               to={to}
-              className="flex items-center gap-3 py-2.5 text-sm transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="flex items-center gap-3 py-2.5 text-sm text-foreground transition-colors duration-150 group-hover:text-docs-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <Icon
-                aria-hidden="true"
-                className="size-4 shrink-0 text-docs-accent"
-              />
+              <Icon aria-hidden="true" className="size-4 shrink-0" />
               <span className="flex min-w-0 flex-1 flex-col sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
-                <span className="font-medium text-foreground transition-colors duration-150 group-hover:text-docs-accent">
-                  {title}
-                </span>
+                <span className="font-medium">{title}</span>
                 <span className="text-xs text-muted-foreground">{where}</span>
               </span>
               <ArrowRight
                 aria-hidden="true"
-                className="size-3.5 shrink-0 text-muted-foreground transition-[color,transform] duration-150 group-hover:translate-x-0.5 group-hover:text-docs-accent"
+                className="size-3.5 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5"
               />
             </Link>
           </li>

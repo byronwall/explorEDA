@@ -60,7 +60,7 @@ export function SheetPicker({
       )}
     >
       <div className="flex items-center gap-2">
-        <SheetIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+        <SheetIcon className="h-4 w-4 shrink-0" />
         <p className="min-w-0 flex-1 truncate font-medium">
           Open a sheet from {fileName}
         </p>

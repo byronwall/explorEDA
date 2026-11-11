@@ -1082,10 +1082,7 @@ export function SavedViewsWorkspace({
       role="status"
       className="flex flex-wrap items-center gap-2 border-b border-border bg-accent/60 px-3 py-2 text-xs"
     >
-      <Eye
-        className="size-4 shrink-0 text-muted-foreground"
-        aria-hidden="true"
-      />
+      <Eye className="size-4 shrink-0" aria-hidden="true" />
       <span className="min-w-0 flex-1 truncate">
         <span className="font-medium">
           Previewing {formatClock(previewed.entry.at)}
@@ -1278,10 +1275,7 @@ export function SavedViewsWorkspace({
       )}
       {previewed && !historyOpen && (
         <div className="mb-2 flex flex-wrap items-center gap-2 rounded-md border border-border bg-accent/50 px-3 py-2 text-sm">
-          <Eye
-            className="size-4 shrink-0 text-muted-foreground"
-            aria-hidden="true"
-          />
+          <Eye className="size-4 shrink-0" aria-hidden="true" />
           <p className="min-w-0 flex-1">
             <span className="font-medium">
               Viewing the version from {formatClock(previewed.entry.at)}

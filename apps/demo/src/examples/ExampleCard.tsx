@@ -9,11 +9,8 @@ export function ExampleCard({ example }: { example: ExampleData }) {
   const { rows, source } = example.dataset;
   return (
     <li className="group relative flex flex-col rounded-xl border border-border bg-card p-4 transition-colors focus-within:ring-2 focus-within:ring-ring hover:bg-accent/40">
-      <div className="flex items-start gap-3">
-        <Icon
-          className="mt-0.5 size-4 shrink-0 text-site-accent"
-          aria-hidden="true"
-        />
+      <div className="flex items-start gap-3 text-card-foreground">
+        <Icon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
         <h3 className="min-w-0 flex-1 text-sm font-semibold leading-snug text-card-foreground">
           <Link
             to={examplePath(example.id)}
@@ -24,7 +21,7 @@ export function ExampleCard({ example }: { example: ExampleData }) {
         </h3>
         <ArrowRight
           aria-hidden="true"
-          className="mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-site-accent motion-reduce:transition-none"
+          className="mt-0.5 size-4 shrink-0 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
         />
       </div>
       <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">

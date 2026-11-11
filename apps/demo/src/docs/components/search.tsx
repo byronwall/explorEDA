@@ -318,7 +318,7 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
                         {selected && (
                           <CornerDownLeft
                             aria-hidden="true"
-                            className="mt-1.5 size-4 shrink-0 text-muted-foreground"
+                            className="mt-1.5 size-4 shrink-0"
                           />
                         )}
                       </div>
