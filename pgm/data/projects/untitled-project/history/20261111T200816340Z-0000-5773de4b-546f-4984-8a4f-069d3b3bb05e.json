@@ -1,0 +1,12 @@
+{
+  "id": "5773de4b-546f-4984-8a4f-069d3b3bb05e",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:008b15",
+    "label": "Agent token ...008b15"
+  },
+  "createdAt": "2026-11-11T20:08:16.340Z",
+  "summary": "Updated metadata for \"Say 'Correlation', not 'Pearson', on scatter matrix cells\".",
+  "nodeIds": ["note-say-correlation-not-pearson-on-scatter-matrix-cells"]
+}

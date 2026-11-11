@@ -1,0 +1,12 @@
+{
+  "id": "817c499f-f04d-4ffc-9067-70cf006b5795",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:559091",
+    "label": "Agent token ...559091"
+  },
+  "createdAt": "2026-11-11T20:08:11.961Z",
+  "summary": "Updated metadata for \"Grid lines draw on top of marks\".",
+  "nodeIds": ["note-grid-lines-draw-on-top-of-marks"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "d4414b89-8747-47e4-98c0-07f46ee836a9",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:780226",
+    "label": "Agent token ...780226"
+  },
+  "createdAt": "2026-11-11T20:08:08.336Z",
+  "summary": "Updated metadata for \"Shift+Z clears all filters\".",
+  "nodeIds": ["note-shift-z-clears-all-filters"]
+}

@@ -2,10 +2,11 @@
 id: note-joint-missingness-dots-use-a-different-blue-not-black
 label: "Joint missingness: dots use a different blue, not black"
 type: note
-status: planned
+status: implemented
 priority: low
 parent: area-1-work-now
 metadata:
+  implementation: Pattern dots and links use a deeper shade of the mark color (fdbk-1111/rendering).
   purpose: Change the black dots to a distinct blue that does not fight the main blue.
 images:
   - id: 22320225-ff67-435a-9133-8df6827d5c15

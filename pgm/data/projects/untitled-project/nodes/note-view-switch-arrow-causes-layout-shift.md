@@ -2,10 +2,11 @@
 id: note-view-switch-arrow-causes-layout-shift
 label: View switch arrow causes layout shift
 type: note
-status: planned
+status: implemented
 priority: medium
 parent: area-1-work-now
 metadata:
+  implementation: Unselected tabs reserve the options button's space, and the selected tab keeps its font weight, so tabs never move (fdbk-1111/demo-shell).
   purpose: Switching views moves the toolbar as the arrow changes. Reserve the arrow space or show it as progressive disclosure so nothing moves.
 images:
   - id: 14654894-8104-416b-9581-ab157f984b5d

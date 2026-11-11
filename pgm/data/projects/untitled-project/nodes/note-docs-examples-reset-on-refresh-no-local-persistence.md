@@ -2,10 +2,11 @@
 id: note-docs-examples-reset-on-refresh-no-local-persistence
 label: Docs examples reset on refresh (no local persistence)
 type: note
-status: planned
+status: implemented
 priority: high
 parent: area-1-work-now
 metadata:
+  implementation: Docs live examples never persisted; the label now reads 'Live example' and 'Start over' reads 'Reset' (fdbk-1111/demo-shell). /examples pages still save sessions on purpose.
   purpose: Docs and example pages must not store edits in local storage. Refresh resets the example. Remove the 'Live example edits stay on this page' text. Rename 'Start over' to 'Reset'.
 images:
   - id: c150750b-f4a4-421b-84a0-fc4548111da6

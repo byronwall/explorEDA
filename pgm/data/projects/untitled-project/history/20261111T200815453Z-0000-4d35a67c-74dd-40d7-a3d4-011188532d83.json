@@ -1,0 +1,12 @@
+{
+  "id": "4d35a67c-74dd-40d7-a3d4-011188532d83",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:682a00",
+    "label": "Agent token ...682a00"
+  },
+  "createdAt": "2026-11-11T20:08:15.453Z",
+  "summary": "Updated metadata for \"Explain dashed bars in the timeline legend\".",
+  "nodeIds": ["note-explain-dashed-bars-in-the-timeline-legend"]
+}

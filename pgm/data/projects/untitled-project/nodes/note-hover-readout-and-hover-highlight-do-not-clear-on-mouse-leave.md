@@ -2,10 +2,11 @@
 id: note-hover-readout-and-hover-highlight-do-not-clear-on-mouse-leave
 label: Hover readout and hover highlight do not clear on mouse leave
 type: note
-status: planned
+status: implemented
 priority: high
 parent: area-1-work-now
 metadata:
+  implementation: Bar, grouped bar, and time series readouts clear on pointer leave; keyboard focus still holds them (fdbk-1111/interactions).
   purpose: When the pointer leaves the marks, clear the readout at the top of the chart and remove the hover highlight on lines. Merged from two marks (bar readout, line hover state).
 images:
   - id: 51c97f0c-6beb-4ec4-9107-b19230b6d334

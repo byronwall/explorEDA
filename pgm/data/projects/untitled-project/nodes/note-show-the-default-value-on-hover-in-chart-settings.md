@@ -2,10 +2,11 @@
 id: note-show-the-default-value-on-hover-in-chart-settings
 label: Show the default value on hover in chart settings
 type: note
-status: planned
+status: implemented
 priority: medium
 parent: area-1-work-now
 metadata:
+  implementation: Docs settings default chips say 'Default for a new chart' on hover (fdbk-1111/labels).
   purpose: In the settings panel, on hover of a control, say what the default is (true/false or value).
 images:
   - id: e5ae3bfb-4691-4da4-b3d8-6ab5d2d7a8b2

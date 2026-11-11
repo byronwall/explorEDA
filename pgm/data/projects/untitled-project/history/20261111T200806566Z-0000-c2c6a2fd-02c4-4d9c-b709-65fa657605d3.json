@@ -1,0 +1,12 @@
+{
+  "id": "c2c6a2fd-02c4-4d9c-b709-65fa657605d3",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c425ba",
+    "label": "Agent token ...c425ba"
+  },
+  "createdAt": "2026-11-11T20:08:06.566Z",
+  "summary": "Updated metadata for \"'Edit this page on GitHub' becomes 'View source'\".",
+  "nodeIds": ["note-edit-this-page-on-github-becomes-view-source"]
+}

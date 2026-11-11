@@ -2,10 +2,11 @@
 id: note-animate-hierarchy-zoom
 label: Animate hierarchy zoom
 type: note
-status: planned
+status: implemented
 priority: medium
 parent: area-1-work-now
 metadata:
+  implementation: Treemap and icicle zoom animates from the picked box; sunburst still jumps (fdbk-1111/zoom-transpose).
   purpose: When zooming into a hierarchy node, tween the rectangle sizes instead of jumping.
 images:
   - id: 1680a5b5-950e-471c-a690-90e9d7265dd1

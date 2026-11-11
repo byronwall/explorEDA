@@ -1,0 +1,12 @@
+{
+  "id": "e86c621a-4ce2-4f56-b2f6-f9db91a218ba",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a4ba66",
+    "label": "Agent token ...a4ba66"
+  },
+  "createdAt": "2026-11-11T20:08:14.579Z",
+  "summary": "Updated metadata for \"Joint missingness: dots use a different blue, not black\".",
+  "nodeIds": ["note-joint-missingness-dots-use-a-different-blue-not-black"]
+}

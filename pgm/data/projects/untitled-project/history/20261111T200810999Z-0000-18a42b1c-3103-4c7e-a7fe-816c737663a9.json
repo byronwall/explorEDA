@@ -1,0 +1,12 @@
+{
+  "id": "18a42b1c-3103-4c7e-a7fe-816c737663a9",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:25f07b",
+    "label": "Agent token ...25f07b"
+  },
+  "createdAt": "2026-11-11T20:08:10.999Z",
+  "summary": "Updated metadata for \"First click on a bar chart is sometimes ignored\".",
+  "nodeIds": ["note-first-click-on-a-bar-chart-is-sometimes-ignored"]
+}

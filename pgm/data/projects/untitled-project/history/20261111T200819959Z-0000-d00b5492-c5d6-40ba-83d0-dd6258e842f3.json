@@ -1,0 +1,12 @@
+{
+  "id": "d00b5492-c5d6-40ba-83d0-dd6258e842f3",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:de9d01",
+    "label": "Agent token ...de9d01"
+  },
+  "createdAt": "2026-11-11T20:08:19.959Z",
+  "summary": "Updated metadata for \"Allow a larger chart title size\".",
+  "nodeIds": ["note-allow-a-larger-chart-title-size"]
+}

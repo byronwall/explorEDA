@@ -2,10 +2,11 @@
 id: note-chart-title-underline-appears-and-disappears
 label: Chart title underline appears and disappears
 type: note
-status: planned
+status: implemented
 priority: medium
 parent: area-1-work-now
 metadata:
+  implementation: Removed the title underline for chart focus; a press focuses without focus-visible and keyboard focus rings the plot (fdbk-1111/interactions).
   purpose: "The title showed an underline, then lost it. Make the rename affordance (double-click to rename) consistent: either always hint on hover or never underline."
 images:
   - id: ca9daed8-d4ad-4f36-88a8-2d9f6a74af8e

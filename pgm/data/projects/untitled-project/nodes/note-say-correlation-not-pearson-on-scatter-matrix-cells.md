@@ -2,10 +2,11 @@
 id: note-say-correlation-not-pearson-on-scatter-matrix-cells
 label: Say 'Correlation', not 'Pearson', on scatter matrix cells
 type: note
-status: planned
+status: implemented
 priority: medium
 parent: area-1-work-now
 metadata:
+  implementation: Cells read 'Correlation'; the method is in the tooltip (fdbk-1111/labels).
   purpose: Label cells 'Correlation'. Put the method name (Pearson) in the tooltip.
 images:
   - id: a869487e-8377-468d-b070-973fa2fc3411

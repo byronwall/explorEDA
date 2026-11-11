@@ -2,10 +2,11 @@
 id: note-replace-the-black-hover-fill-on-bars
 label: Replace the black hover fill on bars
 type: note
-status: planned
+status: implemented
 priority: low
 parent: area-1-work-now
 metadata:
+  implementation: Hovered bar outline is a deeper shade of the bar color (fdbk-1111/rendering).
   purpose: The hovered bar turns near-black. Use a darker shade of the series color instead.
 images:
   - id: 4190a5aa-9445-4407-b5f3-f2a2e0dd11cf

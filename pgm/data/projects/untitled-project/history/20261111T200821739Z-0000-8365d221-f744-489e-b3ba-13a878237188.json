@@ -1,0 +1,12 @@
+{
+  "id": "8365d221-f744-489e-b3ba-13a878237188",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8f5845",
+    "label": "Agent token ...8f5845"
+  },
+  "createdAt": "2026-11-11T20:08:21.739Z",
+  "summary": "Updated metadata for \"Animate hierarchy zoom\".",
+  "nodeIds": ["note-animate-hierarchy-zoom"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "f4c1bbf0-4747-4687-821d-8d17d43f6b43",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:1d76b3",
+    "label": "Agent token ...1d76b3"
+  },
+  "createdAt": "2026-11-11T20:08:20.726Z",
+  "summary": "Changed \"Shared settings: show 'in set' with color, not a border\" status to implemented.",
+  "nodeIds": ["note-shared-settings-show-in-set-with-color-not-a-border"]
+}

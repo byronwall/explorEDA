@@ -1,0 +1,12 @@
+{
+  "id": "5d7caebb-e309-43ee-8e98-7f8ba133dab9",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c83638",
+    "label": "Agent token ...c83638"
+  },
+  "createdAt": "2026-11-11T20:08:18.816Z",
+  "summary": "Changed \"Show the default value on hover in chart settings\" status to implemented.",
+  "nodeIds": ["note-show-the-default-value-on-hover-in-chart-settings"]
+}

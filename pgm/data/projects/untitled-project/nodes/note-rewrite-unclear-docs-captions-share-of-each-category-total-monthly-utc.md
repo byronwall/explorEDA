@@ -2,10 +2,11 @@
 id: note-rewrite-unclear-docs-captions-share-of-each-category-total-monthly-utc
 label: Rewrite unclear docs captions ('Share of each category total', 'Monthly UTC')
 type: note
-status: planned
+status: implemented
 priority: low
 parent: area-1-work-now
 metadata:
+  implementation: "'Monthly · UTC' reads 'One point per month' with a UTC tooltip; grouped bars drop the percent caption and pair count (fdbk-1111/labels)."
   purpose: Replace 'Share of each category total' with a caption that says what the chart shows. Say where 'Monthly UTC' comes from or drop it.
 images:
   - id: 0bf21f0f-5dad-46d9-91d1-7c8b5ca66652

@@ -1,0 +1,12 @@
+{
+  "id": "802095e6-f810-4de8-8224-ddc6b67f3de6",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:25f07b",
+    "label": "Agent token ...25f07b"
+  },
+  "createdAt": "2026-11-11T20:08:10.812Z",
+  "summary": "Changed \"First click on a bar chart is sometimes ignored\" status to needs-review.",
+  "nodeIds": ["note-first-click-on-a-bar-chart-is-sometimes-ignored"]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "fde10d5e-9e34-4f10-99cf-575b6a54c7a4",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:69fb2f",
+    "label": "Agent token ...69fb2f"
+  },
+  "createdAt": "2026-11-11T20:08:24.390Z",
+  "summary": "Updated metadata for \"Line chart annotations: use regions, lines reach the axis\".",
+  "nodeIds": ["note-line-chart-annotations-use-regions-lines-reach-the-axis"]
+}

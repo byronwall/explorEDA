@@ -1,0 +1,12 @@
+{
+  "id": "f80798ba-b80b-44ae-9124-909966ffe5a5",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:633146",
+    "label": "Agent token ...633146"
+  },
+  "createdAt": "2026-11-11T20:08:12.812Z",
+  "summary": "Updated metadata for \"Y-axis label truncates with space left\".",
+  "nodeIds": ["note-y-axis-label-truncates-with-space-left"]
+}

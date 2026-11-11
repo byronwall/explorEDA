@@ -1,0 +1,12 @@
+{
+  "id": "22be2869-f6b7-4101-a5fc-d40034fd56b9",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:01ea45",
+    "label": "Agent token ...01ea45"
+  },
+  "createdAt": "2026-11-11T20:08:04.621Z",
+  "summary": "Changed \"Refresh flashes the home page before the example loads\" status to implemented.",
+  "nodeIds": ["note-refresh-flashes-the-home-page-before-the-example-loads"]
+}

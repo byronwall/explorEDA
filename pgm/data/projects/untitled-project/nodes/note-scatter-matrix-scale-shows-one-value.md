@@ -2,10 +2,11 @@
 id: note-scatter-matrix-scale-shows-one-value
 label: Scatter matrix scale shows one value
 type: note
-status: planned
+status: implemented
 priority: medium
 parent: area-1-work-now
 metadata:
+  implementation: Matrix axes ask for finer ticks until two show (fdbk-1111/labels).
   purpose: The side scale only shows '200'. Show at least the low and high values.
 images:
   - id: a45f3c0e-cf58-4213-bb90-290a4d06189d

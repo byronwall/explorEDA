@@ -1,0 +1,12 @@
+{
+  "id": "53593420-ae4b-4b54-9519-ed8c7a50e36b",
+  "kind": "node.metadata.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c83638",
+    "label": "Agent token ...c83638"
+  },
+  "createdAt": "2026-11-11T20:08:18.992Z",
+  "summary": "Updated metadata for \"Show the default value on hover in chart settings\".",
+  "nodeIds": ["note-show-the-default-value-on-hover-in-chart-settings"]
+}

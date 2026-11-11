@@ -2,10 +2,11 @@
 id: note-allow-a-larger-chart-title-size
 label: Allow a larger chart title size
 type: note
-status: planned
+status: implemented
 priority: low
 parent: area-1-work-now
 metadata:
+  implementation: Title size already accepted 8-64 px; the empty field now shows the theme size (for example 'Theme · 14') so it reads as editable (fdbk-1111/labels).
   purpose: Add a larger step to the chart title size setting.
 images:
   - id: fc32affb-7899-4055-abf7-6488072d6d4b

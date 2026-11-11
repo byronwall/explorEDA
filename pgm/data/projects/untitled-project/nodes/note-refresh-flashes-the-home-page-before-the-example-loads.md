@@ -2,10 +2,11 @@
 id: note-refresh-flashes-the-home-page-before-the-example-loads
 label: Refresh flashes the home page before the example loads
 type: note
-status: planned
+status: implemented
 priority: high
 parent: area-1-work-now
 metadata:
+  implementation: An example URL shows a blank loading area, not the home page, while data loads (fdbk-1111/demo-shell).
   purpose: On refresh of an example page, show a loading state. Do not render the home page first. Check if this is an SSR or route-fallback issue.
 images:
   - id: 2f6f1adc-809d-41d2-8d21-8a9d6ac4171e

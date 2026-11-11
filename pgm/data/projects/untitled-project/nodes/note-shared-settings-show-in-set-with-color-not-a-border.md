@@ -2,10 +2,11 @@
 id: note-shared-settings-show-in-set-with-color-not-a-border
 label: "Shared settings: show 'in set' with color, not a border"
 type: note
-status: planned
+status: implemented
 priority: low
 parent: area-1-work-now
 metadata:
+  implementation: Open shared settings header uses a muted tint instead of a border (fdbk-1111/labels).
   purpose: Replace the border on shared settings with a tint or accent color.
 images:
   - id: 4d49e475-c311-4df0-8ab3-62d0a210e985
