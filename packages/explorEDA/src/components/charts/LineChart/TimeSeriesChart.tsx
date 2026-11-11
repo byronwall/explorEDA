@@ -229,10 +229,7 @@ export function TimeSeriesChart({
         className="absolute inset-x-2 top-1 flex h-10 items-start gap-2 overflow-auto text-xs"
         aria-label="Time series legend"
       >
-        <span
-          className="shrink-0 text-muted-foreground"
-          title={`Rows group into ${period}s by their UTC date`}
-        >
+        <span className="shrink-0 text-muted-foreground">
           One point per {period}
         </span>
         {!(settings.colorField === time.splitField && settings.colorScaleId) &&

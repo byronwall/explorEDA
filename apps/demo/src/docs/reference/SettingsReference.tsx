@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { chartSettingsReference } from "exploreda/docs-kit";
 import { ChevronDown, Link2, Search } from "lucide-react";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
@@ -64,16 +65,20 @@ function SettingRow({ type, row }: { type: string; row: Row }) {
           {row.key}
         </code>
         {kind !== "unset" && (
-          <code
-            aria-label={`New chart: ${formatDefault(row.defaultValue)}`}
-            title={`Default for a new chart: ${formatDefault(row.defaultValue)}`}
-            className={cn(
-              "rounded bg-muted px-1.5 font-mono text-[0.75rem] tabular-nums",
-              KIND_CLASS[kind]
-            )}
+          <ActionTooltip
+            content={`Default for a new chart: ${formatDefault(row.defaultValue)}`}
           >
-            {formatDefault(row.defaultValue)}
-          </code>
+            <code
+              tabIndex={0}
+              aria-label={`New chart: ${formatDefault(row.defaultValue)}`}
+              className={cn(
+                "rounded bg-muted px-1.5 font-mono text-[0.75rem] tabular-nums",
+                KIND_CLASS[kind]
+              )}
+            >
+              {formatDefault(row.defaultValue)}
+            </code>
+          </ActionTooltip>
         )}
         <a
           href={`#${anchor}`}
