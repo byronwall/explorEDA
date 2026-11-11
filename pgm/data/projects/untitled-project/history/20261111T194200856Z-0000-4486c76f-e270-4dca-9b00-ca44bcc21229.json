@@ -1,0 +1,15 @@
+{
+  "id": "4486c76f-e270-4dca-9b00-ca44bcc21229",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:490397",
+    "label": "Agent token ...490397"
+  },
+  "createdAt": "2026-11-11T19:42:00.856Z",
+  "summary": "Updated priority on \"Grid lines draw on top of marks\".",
+  "nodeIds": ["note-grid-lines-draw-on-top-of-marks"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "827406d0-4ed0-41d7-9017-a044de0991bb",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:39ef42",
+    "label": "Agent token ...39ef42"
+  },
+  "createdAt": "2026-11-11T19:43:00.427Z",
+  "summary": "Updated status, priority on \"Correlation methods and 'Browse pairs' are confusing\".",
+  "nodeIds": ["note-correlation-methods-and-browse-pairs-are-confusing"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "41fb86b6-cbc2-4d24-b8b7-ba2f0b9f2089",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:3f8ff7",
+    "label": "Agent token ...3f8ff7"
+  },
+  "createdAt": "2026-11-11T19:41:55.995Z",
+  "summary": "Created \"4 · Parked (do not act yet)\" under \"fdbk 11/11\".",
+  "nodeIds": ["area-4-parked-do-not-act-yet", "page-fdbk-11-11"]
+}

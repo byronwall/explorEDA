@@ -1,0 +1,15 @@
+{
+  "id": "4b6c0887-38a1-42b4-b36b-dc481792e36e",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9f7c4b",
+    "label": "Agent token ...9f7c4b"
+  },
+  "createdAt": "2026-11-11T19:42:51.002Z",
+  "summary": "Updated status, priority on \"Delete confirmation modal feels too aggressive\".",
+  "nodeIds": ["note-delete-confirmation-modal-feels-too-aggressive"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

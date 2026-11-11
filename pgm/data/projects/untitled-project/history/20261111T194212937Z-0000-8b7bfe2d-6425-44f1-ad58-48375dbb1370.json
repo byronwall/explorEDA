@@ -1,0 +1,15 @@
+{
+  "id": "8b7bfe2d-6425-44f1-ad58-48375dbb1370",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2cfec6",
+    "label": "Agent token ...2cfec6"
+  },
+  "createdAt": "2026-11-11T19:42:12.937Z",
+  "summary": "Updated priority on \"'Edit this page on GitHub' becomes 'View source'\".",
+  "nodeIds": ["note-edit-this-page-on-github-becomes-view-source"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "75b24f3e-b089-49f0-836a-45b0407191c6",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2668d5",
+    "label": "Agent token ...2668d5"
+  },
+  "createdAt": "2026-11-11T19:42:28.249Z",
+  "summary": "Updated priority on \"Allow a larger chart title size\".",
+  "nodeIds": ["note-allow-a-larger-chart-title-size"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

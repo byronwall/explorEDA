@@ -1,0 +1,15 @@
+{
+  "id": "f81bdf67-8d9d-4f67-bca8-fa91d546fcaf",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8915da",
+    "label": "Agent token ...8915da"
+  },
+  "createdAt": "2026-11-11T19:42:52.721Z",
+  "summary": "Updated status, priority on \"Metric tiles repeat text and leave a large gap\".",
+  "nodeIds": ["note-metric-tiles-repeat-text-and-leave-a-large-gap"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "dbb860ad-d1b2-4b6b-a7ba-d6a0e047525e",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:8a258b",
+    "label": "Agent token ...8a258b"
+  },
+  "createdAt": "2026-11-11T19:42:58.510Z",
+  "summary": "Updated status, priority on \"Scatter matrix: filtered cell display is confusing\".",
+  "nodeIds": ["note-scatter-matrix-filtered-cell-display-is-confusing"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

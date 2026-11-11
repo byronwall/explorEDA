@@ -1,0 +1,15 @@
+{
+  "id": "e54fdb7b-67a5-4870-9a23-a13cb838c7f2",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a0aa34",
+    "label": "Agent token ...a0aa34"
+  },
+  "createdAt": "2026-11-11T19:43:06.977Z",
+  "summary": "Created \"'Inside the order book' appears on every docs sidebar\" under \"3 · Needs input\".",
+  "nodeIds": [
+    "note-inside-the-order-book-appears-on-every-docs-sidebar",
+    "area-3-needs-input"
+  ]
+}

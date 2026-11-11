@@ -1,0 +1,15 @@
+{
+  "id": "243de06c-47e4-4b33-9d32-01515f5b6631",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:eb80c1",
+    "label": "Agent token ...eb80c1"
+  },
+  "createdAt": "2026-11-11T19:42:50.442Z",
+  "summary": "Created \"Delete confirmation modal feels too aggressive\" under \"3 · Needs input\".",
+  "nodeIds": [
+    "note-delete-confirmation-modal-feels-too-aggressive",
+    "area-3-needs-input"
+  ]
+}

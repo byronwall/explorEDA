@@ -1,0 +1,12 @@
+{
+  "id": "313fe3f5-395f-4263-ad9e-cbab32c5aae4",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d8a4e6",
+    "label": "Agent token ...d8a4e6"
+  },
+  "createdAt": "2026-11-11T19:42:20.835Z",
+  "summary": "Created \"Animate hierarchy zoom\" under \"1 · Work now\".",
+  "nodeIds": ["note-animate-hierarchy-zoom", "area-1-work-now"]
+}

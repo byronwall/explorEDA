@@ -1,0 +1,15 @@
+{
+  "id": "7bc429c3-87a6-4608-8819-440fa1290b86",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f36ecf",
+    "label": "Agent token ...f36ecf"
+  },
+  "createdAt": "2026-11-11T19:43:17.360Z",
+  "summary": "Added 1 images to \"Move the formula bar below the chart?\".",
+  "nodeIds": ["note-move-the-formula-bar-below-the-chart"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

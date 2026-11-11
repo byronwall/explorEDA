@@ -1,0 +1,15 @@
+{
+  "id": "3bb5fed9-fe84-418a-9f05-3f5b769ed567",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:bfdfd5",
+    "label": "Agent token ...bfdfd5"
+  },
+  "createdAt": "2026-11-11T19:42:16.303Z",
+  "summary": "Updated priority on \"Scatter matrix scale shows one value\".",
+  "nodeIds": ["note-scatter-matrix-scale-shows-one-value"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

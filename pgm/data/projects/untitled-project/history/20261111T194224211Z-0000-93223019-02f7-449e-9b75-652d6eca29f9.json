@@ -1,0 +1,15 @@
+{
+  "id": "93223019-02f7-449e-9b75-652d6eca29f9",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:10560d",
+    "label": "Agent token ...10560d"
+  },
+  "createdAt": "2026-11-11T19:42:24.211Z",
+  "summary": "Created \"Joint missingness: dots use a different blue, not black\" under \"1 · Work now\".",
+  "nodeIds": [
+    "note-joint-missingness-dots-use-a-different-blue-not-black",
+    "area-1-work-now"
+  ]
+}

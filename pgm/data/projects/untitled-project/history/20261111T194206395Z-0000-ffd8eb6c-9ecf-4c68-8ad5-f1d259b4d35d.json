@@ -1,0 +1,15 @@
+{
+  "id": "ffd8eb6c-9ecf-4c68-8ad5-f1d259b4d35d",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9c9e5e",
+    "label": "Agent token ...9c9e5e"
+  },
+  "createdAt": "2026-11-11T19:42:06.395Z",
+  "summary": "Added 2 images to \"Docs examples reset on refresh (no local persistence)\".",
+  "nodeIds": ["note-docs-examples-reset-on-refresh-no-local-persistence"],
+  "metadata": {
+    "imageCount": "2"
+  }
+}

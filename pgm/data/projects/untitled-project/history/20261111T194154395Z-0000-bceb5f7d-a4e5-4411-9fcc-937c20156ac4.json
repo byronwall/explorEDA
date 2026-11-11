@@ -1,0 +1,15 @@
+{
+  "id": "bceb5f7d-a4e5-4411-9fcc-937c20156ac4",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:30cb3d",
+    "label": "Agent token ...30cb3d"
+  },
+  "createdAt": "2026-11-11T19:41:54.395Z",
+  "summary": "Updated status, priority on \"2 · Cross-cutting rules (confirm scope)\".",
+  "nodeIds": ["area-2-cross-cutting-rules-confirm-scope"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

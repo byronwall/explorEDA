@@ -1,0 +1,17 @@
+{
+  "id": "83d9c3d1-c560-4547-b2f7-371a3e76bb54",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:e59e84",
+    "label": "Agent token ...e59e84"
+  },
+  "createdAt": "2026-11-11T19:42:33.987Z",
+  "summary": "Added 2 images to \"Rewrite unclear docs captions ('Share of each category total', 'Monthly UTC')\".",
+  "nodeIds": [
+    "note-rewrite-unclear-docs-captions-share-of-each-category-total-monthly-utc"
+  ],
+  "metadata": {
+    "imageCount": "2"
+  }
+}

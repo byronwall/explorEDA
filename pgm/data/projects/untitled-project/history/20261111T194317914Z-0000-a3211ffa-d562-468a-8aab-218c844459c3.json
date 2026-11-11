@@ -1,0 +1,15 @@
+{
+  "id": "a3211ffa-d562-468a-8aab-218c844459c3",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d3327d",
+    "label": "Agent token ...d3327d"
+  },
+  "createdAt": "2026-11-11T19:43:17.914Z",
+  "summary": "Created \"Value shown on hover (formula field)\" under \"4 · Parked (do not act yet)\".",
+  "nodeIds": [
+    "note-value-shown-on-hover-formula-field",
+    "area-4-parked-do-not-act-yet"
+  ]
+}

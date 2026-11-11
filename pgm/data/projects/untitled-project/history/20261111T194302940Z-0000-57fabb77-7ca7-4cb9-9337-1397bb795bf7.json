@@ -1,0 +1,15 @@
+{
+  "id": "57fabb77-7ca7-4cb9-9337-1397bb795bf7",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:11193e",
+    "label": "Agent token ...11193e"
+  },
+  "createdAt": "2026-11-11T19:43:02.940Z",
+  "summary": "Added 1 images to \"Line/area filter 'not quite working'\".",
+  "nodeIds": ["note-line-area-filter-not-quite-working"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "3161115f-899f-4147-a6ba-85b511dadc73",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:fd19ed",
+    "label": "Agent token ...fd19ed"
+  },
+  "createdAt": "2026-11-11T19:43:20.246Z",
+  "summary": "Updated priority on \"Guided 'click, click, click' tour for docs\".",
+  "nodeIds": ["note-guided-click-click-click-tour-for-docs"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

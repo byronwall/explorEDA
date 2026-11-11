@@ -1,0 +1,15 @@
+{
+  "id": "12a0acba-bddb-4e37-9ce0-620061e6189f",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:e46851",
+    "label": "Agent token ...e46851"
+  },
+  "createdAt": "2026-11-11T19:42:47.021Z",
+  "summary": "Created \"RULE: Show, don't tell in docs ('How it reads', annotations)\" under \"2 · Cross-cutting rules (confirm scope)\".",
+  "nodeIds": [
+    "note-rule-show-don-t-tell-in-docs-how-it-reads-annotations",
+    "area-2-cross-cutting-rules-confirm-scope"
+  ]
+}

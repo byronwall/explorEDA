@@ -1,0 +1,15 @@
+{
+  "id": "232450cb-f98a-404d-a09d-43447c7bc906",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:1b7e66",
+    "label": "Agent token ...1b7e66"
+  },
+  "createdAt": "2026-11-11T19:42:23.057Z",
+  "summary": "Updated priority on \"Replace the black hover fill on bars\".",
+  "nodeIds": ["note-replace-the-black-hover-fill-on-bars"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

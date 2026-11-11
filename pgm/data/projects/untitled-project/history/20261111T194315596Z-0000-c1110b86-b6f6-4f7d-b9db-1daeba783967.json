@@ -1,0 +1,15 @@
+{
+  "id": "c1110b86-b6f6-4f7d-b9db-1daeba783967",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:89f220",
+    "label": "Agent token ...89f220"
+  },
+  "createdAt": "2026-11-11T19:43:15.596Z",
+  "summary": "Added 1 images to \"Charts align at top, not bottom\".",
+  "nodeIds": ["note-charts-align-at-top-not-bottom"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

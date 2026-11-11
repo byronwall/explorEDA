@@ -1,0 +1,15 @@
+{
+  "id": "a9a7efbc-adff-48d9-861a-6e0f0216a6fc",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0a721b",
+    "label": "Agent token ...0a721b"
+  },
+  "createdAt": "2026-11-11T19:42:04.698Z",
+  "summary": "Added 1 images to \"First click on a bar chart is sometimes ignored\".",
+  "nodeIds": ["note-first-click-on-a-bar-chart-is-sometimes-ignored"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

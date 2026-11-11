@@ -1,0 +1,15 @@
+{
+  "id": "9be138ef-3be3-4d33-9ed0-bcfb45b8fce4",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:fce3f8",
+    "label": "Agent token ...fce3f8"
+  },
+  "createdAt": "2026-11-11T19:42:26.459Z",
+  "summary": "Updated priority on \"Shared settings: show 'in set' with color, not a border\".",
+  "nodeIds": ["note-shared-settings-show-in-set-with-color-not-a-border"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

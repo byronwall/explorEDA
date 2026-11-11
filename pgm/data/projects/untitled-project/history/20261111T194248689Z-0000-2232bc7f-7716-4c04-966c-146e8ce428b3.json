@@ -1,0 +1,15 @@
+{
+  "id": "2232bc7f-7716-4c04-966c-146e8ce428b3",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5282f0",
+    "label": "Agent token ...5282f0"
+  },
+  "createdAt": "2026-11-11T19:42:48.689Z",
+  "summary": "Created \"RULE: Docs index cards — bigger single-chart thumbnails, no top border\" under \"2 · Cross-cutting rules (confirm scope)\".",
+  "nodeIds": [
+    "note-rule-docs-index-cards-bigger-single-chart-thumbnails-no-top-border",
+    "area-2-cross-cutting-rules-confirm-scope"
+  ]
+}

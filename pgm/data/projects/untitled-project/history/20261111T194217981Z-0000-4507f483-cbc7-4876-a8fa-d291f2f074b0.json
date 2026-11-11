@@ -1,0 +1,15 @@
+{
+  "id": "4507f483-cbc7-4876-a8fa-d291f2f074b0",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:571fd7",
+    "label": "Agent token ...571fd7"
+  },
+  "createdAt": "2026-11-11T19:42:17.981Z",
+  "summary": "Updated priority on \"Explain dashed bars in the timeline legend\".",
+  "nodeIds": ["note-explain-dashed-bars-in-the-timeline-legend"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

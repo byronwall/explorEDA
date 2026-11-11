@@ -1,0 +1,15 @@
+{
+  "id": "373973dd-3fb9-43e5-a7bf-02003ccfb2b5",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:21f6b4",
+    "label": "Agent token ...21f6b4"
+  },
+  "createdAt": "2026-11-11T19:43:07.543Z",
+  "summary": "Updated status, priority on \"'Inside the order book' appears on every docs sidebar\".",
+  "nodeIds": ["note-inside-the-order-book-appears-on-every-docs-sidebar"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

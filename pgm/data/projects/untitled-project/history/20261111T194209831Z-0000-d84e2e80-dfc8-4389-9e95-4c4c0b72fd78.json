@@ -1,0 +1,15 @@
+{
+  "id": "d84e2e80-dfc8-4389-9e95-4c4c0b72fd78",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5cf20e",
+    "label": "Agent token ...5cf20e"
+  },
+  "createdAt": "2026-11-11T19:42:09.831Z",
+  "summary": "Added 1 images to \"Y-axis label truncates with space left\".",
+  "nodeIds": ["note-y-axis-label-truncates-with-space-left"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

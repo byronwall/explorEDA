@@ -1,0 +1,15 @@
+{
+  "id": "31de3e76-9225-4639-b207-2bc51bcb86d9",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:6b0d5a",
+    "label": "Agent token ...6b0d5a"
+  },
+  "createdAt": "2026-11-11T19:42:24.785Z",
+  "summary": "Updated priority on \"Joint missingness: dots use a different blue, not black\".",
+  "nodeIds": ["note-joint-missingness-dots-use-a-different-blue-not-black"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

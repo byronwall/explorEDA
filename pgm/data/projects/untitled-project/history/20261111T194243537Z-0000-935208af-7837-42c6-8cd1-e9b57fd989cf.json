@@ -1,0 +1,15 @@
+{
+  "id": "935208af-7837-42c6-8cd1-e9b57fd989cf",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d0b0a3",
+    "label": "Agent token ...d0b0a3"
+  },
+  "createdAt": "2026-11-11T19:42:43.537Z",
+  "summary": "Created \"RULE: Docs chart heights fit their content\" under \"2 · Cross-cutting rules (confirm scope)\".",
+  "nodeIds": [
+    "note-rule-docs-chart-heights-fit-their-content",
+    "area-2-cross-cutting-rules-confirm-scope"
+  ]
+}

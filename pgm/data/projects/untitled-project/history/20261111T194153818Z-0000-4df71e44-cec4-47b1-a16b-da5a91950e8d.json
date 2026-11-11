@@ -1,0 +1,12 @@
+{
+  "id": "4df71e44-cec4-47b1-a16b-da5a91950e8d",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:878067",
+    "label": "Agent token ...878067"
+  },
+  "createdAt": "2026-11-11T19:41:53.818Z",
+  "summary": "Created \"2 · Cross-cutting rules (confirm scope)\" under \"fdbk 11/11\".",
+  "nodeIds": ["area-2-cross-cutting-rules-confirm-scope", "page-fdbk-11-11"]
+}

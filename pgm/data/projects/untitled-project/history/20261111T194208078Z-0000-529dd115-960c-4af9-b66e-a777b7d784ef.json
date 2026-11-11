@@ -1,0 +1,15 @@
+{
+  "id": "529dd115-960c-4af9-b66e-a777b7d784ef",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:1e9e2e",
+    "label": "Agent token ...1e9e2e"
+  },
+  "createdAt": "2026-11-11T19:42:08.078Z",
+  "summary": "Added 1 images to \"Chart title underline appears and disappears\".",
+  "nodeIds": ["note-chart-title-underline-appears-and-disappears"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

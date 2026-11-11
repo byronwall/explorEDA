@@ -1,0 +1,15 @@
+{
+  "id": "062112a7-7338-4baf-941b-0e3bde872e8e",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:b0da3c",
+    "label": "Agent token ...b0da3c"
+  },
+  "createdAt": "2026-11-11T19:41:57.611Z",
+  "summary": "Updated priority on \"Refresh flashes the home page before the example loads\".",
+  "nodeIds": ["note-refresh-flashes-the-home-page-before-the-example-loads"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "825ea3cd-b36c-42ca-97e5-be0eaa47d569",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5e402a",
+    "label": "Agent token ...5e402a"
+  },
+  "createdAt": "2026-11-11T19:43:16.729Z",
+  "summary": "Updated priority on \"Move the formula bar below the chart?\".",
+  "nodeIds": ["note-move-the-formula-bar-below-the-chart"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

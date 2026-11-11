@@ -1,0 +1,15 @@
+{
+  "id": "a85f4fc4-9c78-4fa6-88bb-24c16a65b8c1",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d43adb",
+    "label": "Agent token ...d43adb"
+  },
+  "createdAt": "2026-11-11T19:42:36.364Z",
+  "summary": "Created \"RULE: No instruction or summary text in chart footers\" under \"2 · Cross-cutting rules (confirm scope)\".",
+  "nodeIds": [
+    "note-rule-no-instruction-or-summary-text-in-chart-footers",
+    "area-2-cross-cutting-rules-confirm-scope"
+  ]
+}

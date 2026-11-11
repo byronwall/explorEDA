@@ -1,0 +1,15 @@
+{
+  "id": "84812606-d12e-4cc9-a9d6-e75a352167c8",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:4fb0b0",
+    "label": "Agent token ...4fb0b0"
+  },
+  "createdAt": "2026-11-11T19:42:44.763Z",
+  "summary": "Added 3 images to \"RULE: Docs chart heights fit their content\".",
+  "nodeIds": ["note-rule-docs-chart-heights-fit-their-content"],
+  "metadata": {
+    "imageCount": "3"
+  }
+}

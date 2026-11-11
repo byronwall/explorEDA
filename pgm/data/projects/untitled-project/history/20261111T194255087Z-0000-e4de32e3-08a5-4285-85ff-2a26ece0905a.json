@@ -1,0 +1,15 @@
+{
+  "id": "e4de32e3-08a5-4285-85ff-2a26ece0905a",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f6f1d9",
+    "label": "Agent token ...f6f1d9"
+  },
+  "createdAt": "2026-11-11T19:42:55.087Z",
+  "summary": "Added 1 images to \"Calendar month divider color and style\".",
+  "nodeIds": ["note-calendar-month-divider-color-and-style"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "0df979d0-0937-4cfb-8bae-8bdd91101ca3",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:888ffc",
+    "label": "Agent token ...888ffc"
+  },
+  "createdAt": "2026-11-11T19:42:29.426Z",
+  "summary": "Created \"Link the timeline composition to an example\" under \"1 · Work now\".",
+  "nodeIds": [
+    "note-link-the-timeline-composition-to-an-example",
+    "area-1-work-now"
+  ]
+}

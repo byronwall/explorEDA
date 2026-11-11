@@ -1,0 +1,15 @@
+{
+  "id": "7533ece1-63ed-4ce2-8e3a-8874eeec7564",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7bf83c",
+    "label": "Agent token ...7bf83c"
+  },
+  "createdAt": "2026-11-11T19:43:04.649Z",
+  "summary": "Added 1 images to \"Area chart upper-left looks weird\".",
+  "nodeIds": ["note-area-chart-upper-left-looks-weird"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

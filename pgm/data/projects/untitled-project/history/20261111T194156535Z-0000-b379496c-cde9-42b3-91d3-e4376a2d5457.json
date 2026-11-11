@@ -1,0 +1,15 @@
+{
+  "id": "b379496c-cde9-42b3-91d3-e4376a2d5457",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0c1a57",
+    "label": "Agent token ...0c1a57"
+  },
+  "createdAt": "2026-11-11T19:41:56.535Z",
+  "summary": "Updated priority on \"4 · Parked (do not act yet)\".",
+  "nodeIds": ["area-4-parked-do-not-act-yet"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

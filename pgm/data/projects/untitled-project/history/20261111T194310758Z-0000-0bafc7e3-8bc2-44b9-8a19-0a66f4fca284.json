@@ -1,0 +1,15 @@
+{
+  "id": "0bafc7e3-8bc2-44b9-8a19-0a66f4fca284",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:879cae",
+    "label": "Agent token ...879cae"
+  },
+  "createdAt": "2026-11-11T19:43:10.758Z",
+  "summary": "Created \"Can a user build the retention chart by hand?\" under \"3 · Needs input\".",
+  "nodeIds": [
+    "note-can-a-user-build-the-retention-chart-by-hand",
+    "area-3-needs-input"
+  ]
+}

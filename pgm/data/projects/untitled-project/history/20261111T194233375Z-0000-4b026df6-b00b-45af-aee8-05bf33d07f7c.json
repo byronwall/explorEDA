@@ -1,0 +1,17 @@
+{
+  "id": "4b026df6-b00b-45af-aee8-05bf33d07f7c",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:426a6f",
+    "label": "Agent token ...426a6f"
+  },
+  "createdAt": "2026-11-11T19:42:33.375Z",
+  "summary": "Updated priority on \"Rewrite unclear docs captions ('Share of each category total', 'Monthly UTC')\".",
+  "nodeIds": [
+    "note-rewrite-unclear-docs-captions-share-of-each-category-total-monthly-utc"
+  ],
+  "metadata": {
+    "fields": "priority"
+  }
+}

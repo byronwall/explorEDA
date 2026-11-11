@@ -1,0 +1,15 @@
+{
+  "id": "6e55c3d3-c1d9-4193-8fcc-0a14cccde482",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:517963",
+    "label": "Agent token ...517963"
+  },
+  "createdAt": "2026-11-11T19:42:42.989Z",
+  "summary": "Added 5 images to \"RULE: Trim the docs example shell to a single chart\".",
+  "nodeIds": ["note-rule-trim-the-docs-example-shell-to-a-single-chart"],
+  "metadata": {
+    "imageCount": "5"
+  }
+}

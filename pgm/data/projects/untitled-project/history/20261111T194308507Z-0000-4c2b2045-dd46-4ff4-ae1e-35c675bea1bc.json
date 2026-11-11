@@ -1,0 +1,15 @@
+{
+  "id": "4c2b2045-dd46-4ff4-ae1e-35c675bea1bc",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5df1f3",
+    "label": "Agent token ...5df1f3"
+  },
+  "createdAt": "2026-11-11T19:43:08.507Z",
+  "summary": "Added 1 images to \"'Inside the order book' appears on every docs sidebar\".",
+  "nodeIds": ["note-inside-the-order-book-appears-on-every-docs-sidebar"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

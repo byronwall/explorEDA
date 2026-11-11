@@ -1,0 +1,15 @@
+{
+  "id": "b4123cd0-8cd0-4a79-bce1-dae4a7e89d66",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:1ccb9a",
+    "label": "Agent token ...1ccb9a"
+  },
+  "createdAt": "2026-11-11T19:42:21.356Z",
+  "summary": "Updated priority on \"Animate hierarchy zoom\".",
+  "nodeIds": ["note-animate-hierarchy-zoom"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

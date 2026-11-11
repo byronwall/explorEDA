@@ -1,0 +1,15 @@
+{
+  "id": "cda26bbb-6e02-455c-95a3-a3e250287e74",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:974a4f",
+    "label": "Agent token ...974a4f"
+  },
+  "createdAt": "2026-11-11T19:42:35.136Z",
+  "summary": "Updated priority on \"Heatmap: add a transpose (flip rows and columns) button\".",
+  "nodeIds": ["note-heatmap-add-a-transpose-flip-rows-and-columns-button"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

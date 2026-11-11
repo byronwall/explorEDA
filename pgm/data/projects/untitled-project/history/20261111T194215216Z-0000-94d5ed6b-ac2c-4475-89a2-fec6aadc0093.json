@@ -1,0 +1,15 @@
+{
+  "id": "94d5ed6b-ac2c-4475-89a2-fec6aadc0093",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:078e67",
+    "label": "Agent token ...078e67"
+  },
+  "createdAt": "2026-11-11T19:42:15.216Z",
+  "summary": "Added 1 images to \"Say 'Correlation', not 'Pearson', on scatter matrix cells\".",
+  "nodeIds": ["note-say-correlation-not-pearson-on-scatter-matrix-cells"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

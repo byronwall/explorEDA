@@ -1,0 +1,15 @@
+{
+  "id": "7bf9fa2f-ca66-420e-b3a8-e87aa640c19b",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a6f60c",
+    "label": "Agent token ...a6f60c"
+  },
+  "createdAt": "2026-11-11T19:42:47.554Z",
+  "summary": "Updated status, priority on \"RULE: Show, don't tell in docs ('How it reads', annotations)\".",
+  "nodeIds": ["note-rule-show-don-t-tell-in-docs-how-it-reads-annotations"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

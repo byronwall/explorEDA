@@ -1,0 +1,17 @@
+{
+  "id": "ade9d61d-21b7-46bb-99c3-bc9c96112dc6",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:45e0ce",
+    "label": "Agent token ...45e0ce"
+  },
+  "createdAt": "2026-11-11T19:42:02.457Z",
+  "summary": "Updated priority on \"Hover readout and hover highlight do not clear on mouse leave\".",
+  "nodeIds": [
+    "note-hover-readout-and-hover-highlight-do-not-clear-on-mouse-leave"
+  ],
+  "metadata": {
+    "fields": "priority"
+  }
+}

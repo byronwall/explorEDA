@@ -1,0 +1,15 @@
+{
+  "id": "124c808d-a078-4411-9caa-3a53d3d72998",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5c12c1",
+    "label": "Agent token ...5c12c1"
+  },
+  "createdAt": "2026-11-11T19:42:01.416Z",
+  "summary": "Added 2 images to \"Grid lines draw on top of marks\".",
+  "nodeIds": ["note-grid-lines-draw-on-top-of-marks"],
+  "metadata": {
+    "imageCount": "2"
+  }
+}

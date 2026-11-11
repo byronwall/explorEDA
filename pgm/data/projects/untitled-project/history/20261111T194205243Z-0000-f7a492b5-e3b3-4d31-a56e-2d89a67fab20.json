@@ -1,0 +1,15 @@
+{
+  "id": "f7a492b5-e3b3-4d31-a56e-2d89a67fab20",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:bcdac6",
+    "label": "Agent token ...bcdac6"
+  },
+  "createdAt": "2026-11-11T19:42:05.243Z",
+  "summary": "Created \"Docs examples reset on refresh (no local persistence)\" under \"1 · Work now\".",
+  "nodeIds": [
+    "note-docs-examples-reset-on-refresh-no-local-persistence",
+    "area-1-work-now"
+  ]
+}

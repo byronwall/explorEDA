@@ -1,0 +1,15 @@
+{
+  "id": "6aade085-8194-4a36-972d-bbc7f459554e",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:953a46",
+    "label": "Agent token ...953a46"
+  },
+  "createdAt": "2026-11-11T19:42:09.211Z",
+  "summary": "Updated priority on \"Y-axis label truncates with space left\".",
+  "nodeIds": ["note-y-axis-label-truncates-with-space-left"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

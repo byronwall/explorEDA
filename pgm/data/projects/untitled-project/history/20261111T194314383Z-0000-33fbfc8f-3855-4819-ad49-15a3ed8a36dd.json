@@ -1,0 +1,15 @@
+{
+  "id": "33fbfc8f-3855-4819-ad49-15a3ed8a36dd",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a6916b",
+    "label": "Agent token ...a6916b"
+  },
+  "createdAt": "2026-11-11T19:43:14.383Z",
+  "summary": "Created \"Charts align at top, not bottom\" under \"4 · Parked (do not act yet)\".",
+  "nodeIds": [
+    "note-charts-align-at-top-not-bottom",
+    "area-4-parked-do-not-act-yet"
+  ]
+}

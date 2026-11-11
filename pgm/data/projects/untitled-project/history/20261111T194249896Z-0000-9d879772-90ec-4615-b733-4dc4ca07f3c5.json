@@ -1,0 +1,17 @@
+{
+  "id": "9d879772-90ec-4615-b733-4dc4ca07f3c5",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:727a44",
+    "label": "Agent token ...727a44"
+  },
+  "createdAt": "2026-11-11T19:42:49.896Z",
+  "summary": "Added 2 images to \"RULE: Docs index cards — bigger single-chart thumbnails, no top border\".",
+  "nodeIds": [
+    "note-rule-docs-index-cards-bigger-single-chart-thumbnails-no-top-border"
+  ],
+  "metadata": {
+    "imageCount": "2"
+  }
+}

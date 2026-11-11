@@ -1,0 +1,12 @@
+{
+  "id": "1bd864c9-be6a-465f-8900-46eeff14e7d3",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c2a5d4",
+    "label": "Agent token ...c2a5d4"
+  },
+  "createdAt": "2026-11-11T19:43:09.071Z",
+  "summary": "Created \"Icicle and sunburst views — keep?\" under \"3 · Needs input\".",
+  "nodeIds": ["note-icicle-and-sunburst-views-keep", "area-3-needs-input"]
+}

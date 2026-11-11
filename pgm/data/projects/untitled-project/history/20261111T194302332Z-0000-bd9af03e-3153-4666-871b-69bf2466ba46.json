@@ -1,0 +1,15 @@
+{
+  "id": "bd9af03e-3153-4666-871b-69bf2466ba46",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d43af5",
+    "label": "Agent token ...d43af5"
+  },
+  "createdAt": "2026-11-11T19:43:02.332Z",
+  "summary": "Updated status, priority on \"Line/area filter 'not quite working'\".",
+  "nodeIds": ["note-line-area-filter-not-quite-working"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

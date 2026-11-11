@@ -1,0 +1,15 @@
+{
+  "id": "335d4c3c-8062-4e9b-9896-6167506ab5f3",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a70cdc",
+    "label": "Agent token ...a70cdc"
+  },
+  "createdAt": "2026-11-11T19:42:39.325Z",
+  "summary": "Added 1 images to \"RULE: Brush parity across every brushable chart\".",
+  "nodeIds": ["note-rule-brush-parity-across-every-brushable-chart"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

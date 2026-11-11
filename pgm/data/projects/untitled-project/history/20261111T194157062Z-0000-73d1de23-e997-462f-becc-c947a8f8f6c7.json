@@ -1,0 +1,15 @@
+{
+  "id": "73d1de23-e997-462f-becc-c947a8f8f6c7",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7fee83",
+    "label": "Agent token ...7fee83"
+  },
+  "createdAt": "2026-11-11T19:41:57.062Z",
+  "summary": "Created \"Refresh flashes the home page before the example loads\" under \"1 · Work now\".",
+  "nodeIds": [
+    "note-refresh-flashes-the-home-page-before-the-example-loads",
+    "area-1-work-now"
+  ]
+}

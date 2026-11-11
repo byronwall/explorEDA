@@ -1,0 +1,15 @@
+{
+  "id": "53f7a1e2-ed75-4a35-83f9-e115473acb9b",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:b45e9b",
+    "label": "Agent token ...b45e9b"
+  },
+  "createdAt": "2026-11-11T19:42:25.398Z",
+  "summary": "Added 1 images to \"Joint missingness: dots use a different blue, not black\".",
+  "nodeIds": ["note-joint-missingness-dots-use-a-different-blue-not-black"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "99e6b4c0-fd72-4a22-a754-181c080ab543",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c05caf",
+    "label": "Agent token ...c05caf"
+  },
+  "createdAt": "2026-11-11T19:42:18.570Z",
+  "summary": "Added 1 images to \"Explain dashed bars in the timeline legend\".",
+  "nodeIds": ["note-explain-dashed-bars-in-the-timeline-legend"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

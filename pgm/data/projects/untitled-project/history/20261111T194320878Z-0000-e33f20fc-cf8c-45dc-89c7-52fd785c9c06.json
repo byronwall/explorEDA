@@ -1,0 +1,15 @@
+{
+  "id": "e33f20fc-cf8c-45dc-89c7-52fd785c9c06",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:017d0b",
+    "label": "Agent token ...017d0b"
+  },
+  "createdAt": "2026-11-11T19:43:20.878Z",
+  "summary": "Added 1 images to \"Guided 'click, click, click' tour for docs\".",
+  "nodeIds": ["note-guided-click-click-click-tour-for-docs"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

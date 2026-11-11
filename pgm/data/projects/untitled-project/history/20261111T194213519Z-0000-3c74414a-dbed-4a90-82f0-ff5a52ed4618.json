@@ -1,0 +1,15 @@
+{
+  "id": "3c74414a-dbed-4a90-82f0-ff5a52ed4618",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:59bbda",
+    "label": "Agent token ...59bbda"
+  },
+  "createdAt": "2026-11-11T19:42:13.519Z",
+  "summary": "Added 1 images to \"'Edit this page on GitHub' becomes 'View source'\".",
+  "nodeIds": ["note-edit-this-page-on-github-becomes-view-source"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

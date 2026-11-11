@@ -1,0 +1,15 @@
+{
+  "id": "bba7df4b-b218-4b0b-9ccc-ebc6bb791310",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5c1418",
+    "label": "Agent token ...5c1418"
+  },
+  "createdAt": "2026-11-11T19:42:01.950Z",
+  "summary": "Created \"Hover readout and hover highlight do not clear on mouse leave\" under \"1 · Work now\".",
+  "nodeIds": [
+    "note-hover-readout-and-hover-highlight-do-not-clear-on-mouse-leave",
+    "area-1-work-now"
+  ]
+}

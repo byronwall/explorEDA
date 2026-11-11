@@ -1,0 +1,12 @@
+{
+  "id": "6995c328-04e9-4209-84cf-102660ad7494",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:1f8649",
+    "label": "Agent token ...1f8649"
+  },
+  "createdAt": "2026-11-11T19:42:10.358Z",
+  "summary": "Created \"View switch arrow causes layout shift\" under \"1 · Work now\".",
+  "nodeIds": ["note-view-switch-arrow-causes-layout-shift", "area-1-work-now"]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "a94ab600-df9f-4e25-ad8b-dfb781568f3f",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:44069c",
+    "label": "Agent token ...44069c"
+  },
+  "createdAt": "2026-11-11T19:42:51.631Z",
+  "summary": "Added 1 images to \"Delete confirmation modal feels too aggressive\".",
+  "nodeIds": ["note-delete-confirmation-modal-feels-too-aggressive"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

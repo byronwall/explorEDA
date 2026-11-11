@@ -1,0 +1,15 @@
+{
+  "id": "bcca006a-7a63-47ee-8055-20726062c0bf",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:935166",
+    "label": "Agent token ...935166"
+  },
+  "createdAt": "2026-11-11T19:43:19.127Z",
+  "summary": "Added 1 images to \"Value shown on hover (formula field)\".",
+  "nodeIds": ["note-value-shown-on-hover-formula-field"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

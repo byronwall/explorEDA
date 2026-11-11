@@ -1,0 +1,12 @@
+{
+  "id": "83e334b5-c5d0-45c3-bafc-93ebad5f6ccc",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:061680",
+    "label": "Agent token ...061680"
+  },
+  "createdAt": "2026-11-11T19:42:27.657Z",
+  "summary": "Created \"Allow a larger chart title size\" under \"1 · Work now\".",
+  "nodeIds": ["note-allow-a-larger-chart-title-size", "area-1-work-now"]
+}
