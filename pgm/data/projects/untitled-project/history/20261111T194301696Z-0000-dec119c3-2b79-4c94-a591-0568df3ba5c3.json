@@ -1,0 +1,12 @@
+{
+  "id": "dec119c3-2b79-4c94-a591-0568df3ba5c3",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:336567",
+    "label": "Agent token ...336567"
+  },
+  "createdAt": "2026-11-11T19:43:01.696Z",
+  "summary": "Created \"Line/area filter 'not quite working'\" under \"3 · Needs input\".",
+  "nodeIds": ["note-line-area-filter-not-quite-working", "area-3-needs-input"]
+}

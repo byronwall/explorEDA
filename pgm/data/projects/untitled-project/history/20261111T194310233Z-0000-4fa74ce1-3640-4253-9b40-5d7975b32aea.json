@@ -1,0 +1,15 @@
+{
+  "id": "4fa74ce1-3640-4253-9b40-5d7975b32aea",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2c9dd6",
+    "label": "Agent token ...2c9dd6"
+  },
+  "createdAt": "2026-11-11T19:43:10.233Z",
+  "summary": "Added 2 images to \"Icicle and sunburst views — keep?\".",
+  "nodeIds": ["note-icicle-and-sunburst-views-keep"],
+  "metadata": {
+    "imageCount": "2"
+  }
+}

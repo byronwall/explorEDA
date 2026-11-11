@@ -1,0 +1,17 @@
+{
+  "id": "5ef272d9-b8ca-4bae-b695-6c5b652d1651",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:6c711a",
+    "label": "Agent token ...6c711a"
+  },
+  "createdAt": "2026-11-11T19:42:03.014Z",
+  "summary": "Added 2 images to \"Hover readout and hover highlight do not clear on mouse leave\".",
+  "nodeIds": [
+    "note-hover-readout-and-hover-highlight-do-not-clear-on-mouse-leave"
+  ],
+  "metadata": {
+    "imageCount": "2"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "508e9356-c36d-49d2-8beb-0ea2e88754c4",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:c32b76",
+    "label": "Agent token ...c32b76"
+  },
+  "createdAt": "2026-11-11T19:42:59.220Z",
+  "summary": "Added 1 images to \"Scatter matrix: filtered cell display is confusing\".",
+  "nodeIds": ["note-scatter-matrix-filtered-cell-display-is-confusing"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

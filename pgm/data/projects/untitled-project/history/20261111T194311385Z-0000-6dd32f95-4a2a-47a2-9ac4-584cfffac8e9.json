@@ -1,0 +1,15 @@
+{
+  "id": "6dd32f95-4a2a-47a2-9ac4-584cfffac8e9",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:ba4ad6",
+    "label": "Agent token ...ba4ad6"
+  },
+  "createdAt": "2026-11-11T19:43:11.385Z",
+  "summary": "Updated status, priority on \"Can a user build the retention chart by hand?\".",
+  "nodeIds": ["note-can-a-user-build-the-retention-chart-by-hand"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

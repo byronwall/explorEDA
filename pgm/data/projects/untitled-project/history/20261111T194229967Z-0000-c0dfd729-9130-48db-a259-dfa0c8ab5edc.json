@@ -1,0 +1,15 @@
+{
+  "id": "c0dfd729-9130-48db-a259-dfa0c8ab5edc",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2a7f0a",
+    "label": "Agent token ...2a7f0a"
+  },
+  "createdAt": "2026-11-11T19:42:29.967Z",
+  "summary": "Updated priority on \"Link the timeline composition to an example\".",
+  "nodeIds": ["note-link-the-timeline-composition-to-an-example"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

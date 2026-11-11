@@ -1,0 +1,15 @@
+{
+  "id": "647cfba9-d68c-484a-abf7-b43490cac047",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:5b4b79",
+    "label": "Agent token ...5b4b79"
+  },
+  "createdAt": "2026-11-11T19:43:14.967Z",
+  "summary": "Updated priority on \"Charts align at top, not bottom\".",
+  "nodeIds": ["note-charts-align-at-top-not-bottom"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

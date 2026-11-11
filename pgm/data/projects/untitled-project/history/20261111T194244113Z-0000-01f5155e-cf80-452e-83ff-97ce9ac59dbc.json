@@ -1,0 +1,15 @@
+{
+  "id": "01f5155e-cf80-452e-83ff-97ce9ac59dbc",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:98474b",
+    "label": "Agent token ...98474b"
+  },
+  "createdAt": "2026-11-11T19:42:44.113Z",
+  "summary": "Updated status, priority on \"RULE: Docs chart heights fit their content\".",
+  "nodeIds": ["note-rule-docs-chart-heights-fit-their-content"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "25cde6d6-e362-4e1e-9a08-4f102f753878",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:ef5149",
+    "label": "Agent token ...ef5149"
+  },
+  "createdAt": "2026-11-11T19:42:41.217Z",
+  "summary": "Added 1 images to \"RULE: Icons take the color of their text\".",
+  "nodeIds": ["note-rule-icons-take-the-color-of-their-text"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

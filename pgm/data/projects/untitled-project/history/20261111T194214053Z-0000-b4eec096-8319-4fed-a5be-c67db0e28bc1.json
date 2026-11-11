@@ -1,0 +1,15 @@
+{
+  "id": "b4eec096-8319-4fed-a5be-c67db0e28bc1",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:767540",
+    "label": "Agent token ...767540"
+  },
+  "createdAt": "2026-11-11T19:42:14.053Z",
+  "summary": "Created \"Say 'Correlation', not 'Pearson', on scatter matrix cells\" under \"1 · Work now\".",
+  "nodeIds": [
+    "note-say-correlation-not-pearson-on-scatter-matrix-cells",
+    "area-1-work-now"
+  ]
+}

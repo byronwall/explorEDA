@@ -1,0 +1,15 @@
+{
+  "id": "860f6b90-3f93-4a0b-8c3f-5563e808ae77",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f14021",
+    "label": "Agent token ...f14021"
+  },
+  "createdAt": "2026-11-11T19:42:19.679Z",
+  "summary": "Updated priority on \"Show the default value on hover in chart settings\".",
+  "nodeIds": ["note-show-the-default-value-on-hover-in-chart-settings"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

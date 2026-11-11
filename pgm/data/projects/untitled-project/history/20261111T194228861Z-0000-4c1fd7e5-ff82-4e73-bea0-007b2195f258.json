@@ -1,0 +1,15 @@
+{
+  "id": "4c1fd7e5-ff82-4e73-bea0-007b2195f258",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:ecb52e",
+    "label": "Agent token ...ecb52e"
+  },
+  "createdAt": "2026-11-11T19:42:28.861Z",
+  "summary": "Added 1 images to \"Allow a larger chart title size\".",
+  "nodeIds": ["note-allow-a-larger-chart-title-size"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "e606a442-3600-41d3-9d40-07e876060d71",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9ef424",
+    "label": "Agent token ...9ef424"
+  },
+  "createdAt": "2026-11-11T19:42:31.695Z",
+  "summary": "Updated priority on \"Line chart annotations: use regions, lines reach the axis\".",
+  "nodeIds": ["note-line-chart-annotations-use-regions-lines-reach-the-axis"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

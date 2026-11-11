@@ -1,0 +1,15 @@
+{
+  "id": "e6bde235-74cd-4d42-ad3a-6934346f0b8e",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f4ae08",
+    "label": "Agent token ...f4ae08"
+  },
+  "createdAt": "2026-11-11T19:43:05.752Z",
+  "summary": "Updated status, priority on \"Row chart '500 to 500' row count\".",
+  "nodeIds": ["note-row-chart-500-to-500-row-count"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

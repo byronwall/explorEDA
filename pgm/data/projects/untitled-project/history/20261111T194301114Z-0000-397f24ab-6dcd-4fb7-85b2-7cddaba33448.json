@@ -1,0 +1,15 @@
+{
+  "id": "397f24ab-6dcd-4fb7-85b2-7cddaba33448",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:509c7f",
+    "label": "Agent token ...509c7f"
+  },
+  "createdAt": "2026-11-11T19:43:01.114Z",
+  "summary": "Added 1 images to \"Correlation methods and 'Browse pairs' are confusing\".",
+  "nodeIds": ["note-correlation-methods-and-browse-pairs-are-confusing"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

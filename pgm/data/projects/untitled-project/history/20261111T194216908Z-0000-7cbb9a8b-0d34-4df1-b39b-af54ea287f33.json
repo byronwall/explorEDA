@@ -1,0 +1,15 @@
+{
+  "id": "7cbb9a8b-0d34-4df1-b39b-af54ea287f33",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:4fea35",
+    "label": "Agent token ...4fea35"
+  },
+  "createdAt": "2026-11-11T19:42:16.908Z",
+  "summary": "Added 1 images to \"Scatter matrix scale shows one value\".",
+  "nodeIds": ["note-scatter-matrix-scale-shows-one-value"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

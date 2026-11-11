@@ -1,0 +1,15 @@
+{
+  "id": "5cd25017-124e-4f98-a535-8556b361751f",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0f8951",
+    "label": "Agent token ...0f8951"
+  },
+  "createdAt": "2026-11-11T19:42:30.580Z",
+  "summary": "Added 1 images to \"Link the timeline composition to an example\".",
+  "nodeIds": ["note-link-the-timeline-composition-to-an-example"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

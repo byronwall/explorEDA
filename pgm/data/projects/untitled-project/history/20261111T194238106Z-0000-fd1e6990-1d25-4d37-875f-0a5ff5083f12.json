@@ -1,0 +1,15 @@
+{
+  "id": "fd1e6990-1d25-4d37-875f-0a5ff5083f12",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:343b0f",
+    "label": "Agent token ...343b0f"
+  },
+  "createdAt": "2026-11-11T19:42:38.106Z",
+  "summary": "Created \"RULE: Brush parity across every brushable chart\" under \"2 · Cross-cutting rules (confirm scope)\".",
+  "nodeIds": [
+    "note-rule-brush-parity-across-every-brushable-chart",
+    "area-2-cross-cutting-rules-confirm-scope"
+  ]
+}

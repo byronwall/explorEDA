@@ -1,0 +1,15 @@
+{
+  "id": "f5a59e4f-ea56-426e-8e1e-2aee763cc402",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:1ff37d",
+    "label": "Agent token ...1ff37d"
+  },
+  "createdAt": "2026-11-11T19:42:27.130Z",
+  "summary": "Added 1 images to \"Shared settings: show 'in set' with color, not a border\".",
+  "nodeIds": ["note-shared-settings-show-in-set-with-color-not-a-border"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

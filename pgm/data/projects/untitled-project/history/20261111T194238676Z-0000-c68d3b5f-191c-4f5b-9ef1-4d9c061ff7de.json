@@ -1,0 +1,15 @@
+{
+  "id": "c68d3b5f-191c-4f5b-9ef1-4d9c061ff7de",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a953be",
+    "label": "Agent token ...a953be"
+  },
+  "createdAt": "2026-11-11T19:42:38.676Z",
+  "summary": "Updated status, priority on \"RULE: Brush parity across every brushable chart\".",
+  "nodeIds": ["note-rule-brush-parity-across-every-brushable-chart"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

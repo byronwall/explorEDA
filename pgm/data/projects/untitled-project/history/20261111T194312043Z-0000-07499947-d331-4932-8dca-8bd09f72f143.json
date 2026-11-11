@@ -1,0 +1,15 @@
+{
+  "id": "07499947-d331-4932-8dca-8bd09f72f143",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:447169",
+    "label": "Agent token ...447169"
+  },
+  "createdAt": "2026-11-11T19:43:12.043Z",
+  "summary": "Added 1 images to \"Can a user build the retention chart by hand?\".",
+  "nodeIds": ["note-can-a-user-build-the-retention-chart-by-hand"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

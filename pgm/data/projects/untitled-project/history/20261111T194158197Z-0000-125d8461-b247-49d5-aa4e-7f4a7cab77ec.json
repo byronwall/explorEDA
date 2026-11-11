@@ -1,0 +1,15 @@
+{
+  "id": "125d8461-b247-49d5-aa4e-7f4a7cab77ec",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:cd9443",
+    "label": "Agent token ...cd9443"
+  },
+  "createdAt": "2026-11-11T19:41:58.197Z",
+  "summary": "Added 1 images to \"Refresh flashes the home page before the example loads\".",
+  "nodeIds": ["note-refresh-flashes-the-home-page-before-the-example-loads"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

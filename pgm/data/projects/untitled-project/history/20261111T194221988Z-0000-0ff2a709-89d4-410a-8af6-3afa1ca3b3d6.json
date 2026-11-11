@@ -1,0 +1,15 @@
+{
+  "id": "0ff2a709-89d4-410a-8af6-3afa1ca3b3d6",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:358782",
+    "label": "Agent token ...358782"
+  },
+  "createdAt": "2026-11-11T19:42:21.988Z",
+  "summary": "Added 1 images to \"Animate hierarchy zoom\".",
+  "nodeIds": ["note-animate-hierarchy-zoom"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

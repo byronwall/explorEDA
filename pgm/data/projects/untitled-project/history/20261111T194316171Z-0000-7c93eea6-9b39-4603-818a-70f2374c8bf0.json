@@ -1,0 +1,15 @@
+{
+  "id": "7c93eea6-9b39-4603-818a-70f2374c8bf0",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f53e63",
+    "label": "Agent token ...f53e63"
+  },
+  "createdAt": "2026-11-11T19:43:16.171Z",
+  "summary": "Created \"Move the formula bar below the chart?\" under \"4 · Parked (do not act yet)\".",
+  "nodeIds": [
+    "note-move-the-formula-bar-below-the-chart",
+    "area-4-parked-do-not-act-yet"
+  ]
+}

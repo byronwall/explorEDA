@@ -1,0 +1,12 @@
+{
+  "id": "624f7417-2975-4497-a4cf-b5e1f2b70e36",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:cc15bd",
+    "label": "Agent token ...cc15bd"
+  },
+  "createdAt": "2026-11-11T19:41:54.919Z",
+  "summary": "Created \"3 · Needs input\" under \"fdbk 11/11\".",
+  "nodeIds": ["area-3-needs-input", "page-fdbk-11-11"]
+}

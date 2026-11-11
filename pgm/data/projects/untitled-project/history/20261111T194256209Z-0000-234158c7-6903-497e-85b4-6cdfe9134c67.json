@@ -1,0 +1,15 @@
+{
+  "id": "234158c7-6903-497e-85b4-6cdfe9134c67",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9913f1",
+    "label": "Agent token ...9913f1"
+  },
+  "createdAt": "2026-11-11T19:42:56.209Z",
+  "summary": "Updated status, priority on \"'Show all twelve' placement and persisted state\".",
+  "nodeIds": ["note-show-all-twelve-placement-and-persisted-state"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

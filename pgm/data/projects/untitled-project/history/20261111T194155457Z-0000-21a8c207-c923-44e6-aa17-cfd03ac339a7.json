@@ -1,0 +1,15 @@
+{
+  "id": "21a8c207-c923-44e6-aa17-cfd03ac339a7",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:33b71d",
+    "label": "Agent token ...33b71d"
+  },
+  "createdAt": "2026-11-11T19:41:55.457Z",
+  "summary": "Updated status, priority on \"3 · Needs input\".",
+  "nodeIds": ["area-3-needs-input"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

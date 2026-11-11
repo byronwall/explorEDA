@@ -1,0 +1,15 @@
+{
+  "id": "260e46de-ab6e-42c4-b2e9-abb4a4a9c542",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:230d8c",
+    "label": "Agent token ...230d8c"
+  },
+  "createdAt": "2026-11-11T19:42:36.912Z",
+  "summary": "Updated status, priority on \"RULE: No instruction or summary text in chart footers\".",
+  "nodeIds": ["note-rule-no-instruction-or-summary-text-in-chart-footers"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

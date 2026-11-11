@@ -1,0 +1,15 @@
+{
+  "id": "790ac804-d3f3-480c-8676-16a1a370a619",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:00a8ff",
+    "label": "Agent token ...00a8ff"
+  },
+  "createdAt": "2026-11-11T19:42:53.339Z",
+  "summary": "Added 1 images to \"Metric tiles repeat text and leave a large gap\".",
+  "nodeIds": ["note-metric-tiles-repeat-text-and-leave-a-large-gap"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

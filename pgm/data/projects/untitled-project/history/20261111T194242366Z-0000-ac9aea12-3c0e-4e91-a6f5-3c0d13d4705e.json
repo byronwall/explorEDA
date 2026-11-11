@@ -1,0 +1,15 @@
+{
+  "id": "ac9aea12-3c0e-4e91-a6f5-3c0d13d4705e",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:43d400",
+    "label": "Agent token ...43d400"
+  },
+  "createdAt": "2026-11-11T19:42:42.366Z",
+  "summary": "Updated status, priority on \"RULE: Trim the docs example shell to a single chart\".",
+  "nodeIds": ["note-rule-trim-the-docs-example-shell-to-a-single-chart"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

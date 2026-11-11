@@ -1,0 +1,17 @@
+{
+  "id": "5a0aef74-0ffa-403c-8bb1-5a520e5fb1d0",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7eccb5",
+    "label": "Agent token ...7eccb5"
+  },
+  "createdAt": "2026-11-11T19:42:49.277Z",
+  "summary": "Updated status, priority on \"RULE: Docs index cards — bigger single-chart thumbnails, no top border\".",
+  "nodeIds": [
+    "note-rule-docs-index-cards-bigger-single-chart-thumbnails-no-top-border"
+  ],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

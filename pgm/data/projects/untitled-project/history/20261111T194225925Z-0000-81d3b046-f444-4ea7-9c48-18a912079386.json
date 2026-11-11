@@ -1,0 +1,15 @@
+{
+  "id": "81d3b046-f444-4ea7-9c48-18a912079386",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:7240d7",
+    "label": "Agent token ...7240d7"
+  },
+  "createdAt": "2026-11-11T19:42:25.925Z",
+  "summary": "Created \"Shared settings: show 'in set' with color, not a border\" under \"1 · Work now\".",
+  "nodeIds": [
+    "note-shared-settings-show-in-set-with-color-not-a-border",
+    "area-1-work-now"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "6c84288b-01bf-403a-b3e2-3f622eeb34f1",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a572ad",
+    "label": "Agent token ...a572ad"
+  },
+  "createdAt": "2026-11-11T19:42:48.165Z",
+  "summary": "Added 3 images to \"RULE: Show, don't tell in docs ('How it reads', annotations)\".",
+  "nodeIds": ["note-rule-show-don-t-tell-in-docs-how-it-reads-annotations"],
+  "metadata": {
+    "imageCount": "3"
+  }
+}

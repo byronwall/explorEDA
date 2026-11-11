@@ -1,0 +1,12 @@
+{
+  "id": "a06d6e70-090d-4f16-95fa-b23beda6eebf",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:f37c59",
+    "label": "Agent token ...f37c59"
+  },
+  "createdAt": "2026-11-11T19:41:58.702Z",
+  "summary": "Created \"Shift+Z clears all filters\" under \"1 · Work now\".",
+  "nodeIds": ["note-shift-z-clears-all-filters", "area-1-work-now"]
+}

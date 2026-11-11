@@ -1,0 +1,15 @@
+{
+  "id": "b95a9e61-93ef-4527-adbf-41187bfae4f6",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:9d7e6e",
+    "label": "Agent token ...9d7e6e"
+  },
+  "createdAt": "2026-11-11T19:41:59.250Z",
+  "summary": "Updated priority on \"Shift+Z clears all filters\".",
+  "nodeIds": ["note-shift-z-clears-all-filters"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

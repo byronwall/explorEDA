@@ -1,0 +1,15 @@
+{
+  "id": "b360d16e-8630-4af9-866f-7c7e3a7b36b5",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:36b6dc",
+    "label": "Agent token ...36b6dc"
+  },
+  "createdAt": "2026-11-11T19:42:04.085Z",
+  "summary": "Updated priority on \"First click on a bar chart is sometimes ignored\".",
+  "nodeIds": ["note-first-click-on-a-bar-chart-is-sometimes-ignored"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

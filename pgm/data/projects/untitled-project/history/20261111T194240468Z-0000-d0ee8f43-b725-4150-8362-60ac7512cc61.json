@@ -1,0 +1,15 @@
+{
+  "id": "d0ee8f43-b725-4150-8362-60ac7512cc61",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:3f12dd",
+    "label": "Agent token ...3f12dd"
+  },
+  "createdAt": "2026-11-11T19:42:40.468Z",
+  "summary": "Updated status, priority on \"RULE: Icons take the color of their text\".",
+  "nodeIds": ["note-rule-icons-take-the-color-of-their-text"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "787c6138-780e-46b3-8615-8b164bfdd4f2",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2bb248",
+    "label": "Agent token ...2bb248"
+  },
+  "createdAt": "2026-11-11T19:42:45.836Z",
+  "summary": "Updated status, priority on \"RULE: Each specialized chart says why to pick it over its lookalike\".",
+  "nodeIds": [
+    "note-rule-each-specialized-chart-says-why-to-pick-it-over-its-lookalike"
+  ],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

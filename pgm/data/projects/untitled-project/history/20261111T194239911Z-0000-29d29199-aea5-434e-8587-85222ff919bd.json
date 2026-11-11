@@ -1,0 +1,15 @@
+{
+  "id": "29d29199-aea5-434e-8587-85222ff919bd",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:a1a602",
+    "label": "Agent token ...a1a602"
+  },
+  "createdAt": "2026-11-11T19:42:39.911Z",
+  "summary": "Created \"RULE: Icons take the color of their text\" under \"2 · Cross-cutting rules (confirm scope)\".",
+  "nodeIds": [
+    "note-rule-icons-take-the-color-of-their-text",
+    "area-2-cross-cutting-rules-confirm-scope"
+  ]
+}

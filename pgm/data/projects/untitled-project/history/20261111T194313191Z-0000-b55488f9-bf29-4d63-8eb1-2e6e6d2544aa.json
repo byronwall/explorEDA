@@ -1,0 +1,15 @@
+{
+  "id": "b55488f9-bf29-4d63-8eb1-2e6e6d2544aa",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:71186c",
+    "label": "Agent token ...71186c"
+  },
+  "createdAt": "2026-11-11T19:43:13.191Z",
+  "summary": "Updated status, priority on \"Scatter matrix missing grid lines\".",
+  "nodeIds": ["note-scatter-matrix-missing-grid-lines"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

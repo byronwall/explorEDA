@@ -1,0 +1,15 @@
+{
+  "id": "d760a75c-1d10-4b98-9f64-5532e1609627",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:807c3a",
+    "label": "Agent token ...807c3a"
+  },
+  "createdAt": "2026-11-11T19:43:04.077Z",
+  "summary": "Updated status, priority on \"Area chart upper-left looks weird\".",
+  "nodeIds": ["note-area-chart-upper-left-looks-weird"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "3861bd0c-4fa9-41d5-935f-773fff01ce26",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:65ac3b",
+    "label": "Agent token ...65ac3b"
+  },
+  "createdAt": "2026-11-11T19:42:41.796Z",
+  "summary": "Created \"RULE: Trim the docs example shell to a single chart\" under \"2 · Cross-cutting rules (confirm scope)\".",
+  "nodeIds": [
+    "note-rule-trim-the-docs-example-shell-to-a-single-chart",
+    "area-2-cross-cutting-rules-confirm-scope"
+  ]
+}

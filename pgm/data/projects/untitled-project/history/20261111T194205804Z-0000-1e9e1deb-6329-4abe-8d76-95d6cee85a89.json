@@ -1,0 +1,15 @@
+{
+  "id": "1e9e1deb-6329-4abe-8d76-95d6cee85a89",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:01ab84",
+    "label": "Agent token ...01ab84"
+  },
+  "createdAt": "2026-11-11T19:42:05.804Z",
+  "summary": "Updated priority on \"Docs examples reset on refresh (no local persistence)\".",
+  "nodeIds": ["note-docs-examples-reset-on-refresh-no-local-persistence"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

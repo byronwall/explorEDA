@@ -1,0 +1,15 @@
+{
+  "id": "59e7020f-949f-4df7-a91c-e4d87443921e",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d517c6",
+    "label": "Agent token ...d517c6"
+  },
+  "createdAt": "2026-11-11T19:43:09.641Z",
+  "summary": "Updated status, priority on \"Icicle and sunburst views — keep?\".",
+  "nodeIds": ["note-icicle-and-sunburst-views-keep"],
+  "metadata": {
+    "fields": "status,priority"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "5cd513eb-1fd1-4165-87ed-58aff7a80288",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:3c2cc0",
+    "label": "Agent token ...3c2cc0"
+  },
+  "createdAt": "2026-11-11T19:43:19.684Z",
+  "summary": "Created \"Guided 'click, click, click' tour for docs\" under \"4 · Parked (do not act yet)\".",
+  "nodeIds": [
+    "note-guided-click-click-click-tour-for-docs",
+    "area-4-parked-do-not-act-yet"
+  ]
+}

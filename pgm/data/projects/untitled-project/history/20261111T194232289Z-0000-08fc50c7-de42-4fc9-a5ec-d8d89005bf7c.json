@@ -1,0 +1,15 @@
+{
+  "id": "08fc50c7-de42-4fc9-a5ec-d8d89005bf7c",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:45404e",
+    "label": "Agent token ...45404e"
+  },
+  "createdAt": "2026-11-11T19:42:32.289Z",
+  "summary": "Added 1 images to \"Line chart annotations: use regions, lines reach the axis\".",
+  "nodeIds": ["note-line-chart-annotations-use-regions-lines-reach-the-axis"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

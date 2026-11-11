@@ -1,0 +1,15 @@
+{
+  "id": "c40fb920-ef0f-43a7-a62b-5547275683b1",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2d4321",
+    "label": "Agent token ...2d4321"
+  },
+  "createdAt": "2026-11-11T19:42:37.511Z",
+  "summary": "Added 8 images to \"RULE: No instruction or summary text in chart footers\".",
+  "nodeIds": ["note-rule-no-instruction-or-summary-text-in-chart-footers"],
+  "metadata": {
+    "imageCount": "8"
+  }
+}

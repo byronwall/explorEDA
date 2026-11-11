@@ -1,0 +1,15 @@
+{
+  "id": "89915c40-36c8-42d7-8414-0f265d73fabc",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:37a0b9",
+    "label": "Agent token ...37a0b9"
+  },
+  "createdAt": "2026-11-11T19:42:20.283Z",
+  "summary": "Added 1 images to \"Show the default value on hover in chart settings\".",
+  "nodeIds": ["note-show-the-default-value-on-hover-in-chart-settings"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

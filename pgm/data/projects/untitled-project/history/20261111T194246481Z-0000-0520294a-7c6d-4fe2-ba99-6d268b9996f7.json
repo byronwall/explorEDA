@@ -1,0 +1,17 @@
+{
+  "id": "0520294a-7c6d-4fe2-ba99-6d268b9996f7",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0c02b8",
+    "label": "Agent token ...0c02b8"
+  },
+  "createdAt": "2026-11-11T19:42:46.481Z",
+  "summary": "Added 1 images to \"RULE: Each specialized chart says why to pick it over its lookalike\".",
+  "nodeIds": [
+    "note-rule-each-specialized-chart-says-why-to-pick-it-over-its-lookalike"
+  ],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

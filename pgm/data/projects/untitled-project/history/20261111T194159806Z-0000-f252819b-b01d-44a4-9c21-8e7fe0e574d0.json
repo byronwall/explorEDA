@@ -1,0 +1,15 @@
+{
+  "id": "f252819b-b01d-44a4-9c21-8e7fe0e574d0",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:63f888",
+    "label": "Agent token ...63f888"
+  },
+  "createdAt": "2026-11-11T19:41:59.806Z",
+  "summary": "Added 1 images to \"Shift+Z clears all filters\".",
+  "nodeIds": ["note-shift-z-clears-all-filters"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

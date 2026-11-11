@@ -1,0 +1,15 @@
+{
+  "id": "2dcac6cf-214c-483c-ab96-f6bff38c72f2",
+  "kind": "node.created",
+  "actor": {
+    "kind": "agent",
+    "id": "token:b5d4e9",
+    "label": "Agent token ...b5d4e9"
+  },
+  "createdAt": "2026-11-11T19:42:19.112Z",
+  "summary": "Created \"Show the default value on hover in chart settings\" under \"1 · Work now\".",
+  "nodeIds": [
+    "note-show-the-default-value-on-hover-in-chart-settings",
+    "area-1-work-now"
+  ]
+}

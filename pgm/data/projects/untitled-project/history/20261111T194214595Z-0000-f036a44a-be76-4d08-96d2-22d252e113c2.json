@@ -1,0 +1,15 @@
+{
+  "id": "f036a44a-be76-4d08-96d2-22d252e113c2",
+  "kind": "node.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:b80c92",
+    "label": "Agent token ...b80c92"
+  },
+  "createdAt": "2026-11-11T19:42:14.595Z",
+  "summary": "Updated priority on \"Say 'Correlation', not 'Pearson', on scatter matrix cells\".",
+  "nodeIds": ["note-say-correlation-not-pearson-on-scatter-matrix-cells"],
+  "metadata": {
+    "fields": "priority"
+  }
+}

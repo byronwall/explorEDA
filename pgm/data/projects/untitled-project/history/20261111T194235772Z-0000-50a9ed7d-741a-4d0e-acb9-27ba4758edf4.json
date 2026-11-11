@@ -1,0 +1,15 @@
+{
+  "id": "50a9ed7d-741a-4d0e-acb9-27ba4758edf4",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:d5418a",
+    "label": "Agent token ...d5418a"
+  },
+  "createdAt": "2026-11-11T19:42:35.772Z",
+  "summary": "Added 1 images to \"Heatmap: add a transpose (flip rows and columns) button\".",
+  "nodeIds": ["note-heatmap-add-a-transpose-flip-rows-and-columns-button"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

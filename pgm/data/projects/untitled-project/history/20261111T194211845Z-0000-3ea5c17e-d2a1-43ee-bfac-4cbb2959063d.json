@@ -1,0 +1,15 @@
+{
+  "id": "3ea5c17e-d2a1-43ee-bfac-4cbb2959063d",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:0f8ed8",
+    "label": "Agent token ...0f8ed8"
+  },
+  "createdAt": "2026-11-11T19:42:11.845Z",
+  "summary": "Added 1 images to \"View switch arrow causes layout shift\".",
+  "nodeIds": ["note-view-switch-arrow-causes-layout-shift"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}

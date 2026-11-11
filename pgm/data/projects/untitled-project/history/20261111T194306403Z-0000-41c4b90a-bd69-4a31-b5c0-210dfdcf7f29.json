@@ -1,0 +1,15 @@
+{
+  "id": "41c4b90a-bd69-4a31-b5c0-210dfdcf7f29",
+  "kind": "node.images.added",
+  "actor": {
+    "kind": "agent",
+    "id": "token:ba9408",
+    "label": "Agent token ...ba9408"
+  },
+  "createdAt": "2026-11-11T19:43:06.403Z",
+  "summary": "Added 1 images to \"Row chart '500 to 500' row count\".",
+  "nodeIds": ["note-row-chart-500-to-500-row-count"],
+  "metadata": {
+    "imageCount": "1"
+  }
+}
