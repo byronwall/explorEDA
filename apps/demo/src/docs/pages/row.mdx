@@ -7,13 +7,32 @@
 
 ## How it reads
 
-- Each bar counts the rows in one category of the chart's field.
-- To rank something other than a count, pick a **Measure** and an **Operation** (sum or average, optionally once per ID). This saves a named grouped summary that bar charts can read too, so both show the same numbers.
-- Click a bar to filter every other chart to that category.
-- Categories keep their all-rows order while other charts filter. The filtered value draws over a faint all-rows bar, or a tick for averages, maxima, and minima.
-- Negative values draw left of a zero line.
-- Row height stays between the minimum and maximum you set. When the rows would be shorter than the minimum, the chart shows fewer categories. Set **Top N** to keep the same categories, and the same members in **Other**, at every size.
-- Turn on **Use as color field** to give each category its own color from a shared scale, which other charts that color by the same field reuse.
+<ReadingGuide chart="row">
+  <Part at="label">Each row is one category of the chart's field.</Part>
+  <Part at="bar">
+    Bar length counts its rows, or sums or averages a **Measure** by the
+    **Operation** you pick (optionally once per ID). That saves a grouped
+    summary that bar charts read too.
+  </Part>
+  <Part at="filtered">
+    While other charts filter, the filtered value draws over a faint all-rows
+    bar (a tick for averages, maxima, and minima), and rows keep their all-rows
+    order.
+  </Part>
+  <Part at="zero">Negative values draw left of the zero line.</Part>
+  <Part at="other">
+    Set **Top N** to keep the same categories, and the same members in
+    **Other**, at every size.
+  </Part>
+  <Part>
+    Row height stays between the minimum and maximum you set; when rows would be
+    shorter, fewer categories show.
+  </Part>
+  <Part>
+    **Use as color field** gives each category a color that other charts
+    coloring by that field reuse.
+  </Part>
+</ReadingGuide>
 
 ## Annotations
 

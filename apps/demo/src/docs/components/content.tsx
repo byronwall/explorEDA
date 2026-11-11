@@ -13,6 +13,7 @@ import { docsPath, slugify } from "../paths";
 import { inlineCodeClass, inlineLinkClass, proseClass } from "./chrome";
 import { CodeBlock } from "./code";
 import { WorkedOrder } from "./workedOrder";
+import { Part, ReadingGuide } from "./readingGuide";
 import {
   DashboardTextReference,
   ExampleText,
@@ -342,7 +343,9 @@ export const mdxComponents: MDXComponents = {
   ExampleText,
   Figure,
   LiveExample,
+  Part,
   PropsReference,
+  ReadingGuide,
   SettingsReference,
   Steps,
   Terms,

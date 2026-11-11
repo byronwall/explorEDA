@@ -7,12 +7,30 @@
 
 ## How it reads
 
-- Rows group by one field and columns by another. Each cell's shade shows its count or measure.
-- **Metric** counts rows, or sums, averages, or takes the maximum or minimum of a measure. A maximum shows each cell's peak, such as a state's highest weekly rate in each wave; write it as `aggregation=max measureField=rate`.
-- Click a cell to filter every other chart to rows with both of its values.
-- Each axis shows at most a set number of values, the ones with the most rows. Rows with other values are left out and counted below the chart. **Rows shown** and **Columns shown** set the two limits apart, up to 200 each.
-- **Order** puts values by row count, A to Z, or the order they first appear in the data. **Column order** sets the columns apart from the rows.
-- **Show values in cells** prints each value inside its cell when the cell is large enough for the text.
+<ReadingGuide chart="heatmap">
+  <Part at="rows">Rows group by one field and columns by another.</Part>
+  <Part at="cell">
+    Each cell's shade shows its **Metric**: a count of rows, or a sum, average,
+    maximum, or minimum of a measure, such as `aggregation=max
+    measureField=rate`.
+  </Part>
+  <Part at="values">
+    **Show values in cells** prints each value inside its cell when the cell is
+    large enough for the text.
+  </Part>
+  <Part at="selected">
+    Click a cell to filter every other chart to rows with both of its values.
+  </Part>
+  <Part at="limit">
+    Each axis shows the values with the most rows, up to **Rows shown** and
+    **Columns shown** (200 each at most). Rows with other values are counted
+    below the chart.
+  </Part>
+  <Part>
+    **Order** puts values by row count, A to Z, or the order they first appear.
+    **Column order** sets the columns apart from the rows.
+  </Part>
+</ReadingGuide>
 
 ## Long histories
 
