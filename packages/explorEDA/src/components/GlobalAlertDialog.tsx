@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { buttonVariants } from "@/components/ui/button";
 import { useAlertStore } from "@/stores/alertStore";
+import { useSingleHost } from "@/lib/singleHost";
 
 export function GlobalAlertDialog() {
   const {
@@ -21,6 +22,11 @@ export function GlobalAlertDialog() {
     closeAlert,
     id,
   } = useAlertStore();
+  const host = useSingleHost("alert-dialog");
+
+  if (!host) {
+    return null;
+  }
 
   return (
     <AlertDialog

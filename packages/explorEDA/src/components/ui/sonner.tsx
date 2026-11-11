@@ -3,8 +3,15 @@
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, ToasterProps } from "sonner";
 
+import { useSingleHost } from "@/lib/singleHost";
+
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
+  const host = useSingleHost("toaster");
+
+  if (!host) {
+    return null;
+  }
 
   return (
     <Sonner
