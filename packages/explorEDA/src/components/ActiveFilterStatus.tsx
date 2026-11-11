@@ -575,7 +575,7 @@ export function ActiveFilterStatus({
           size="icon"
           className="eda-filter-clear shrink-0"
           aria-label="Clear all filters"
-          tooltip="Clear all filters: workspace and chart filters, table searches, and Rows filters"
+          tooltip="Clear all filters: workspace and chart filters, table searches, and Rows filters (Shift+Z)"
           onClick={clearAllFilters}
         >
           <FilterX aria-hidden="true" />

@@ -150,6 +150,7 @@ export function PlotManager({
   const removeChart = useDataLayer((state) => state.removeChart);
   const openDetails = useChartDetailsStore((state) => state.open);
   const removeAllCharts = useDataLayer((state) => state.removeAllCharts);
+  const clearAllFilters = useDataLayer((state) => state.clearAllFilters);
   const gridSettings = useDataLayer((state) => state.gridSettings);
   const themeId = resolveThemeId(useDataLayer((state) => state.theme));
   const setDarkMode = useDataLayer((state) => state.setDarkMode);
@@ -410,6 +411,24 @@ export function PlotManager({
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [rowsOpen, closeRows, setRowsOpen, acceptsShortcut]);
+
+  // Shift+Z clears every filter.
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.key.toLowerCase() !== "z" ||
+        !event.shiftKey ||
+        !acceptsShortcut(event) ||
+        document.querySelector("[role='dialog']")
+      ) {
+        return;
+      }
+      event.preventDefault();
+      clearAllFilters();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [clearAllFilters, acceptsShortcut]);
 
   // A host panel's letter toggles it, like F and R.
   useEffect(() => {

@@ -1,4 +1,5 @@
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
+import { keyboardFocused } from "../keyboardFocus";
 import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
 import { useId, useMemo, useRef, useState } from "react";
@@ -383,6 +384,10 @@ export function TimeSeriesChart({
                   aria-description="Enter selects this period and series. Alt-Enter inspects its records. Arrow keys move between points."
                   className="cursor-pointer outline-none focus-visible:stroke-[var(--ring)]"
                   onPointerEnter={() => setActiveId(point.id)}
+                  onPointerLeave={(event) => {
+                    if (!keyboardFocused(event.currentTarget))
+                      setActiveId(undefined);
+                  }}
                   onFocus={() => setActiveId(point.id)}
                   onClick={(event) => {
                     event.stopPropagation();

@@ -1559,9 +1559,12 @@ html {
 .eda-workspace .react-grid-item {
   transition: none;
 }
-.eda-panel:has(svg:focus-visible) h3 {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+/* Keyboard focus on a chart rings the plot; the title stays plain so it
+   never reads as a link or a rename hint. */
+.eda-panel svg[tabindex]:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+  border-radius: 4px;
 }
 
 .eda-settings-popover {
