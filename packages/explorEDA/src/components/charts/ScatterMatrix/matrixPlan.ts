@@ -298,11 +298,20 @@ function planTicks(field: Pick<MatrixField, "axis" | "kind">, size: number) {
   const largest = Math.max(...axis.domain.map(Math.abs));
   // Small cells have room for short labels only, such as 4k.
   const short = largest >= 1e5 || (largest >= 1000 && size < 110);
-  const format = linear.tickFormat(count, short ? "~s" : undefined);
-  return linear
-    .ticks(count)
-    .filter((tick) => tick >= axis.domain[0] && tick <= axis.domain[1])
-    .map((tick) => ({ offset: axis.scale(tick), label: format(tick) }));
+  const inDomain = (n: number) =>
+    linear
+      .ticks(n)
+      .filter((tick) => tick >= axis.domain[0] && tick <= axis.domain[1]);
+  // A lone tick says nothing about the range; ask for finer steps until two
+  // ticks show a low and a high.
+  let used = count;
+  let ticks = inDomain(used);
+  while (ticks.length < 2 && used < 10) ticks = inDomain(++used);
+  const format = linear.tickFormat(used, short ? "~s" : undefined);
+  return ticks.map((tick) => ({
+    offset: axis.scale(tick),
+    label: format(tick),
+  }));
 }
 
 /**

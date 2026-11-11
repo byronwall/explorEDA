@@ -1227,8 +1227,10 @@ function CorrelationCell({
         dominantBaseline="central"
         fontSize={fontSize * 0.6}
         className="fill-muted-foreground"
+        // Screen readers hear the method; Alt-click shows it in the trace.
+        aria-label={`${METHOD_NAMES[method]} correlation`}
       >
-        {METHOD_NAMES[method]}
+        Correlation
       </text>
       <text
         x={cell.x + size / 2}

@@ -364,11 +364,9 @@ export function SeriesBarChart({
         <span className="truncate">
           {plan.zeroTotals
             ? "Zero-total categories have no share"
-            : plan.percent
-              ? "Share of each category total"
-              : plan.bars.some((bar) => bar.row.value === undefined)
-                ? "Outline marks have no valid values"
-                : `${plan.bars.length} category–series pairs`}
+            : plan.bars.some((bar) => bar.row.value === undefined)
+              ? "Outline marks have no valid values"
+              : null}
         </span>
       </div>
       {active && (
