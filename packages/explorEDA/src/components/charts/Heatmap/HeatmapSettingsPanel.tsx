@@ -11,6 +11,8 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown } from "lucide-react";
 import type { HeatmapSettings } from "./definition";
 
 /** Drops a cell selection that names a field the chart no longer uses. */
@@ -72,6 +74,30 @@ export function HeatmapSettingsPanel({
           value={settings.columnField}
           onChange={(value) => change({ columnField: value })}
         />
+        {/* Date columns bin into periods, which rows cannot do yet. */}
+        {!settings.columnInterval && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="col-start-2 justify-self-start"
+            disabled={!settings.field || !settings.columnField}
+            tooltip="Swap the row and column fields, with their limits and order"
+            onClick={() =>
+              change({
+                field: settings.columnField,
+                columnField: settings.field,
+                maxCategories: settings.maxColumns ?? settings.maxCategories,
+                maxColumns: settings.maxCategories,
+                sortBy: settings.columnSortBy ?? settings.sortBy,
+                columnSortBy: settings.sortBy,
+              })
+            }
+          >
+            <ArrowUpDown aria-hidden="true" />
+            Swap rows and columns
+          </Button>
+        )}
         {settings.field && settings.field === settings.columnField && (
           <p className="col-start-2 text-xs text-destructive" role="alert">
             Rows and columns need different fields.

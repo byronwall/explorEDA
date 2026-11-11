@@ -14,6 +14,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -204,6 +205,7 @@ export function HierarchyChart({
   const trace = useChartTrace();
   const traceApi = useChartTraceApi();
   const owner = useId();
+  const zoomClipId = `${owner.replace(/:/g, "")}-zoom`;
   const [hovered, setHovered] = useState<string | null>(null);
   const [focused, setFocused] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -336,6 +338,45 @@ export function HierarchyChart({
       tiny: all.length - drawn.length,
     };
   }, [arrangement, focusNode, plotWidth, plotHeight, radius]);
+
+  // Zooming scales the boxes from where they were: in, the new focus grows
+  // out of its old box; out, the old focus shrinks into its new box.
+  const zoomRef = useRef<SVGGElement>(null);
+  const lastZoom = useRef<{
+    focusId: string;
+    boxes: Map<string, TreemapRect>;
+  } | null>(null);
+  useLayoutEffect(() => {
+    const boxes = new Map(rects.map((rect) => [rect.node.id, rect]));
+    const previous = lastZoom.current;
+    lastZoom.current = { focusId: focusNode.id, boxes };
+    const group = zoomRef.current;
+    if (!previous || previous.focusId === focusNode.id || !group?.animate) {
+      return;
+    }
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    const w = Math.max(1, plotWidth);
+    const h = Math.max(1, plotHeight);
+    const grown = previous.boxes.get(focusNode.id);
+    const shrunk = boxes.get(previous.focusId);
+    let start: string | undefined;
+    if (grown) {
+      const sx = (grown.x1 - grown.x0) / w;
+      const sy = (grown.y1 - grown.y0) / h;
+      start = `translate(${grown.x0}px, ${grown.y0}px) scale(${sx}, ${sy})`;
+    } else if (shrunk) {
+      const sx = w / Math.max(1, shrunk.x1 - shrunk.x0);
+      const sy = h / Math.max(1, shrunk.y1 - shrunk.y0);
+      start = `translate(${-shrunk.x0 * sx}px, ${-shrunk.y0 * sy}px) scale(${sx}, ${sy})`;
+    }
+    if (!start) return;
+    group.animate([{ transform: start }, { transform: "none" }], {
+      duration: 320,
+      easing: "cubic-bezier(0.2, 0, 0, 1)",
+    });
+  }, [rects, focusNode.id, plotWidth, plotHeight]);
 
   if (!levels.length) {
     return (
@@ -705,7 +746,14 @@ export function HierarchyChart({
           role="group"
           aria-label={`${plan.levelLabels.join(" › ")} as ${ARTICLES[arrangement]}`}
         >
-          {rects.map(renderRect)}
+          {rects.length > 0 && (
+            <g clipPath={`url(#${zoomClipId})`}>
+              <clipPath id={zoomClipId}>
+                <rect width={plotWidth} height={plotHeight} />
+              </clipPath>
+              <g ref={zoomRef}>{rects.map(renderRect)}</g>
+            </g>
+          )}
           {arrangement === "sunburst" && (
             <g transform={`translate(${plotWidth / 2},${plotHeight / 2})`}>
               {arcs.map(renderArc)}
