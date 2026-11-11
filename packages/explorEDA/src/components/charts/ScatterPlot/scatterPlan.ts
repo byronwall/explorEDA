@@ -85,7 +85,6 @@ export type SvgPrimitive =
       fillOpacity?: number;
       stroke?: string;
       strokeWidth?: number;
-      cursor?: string;
     }
   | {
       kind: "circle";
@@ -942,7 +941,6 @@ export function planScatterOverlay(
       fillOpacity: 0.09,
       stroke: "var(--primary)",
       strokeWidth: 1.25,
-      cursor: "move",
     });
     for (const [i, x] of [x0, x1].entries()) {
       brush.push({
@@ -954,7 +952,6 @@ export function planScatterOverlay(
         height: 16,
         rx: 2,
         fill: "var(--primary)",
-        cursor: "ew-resize",
       });
     }
     for (const [i, y] of [y0, y1].entries()) {
@@ -967,7 +964,6 @@ export function planScatterOverlay(
         height: 4,
         rx: 2,
         fill: "var(--primary)",
-        cursor: "ns-resize",
       });
     }
   }
