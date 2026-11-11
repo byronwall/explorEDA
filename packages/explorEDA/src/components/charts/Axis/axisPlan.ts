@@ -544,7 +544,9 @@ function planAxis(
                 typography,
                 input.label,
                 labelFontSize,
-                Math.max(3 * labelFontSize * 0.6, plotWidth)
+                Math.max(3 * labelFontSize * 0.6, plotWidth),
+                // Titles fit by measured width alone; the estimate runs wide.
+                0
               ),
               fullText: input.label,
               x: plotWidth / 2,
@@ -562,7 +564,12 @@ function planAxis(
                 typography,
                 input.label,
                 labelFontSize,
-                Math.max(3 * labelFontSize * 0.6, plotHeight)
+                // A rotated title may run a little past the plot's ends.
+                Math.max(
+                  3 * labelFontSize * 0.6,
+                  plotHeight + Math.min(margin.top, margin.bottom)
+                ),
+                0
               ),
               fullText: input.label,
               x: -plotHeight / 2,

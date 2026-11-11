@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo, useState, type CSSProperties } from "react";
 import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useNotebookKeep } from "@/components/notebook/NotebookKeep";
 import { Button } from "@/components/ui/button";
@@ -387,7 +387,14 @@ export function JointMissingness({
   return (
     <div
       className="eda-missingness relative flex flex-col"
-      style={{ width, height }}
+      style={
+        {
+          width,
+          height,
+          // Pattern dots take a deeper shade of the bar color, not black.
+          "--eda-missingness-on": `color-mix(in oklab, ${themeColors.mark} 72%, var(--foreground))`,
+        } as CSSProperties
+      }
     >
       {unkept && (
         <div className="eda-missingness-keep" data-export="omit">

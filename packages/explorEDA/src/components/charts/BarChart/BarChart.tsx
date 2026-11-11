@@ -866,7 +866,8 @@ function SingleBarChart({
                   stroke: outlined
                     ? "var(--foreground)"
                     : isHovered
-                      ? "var(--foreground)"
+                      ? // A deeper shade of the bar, so a narrow bar never reads black.
+                        `color-mix(in oklab, ${bar.fill} 65%, var(--foreground))`
                       : bar.tail
                         ? "var(--muted-foreground)"
                         : undefined,

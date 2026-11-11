@@ -8942,8 +8942,8 @@ td[data-null] {
   vertical-align: middle;
 }
 .eda-missingness-dot > i[data-on] {
-  background: var(--foreground);
-  border-color: var(--foreground);
+  background: var(--eda-missingness-on, var(--foreground));
+  border-color: var(--eda-missingness-on, var(--foreground));
 }
 .eda-missingness-link {
   position: absolute;
@@ -8952,7 +8952,7 @@ td[data-null] {
   right: 0;
   height: 2px;
   transform: translateY(-50%);
-  background: var(--foreground);
+  background: var(--eda-missingness-on, var(--foreground));
 }
 .eda-missingness-link[data-start] {
   left: 50%;
