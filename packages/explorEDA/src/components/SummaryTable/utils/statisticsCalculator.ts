@@ -28,7 +28,7 @@ export function binValues(
   if (max - min + 1 < binCount && sorted.every(Number.isInteger)) {
     binCount = max - min + 1;
     const bins = new Array<number>(binCount).fill(0);
-    for (const value of sorted) bins[value - min] += 1;
+    for (const value of sorted) bins[value - min]! += 1;
     return bins;
   }
   const bins = new Array<number>(binCount).fill(0);
@@ -36,7 +36,7 @@ export function binValues(
   for (const value of sorted) {
     if (!Number.isFinite(value)) continue;
     const index = Math.min(binCount - 1, Math.floor((value - min) / width));
-    bins[index] += 1;
+    bins[index]! += 1;
   }
   return bins;
 }

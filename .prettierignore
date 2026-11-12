@@ -17,3 +17,6 @@ docs/intent/selection-refresh/assets/pro-results/selection-refresh-design-2026-1
 docs/intent/empty-selection-recovery/assets/pro-results/empty-selection-design-2026-11-01/originals/
 # Preserve original Pro artifact bytes.
 docs/intent/**/assets/pro-results/**
+
+# pnpm writes its own lockfile format.
+pnpm-lock.yaml

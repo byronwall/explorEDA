@@ -1,6 +1,12 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { afterEach, beforeEach, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, vi } from "vitest";
 import { catalogue } from "./catalogue";
 import { DocsSite } from "./DocsSite";
 
@@ -158,13 +164,44 @@ describe("docs routes", () => {
     );
   });
 
-  it.each(catalogue.map((page) => [page.topic]))(
-    "renders every section of /docs/%s",
-    async (topic) => {
-      const { unmount } = renderAt(`/docs/${topic}`);
-      const sections = await screen.findAllByRole("heading", { level: 2 });
-      expect(sections.length).toBeGreaterThan(0);
-      unmount();
-    }
-  );
+  describe("every page", () => {
+    // Pages load with React.lazy, and React waits at least 300 ms before it
+    // swaps a Suspense fallback for the content. Loading pages ten at a time
+    // pays that wait five times instead of once per page, and keeps the
+    // rendered tree small.
+    beforeAll(async () => {
+      for (let start = 0; start < catalogue.length; start += 10) {
+        const batch = catalogue.slice(start, start + 10);
+        const { container, unmount } = render(
+          <>
+            {batch.map((page) => (
+              <MemoryRouter
+                key={page.topic}
+                initialEntries={[`/docs/${page.topic}`]}
+              >
+                <DocsSite />
+              </MemoryRouter>
+            ))}
+          </>
+        );
+        // Each page has an h2 once its content is in.
+        await waitFor(() =>
+          expect(
+            container.querySelectorAll("h2").length
+          ).toBeGreaterThanOrEqual(batch.length)
+        );
+        unmount();
+      }
+    });
+
+    it.each(catalogue.map((page) => [page.topic]))(
+      "renders every section of /docs/%s",
+      async (topic) => {
+        const { unmount } = renderAt(`/docs/${topic}`);
+        const sections = await screen.findAllByRole("heading", { level: 2 });
+        expect(sections.length).toBeGreaterThan(0);
+        unmount();
+      }
+    );
+  });
 });

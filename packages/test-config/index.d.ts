@@ -8,8 +8,13 @@ export declare const testTiming: {
   readonly browserRetries: number;
 };
 
+export declare const testWorkers: number;
+
 export declare const vitestDefaults: {
   readonly globals: true;
   readonly testTimeout: number;
   readonly hookTimeout: number;
+  readonly pool: "forks";
+  readonly maxWorkers: number;
+  readonly minWorkers: number;
 };

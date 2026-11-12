@@ -132,10 +132,12 @@ function sourceFrame(
     return { rows: [], fields: [] };
   }
   const refs = sourceReferences(source, table, step.id, diagnostics);
+  const ids = source.fields.map(
+    (field) => [`${source.id}.${field.id}`, field.id] as const
+  );
   const rows = table.map((data, index) => {
-    const values = Object.fromEntries(
-      source.fields.map((field) => [`${source.id}.${field.id}`, data[field.id]])
-    );
+    const values: Record<string, AnalysisScalar> = {};
+    for (const [id, fieldId] of ids) values[id] = data[fieldId];
     const ref = refs[index]!;
     return {
       key: ref.rowKey,
@@ -352,6 +354,9 @@ function lookupFrame(
     if (matches) matches.push(target);
     else index.set(key, [target]);
   }
+  const ids = source.fields.map(
+    (field) => [`${step.as}.${field.id}`, field.id] as const
+  );
   const rows = input.rows.map((row) => {
     const key = row.values[side.inputId];
     const matches =
@@ -376,8 +381,7 @@ function lookupFrame(
         value: key,
       });
     const values = { ...row.values };
-    for (const field of source.fields)
-      values[`${step.as}.${field.id}`] = selected?.[field.id];
+    for (const [id, fieldId] of ids) values[id] = selected?.[fieldId];
     const refs = matches.map((match) => referenceByRow.get(match)!);
     return {
       ...row,
@@ -645,11 +649,16 @@ function calculateFrame(
 ): Frame {
   assertNoFieldCollision(step.id, input.fields, [step.fieldId]);
   const expression = parseExpression(step.expression);
+  // Only the fields the expression names; joined rows can carry dozens.
+  const fields = expression.dependencies;
   const rows = input.rows.map((row) => {
-    const result = new Calculator({
-      data: [row.values],
-      variables: new Map(Object.entries(row.values)),
-    }).evaluate(expression);
+    const variables = new Map<string, AnalysisScalar>();
+    for (const field of fields)
+      if (Object.hasOwn(row.values, field))
+        variables.set(field, row.values[field]);
+    const result = new Calculator({ data: [row.values], variables }).evaluate(
+      expression
+    );
     if (!result.success)
       diagnostics.push({
         code: "calculation-error",

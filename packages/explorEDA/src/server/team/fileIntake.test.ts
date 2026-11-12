@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { existsSync, mkdtempSync, readFileSync } from "node:fs";
 import { createServer, request, type Server } from "node:http";
 import type { AddressInfo, LookupFunction } from "node:net";

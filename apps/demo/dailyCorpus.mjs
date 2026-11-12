@@ -172,6 +172,9 @@ export function releaseOrder(entries, history = []) {
  * Gives each unscheduled piece the next free day after the latest one, in a
  * varied order. With `reseed`, every piece is reordered so the last lands on
  * `end`, which is how the collection was first back-filled.
+ *
+ * @param {any[]} catalog
+ * @param {{ reseed?: boolean, end?: string }} [options]
  */
 export function scheduleCatalog(catalog, { reseed = false, end } = {}) {
   const dated = reseed ? [] : catalog.filter((entry) => entry.published);
