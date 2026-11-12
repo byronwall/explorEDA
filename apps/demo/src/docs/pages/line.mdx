@@ -7,10 +7,25 @@
 
 ## How it reads
 
-- With a date on the X axis, the chart summarizes rows into periods. Choose the interval, the week start, and the metric: a count, or a sum, average, maximum, or minimum of a measure.
-- **Display** draws a line between period values, an area filled to zero, or stacked areas that add nonnegative counts or sums across series.
-- **Missing periods** either leave a gap, or draw an empty count or sum at zero. An average, maximum, or minimum needs observations, so an empty period has none to draw.
-- Each series can use the right axis, its own line style, and points.
+<ReadingGuide chart="line">
+  <Part at="period">
+    A date on the X axis groups rows into periods. Choose the interval, the week
+    start, and the metric: a count, or a sum, average, maximum, or minimum.
+  </Part>
+  <Part at="line">
+    **Display** draws a line between period values, with optional points and
+    line style per series.
+  </Part>
+  <Part at="gap">
+    **Missing periods** leave a gap, or draw an empty count or sum at zero. An
+    average, maximum, or minimum has nothing to draw.
+  </Part>
+  <Part at="area">
+    **Display** can also fill an area to zero, or stack areas that add
+    nonnegative counts or sums across series.
+  </Part>
+  <Part at="right">Any series can use the right axis.</Part>
+</ReadingGuide>
 
 ## One line per category
 

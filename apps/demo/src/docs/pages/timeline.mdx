@@ -11,12 +11,29 @@ A timeline reads one row per interval: a **lane** field, such as a room, machine
 
 ## How it reads
 
-- Each lane is one value of the lane field, sorted by name. Each bar runs from its row's start to its end, in UTC.
-- A row with no end runs to the last time in the data, drawn faded with a dashed edge.
-- Bars that overlap in a lane draw over each other, so a double booking shows as a darker stretch.
-- **Color** bars by a category, such as status or team.
-- Lanes and the time range come from every row, so filtering another chart thins the bars without moving them.
-- Rows with no lane, no readable start, or an end before their start are left out.
+<ReadingGuide chart="timeline">
+  <Part at="lane">
+    Each lane is one value of the lane field, sorted by name.
+  </Part>
+  <Part at="bar">Each bar runs from its row's start to its end, in UTC.</Part>
+  <Part at="overlap">
+    Bars that overlap in a lane draw over each other, so a double booking shows
+    as a darker stretch.
+  </Part>
+  <Part at="color">**Color** bars by a category, such as status or team.</Part>
+  <Part at="open">
+    A row with no end runs to the last time in the data, drawn faded with a
+    dashed edge.
+  </Part>
+  <Part>
+    Lanes and the time range come from every row, so filtering another chart
+    thins the bars without moving them.
+  </Part>
+  <Part>
+    Rows with no lane, no readable start, or an end before their start are left
+    out.
+  </Part>
+</ReadingGuide>
 
 ## Select and trace
 

@@ -7,11 +7,27 @@
 
 ## How it reads
 
-- **Read as** plots the share of values at or below each x, or at or above it, which reads better for questions about how many exceed a value.
-- **Split by** draws one curve per value of a field. Each curve uses its own rows as 100%, so groups of different sizes compare fairly. A dashed curve can show all rows together.
-- Quantile marks show where each curve crosses 50% and 90%.
-- When every value is positive, the X axis can use a log scale.
-- An ECDF at a limit includes the values equal to it. The share at or below an upper limit is the share that passes it. A [histogram's specification limits](/docs/bar#specification-limits) count the parts that fail, strictly past each limit, so the two readings add up to 100%.
+<ReadingGuide chart="ecdf">
+  <Part at="curve">
+    **Read as** plots the share of values at or below each x, or at or above it,
+    which reads better for questions about how many exceed a value.
+  </Part>
+  <Part at="split">
+    **Split by** draws one curve per value of a field. Each curve uses its own
+    rows as 100%, so groups of different sizes compare fairly.
+  </Part>
+  <Part at="all">A dashed curve can show all rows together.</Part>
+  <Part at="quantile">
+    Quantile marks show where each curve crosses 50% and 90%.
+  </Part>
+  <Part>When every value is positive, the X axis can use a log scale.</Part>
+  <Part>
+    At a limit, an ECDF includes the values equal to it, so the share at or
+    below an upper limit is the share that passes. A [histogram's specification
+    limits](/docs/bar#specification-limits) count the failures strictly past
+    each limit, so the two readings add up to 100%.
+  </Part>
+</ReadingGuide>
 
 ## Annotations
 

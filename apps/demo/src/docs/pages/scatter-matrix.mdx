@@ -7,11 +7,32 @@
 
 ## How it reads
 
-- Fields run left to right and top to bottom in the same order, so each pair appears once below the diagonal and once above it.
-- Each triangle draws its cells by the types of their two fields: numeric pairs as points or correlation; a numeric field against a category as points or boxes; two categories as points, tiles, or shares. Any cell can be blank.
-- The diagonal shows each field alone: a density, histogram, or label for numbers, and bars or a label for categories.
-- Diagonal histogram and bar heights use the tallest bar over all rows, so they shrink while other charts filter. Densities keep their own peak.
-- **Color** colors points, distributions, and correlations by a category field. Box plots and tiles keep one color.
+<ReadingGuide chart="scatter-matrix">
+  <Part at="order">
+    Fields run left to right and top to bottom in the same order, so each pair
+    appears once below the diagonal and once above it.
+  </Part>
+  <Part at="lower">
+    Each triangle draws its cells by the types of their two fields: numeric
+    pairs as points or correlation; a number against a category as points or
+    boxes; two categories as points, tiles, or shares.
+  </Part>
+  <Part at="upper">
+    Here the upper triangle shows correlations. Any cell can be blank.
+  </Part>
+  <Part at="diagonal">
+    The diagonal shows each field alone: a density, histogram, or label for
+    numbers, and bars or a label for categories.
+  </Part>
+  <Part>
+    Diagonal histogram and bar heights use the tallest bar over all rows, so
+    they shrink while other charts filter. Densities keep their own peak.
+  </Part>
+  <Part>
+    **Color** colors points, distributions, and correlations by a category
+    field. Box plots and tiles keep one color.
+  </Part>
+</ReadingGuide>
 
 ## Correlation methods and paired rows
 

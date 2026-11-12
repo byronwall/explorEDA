@@ -7,11 +7,25 @@
 
 ## How it reads
 
-- Each box spans the middle half of a group's values, with a line at the median.
-- **Whisker type** sets how far whiskers reach: 1.5 times the interquartile range, the minimum and maximum, or standard deviations.
-- **Show Outliers** draws values beyond the whiskers as separate points.
-- **Display** can add a violin: a density shape around each box. Smoothing is automatic from each group's spread and row count, or set by hand.
-- **Observations** shows individual values over each box, up to the first 300 valid rows per group.
+<ReadingGuide chart="boxplot">
+  <Part at="box">Each box spans the middle half of a group's values.</Part>
+  <Part at="median">The line across the box is the median.</Part>
+  <Part at="whisker">
+    **Whisker type** sets how far whiskers reach: 1.5 times the interquartile
+    range, the minimum and maximum, or standard deviations.
+  </Part>
+  <Part at="outlier">
+    **Show Outliers** draws values beyond the whiskers as separate points.
+  </Part>
+  <Part at="violin">
+    **Display** can add a violin: a density shape around each box, smoothed
+    automatically from the group's spread and row count, or by hand.
+  </Part>
+  <Part at="observations">
+    **Observations** shows individual values over each box, up to the first 300
+    valid rows per group.
+  </Part>
+</ReadingGuide>
 
 ## Annotations
 
