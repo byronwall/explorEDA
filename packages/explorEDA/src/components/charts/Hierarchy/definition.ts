@@ -28,7 +28,7 @@ export interface HierarchySettings extends BaseChartSettings {
 }
 
 export const MIN_HIERARCHY_LEVELS = 1;
-export const MAX_HIERARCHY_LEVELS = 3;
+export const MAX_HIERARCHY_LEVELS = 6;
 
 export const hierarchyDefinition: ChartDefinition<HierarchySettings> = {
   type: "hierarchy",

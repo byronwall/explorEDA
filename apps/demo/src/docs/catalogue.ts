@@ -376,7 +376,7 @@ export const catalogue: readonly DocsPage[] = [
     highlights: ["Treemap", "Icicle", "Sunburst"],
     covers: ["chart:hierarchy"],
     chartType: "hierarchy",
-    examples: ["categorical-charts"],
+    examples: ["categorical-charts", "request-profile"],
     related: ["sankey", "pivot"],
   },
   {
