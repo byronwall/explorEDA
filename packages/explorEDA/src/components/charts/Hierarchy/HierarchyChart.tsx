@@ -23,11 +23,6 @@ import {
 } from "react";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
 import { isEmptyPlotTarget } from "../emptyPlotClick";
 import { useChartEdit } from "../InPlace/useChartEdit";
 import {
@@ -308,12 +303,9 @@ export function HierarchyChart({
   const margin = settings.margin;
   const plotTop = margin.top + crumbHeight;
   const plotWidth = Math.max(0, width - margin.left - margin.right);
-  const plotHeight = Math.max(
-    0,
-    height - plotTop - margin.bottom - STATUS_LINE_HEIGHT
-  );
+  const plotHeight = Math.max(0, height - plotTop - margin.bottom);
   const radius = Math.max(0, Math.min(plotWidth, plotHeight) / 2);
-  const { rects, arcs, tiny } = useMemo(() => {
+  const { rects, arcs } = useMemo(() => {
     if (arrangement === "sunburst") {
       const all = layoutSunburst(focusNode, { radius, hole: radius * HOLE });
       // An arc under a pixel along its outer edge cannot be seen or pointed at.
@@ -328,7 +320,7 @@ export function HierarchyChart({
         ? layoutIcicle(focusNode, size)
         : layoutTreemap(focusNode, { ...size, headerHeight: HEADER_HEIGHT });
     // A box under a pixel on either side cannot be seen or pointed at; its
-    // parent still holds its size, and the status line counts it.
+    // parent still holds its size.
     const drawn = all.filter(
       (rect) => rect.x1 - rect.x0 >= 1 && rect.y1 - rect.y0 >= 1
     );
@@ -530,27 +522,6 @@ export function HierarchyChart({
   const hoveredParent = hoveredNode?.parentId
     ? nodeById.get(hoveredNode.parentId)
     : undefined;
-  const statusParts = [
-    plan.hasSelection
-      ? `${format(plan.root.selectedWeight)} of ${format(plan.root.weight)} ${plan.unit} selected`
-      : `${format(plan.root.weight)} ${plan.unit} in all`,
-    tiny > 0 &&
-      `${tiny.toLocaleString()} ${tiny === 1 ? "box" : "boxes"} too small to draw`,
-    plan.incompleteCount > 0 &&
-      `${plan.incompleteCount.toLocaleString()} rows with a missing level not drawn`,
-    ...plan.excluded.map(
-      (item) =>
-        `${item.count.toLocaleString()} rows left out: ${item.reason.toLowerCase()}`
-    ),
-  ];
-  const statusHint =
-    notice ??
-    (!plan.hasSelection &&
-      !facetIds &&
-      width >= STATUS_HINT_MIN_WIDTH &&
-      (levels.length > 1
-        ? "Click a box to select its branch, double-click to zoom in"
-        : "Click a box to select it"));
 
   /** Events, name, and outline every mark shares, box or arc. */
   const markProps = (node: HierarchyNode) => {
@@ -724,7 +695,7 @@ export function HierarchyChart({
     >
       <svg
         width={width}
-        height={height - STATUS_LINE_HEIGHT}
+        height={height}
         className="block"
         onClick={(event) => {
           // A click outside every box clears the selection.
@@ -736,11 +707,7 @@ export function HierarchyChart({
             updateChart(settings.id, { filters: [] });
         }}
       >
-        <rect
-          width={width}
-          height={Math.max(0, height - STATUS_LINE_HEIGHT)}
-          fill="transparent"
-        />
+        <rect width={width} height={Math.max(0, height)} fill="transparent" />
         <g
           transform={`translate(${margin.left},${plotTop})`}
           role="group"
@@ -888,13 +855,6 @@ export function HierarchyChart({
           })}
         </ToggleGroup>
       </div>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={margin.left}
-        right={margin.right}
-        bottom={2}
-      />
       {hoveredNode && hoveredNode.depth > 0 && (
         <Readout
           plan={plan}

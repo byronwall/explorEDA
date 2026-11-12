@@ -38,6 +38,7 @@ import {
   Upload,
   Download,
   Code,
+  Compass,
   Ruler,
   Layers,
   CircleAlert,
@@ -206,6 +207,19 @@ export const catalogue: readonly DocsPage[] = [
     related: ["bar"],
   },
   {
+    topic: "choose-a-chart",
+    title: "Choose a chart",
+    group: "start",
+    icon: Compass,
+    lede: "Find the chart type that answers your question, and the fields each one needs.",
+    summary:
+      "Every chart type by question, with the setup the special ones need.",
+    highlights: ["Which chart?", "Lookalikes", "Setup"],
+    covers: [],
+    examples: [],
+    related: ["bar", "line", "scatter", "chart-settings"],
+  },
+  {
     topic: "developers",
     title: "Developers",
     group: "start",
@@ -304,7 +318,7 @@ export const catalogue: readonly DocsPage[] = [
     highlights: ["Quartiles", "Violins", "Outliers"],
     covers: ["chart:boxplot"],
     chartType: "boxplot",
-    examples: ["shop-operations"],
+    examples: ["box-plot", "shop-operations"],
     related: ["ecdf", "bar"],
   },
   {
@@ -362,7 +376,7 @@ export const catalogue: readonly DocsPage[] = [
     highlights: ["Treemap", "Icicle", "Sunburst"],
     covers: ["chart:hierarchy"],
     chartType: "hierarchy",
-    examples: ["categorical-charts"],
+    examples: ["categorical-charts", "request-profile"],
     related: ["sankey", "pivot"],
   },
   {

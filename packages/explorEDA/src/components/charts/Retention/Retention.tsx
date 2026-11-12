@@ -3,11 +3,6 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
 import { HeatLegend } from "../HeatLegend";
 import { isEmptyPlotTarget } from "../emptyPlotClick";
 import { heatFill, heatText, type HeatScale } from "../heatScale";
@@ -248,7 +243,7 @@ export function Retention({
   const sizeWidth = 44;
   const left = 8 + labelWidth + sizeWidth + 4;
   const top = LEGEND_HEIGHT + HEADER_HEIGHT;
-  const bottom = STATUS_LINE_HEIGHT + 6;
+  const bottom = 6;
   const plotWidth = Math.max(40, width - left - 10);
   const cellWidth = plotWidth / plan.summary.length;
   // The newest cohorts show when there are more than fit.
@@ -362,22 +357,6 @@ export function Retention({
   };
 
   const hoveredCell = hovered ? findCell(hovered) : undefined;
-  const hidden = plan.cohorts.length - cohorts.length;
-  const selectedCell = selectedId ? findCell(selectedId) : undefined;
-  const statusParts = [
-    `${plan.entities.toLocaleString()} entered in ${plan.cohorts.length} ${plan.cohorts.length === 1 ? "cohort" : "cohorts"}`,
-    selectedCell &&
-      `${selectedCell.cell.active.toLocaleString()} selected: ${cohortLabel(selectedCell.cohort.start, period, withYear)}, ${periodName} ${selectedCell.cell.period}`,
-    hidden > 0 && `newest ${cohorts.length} of ${plan.cohorts.length} shown`,
-    ...plan.excluded.map(
-      (item) => `${item.count.toLocaleString()} ${item.reason}`
-    ),
-  ];
-  const statusHint =
-    !selectedCell &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    "Click a cell to select who was active";
 
   return (
     <div
@@ -549,13 +528,6 @@ export function Retention({
           )}
         </g>
       </svg>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={8}
-        right={10}
-        bottom={4}
-      />
     </div>
   );
 }

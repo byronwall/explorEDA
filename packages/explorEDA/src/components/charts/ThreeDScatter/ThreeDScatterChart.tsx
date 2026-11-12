@@ -10,7 +10,6 @@ import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { Button } from "@/components/ui/button";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { ChartReadout } from "../ChartReadout";
-import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ThreeDScatterAxes, type CubeTicks } from "./ThreeDScatterAxes";
 import { showBackFaces } from "./showBackFaces";
 import { ThreeDScatterPoints } from "./ThreeDScatterPoints";
@@ -92,7 +91,7 @@ export function ThreeDScatterChart({
   const updateChart = useDataLayer((state) => state.updateChart);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const fieldSettings = useDataLayer((state) => state.fieldSettings);
-  const { points, omitted, axes } = useThreeDScatterData(settings, facetIds);
+  const { points, axes } = useThreeDScatterData(settings, facetIds);
   const [nonce, setNonce] = useState(0);
   const [hovered, setHovered] = useState<number | null>(null);
   const themeKey = useThemeKey();
@@ -432,13 +431,6 @@ export function ThreeDScatterChart({
   };
 
   const hoveredPoint = hovered !== null ? points[hovered] : undefined;
-  const showHints = width >= STATUS_HINT_MIN_WIDTH && !facetIds;
-  const statusParts = [
-    omitted > 0 &&
-      `${omitted.toLocaleString()} rows without a value on every axis left out`,
-  ];
-  const statusHint =
-    showHints && "Drag to turn, scroll to zoom, right-drag to pan";
 
   return (
     <div
@@ -552,12 +544,6 @@ export function ThreeDScatterChart({
           />
         </>
       )}
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={8}
-        right={8}
-      />
     </div>
   );
 }

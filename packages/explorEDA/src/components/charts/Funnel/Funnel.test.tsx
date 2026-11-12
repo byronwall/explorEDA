@@ -79,9 +79,6 @@ describe("Funnel", () => {
       "Step 2, signup: 3, 75% of the first step",
       "Step 3, pay: 2, 50% of the first step",
     ]);
-    expect(container.querySelector(".eda-chart-status")).toHaveTextContent(
-      "4 entered · 2 completed (50%)"
-    );
   });
 
   it("selects every event of the entities that reached a step", () => {

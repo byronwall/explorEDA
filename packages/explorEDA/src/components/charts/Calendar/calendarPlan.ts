@@ -63,8 +63,6 @@ export interface CalendarPlan {
     first: string;
     last: string;
   }[];
-  /** Year view: lines between months, in plot coordinates. */
-  monthBoundaries: string[];
   weekdayLabels: { label: string; position: number }[];
   /** Columns in the grid, used for keyboard movement. */
   columns: number;
@@ -96,6 +94,8 @@ export interface CalendarPlanInput {
 
 export const HEADER_HEIGHT = 30;
 const MONTH_LABEL_HEIGHT = 16;
+/** Space between months in the year view, as a share of a cell width. */
+const MONTH_GAP = 0.4;
 /** Smallest year-view cell that still takes a pointer comfortably. */
 const MIN_YEAR_CELL = 9;
 const MONTHS = [
@@ -177,12 +177,18 @@ export function planCalendar({
   const bottom = settings.margin.bottom + 16;
   // Cells may widen up to 1.8 times their height so a year fills wide panels.
   const yearCellHeight = Math.min((height - yearTop - bottom) / 7, 22);
+  // Each month after January shifts right by a gap, so months part by
+  // space instead of a ruled line.
   const yearCellWidth = Math.min(
-    (width - left - right) / weekCount,
+    (width - left - right) / (weekCount + 11 * MONTH_GAP),
     yearCellHeight * 1.8
   );
+  // The gaps must not push a panel that fit a year into the month view.
   const view: CalendarPlan["view"] =
-    Math.min(yearCellWidth, yearCellHeight) >= MIN_YEAR_CELL ? "year" : "month";
+    Math.min((width - left - right) / weekCount, yearCellHeight) >=
+    MIN_YEAR_CELL
+      ? "year"
+      : "month";
 
   const allDays = Array.from(
     { length: dayCount },
@@ -235,6 +241,8 @@ export function planCalendar({
     );
   }
   const marginLeft = view === "year" ? left : settings.margin.left;
+  const monthGap = (start: number) =>
+    view === "year" ? new Date(start).getUTCMonth() * MONTH_GAP * cellWidth : 0;
 
   const bucketsOf = (days: typeof rollup.days) =>
     allDays.map((start) =>
@@ -297,7 +305,7 @@ export function planCalendar({
       contributors: bucket?.contributors ?? [],
       column,
       row,
-      x: column * cellWidth,
+      x: column * cellWidth + monthGap(start),
       y: row * cellHeight,
       size: cellWidth,
       height: cellHeight,
@@ -321,22 +329,10 @@ export function planCalendar({
             place(
               Date.UTC(year, index, 1),
               (Date.UTC(year, index, 1) - yearStart) / DAY_MS
-            ).column * cellWidth,
+            ).column *
+              cellWidth +
+            monthGap(Date.UTC(year, index, 1)),
         }))
-      : [];
-  // Each month after January starts with a step: down its first week's
-  // column, across, then down the next column to the bottom.
-  const monthBoundaries =
-    view === "year"
-      ? MONTHS.slice(1).map((_, index) => {
-          const first = Date.UTC(year, index + 1, 1);
-          const { column, row } = place(first, (first - yearStart) / DAY_MS);
-          const x = column * cellWidth;
-          const bottom = 7 * cellHeight;
-          return row === 0
-            ? `M${x},0V${bottom}`
-            : `M${x + cellWidth},0V${row * cellHeight}H${x}V${bottom}`;
-        })
       : [];
   const weekdayOrder = Array.from(
     { length: 7 },
@@ -366,7 +362,6 @@ export function planCalendar({
     margin: { top, right, bottom, left: marginLeft },
     days,
     monthLabels,
-    monthBoundaries,
     weekdayLabels,
     columns,
     metricLabel:

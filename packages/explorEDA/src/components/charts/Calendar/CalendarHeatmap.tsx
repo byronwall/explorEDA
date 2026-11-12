@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage } from "../ChartMessage";
 import type { BaseChartProps } from "@/types/ChartTypes";
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
@@ -256,33 +255,6 @@ export function CalendarHeatmap({
   };
   const singleSelection = plan.days.filter((day) => day.selected).length === 1;
   const hoveredDay = plan.days.find((day) => day.id === hovered);
-  const selectedDays = plan.days.filter((day) => day.selected);
-  const rowsIn = (days: CalendarDay[]) =>
-    days.reduce((total, day) => total + day.rowCount, 0);
-  const selection = plan.selection;
-  const selectionText = selection
-    ? selection.min && selection.max
-      ? selection.min === selection.max
-        ? selection.min
-        : `${selection.min} to ${selection.max}`
-      : selection.min
-        ? `from ${selection.min}`
-        : `through ${selection.max}`
-    : "";
-  const statusParts = [
-    // Counts lead, so a narrow chart that cuts the line keeps them.
-    selectionText &&
-      `${rowsIn(selectedDays).toLocaleString()} of ${rowsIn(plan.days).toLocaleString()} rows in ${period} selected: ${selectionText}`,
-    plan.omitted.invalidDates > 0 &&
-      `${plan.omitted.invalidDates.toLocaleString()} rows have no readable date`,
-    plan.omitted.otherYears > 0 &&
-      `${plan.omitted.otherYears.toLocaleString()} rows fall in other years`,
-  ];
-  const statusHint =
-    !selectionText &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    "Click a day to select, Shift-click to extend";
   const showDayNumbers = !isYear && plan.days[0]!.height >= 18;
 
   return (
@@ -515,24 +487,9 @@ export function CalendarHeatmap({
               );
             })}
           </g>
-          <path
-            d={plan.monthBoundaries.join("")}
-            fill="none"
-            stroke="var(--muted-foreground)"
-            strokeOpacity={0.35}
-            strokeWidth={1}
-            pointerEvents="none"
-            aria-hidden="true"
-          />
           {annotationSlot(settings, annotationFrame)?.(`url(#${baseId}-plot)`)}
         </g>
       </svg>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={plan.margin.left - (isYear ? 34 : 0)}
-        right={plan.margin.right}
-      />
       {hoveredDay && <Readout day={hoveredDay} plan={plan} />}
     </div>
   );

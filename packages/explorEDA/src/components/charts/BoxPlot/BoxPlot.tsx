@@ -34,11 +34,6 @@ import { useCallback, useId, useMemo, useState } from "react";
 import { BaseChart } from "../BaseChart";
 import { useAxisTypography } from "../chartTypography";
 import { ChartReadout } from "../ChartReadout";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
 import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
 import { useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetLiveData, useGetLiveIds } from "../useGetLiveData";
@@ -51,7 +46,6 @@ import type { TraceSource } from "../trace/traceTypes";
 import {
   calculateBoxPlotStats,
   calculateKernelDensity,
-  medianRange,
   MIN_VIOLIN_BANDWIDTH,
   selectBoxGroup,
 } from "./boxPlotCalculations";
@@ -73,9 +67,7 @@ export function BoxPlot({
   const revision = useTraceRevision(settings);
   const liveIds = useGetLiveIds(settings, facetIds);
   const rawData = useDataLayer((state) => state.rawData);
-  // The observations note takes a line under the chart when it shows.
-  const footerHeight = settings.showObservations ? 32 : 0;
-  const chartHeight = Math.max(40, height - footerHeight);
+  const chartHeight = Math.max(40, height);
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
   const updateChart = useDataLayer((s) => s.updateChart);
   const getFieldLabel = useDataLayer((s) => s.getFieldLabel);
@@ -189,9 +181,7 @@ export function BoxPlot({
   const margin = {
     ...settings.margin,
     left: plannedMargin.left,
-    bottom:
-      Math.max(settings.margin.bottom, xAxisLabel ? 44 : 28) +
-      STATUS_LINE_HEIGHT,
+    bottom: Math.max(settings.margin.bottom, xAxisLabel ? 44 : 28),
   };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = chartHeight - margin.top - margin.bottom;
@@ -488,19 +478,6 @@ export function BoxPlot({
   const hovered = shown.find(
     ({ group }) => categoryLabel(group) === hoveredGroup
   );
-  const range = medianRange(shown);
-  const showHints = width >= STATUS_HINT_MIN_WIDTH && !facetIds;
-  const statusParts = [
-    selectedGroups.length > 0
-      ? `${selectedGroups.length} of ${xScale.domain().length} ${groupName} groups selected`
-      : range &&
-        showHints &&
-        `Medians ${format(range.low.stats.median)} (${groupName} ${formatGroup(range.low.group)}) to ${format(range.high.stats.median)} (${groupName} ${formatGroup(range.high.group)})`,
-  ];
-  const statusHint =
-    showHints &&
-    settings.colorField &&
-    "Click groups to select or clear them · Alt-click to inspect";
 
   const boxStroke =
     // The original default follows the theme so boxes keep an edge in dark mode.
@@ -576,7 +553,6 @@ export function BoxPlot({
         settings={{ ...settings, margin }}
         yTickFormatter={formatAxis}
         onClearPlot={() => updateChart(settings.id, { filters: [] })}
-        footer={STATUS_LINE_HEIGHT}
         overlay={
           // Each group's column, including its axis label, is one target.
           <g>
@@ -777,18 +753,6 @@ export function BoxPlot({
           );
         })}
       </BaseChart>
-      {settings.showObservations && (
-        <div className="absolute bottom-0 left-0 flex h-8 items-center gap-2 overflow-hidden px-2 text-xs text-muted-foreground">
-          Observations: first 300 per group
-        </div>
-      )}
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={margin.left}
-        right={margin.right}
-        bottom={footerHeight + 2}
-      />
     </div>
   );
 }

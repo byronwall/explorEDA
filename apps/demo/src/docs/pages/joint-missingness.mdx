@@ -11,12 +11,34 @@ Summary shows one missing count per field. Two fields can each be missing in 25%
 
 ## How it reads
 
-- Each row of the chart is one pattern. Filled dots are the missing fields; every other chosen field is present. A line joins the missing fields of a pattern.
-- **All present** is always the first row, even with no rows, so complete rows are easy to find.
-- The bar and number give the rows with that pattern. **Share** divides by every row that passes the other charts' filters, and a selection here never changes it.
-- The small bars above the field names count each field's missing rows, the same numbers Summary shows.
-- A value is missing after field settings: null, an absent key, blank text, or a null token such as `NA`. Zero and false are present.
-- The chart shows 20 patterns at a time. The pager says how many rows sit on other pages.
+<ReadingGuide chart="joint-missingness">
+  <Part at="field">
+    The small bars above the field names count each field's missing rows, the
+    same numbers Summary shows.
+  </Part>
+  <Part at="all">
+    **All present** is always the first row, even with no rows, so complete rows
+    are easy to find.
+  </Part>
+  <Part at="pattern">
+    Each row is one pattern. Filled dots are the missing fields; every other
+    chosen field is present.
+  </Part>
+  <Part at="line">A line joins the missing fields of a pattern.</Part>
+  <Part at="bar">
+    The bar and number give the rows with that pattern. **Share** divides by
+    every row that passes the other charts' filters, and a selection here never
+    changes it.
+  </Part>
+  <Part>
+    A value is missing after field settings: null, an absent key, blank text, or
+    a null token such as `NA`. Zero and false are present.
+  </Part>
+  <Part>
+    The chart shows 20 patterns at a time. The pager says how many rows sit on
+    other pages.
+  </Part>
+</ReadingGuide>
 
 ## Select and trace
 
@@ -32,7 +54,7 @@ Set **Compare groups** in chart settings, or `groupField=` in text, to add one c
 
 - Each cell is that pattern's share of the group's own rows, so a small group is not drowned out by a large one.
 - The eight largest groups get their own column. The rest share one column, and rows with no group value form a **(missing)** group. Every row still counts once.
-- With a selection, a **Selected** row gives the selection's share of each group, and the status line gives the gap between the highest and lowest group in percentage points. The gap describes these rows; it does not say why they differ.
+- With a selection, a **Selected** row gives the selection's share of each group.
 
 ## Rows usable for chosen inputs
 

@@ -1,4 +1,12 @@
 import { PointerEvent, RefObject, useRef, useState } from "react";
+import {
+  boxGrips,
+  dragSpan,
+  gripCursor,
+  gripsResize,
+  spanGrip,
+  type Grip,
+} from "./brushSpan";
 
 type Extent = [[number, number], [number, number]];
 type Point = [number, number];
@@ -21,12 +29,10 @@ interface Options {
 }
 interface Gesture {
   start: Point;
-  original: Extent | null;
-  kind: "draw" | "move" | "resize";
-  edges: string;
+  original: Extent;
+  grips: [Grip, Grip];
   moved: boolean;
 }
-const clamp = (value: number, max: number) => Math.max(0, Math.min(value, max));
 
 export function useBrush({
   svgRef,
@@ -44,6 +50,8 @@ export function useBrush({
   const wasDrag = useRef(false);
   const draftRef = useRef<Extent | null>(null);
   const [draft, setDraft] = useState<Extent | null>(null);
+  // Move on the body, resize on edges and corners, crosshair elsewhere.
+  const [hoverCursor, setHoverCursor] = useState("");
   // External selections only supply the resting state. They never interrupt a gesture.
   const extent = draft ?? defaultExtent;
   const position = (event: PointerEvent): Point => {
@@ -52,6 +60,13 @@ export function useBrush({
       event.clientX - rect.left - marginLeft,
       event.clientY - rect.top - marginTop,
     ];
+  };
+  // What a press at this point does to the current selection. A horizontal
+  // brush spans the plot's height, so only its x edges resize.
+  const gripsAt = ([x, y]: Point): [Grip, Grip] => {
+    if (!extent) return ["draw", mode === "2d" ? "draw" : "hold"];
+    if (mode === "2d") return boxGrips(extent, [x, y]);
+    return [spanGrip([extent[0][0], extent[1][0]], x), "hold"];
   };
   const cancel = () => {
     gesture.current = null;
@@ -79,32 +94,35 @@ export function useBrush({
       preventScroll: true,
       focusVisible: false,
     } as FocusOptions);
-    let edges = "";
-    let inside = false;
-    if (extent) {
-      const [[x0, y0], [x1, y1]] = extent;
-      inside = x >= x0 - 6 && x <= x1 + 6 && y >= y0 - 6 && y <= y1 + 6;
-      if (inside) {
-        if (Math.abs(x - x0) < 6) edges += "l";
-        else if (Math.abs(x - x1) < 6) edges += "r";
-        if (mode === "2d") {
-          if (Math.abs(y - y0) < 6) edges += "t";
-          else if (Math.abs(y - y1) < 6) edges += "b";
-        }
-      }
-    }
+    const grips = gripsAt([x, y]);
+    const top = mode === "horizontal" ? 0 : y;
+    const bottom = mode === "horizontal" ? innerHeight : y;
     gesture.current = {
       start: [x, y],
-      original: extent ?? null,
-      kind: edges ? "resize" : inside ? "move" : "draw",
-      edges,
+      original:
+        extent && grips[0] !== "draw"
+          ? extent
+          : [
+              [x, top],
+              [x, bottom],
+            ],
+      grips,
       moved: false,
     };
+    setHoverCursor(gripCursor(...grips));
   };
 
   const handlePointerMove = (event: PointerEvent<SVGSVGElement>) => {
     const active = gesture.current;
-    if (!active || !svgRef.current) return;
+    if (!svgRef.current || mode === "none") return;
+    if (!active) {
+      // Without a gesture, the cursor shows what a press here would do.
+      if (event.buttons) return;
+      const [x, y] = position(event);
+      const inPlot = x >= 0 && x <= innerWidth && y >= 0 && y <= innerHeight;
+      setHoverCursor(inPlot ? gripCursor(...gripsAt([x, y])) : "");
+      return;
+    }
     const raw = position(event);
     if (
       !active.moved &&
@@ -116,42 +134,25 @@ export function useBrush({
     active.moved = true;
     wasDrag.current = true;
     event.preventDefault();
-    const x = clamp(raw[0], innerWidth),
-      y = clamp(raw[1], innerHeight);
-    let next: Extent;
-    if (active.kind === "move" && active.original) {
-      const [[x0, y0], [x1, y1]] = active.original;
-      const left = clamp(x0 + x - active.start[0], innerWidth - (x1 - x0));
-      const top =
-        mode === "horizontal"
-          ? 0
-          : clamp(y0 + y - active.start[1], innerHeight - (y1 - y0));
-      next = [
-        [left, top],
-        [left + x1 - x0, top + y1 - y0],
-      ];
-    } else if (active.kind === "resize" && active.original) {
-      const [[x0, y0], [x1, y1]] = active.original;
-      const left = active.edges.includes("l") ? x : x0;
-      const right = active.edges.includes("r") ? x : x1;
-      const top = active.edges.includes("t") ? y : y0;
-      const bottom = active.edges.includes("b") ? y : y1;
-      next = [
-        [Math.min(left, right), Math.min(top, bottom)],
-        [Math.max(left, right), Math.max(top, bottom)],
-      ];
-    } else {
-      next = [
-        [
-          Math.min(x, active.start[0]),
-          mode === "horizontal" ? 0 : Math.min(y, active.start[1]),
-        ],
-        [
-          Math.max(x, active.start[0]),
-          mode === "horizontal" ? innerHeight : Math.max(y, active.start[1]),
-        ],
-      ];
-    }
+    const [[x0, y0], [x1, y1]] = active.original;
+    const [left, right] = dragSpan(
+      active.grips[0],
+      [x0, x1],
+      active.start[0],
+      raw[0],
+      innerWidth
+    );
+    const [top, bottom] = dragSpan(
+      active.grips[1],
+      [y0, y1],
+      active.start[1],
+      raw[1],
+      innerHeight
+    );
+    const next: Extent = [
+      [left, top],
+      [right, bottom],
+    ];
     draftRef.current = next;
     setDraft(next);
   };
@@ -166,11 +167,13 @@ export function useBrush({
     if (!active.moved) {
       // A click outside the selection clears it unless the chart selects what
       // was clicked. A click inside may also narrow it to what was clicked.
-      if (active.kind === "resize") return;
+      // A click on an edge does nothing.
+      if (gripsResize(...active.grips)) return;
+      const inside = active.grips[0] !== "draw";
       const handled = onPlotClick?.(active.start, event) ?? false;
       if (handled) return;
-      if (onDeadClick) onDeadClick(active.kind === "move");
-      else if (active.kind === "draw") onBrushChange?.(null);
+      if (onDeadClick) onDeadClick(inside);
+      else if (!inside) onBrushChange?.(null);
       return;
     }
     if (
@@ -182,6 +185,7 @@ export function useBrush({
     else onBrushChange?.(null);
   };
 
+  // The brush's shapes set no cursor of their own; they inherit getCursor().
   const renderBrush =
     extent && mode !== "none" ? (
       <g className="eda-brush">
@@ -194,7 +198,6 @@ export function useBrush({
           fillOpacity={0.09}
           stroke="var(--primary)"
           strokeWidth={1.25}
-          style={{ cursor: "move" }}
         />
         {[extent[0][0], extent[1][0]].map((x, index) => (
           <rect
@@ -205,7 +208,6 @@ export function useBrush({
             height={16}
             rx={2}
             fill="var(--primary)"
-            style={{ cursor: "ew-resize" }}
           />
         ))}
         {mode === "2d" &&
@@ -218,7 +220,6 @@ export function useBrush({
               height={4}
               rx={2}
               fill="var(--primary)"
-              style={{ cursor: "ns-resize" }}
             />
           ))}
       </g>
@@ -232,6 +233,6 @@ export function useBrush({
     clear,
     wasDrag,
     renderBrush,
-    getCursor: () => (mode === "none" ? "default" : "crosshair"),
+    getCursor: () => (mode === "none" ? "default" : hoverCursor || "crosshair"),
   };
 }

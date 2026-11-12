@@ -13,6 +13,8 @@ import { docsPath, slugify } from "../paths";
 import { inlineCodeClass, inlineLinkClass, proseClass } from "./chrome";
 import { CodeBlock } from "./code";
 import { WorkedOrder } from "./workedOrder";
+import { Part, ReadingGuide } from "./readingGuide";
+import { ChartQuestions, ChartTypeList } from "./chooseChart";
 import {
   DashboardTextReference,
   ExampleText,
@@ -173,10 +175,7 @@ export function Terms({
       )}
     >
       {items.map(([name, body]) => (
-        <div
-          key={name}
-          className="rounded-lg border border-border bg-card p-4 shadow-[inset_0_2px_0_0_color-mix(in_oklab,var(--docs-accent)_55%,transparent)]"
-        >
+        <div key={name} className="rounded-lg border border-border bg-card p-4">
           <dt className="text-sm font-semibold text-foreground">{name}</dt>
           <dd className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
             {body}
@@ -337,12 +336,16 @@ export const mdxComponents: MDXComponents = {
   // Blocks a page can use without importing them.
   Callout,
   CalcChain,
+  ChartQuestions,
+  ChartTypeList,
   DocsLink,
   DashboardTextReference,
   ExampleText,
   Figure,
   LiveExample,
+  Part,
   PropsReference,
+  ReadingGuide,
   SettingsReference,
   Steps,
   Terms,

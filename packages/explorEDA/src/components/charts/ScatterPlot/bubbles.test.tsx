@@ -128,7 +128,7 @@ it("selects exact source rows by keyboard and pointer, traces sizes, and replace
   expect(
     container.querySelector('[aria-label="Bubble size legend"]')
   ).toHaveStyle({
-    bottom: "20px",
+    bottom: "2px",
   });
   const svg = screen.getByRole("group", { name: "Bubble test" });
   fireEvent.focus(svg);

@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { registerAllCharts } from "../../charts/registerAllCharts";
 import { dataTableDefinition } from "../../components/charts/DataTable/definition";
 import { lineChartDefinition } from "../../components/charts/LineChart/definition";
+import { metricCardDefinition } from "../../components/charts/MetricCard/definition";
 import { scatterPlotDefinition } from "../../components/charts/ScatterPlot/definition";
 import {
   getChartAxisLabel,
@@ -77,5 +78,28 @@ describe("chart accessibility summary", () => {
 
     settings.title = "My chart";
     expect(getChartTitle(settings, () => "Changed label")).toBe("My chart");
+  });
+
+  it("names the calculation a default title shows, never another one", () => {
+    const layout = { x: 0, y: 0, w: 4, h: 4 };
+    for (const [aggregation, word] of [
+      ["sum", "Sum"],
+      ["average", "Average"],
+      ["max", "Max"],
+      ["min", "Min"],
+    ] as const) {
+      const metric = metricCardDefinition.createDefaultSettings(layout);
+      Object.assign(metric, { aggregation, measureField: "Revenue" });
+      expect(getChartTitle(metric)).toBe(`${word} of Revenue`);
+
+      const line = lineChartDefinition.createDefaultSettings(layout);
+      line.time = {
+        ...line.time!,
+        aggregation,
+        measureField: "Revenue",
+        interval: "month",
+      };
+      expect(getChartTitle(line)).toBe(`${word} of Revenue by month`);
+    }
   });
 });

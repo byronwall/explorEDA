@@ -933,6 +933,9 @@ export function PlotChartPanel({
               </ActionTooltip>
             </div>
           )}
+          {!faceted && hasScaleTo(settings) && (
+            <ScaleToChipSlot settings={settings} />
+          )}
           {hasFilter && (
             <ActionTooltip content="Clear this chart’s filters">
               <Button
@@ -956,9 +959,11 @@ export function PlotChartPanel({
             (settings.type !== "line" || settings.time) && (
               <ChartTraceInspector type={settings.type} />
             )}
-          {settings.type === "scatter-matrix" && (
-            <MatrixPairsAction settings={settings} chartTitle={chartTitle} />
-          )}
+          {/* Pairs compares methods, so it shows once a matrix shows both. */}
+          {settings.type === "scatter-matrix" &&
+            settings.correlation === "both" && (
+              <MatrixPairsAction settings={settings} chartTitle={chartTitle} />
+            )}
           {!expanded && canViewData && (
             <Popover open={dataOpen} onOpenChange={setDataOpen}>
               <ActionTooltip content="View data: preview the rows behind this chart (V)">
@@ -1147,9 +1152,6 @@ export function PlotChartPanel({
                 width={Math.max(1, panelWidth - 24)}
                 height={bodyHeight(autoLegendHeight)}
               />
-            )}
-            {!faceted && hasScaleTo(settings) && (
-              <ScaleToChipSlot settings={settings} />
             )}
           </div>
         </ChartReadoutProvider>

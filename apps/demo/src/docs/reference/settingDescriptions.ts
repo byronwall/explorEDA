@@ -47,11 +47,11 @@ export const CHART_SETTINGS: Readonly<
   row: {
     field: "Category field; each value gets its own row.",
     minRowHeight:
-      "Smallest row height in pixels. When rows would be shorter, the chart shows fewer categories.",
+      "Preferred smallest row height in pixels. To show every category, rows shrink below it to 12 pixels before the rest fold into a +N more row.",
     maxRowHeight: "Largest row height in pixels, so a few rows stay compact.",
     aggregateId:
       "Grouped summary to rank instead of counting rows: a count, sum, average, or rate (one sum divided by another). Its group field must match `field`.",
-    topN: "Number of categories to show, with the rest gathered in Other. Leave unset to fit as many rows as the height allows.",
+    topN: "Number of categories to show, with the rest gathered in a +N more row. Leave unset to show every category.",
     share:
       "Shows each bar as its share of the total of all bars, so they add to 100%. Counts and sums only.",
     valueFormat:
@@ -145,7 +145,7 @@ export const CHART_SETTINGS: Readonly<
   hierarchy: {
     field: "Not read by this chart type.",
     levels:
-      "Category fields from outermost in, one to three. Each row is one path through them.",
+      "Category fields from outermost in, one to six. Each row is one path through them.",
     aggregation: "Node size: a count of rows, or a sum of the measure.",
     measureField:
       "Field summed for node size. Negative and missing values are left out.",
@@ -304,6 +304,8 @@ export const CHART_SETTINGS: Readonly<
     measureField: "Field the metric summarizes, when it is not a count.",
     entityField:
       "Counts each value of this field once, so repeated result rows don't inflate the metric.",
+    trendField:
+      "Optional date field. The card draws its metric per day, week, or month beside the value, with a dashed line for all rows while filters narrow it.",
   },
   map: {
     field: "Not read by this chart type.",

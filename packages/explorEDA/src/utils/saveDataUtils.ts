@@ -924,6 +924,8 @@ function isChart(value: unknown): boolean {
         isAggregation(value.aggregation) &&
         (value.measureField === undefined ||
           typeof value.measureField === "string") &&
+        (value.trendField === undefined ||
+          typeof value.trendField === "string") &&
         (value.aggregation === "count" || Boolean(value.measureField))
       );
     case "calendar":

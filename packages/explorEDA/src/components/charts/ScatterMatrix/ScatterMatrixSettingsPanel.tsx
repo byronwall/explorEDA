@@ -61,7 +61,7 @@ const CORRELATIONS: Options = [
   [
     "both",
     "Both",
-    "Show r above ρ in each cell. A large gap marks a trend that bends or has outliers.",
+    "Show r above ρ in each cell, and add Pairs to the chart header: every pair sorted by r, ρ, or their gap. A large gap marks a trend that bends or has outliers.",
   ],
 ];
 const CATEGORICAL_CELLS: Options = [
@@ -366,7 +366,7 @@ export function ScatterMatrixSettingsPanel({
       <section className="eda-setting-section" aria-label="Points">
         <h5>Points</h5>
         <div className="eda-setting-grid">
-          <ActionTooltip content="Color points, distributions, and correlations by a category field. Box plots and tiles keep one color.">
+          <ActionTooltip content="Color points, distributions, and correlations by a category field. Box plots split by that field take its colors; tiles keep one color.">
             <Label>Color</Label>
           </ActionTooltip>
           <FieldSelector

@@ -1,4 +1,5 @@
 import { ChartSettings } from "@/types/ChartTypes";
+import { aggregationLabel } from "@/lib/aggregates";
 import { getChartDefinition } from "@/charts/registry";
 
 const chartNames: Record<string, string> = {
@@ -51,7 +52,7 @@ export function getChartTitle(
     const metric =
       settings.time.aggregation === "count"
         ? "Rows"
-        : `${settings.time.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(settings.time.measureField ?? "")}`;
+        : `${aggregationLabel(settings.time.aggregation)} of ${getFieldLabel(settings.time.measureField ?? "")}`;
     return `${metric} by ${settings.time.interval}`;
   }
 
@@ -60,7 +61,7 @@ export function getChartTitle(
       return settings.entityField
         ? `Distinct ${getFieldLabel(settings.entityField)}`
         : "Matching rows";
-    const metric = settings.aggregation === "sum" ? "Sum" : "Average";
+    const metric = aggregationLabel(settings.aggregation);
     const once = settings.entityField
       ? `, once per ${getFieldLabel(settings.entityField)}`
       : "";

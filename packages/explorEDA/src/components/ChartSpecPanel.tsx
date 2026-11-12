@@ -850,7 +850,7 @@ function Reference({
       <summary className="flex cursor-pointer list-none items-center gap-2 rounded-md px-2.5 py-2 text-xs hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
         <ChevronRight
           aria-hidden="true"
-          className="size-3.5 shrink-0 text-muted-foreground transition-transform group-open:rotate-90"
+          className="size-3.5 shrink-0 transition-transform group-open:rotate-90"
         />
         <span
           className={cn(

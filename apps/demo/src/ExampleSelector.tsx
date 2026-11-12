@@ -90,10 +90,7 @@ export function ExampleSelector({
               className="group relative grid cursor-pointer gap-x-8 gap-y-4 px-5 py-5 transition-colors focus-within:ring-2 focus-within:ring-inset focus-within:ring-ring hover:bg-accent/40 sm:px-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,4fr)_1.25rem] lg:items-center"
             >
               <div className="flex min-w-0 items-start gap-3">
-                <Icon
-                  className="mt-0.5 h-5 w-5 shrink-0 text-site-accent transition-colors"
-                  aria-hidden="true"
-                />
+                <Icon className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
                 <div className="min-w-0">
                   <h3 className="text-base font-semibold leading-snug text-card-foreground">
                     <button

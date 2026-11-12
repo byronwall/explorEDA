@@ -57,7 +57,7 @@ interface BaseChartProps {
    */
   onClearPlot?: () => void;
   activeGuideId?: string | null;
-  /** Bottom margin kept below the X axis title, such as for a status line. */
+  /** Bottom margin kept below the X axis title, such as for a summary row. */
   footer?: number;
   /** Marks past each end of a bounded axis, which that axis marks. */
   hidden?: { x?: AxisHiddenEnds; y?: AxisHiddenEnds };

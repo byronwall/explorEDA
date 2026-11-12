@@ -126,7 +126,9 @@ import {
   ThermometerSun,
   Trophy,
   Wine,
+  Flame,
 } from "lucide-react";
+import { requestProfileDashboard } from "./profileDashboard";
 import { boxPlotSettings } from "./boxPlotSettings";
 import { beijingAnalysis } from "./analyses/beijing";
 import { earthquakesAnalysis } from "./analyses/earthquakes";
@@ -767,6 +769,17 @@ export const examples: ExampleData[] = [
     icon: Tags,
     data: "/categorical_medium.csv",
     savedData: categoricalChartSettings,
+  },
+  {
+    id: "request-profile",
+    title: "Where does one request spend its time?",
+    description:
+      "Sampled call stacks for one API request, four frames under the handler. An icicle gives each stack depth its own column, so every frame stays labeled and each caller sits beside its callees, the way a profiler's flame graph does. The same stacks as a treemap nest each level inside the last and cut off the deepest labels.",
+    dataset: { rows: "19 stacks", fields: 6, source: "Synthetic" },
+    shows: ["Icicle", "Deep hierarchy", "Treemap comparison"],
+    icon: Flame,
+    data: "/datasets/request-profile.csv",
+    savedData: requestProfileDashboard,
   },
   {
     id: "box-plot",

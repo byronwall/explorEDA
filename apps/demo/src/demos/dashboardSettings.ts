@@ -993,6 +993,7 @@ shopDashboard.charts = [
       title,
       aggregation,
       measureField: aggregation === "count" ? undefined : "Revenue",
+      trendField: "Order Date",
       layout: layout(index * 4, 0, 4, 2),
     })
   ),

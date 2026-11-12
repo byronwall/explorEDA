@@ -11,13 +11,33 @@ Retention reads an event log: one row per event, with a field that names **who**
 
 ## How it reads
 
-- Each row is a **cohort**: the entities whose entry fell in that day, week, or month. Its size sits beside it.
-- Each column is a period after entry. Period 0 is the period they entered; week 1 is the next calendar week, Monday to Sunday in UTC, not seven days later.
-- A cell is the share of the cohort with at least one active event in that period. An entity can skip a week and come back.
-- The **All** row pools every cohort, over the cohorts that have reached that period.
-- Periods after the data ends are blank, not 0%. The period the data ends in is hatched, since its share may still rise.
-- Colors run from 0 to 100% and keep that range while filtering, so a color always means the same rate.
-- With more cohorts than fit, the newest show, and the status line says how many.
+<ReadingGuide chart="retention">
+  <Part at="cohort">
+    Each row is a **cohort**: the entities whose entry fell in that day, week,
+    or month.
+  </Part>
+  <Part at="size">The cohort's size sits beside it.</Part>
+  <Part at="period">
+    Each column is a period after entry. Period 0 is the entry period; week 1 is
+    the next calendar week, Monday to Sunday in UTC.
+  </Part>
+  <Part at="cell">
+    A cell is the share of the cohort with at least one active event in that
+    period. An entity can skip a week and come back.
+  </Part>
+  <Part at="partial">
+    The period the data ends in is hatched, since its share may still rise.
+  </Part>
+  <Part at="blank">Periods after the data ends are blank, not 0%.</Part>
+  <Part at="all">
+    The **All** row pools every cohort that has reached that period.
+  </Part>
+  <Part at="scale">
+    Colors run from 0 to 100% and keep that range while filtering, so a color
+    always means the same rate.
+  </Part>
+  <Part>With more cohorts than fit, the newest show.</Part>
+</ReadingGuide>
 
 ## Select and trace
 

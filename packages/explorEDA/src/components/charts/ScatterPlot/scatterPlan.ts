@@ -8,7 +8,6 @@ import {
   type FieldSettingsMap,
 } from "@/lib/fieldSettings";
 import { makeColorScale } from "@/lib/colorScaleMath";
-import { STATUS_LINE_HEIGHT } from "../ChartStatusLine";
 import {
   categoryIncludes,
   categoryKey,
@@ -86,7 +85,6 @@ export type SvgPrimitive =
       fillOpacity?: number;
       stroke?: string;
       strokeWidth?: number;
-      cursor?: string;
     }
   | {
       kind: "circle";
@@ -446,9 +444,6 @@ export function planScatter(
     margin.top += MARGINAL_SIZE + MARGINAL_GAP;
     margin.right += MARGINAL_SIZE + MARGINAL_GAP;
   }
-  // A lone chart keeps a line under its axis title for the status line.
-  const footer = snapshot.facetIds ? 0 : STATUS_LINE_HEIGHT;
-  margin.bottom += footer;
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const inset = size ? bubbleRadius : 0;
@@ -619,7 +614,6 @@ export function planScatter(
           : 0),
     },
     marginPolicy,
-    footer,
     x: {
       typography,
       scale: xScale,
@@ -947,7 +941,6 @@ export function planScatterOverlay(
       fillOpacity: 0.09,
       stroke: "var(--primary)",
       strokeWidth: 1.25,
-      cursor: "move",
     });
     for (const [i, x] of [x0, x1].entries()) {
       brush.push({
@@ -959,7 +952,6 @@ export function planScatterOverlay(
         height: 16,
         rx: 2,
         fill: "var(--primary)",
-        cursor: "ew-resize",
       });
     }
     for (const [i, y] of [y0, y1].entries()) {
@@ -972,7 +964,6 @@ export function planScatterOverlay(
         height: 4,
         rx: 2,
         fill: "var(--primary)",
-        cursor: "ns-resize",
       });
     }
   }

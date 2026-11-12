@@ -739,6 +739,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "style",
     "subtitle",
     "title",
+    "trendField",
     "xAxis",
     "xAxisLabel",
     "xGridLines",

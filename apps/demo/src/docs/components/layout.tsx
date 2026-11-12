@@ -191,7 +191,7 @@ function DocsHeader({ onOpenNav }: { onOpenNav: () => void }) {
             focusRing
           )}
         >
-          <BookOpen aria-hidden="true" className="size-4 text-docs-accent" />
+          <BookOpen aria-hidden="true" className="size-4" />
           Docs
         </Link>
         <div className="ml-auto flex min-w-0 items-center gap-1 md:ml-6 md:flex-1">

@@ -2,7 +2,7 @@
 id: note-delete-confirmation-modal-feels-too-aggressive
 label: Delete confirmation modal feels too aggressive
 type: note
-status: blocked
+status: implemented
 priority: medium
 parent: area-3-needs-input
 metadata:

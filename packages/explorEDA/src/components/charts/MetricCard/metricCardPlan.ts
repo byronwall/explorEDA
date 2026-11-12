@@ -12,6 +12,8 @@ export type MetricCardState = "value" | "empty" | "invalid";
 
 export interface MetricCardPlan {
   revision: string;
+  /** Rows behind the value. */
+  liveIds: number[];
   aggregation: MetricCardSettings["aggregation"];
   measureField?: string;
   measureLabel?: string;
@@ -161,6 +163,7 @@ export function planMetricCard(
 
   return {
     revision: snapshot.revision,
+    liveIds: snapshot.liveIds,
     aggregation: settings.aggregation,
     measureField,
     measureLabel,

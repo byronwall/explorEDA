@@ -27,18 +27,15 @@ export function ColumnHeader({ column, sortConfig }: ColumnHeaderProps) {
         variant="ghost"
         className={cn(
           "flex items-center gap-2",
-          !column.sortable && "cursor-default"
+          !column.sortable && "cursor-default",
+          isSorted && "text-primary"
         )}
         disabled={!column.sortable}
       >
         {column.label}
         {column.sortable && (
           <ArrowUpDown
-            className={cn(
-              "h-4 w-4",
-              isSorted && "text-primary",
-              sortDirection === "desc" && "rotate-180"
-            )}
+            className={cn("h-4 w-4", sortDirection === "desc" && "rotate-180")}
           />
         )}
       </Button>

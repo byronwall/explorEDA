@@ -36,10 +36,7 @@ function TryHints({ edited }: { edited: boolean }) {
       aria-live="polite"
       className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground"
     >
-      <MousePointerClick
-        aria-hidden="true"
-        className="size-4 shrink-0 text-site-accent"
-      />
+      <MousePointerClick aria-hidden="true" className="size-4 shrink-0" />
       {edited ? (
         <span>
           <span className="font-semibold text-foreground">

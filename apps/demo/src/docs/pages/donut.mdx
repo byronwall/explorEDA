@@ -7,11 +7,27 @@
 
 ## How it reads
 
-- Each slice is one category's share of the whole: every row that passes the other charts' filters. Filter another chart and the shares redraw so they still sum to 100%.
-- The center shows the whole: the row count, or the sum of the measure.
-- Slices run largest first, clockwise from the top. The legend lists each category with its share, in the slices' colors.
-- **Top N** sets how many of the largest categories get their own slice; the rest pool into **Other**. It shows six by default, because thin slices are hard to compare.
-- With a color field and scale, slices take the same colors as other charts that color by that field.
+<ReadingGuide chart="donut">
+  <Part at="slice">
+    Each slice is one category's share of every row that passes the other
+    charts' filters, so the shares always sum to 100%.
+  </Part>
+  <Part at="center">
+    The center shows the whole: the row count, or the sum of the measure.
+  </Part>
+  <Part at="order">Slices run largest first, clockwise from the top.</Part>
+  <Part at="legend">
+    The legend lists each category with its share, in the slices' colors.
+  </Part>
+  <Part at="other">
+    **Top N** (six by default, since thin slices are hard to compare) sets how
+    many categories get a slice; the rest pool into **Other**.
+  </Part>
+  <Part>
+    With a color field and scale, slices take the same colors as other charts
+    that color by that field.
+  </Part>
+</ReadingGuide>
 
 ## When it won't draw
 

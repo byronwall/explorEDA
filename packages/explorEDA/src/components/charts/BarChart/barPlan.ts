@@ -89,7 +89,7 @@ export interface BarPlanInput {
   /** Formats value-axis ticks, which can be shorter than readout values. */
   /** Writes an axis tick; `reference` is the axis end, for one notation. */
   formatAxisValue?: (field: string, value: datum, reference?: number) => string;
-  /** Bottom margin kept under the X axis title for a status line. */
+  /** Bottom margin kept under the X axis title, such as for a summary row. */
   footer?: number;
   /** Whether bars show their count over every source row. Facets do not. */
   showTotals?: boolean;

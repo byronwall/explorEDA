@@ -44,7 +44,7 @@ function Harness() {
 it("inspects typed Other members and saves exact category selections across resize", () => {
   render(
     <DataLayerProvider
-      charts={[settings]}
+      charts={[{ ...settings, topN: 1 }]}
       data={["A", "A", "A", 1, "1", null, "Other categories"].map(
         (category) => ({ category })
       )}
@@ -63,9 +63,6 @@ it("inspects typed Other members and saves exact category selections across resi
   expect(screen.getByLabelText("Matching IDs")).toHaveTextContent(/^3$/);
   expect(screen.getByRole("checkbox", { name: "Select 1" })).toBeChecked();
   fireEvent.click(screen.getByRole("button", { name: "Resize" }));
-  expect(
-    screen.queryByRole("button", { name: "Other categories: 4 rows" })
-  ).not.toBeInTheDocument();
   expect(screen.getByLabelText("Matching IDs")).toHaveTextContent(/^3$/);
   const saved = JSON.parse(
     screen.getByLabelText("Saved settings").textContent!
@@ -367,20 +364,25 @@ it("traces a ranked value to its included and excluded rows", () => {
   expect(screen.getByText("Value").nextSibling?.textContent).toBe("6");
 });
 
-it("says why a saved Top N folds rows in a short chart", () => {
-  render(
-    <DataLayerProvider
-      charts={[{ ...settings, topN: 30 }]}
-      data={Array.from({ length: 40 }, (_, index) => ({
-        category: `C${index}`,
-      }))}
-    >
-      <RowChart settings={{ ...settings, topN: 30 }} width={600} height={160} />
+it("shows every category without Top N, and folds a Top N tail into +N more", () => {
+  const data = Array.from({ length: 12 }, (_, index) => ({
+    category: `C${index}`,
+  }));
+  const { rerender } = render(
+    <DataLayerProvider charts={[settings]} data={data}>
+      <RowChart settings={settings} width={600} height={300} />
     </DataLayerProvider>
   );
   expect(
-    screen.getByText(
-      /^Top 30 needs a taller chart · \d+ smaller categories in Other categories/
-    )
-  ).toBeTruthy();
+    screen.queryByRole("button", { name: /^Other categories/ })
+  ).not.toBeInTheDocument();
+  rerender(
+    <DataLayerProvider charts={[{ ...settings, topN: 5 }]} data={data}>
+      <RowChart settings={{ ...settings, topN: 5 }} width={600} height={300} />
+    </DataLayerProvider>
+  );
+  expect(screen.getByText("+7 more")).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: "Show all 12 categories" })
+  ).toBeInTheDocument();
 });

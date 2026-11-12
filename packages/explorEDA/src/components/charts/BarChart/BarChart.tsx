@@ -12,19 +12,10 @@ import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { BaseChart } from "../BaseChart";
 import { buildScale } from "../Axis/axisPlan";
 import { ChartReadout } from "../ChartReadout";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
 import { formatFieldValue as formatValue } from "@/lib/fieldSettings";
 import { useGetColumnData, useGetColumnDataForIds } from "../useGetColumnData";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
-import {
-  SMALL_SAMPLE,
-  rowsWithoutMeasure,
-  type AggregateResult,
-} from "@/lib/aggregates";
+import { type AggregateResult } from "@/lib/aggregates";
 import {
   barAt,
   planBarChart,
@@ -42,7 +33,7 @@ import { binSelection, samePredicate } from "./histogramPlan";
 import { HistogramSummary } from "./HistogramSummary";
 import type { SpecRegion } from "@/types/FilterTypes";
 
-/** Room for the specification summary row above the status line. */
+/** Room for the specification summary row under the axis. */
 const SUMMARY_HEIGHT = 24;
 import { barTraceTargets, findBarTraceRow, resolveBarTrace } from "./barTrace";
 import { BarChartSettings } from "./definition";
@@ -80,29 +71,6 @@ function barLabel(
   return bar.bin && bar.label.startsWith("[")
     ? `${format(bar.bin.start)} to ${exact && !bar.bin.closed ? "< " : ""}${format(bar.bin.end)}`
     : bar.label;
-}
-
-/** A measurement range in words: "2 to < 4", "> 12". */
-function rangeText(
-  filter: {
-    min?: number;
-    max?: number;
-    minExclusive?: boolean;
-    maxExclusive?: boolean;
-  },
-  format: (value: number) => string
-) {
-  const low =
-    filter.min === undefined
-      ? undefined
-      : `${filter.minExclusive ? "> " : ""}${format(filter.min)}`;
-  const high =
-    filter.max === undefined
-      ? undefined
-      : `${filter.maxExclusive ? "< " : ""}${format(filter.max)}`;
-  if (low && high) return `${low} to ${high}`;
-  if (low) return filter.minExclusive ? low : `≥ ${low}`;
-  return filter.maxExclusive ? high : `≤ ${high}`;
 }
 
 /** Field and value pairs for the hovered bar, in the panel header. */
@@ -293,12 +261,11 @@ function SingleBarChart({
             { compact: true, reference }
           ),
         footer:
-          STATUS_LINE_HEIGHT +
-          (settings.histogram?.spec &&
+          settings.histogram?.spec &&
           (settings.histogram.spec.lower !== undefined ||
             settings.histogram.spec.upper !== undefined)
             ? SUMMARY_HEIGHT
-            : 0),
+            : 0,
         showTotals: !facetIds,
         aggregateScope,
       }),
@@ -542,80 +509,7 @@ function SingleBarChart({
     plan.mode === "bin" ? bar.opacity === 1 : bar.selected
   );
   const anyDimmed = plan.bars.some((bar) => bar.opacity < 1);
-  const rowsOf = (bars: BarMark[]) =>
-    bars.reduce(
-      (total, bar) =>
-        total + (isAggregate || plan.shared ? bar.row.rowCount : bar.value),
-      0
-    );
-  const rangeFilter = settings.filters.find(
-    (f) => f.type === "range" && f.field === settings.field
-  );
-  let selectionText: string | undefined;
   const histogram = plan.histogram;
-  if (histogram) {
-    selectionText = histogram.selection?.filters
-      .map((filter) =>
-        filter.type === "range"
-          ? rangeText(filter, formatField)
-          : filter.type === "spec-status"
-            ? `${filter.region} spec`
-            : undefined
-      )
-      .filter(Boolean)
-      .join(" and ");
-  } else if (plan.mode === "bin" && rangeFilter?.type === "range") {
-    const first = selectedBars[0];
-    const last = selectedBars.at(-1);
-    // Whole-number bins name their first and last values, not the half-step edges.
-    selectionText =
-      first && first === last && !first.label.startsWith("[")
-        ? first.label
-        : first && last && !first.label.startsWith("[")
-          ? `${first.label.split("–")[0]} to ${last.label.split("–").at(-1)}`
-          : `${formatField(rangeFilter.min ?? plan.binEdges[0] ?? 0)} to ${
-              rangeFilter.maxExclusive ? "< " : ""
-            }${formatField(rangeFilter.max ?? plan.binEdges.at(-1) ?? 0)}`;
-  } else if (selectable && valueFilter?.values.length) {
-    const names = selectedBars.map((bar) => bar.label);
-    selectionText = `${
-      names.length > 3
-        ? `${names.slice(0, 3).join(", ")} and ${names.length - 3} more`
-        : names.join(", ")
-    }`;
-  }
-  const liveAggregate = aggregateResult ?? resolvedAggregate;
-  const leftOut = rowsWithoutMeasure(liveAggregate);
-  const statusParts = histogram
-    ? [
-        histogram.problem,
-        histogram.selection
-          ? `${histogram.selection.ids.length.toLocaleString()} of ${histogram.n.toLocaleString()} selected${selectionText ? `: ${selectionText}` : ""}`
-          : `n ${histogram.n.toLocaleString()}`,
-        histogram.missing.length > 0 &&
-          `${histogram.missing.length.toLocaleString()} missing`,
-        histogram.invalid.length > 0 &&
-          `${histogram.invalid.length.toLocaleString()} not numbers`,
-      ]
-    : [
-        // Counts lead, so a narrow chart that cuts the line keeps them.
-        selectionText &&
-          `${rowsOf(selectedBars).toLocaleString()} of ${rowsOf(plan.bars).toLocaleString()} rows selected: ${selectionText}`,
-        plan.unplotted.length > 0 &&
-          `${plan.unplotted.length} ${plan.unplotted.length === 1 ? "group" : "groups"} without a number left out`,
-        plan.notice,
-        leftOut > 0 &&
-          `${leftOut.toLocaleString()} ${leftOut === 1 ? "row" : "rows"} without ${getFieldLabel(liveAggregate!.spec.measureField ?? "")} left out`,
-        plan.bars.some((bar) => bar.faded) &&
-          `faded: fewer than ${SMALL_SAMPLE} rows`,
-      ];
-  const statusHint =
-    !selectionText &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    (plan.mode === "bin"
-      ? "Click a bar or drag across bars to select a range · Alt-click to inspect"
-      : "Click bars or labels to select · Alt-click to inspect");
   const band = selectable && "bandwidth" in xScale ? xScale : undefined;
 
   // Specification limits: a neutral guide at each limit, and a light tint
@@ -937,18 +831,12 @@ function SingleBarChart({
           // A narrow chart gives the buttons its full width.
           left={width < 520 ? 8 : margin.left}
           right={width < 520 ? 8 : margin.right}
-          bottom={STATUS_LINE_HEIGHT + 2}
+          bottom={2}
           compact={width < 520}
           onSelect={selectRegion}
           onInspect={(region) => inspect("spec-status", region)}
         />
       )}
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={margin.left}
-        right={margin.right}
-      />
     </div>
   );
 }

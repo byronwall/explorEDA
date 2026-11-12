@@ -1,4 +1,5 @@
-import { rankMeasureFields } from "@/lib/fieldRanking";
+import { rankDateFields, rankMeasureFields } from "@/lib/fieldRanking";
+import { hasDateValues } from "@/lib/dailyRollup";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
@@ -31,6 +32,21 @@ export function MetricCardSettingsPanel({
           (value) =>
             typeof value !== "boolean" && finiteNumber(value) !== undefined
         )
+    );
+  }, [calculations, profiles, nonce, getColumnData, getColumnNames]);
+
+  const dateFields = useMemo(() => {
+    void calculations;
+    void nonce;
+    const names = getColumnNames();
+    return rankDateFields(
+      names.filter((field) =>
+        hasDateValues(
+          Object.values(getColumnData(field)),
+          profiles.find((profile) => profile.name === field)?.dataType
+        )
+      ),
+      profiles
     );
   }, [calculations, profiles, nonce, getColumnData, getColumnNames]);
 
@@ -101,6 +117,25 @@ export function MetricCardSettingsPanel({
             }
           />
         </ActionTooltip>
+        {dateFields.length > 0 && (
+          <>
+            <Label>Trend over</Label>
+            <FieldSelector
+              label=""
+              placeholder="No trend"
+              value={settings.trendField ?? ""}
+              allowClear
+              fields={dateFields}
+              related="date"
+              onChange={(trendField) =>
+                onSettingsChange({
+                  ...settings,
+                  trendField: trendField || undefined,
+                })
+              }
+            />
+          </>
+        )}
       </div>
     </div>
   );
