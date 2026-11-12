@@ -16,7 +16,7 @@
     "build": "tsup && node scripts/build-types.mjs && node scripts/copy-examples.mjs",
     "check-types": "tsgo --noEmit --checkers 1",
     "lint": "oxlint --quiet src",
-    "test": "vitest run",
+    "test": "vitest run --project unit && vitest run --project io && vitest run --project dom",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "verify:lean": "node scripts/verify-lean-bundle.mjs",

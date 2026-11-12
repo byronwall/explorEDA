@@ -26,8 +26,9 @@ it("plans scatter points, guides, and brush from distinct row populations", () =
   chart.id = "scatter";
   chart.xField = "x";
   chart.yField = "y";
-  chart.xAxis.grid = true;
-  chart.yAxis.grid = true;
+  // The axes are shared default objects; copy them instead of mutating.
+  chart.xAxis = { ...chart.xAxis, grid: true };
+  chart.yAxis = { ...chart.yAxis, grid: true };
   chart.filters = [{ type: "range", field: "x", min: 2, max: 3 }];
   const other = {
     ...chart,
@@ -160,9 +161,10 @@ it("applies legend category filters globally and dims other scatter points", () 
   );
   crossfilter.addChart(chart);
   expect(crossfilter.getFilteredRowIds()).toEqual([1, 2]);
-  const chartIds = crossfilter.getAllData()[chart.id]!.items
-    .filter((item) => item.value > 0)
-    .map((item) => item.key);
+  const groups = crossfilter.getAllData();
+  const chartIds = groups[chart.id]!.items.filter((item) => item.value > 0).map(
+    (item) => item.key
+  );
   expect(chartIds).toEqual([0, 1, 2]);
 
   const plan = planScatter(

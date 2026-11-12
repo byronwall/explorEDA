@@ -1,4 +1,3 @@
-// @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { accountStoreContract } from "@/test/accountStoreContract";
 import { hashPassword, memoryAccountStore, verifyPassword } from "./accounts";
