@@ -1,9 +1,9 @@
 import { defineConfig } from "@playwright/test";
 import { testTiming } from "@repo/test-config";
 
-// The docs browser check: every docs page, its live examples and their
-// scripted steps, the screenshots narrow screens show, and overflow at narrow
-// widths. It serves the built demo, so build first:
+// The docs browser check: every docs page and its live examples render, the
+// screenshots narrow screens show, and overflow at narrow widths. It serves
+// the built demo, so build first:
 //
 //   pnpm --filter demo build && pnpm --filter demo docs:verify
 //
