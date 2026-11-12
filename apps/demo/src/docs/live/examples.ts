@@ -216,7 +216,7 @@ export const liveExamples = {
     data: "/shaft-diameters.csv",
     savedData: focus(engineeringHistogramsDashboard, {
       "diameter-bins": [0, 0, 8, 5],
-      "diameter-machines": [8, 0, 4, 5],
+      "diameter-machines": [8, 0, 4, 4],
     }),
     exampleId: "engineering-histograms",
     shotAlt:
@@ -236,7 +236,7 @@ export const liveExamples = {
     data: "/shaft-diameters.csv",
     savedData: focus(engineeringHistogramsDashboard, {
       "diameter-bins": [0, 0, 8, 5],
-      "diameter-machines": [8, 0, 4, 5],
+      "diameter-machines": [8, 0, 4, 4],
     }),
     exampleId: "engineering-histograms",
     shotAlt:
@@ -267,7 +267,7 @@ export const liveExamples = {
     data: "/datasets/scatter-trace.csv",
     savedData: focus(scatterTraceDashboard, {
       "trace-scatter": [0, 0, 12, 6],
-      "trace-channel": [0, 6, 6, 4],
+      "trace-channel": [0, 6, 6, 3],
     }),
     exampleId: "scatter-trace",
     shotAlt:
@@ -290,8 +290,8 @@ export const liveExamples = {
     label: "Live category row chart",
     data: SHOP,
     savedData: focus(shopDashboard, {
-      "shop-category": [0, 0, 6],
-      "shop-channel": [6, 0, 6],
+      "shop-category": [0, 0, 6, 4],
+      "shop-channel": [6, 0, 6, 4],
     }),
     exampleId: "shop-operations",
     shotAlt: "Orders by product category beside orders by sales channel.",
@@ -375,8 +375,8 @@ export const liveExamples = {
     label: "Live color legend beside a box plot",
     data: "/correlated_medium.csv",
     savedData: focus(boxPlotSettings, {
-      "0b8a3f5e-2c1d-4d9b-8f6e-3a7c9d2e4b15": [0, 0, 12, 2],
-      "384f8bd5-0c6f-4997-86ef-822749431aff": [0, 2, 12],
+      "0b8a3f5e-2c1d-4d9b-8f6e-3a7c9d2e4b15": [0, 0, 12, 1],
+      "384f8bd5-0c6f-4997-86ef-822749431aff": [0, 1, 12],
     }),
     exampleId: "box-plot",
     shotAlt: "A color legend above box plots colored by the same scale.",
@@ -407,7 +407,7 @@ export const liveExamples = {
     data: "/datasets/product-events.csv",
     savedData: focus(productFunnelDashboard, {
       "funnel-signup": [0, 0, 7, 5],
-      "funnel-channel": [7, 0, 5, 5],
+      "funnel-channel": [7, 0, 5, 4],
     }),
     exampleId: "product-funnel",
     shotAlt:
@@ -425,7 +425,7 @@ export const liveExamples = {
     data: "/datasets/product-events.csv",
     savedData: focus(productRetentionDashboard, {
       "retention-weekly": [0, 0, 8, 7],
-      "retention-channel": [8, 0, 4, 7],
+      "retention-channel": [8, 0, 4, 4],
     }),
     exampleId: "product-retention",
     shotAlt:
@@ -458,7 +458,7 @@ export const liveExamples = {
     label: "Live joint missingness chart",
     data: "/datasets/order-gaps.csv",
     savedData: focus(orderGapsDashboard, {
-      "order-gaps": [0, 0, 12, 8],
+      "order-gaps": [0, 0, 12, 10],
     }),
     exampleId: "order-gaps",
     shotAlt:
@@ -489,7 +489,11 @@ export const liveExamples = {
   "rank-correlation-basics": {
     label: "Live Pearson and Spearman matrices",
     data: "/datasets/study-hours.csv",
-    savedData: rankCorrelationDashboard,
+    savedData: focus(rankCorrelationDashboard, {
+      "rank-pearson": [0, 0, 6, 6],
+      "rank-spearman": [6, 0, 6, 6],
+      "rank-records": [0, 6, 12, 4],
+    }),
     exampleId: "rank-correlation-basics",
     shotAlt:
       "Two scatter matrices of study hours, exam score, practice tests, and confidence: Pearson r on the left, Spearman ρ on the right.",
@@ -618,7 +622,7 @@ export const liveExamples = {
   "composition-parts": {
     label: "Live lab budget report",
     data: "/datasets/lab-budget.csv",
-    savedData: focus(budgetReportDashboard, { "budget-report": [0, 0, 12] }),
+    savedData: focus(budgetReportDashboard, { "budget-report": [0, 0, 12, 8] }),
     exampleId: "budget-report",
     shotAlt:
       "A report page: each quarter's plan-to-actual waterfall on one scale, and a donut of each budget group's line items with a legend.",
@@ -748,8 +752,8 @@ export const liveExamples = {
     label: "Live workspace tour",
     data: SHOP,
     savedData: focus(shopDashboard, {
-      "shop-category": [0, 0, 6],
-      "shop-channel": [6, 0, 6],
+      "shop-category": [0, 0, 6, 4],
+      "shop-channel": [6, 0, 6, 4],
     }),
     exampleId: "shop-operations",
     chrome: true,
@@ -767,7 +771,7 @@ export const liveExamples = {
   fields: {
     label: "Live field list",
     data: SHOP,
-    savedData: focus(shopDashboard, { "shop-channel": [0, 0, 6] }),
+    savedData: focus(shopDashboard, { "shop-channel": [0, 0, 6, 4] }),
     exampleId: "shop-operations",
     chrome: true,
     shotAlt: "A row chart of sales channels beside the workspace toolbar.",
