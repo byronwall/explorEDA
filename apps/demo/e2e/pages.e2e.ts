@@ -5,11 +5,9 @@ import {
   expectImagesLoad,
   liveExample,
   recordErrors,
-  runStep,
   shotsDir,
   topics,
   waitForWorkspace,
-  type DocsStep,
 } from "./docs";
 
 mkdirSync(shotsDir, { recursive: true });
@@ -23,25 +21,21 @@ for (const topic of topics) {
     await page.goto(path);
     await expect(page.locator("article h2").first()).toBeVisible();
 
+    // Each example only has to render; chart behavior has its own tests.
     const examples = await page
       .locator("[data-docs-example]")
       .evaluateAll((nodes) =>
         nodes.map((node) => ({
           id: node.getAttribute("data-docs-example") ?? "",
-          steps: JSON.parse(node.getAttribute("data-docs-steps") ?? "[]"),
         }))
       );
 
-    for (const { id, steps } of examples) {
+    for (const { id } of examples) {
       await test.step(`example "${id}"`, async () => {
         await page
           .locator(`[data-docs-example="${id}"]`)
           .scrollIntoViewIfNeeded();
         await waitForWorkspace(page, id);
-        for (const [index, step] of (steps as DocsStep[]).entries()) {
-          await test.step(`step ${index + 1}: ${Object.keys(step)[0]}`, () =>
-            runStep(page, id, step));
-        }
       });
     }
     expect.soft(errors, `console errors on ${path}`).toEqual([]);

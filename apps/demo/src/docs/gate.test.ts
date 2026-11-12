@@ -66,14 +66,10 @@ function currentInput(): DocsGateInput {
               spec.notebook === undefined
                 ? spec.savedData.charts.map((chart) => chart.id)
                 : [],
-            stepCharts: [
-              ...spec.steps.flatMap((step) =>
-                "brush" in step ? [step.brush.chart] : []
-              ),
-              ...(spec.notebook === undefined && spec.surface
+            surfaceCharts:
+              spec.notebook === undefined && spec.surface
                 ? [spec.surface.chart]
-                : []),
-            ],
+                : [],
           },
         ]
       )
@@ -178,7 +174,7 @@ describe("docs gate", () => {
     ]);
   });
 
-  it("fails for a missing live example, data file, or step chart", () => {
+  it("fails for a missing live example, data file, or surface chart", () => {
     const input = currentInput();
     expect(
       findDocsErrors({
@@ -193,7 +189,7 @@ describe("docs gate", () => {
             exampleId: "nope",
             data: "/datasets/gone.csv",
             charts: ["a"],
-            stepCharts: ["b"],
+            surfaceCharts: ["b"],
           },
         },
       })
@@ -201,7 +197,7 @@ describe("docs gate", () => {
       'pages/scatter.mdx uses missing live example "ghost"',
       'Live example "broken" opens unknown example "nope"',
       'Live example "broken" loads missing data "/datasets/gone.csv"',
-      'Live example "broken" has a step on missing chart "b"',
+      'Live example "broken" shows missing chart "b"',
     ]);
   });
 
