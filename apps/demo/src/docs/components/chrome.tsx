@@ -44,10 +44,7 @@ export function PageHeader({
           {trail.map((step, index) => (
             <span key={step} className="flex items-center gap-1">
               {index > 0 && (
-                <ChevronRight
-                  aria-hidden="true"
-                  className="size-3.5 text-muted-foreground"
-                />
+                <ChevronRight aria-hidden="true" className="size-3.5" />
               )}
               {step}
             </span>

@@ -210,10 +210,7 @@ function ShotCard({ page }: { page: DocsPage }) {
       </div>
       <div className="flex flex-1 flex-col p-4">
         <h3 className="flex items-center gap-2 font-semibold">
-          <Icon
-            aria-hidden="true"
-            className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-docs-accent"
-          />
+          <Icon aria-hidden="true" className="size-4 shrink-0" />
           <Link className={stretchedLinkClass} to={docsPath(page.topic)}>
             {page.title}
           </Link>

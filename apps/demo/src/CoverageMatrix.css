@@ -522,7 +522,6 @@ details[open] .coverage-feature-description {
   flex-shrink: 0;
   width: 14px;
   height: 14px;
-  color: var(--muted-foreground);
 }
 .coverage-matrix-example span {
   display: -webkit-box;

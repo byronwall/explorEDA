@@ -89,15 +89,12 @@ export function StartSection({
               ({ title, where, body, command, to, icon: Icon }) => (
                 <li
                   key={title}
-                  className="group relative grid grid-cols-[1.25rem_minmax(0,1fr)_1rem] gap-x-3 rounded-sm py-3.5 has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring"
+                  className="group relative grid grid-cols-[1.25rem_minmax(0,1fr)_1rem] gap-x-3 rounded-sm py-3.5 text-site-ink transition-colors duration-150 hover:text-site-accent has-[a:focus-visible]:ring-2 has-[a:focus-visible]:ring-ring"
                 >
-                  <Icon
-                    aria-hidden="true"
-                    className="mt-0.5 size-5 text-site-accent"
-                  />
+                  <Icon aria-hidden="true" className="mt-0.5 size-5" />
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-baseline gap-x-2">
-                      <h3 className="font-semibold text-site-ink transition-colors duration-150 group-hover:text-site-accent">
+                      <h3 className="font-semibold">
                         <Link
                           to={to}
                           className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
@@ -123,7 +120,7 @@ export function StartSection({
                   </div>
                   <ArrowRight
                     aria-hidden="true"
-                    className="mt-1 size-4 text-muted-foreground transition-[color,transform] duration-150 group-hover:translate-x-0.5 group-hover:text-site-accent"
+                    className="mt-1 size-4 transition-transform duration-150 group-hover:translate-x-0.5"
                   />
                 </li>
               )

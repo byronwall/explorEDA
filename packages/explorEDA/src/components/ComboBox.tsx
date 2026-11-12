@@ -71,7 +71,7 @@ export function ComboBox<T>({
           <span className="min-w-0 truncate">
             {value ? optionToString(value) : placeholder}
           </span>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[max(18rem,var(--radix-popover-trigger-width))] p-0">

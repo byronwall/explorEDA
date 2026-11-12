@@ -184,9 +184,9 @@ function FitDetails({
         </TraceSection>
       ) : (
         <TraceSection heading="Fit unavailable">
-          <p className="flex gap-1.5">
+          <p className="flex gap-1.5 text-warning">
             <TriangleAlert
-              className="mt-0.5 size-3.5 shrink-0 text-warning"
+              className="mt-0.5 size-3.5 shrink-0"
               aria-hidden="true"
             />
             {outcome.reason}
