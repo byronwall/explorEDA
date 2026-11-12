@@ -206,7 +206,6 @@ export const STRIP_SIZE = 20;
 export const LEFT_TICKS = 44;
 export const BOTTOM_TICKS = 22;
 export const HISTOGRAM_BINS = 20;
-export const MATRIX_POINT_COLOR = "#3479a8";
 export const MATRIX_CONTEXT_COLOR = "rgb(156 163 175)";
 
 export function matrixFieldKind(type: DataType | undefined): MatrixFieldKind {
@@ -804,7 +803,7 @@ export function planMatrixLayout({
     liveIds,
     pointRadius:
       settings.pointSize ?? Math.max(0.75, [2.5, 2, 1.5, 1][density]! - small),
-    pointOpacity: settings.pointOpacity ?? [0.7, 0.5, 0.35, 0.2][density]!,
+    pointOpacity: settings.pointOpacity ?? [0.7, 0.55, 0.4, 0.25][density]!,
     dimmedOpacity: 0.15,
   };
 }

@@ -1360,17 +1360,15 @@ const scatterMatrix: Schematic = {
                     opacity={0.8}
                   />
                 ))}
+              {r >= c &&
+                [17, 35, 53].map((t) => (
+                  <g key={`t${t}`} className="stroke-muted-foreground">
+                    <line x1={x + t} x2={x + t} y1={y + 70} y2={y + 66} />
+                    {r > c && <line x1={x} x2={x + 4} y1={y + t} y2={y + t} />}
+                  </g>
+                ))}
               {r < c && (
                 <>
-                  <rect
-                    x={x}
-                    y={y}
-                    width={70}
-                    height={70}
-                    rx={2}
-                    className={mark}
-                    opacity={0.08 + (r + c) * 0.1}
-                  />
                   <text
                     x={x + 35}
                     y={y + 35}
@@ -1380,6 +1378,9 @@ const scatterMatrix: Schematic = {
                     dominantBaseline="central"
                     className="fill-foreground"
                   >
+                    <tspan fontStyle="italic" fontWeight={400}>
+                      r
+                    </tspan>{" "}
                     {["0.82", "0.41", "0.37"][r + c - 1]}
                   </text>
                 </>
