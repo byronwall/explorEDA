@@ -12,6 +12,8 @@ export interface MetricCardSettings extends BaseChartSettings {
   measureField?: string;
   /** Reduce repeated result rows to one value per declared entity. */
   entityField?: string;
+  /** Date field. When set, the card draws its metric per period beside the value. */
+  trendField?: string;
 }
 
 export const metricCardDefinition: ChartDefinition<MetricCardSettings> = {

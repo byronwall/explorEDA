@@ -304,6 +304,8 @@ export const CHART_SETTINGS: Readonly<
     measureField: "Field the metric summarizes, when it is not a count.",
     entityField:
       "Counts each value of this field once, so repeated result rows don't inflate the metric.",
+    trendField:
+      "Optional date field. The card draws its metric per day, week, or month beside the value, with a dashed line for all rows while filters narrow it.",
   },
   map: {
     field: "Not read by this chart type.",
