@@ -7,7 +7,7 @@ A map of the code and the commands that work, for agents changing this repo. Rea
 - **Store: rows, charts, filters, save/restore:** `packages/explorEDA/src/providers/DataLayerProvider.tsx` (zustand). `updateChart(id, partial)` is the one write path for chart settings.
 - **Host callback:** `onStateChange` in the same file. It fires after every store change that alters `saveToStructure()`, unless an in-place edit holds it (`holdStateChanges`). It is not debounced.
 - **Settings types:** `src/types/ChartTypes.ts` (`BaseChartSettings`, `AxisSettings`), `src/types/SavedDataStructure.ts`
-- **Defaults:** `src/utils/defaultSettings.ts`. `DEFAULT_AXIS_SETTINGS` writes `min: 0, max: 100` into every axis. Those keys are a dead placeholder, marked `@deprecated`; axis ranges live in `xAxis.limits` and `yAxis.limits`. Never give `min` or `max` meaning.
+- **Defaults:** `src/utils/defaultSettings.ts`. The defaults are deep-frozen: a new chart's axes, margin, facet, layout, and filters are these objects until something copies them, so an in-place edit throws. `DEFAULT_AXIS_SETTINGS` writes `min: 0, max: 100` into every axis. Those keys are a dead placeholder, marked `@deprecated`; axis ranges live in `xAxis.limits` and `yAxis.limits`. Never give `min` or `max` meaning.
 - **Saved-data validation:** `src/utils/saveDataUtils.ts` (`isAxis`, `validateSavedData`). A new setting that fails validation makes restores reject the whole save.
 - **Chart registry:** `src/charts/registry.ts`, `registerAllCharts.ts`, and one `src/components/charts/<Type>/definition.ts` per type
 - **Chart panel: header, title, actions, details dialog, keys:** `src/components/PlotChartPanel.tsx`
@@ -25,20 +25,64 @@ A map of the code and the commands that work, for agents changing this repo. Rea
 - **In-place editing:** `components/charts/InPlace/`. `useChartEdit` applies through `updateChart` and holds `onStateChange` until the edit ends: one edit, one undo step, and Escape reports nothing. `useTitleEditing` handles chart titles; `useAxisEditing` handles axis ranges, axis titles, axis drag, and menu items. `InlineTextEditor` and `AxisLimitFields` are the shared inputs, and `axisDrag.ts` holds the pure pan and stretch math.
 - **Axis limits:** `components/charts/Axis/axisBounds.ts`: `boundedDomain(auto, axis)` applies `limits` over a renderer's automatic domain; `numericAxes(settings)` says which axes can take limits. Call it wherever a renderer builds a numeric domain, and skip `.nice()` when `hasAxisBounds`. `hiddenByBounds(axis, domain, values, unit)` counts what a bound hides; pass it as `hidden` to `planAxes`, and `PlannedAxes` draws the marker that `useHiddenNotice` opens.
 - **Axis bands:** `AxisLayer.tsx` draws an invisible `.eda-axis-edit` group per numeric axis, under the tick labels. It carries `data-axis-edit`, `data-domain`, `data-range`, and `data-scale-type`, which the editors read and invert.
-- **Docs site (`/docs/<topic>`):** `apps/demo/src/docs/`. Pages are MDX in `pages/`, listed in `catalogue.ts` with the targets they `covers`. `targets.ts` derives what must be documented (registered chart types, required `coverage.ts` features, flows, surfaces). `live/examples.ts` defines each live example (a focused layout from a demo dashboard) and its scripted steps. Settings tables come from the unpublished `exploreda/docs-kit` entry (`packages/explorEDA/src/docsKit/`) plus `reference/settingDescriptions.ts`. `gate.ts` fails on any uncovered target, broken link, unknown example, or undescribed setting; `pnpm --filter demo build` runs it first. The build then prerenders each page, and the examples index, to static HTML (`apps/demo/docsPrerender.ts`, `src/docs/prerender.tsx`), so `/docs/<topic>` returns a 200 with the page's text; the app replaces it on boot, so a page must render under `react-dom/static` without touching `window` outside effects. `pnpm --filter demo docs:verify` (Playwright Test, `apps/demo/e2e/`) runs one test per page: every example's steps, the screenshots narrow screens show, and overflow at narrow widths. It runs in PR CI and in the Pages deploy before upload.
+- **Docs site (`/docs/<topic>`):** `apps/demo/src/docs/`. Pages are MDX in `pages/`, listed in `catalogue.ts` with the targets they `covers`. `targets.ts` derives what must be documented (registered chart types, required `coverage.ts` features, flows, surfaces). `live/examples.ts` defines each live example: a focused layout from a demo dashboard. Settings tables come from the unpublished `exploreda/docs-kit` entry (`packages/explorEDA/src/docsKit/`) plus `reference/settingDescriptions.ts`. `gate.ts` fails on any uncovered target, broken link, unknown example, or undescribed setting; `pnpm --filter demo build` runs it first. The build then prerenders each page, and the examples index, to static HTML (`apps/demo/docsPrerender.ts`, `src/docs/prerender.tsx`), so `/docs/<topic>` returns a 200 with the page's text; the app replaces it on boot, so a page must render under `react-dom/static` without touching `window` outside effects. `pnpm --filter demo docs:verify` (Playwright Test, `apps/demo/e2e/`) runs one test per page: the page and each live example render with no console errors, the screenshots that narrow screens show are captured, and nothing overflows at 783 and 390 px. It doesn't click through examples; chart behavior has its own tests. It runs in PR CI and in the Pages deploy before upload.
 - **Daily data viz (`/daily`):** pieces, data, and `catalog.json` under `apps/demo/public/daily-viz/`; derivation and static pages in `apps/demo/dailyCorpus.mjs`; pages and the finding calculator in `apps/demo/src/daily/`. Add pieces with `pnpm daily` and the workflow in [Daily data viz](daily-viz.md).
 - **Initiatives:** `docs/intent/<slug>/`: `intent-brief.md`, `initiative-map.json`, and when planned, `implementation-plan.md`. Only unbuilt or in-progress work lives there; retired initiatives are recorded in `docs/initiative-history.json`, with shipped behavior in the [feature inventory](application-feature-inventory.md).
 - **Work items and feedback:** Product Grid in `pgm/data`, read and written with the `pgm` CLI through `pnpm -s pgm <command> --json 2>/dev/null`. Start with `node list --roots --compact` or `node list --subtree <id> --with-ancestors`. Commit `pgm/data` changes like any other file.
 
 ## Commands
 
+### Checks
+
+Run the narrowest check that covers your change. Other sessions share this laptop, so read [Memory](#memory) before running a whole suite.
+
 ```bash
 pnpm --filter exploreda exec vitest run src/components/charts/BarChart
 ```
 
+Runs the tests under a path or the files you name. Add `--project unit`, `--project io`, or `--project dom` to run one group; [Tests](#tests) says which group holds a file. For the demo, use `pnpm --filter demo exec vitest run <files>`.
+
 ```bash
 pnpm --filter exploreda check-types
 ```
+
+Type-checks the library with `tsgo` in about 5 s. The demo and the app have the same script. The demo reads library types from `packages/explorEDA/dist`, so after you add or change a library type, run `pnpm --filter exploreda build` before `pnpm --filter demo check-types`.
+
+```bash
+pnpm lint
+```
+
+Runs [oxlint](https://oxc.rs/docs/guide/usage/linter) on the library, demo, and app in under a second. It reports errors only, because the codebase already has thousands of `curly` warnings. The rules are in the root `.oxlintrc.json`: ESLint's and typescript-eslint's recommended sets, react-hooks, and react-refresh. `eslint-disable` comments still apply. `pnpm check` and CI do not run the linter; the pre-commit hook does, on staged files.
+
+```bash
+pnpm check
+```
+
+Runs `check:ui`, then each package's build, type check, and tests, one package at a time. It takes about 2 minutes and peaks near 2.2 GB. It builds the package, so run it once before a PR, from one worktree at a time.
+
+```bash
+pnpm check:pr
+```
+
+Fails when a branch changes the `exploreda` package without a changeset, or has a commit with an invalid author. CI runs it and `pnpm check` on every pull request.
+
+A pre-commit hook (`.githooks/pre-commit`, installed by `pnpm install`) formats the staged files with Prettier and fails on oxlint errors in them, so don't run Prettier by hand before committing. A file with unstaged edits as well is only checked; format it and stage it again. Never format a whole folder; it rewrites unrelated files.
+
+### Test time limits
+
+Every runner takes its limits from `packages/test-config` (`@repo/test-config`): Vitest's test and hook timeouts, Testing Library's `findBy*` and `waitFor`, and Playwright's action, `expect`, per-test, and whole-run limits. On CI, Playwright retries a failed page once and reports a pass on retry as flaky. Each CI job and slow step also has `timeout-minutes`, so a hang fails in minutes. When a check is slow on CI, change the shared limit; don't add a timeout to one test or config.
+
+### Memory
+
+Many agent sessions share one 18 GB laptop. Full test runs from several of them once pushed it 12 GB into swap. Keep each check small:
+
+- Run the test files you changed, not the whole suite. A full library run takes about 50 s and peaks near 1.6 GB.
+- Vitest runs 2 test files at a time (`testWorkers` in `@repo/test-config`). Don't raise the cap in a config. For one faster run on an idle machine, pass `--maxWorkers=4`.
+- `check-types` uses `tsgo` (the Go port of TypeScript, `@typescript/native-preview`) with one checker: about 5 s and 0.9 GB for the library, against 15–30 s for `tsc`. The library build still uses `tsc` 5.4 to emit declarations, because tsgo writes TypeScript 5.7+ types, such as `Float64Array<ArrayBuffer>`, that older package users can't read.
+- Run long commands with `run_in_background` and wait for the exit notice.
+- Leave no processes behind. Stop `vitest --ui`, Vitest watch mode, and your `pnpm dev:agent` server before the session ends.
+
+### Dev server and screenshots
 
 ```bash
 pnpm dev:agent
@@ -62,17 +106,7 @@ pnpm export-proof
 
 `pnpm export-proof` checks chart image export against the screen: it presses Shift+E on a set of demo charts and diffs each download with an element screenshot, saving `tmp/export-proof/<case>-{screen,export,diff}.png`. Add `--only <case>` to run one. Run one engine at a time; `--engine webkit` builds multi-MB images and has used a lot of memory.
 
-```bash
-pnpm restack 390
-```
-
-`pnpm restack <pr|branch>` brings a stack of PRs up to date with `main`. It finds the whole stack from any PR in it, merges `main` into the bottom branch and each branch into the one above in a scratch worktree (`tmp/restack`), and stops at the first conflict with the file list. Resolve there, commit, and run `pnpm restack --continue`. It then type-checks the top of the stack, which catches conflicts git can't see, and pushes as fast-forwards. `--no-push` stops before pushing, `--merge` merges the PRs bottom-up afterwards, and `--abort` drops the scratch worktree. `git rerere` is on in this repo, so check any resolution it fills in.
-
-```bash
-pnpm check:pr
-```
-
-`pnpm check:pr` fails when a branch changes the `exploreda` package without a changeset, or has a commit with an invalid author. CI runs it and `pnpm check` on every pull request.
+### Docs site
 
 ```bash
 pnpm --filter demo docs:check
@@ -82,37 +116,25 @@ pnpm --filter demo docs:check
 pnpm --filter demo build && pnpm --filter demo docs:verify
 ```
 
-Pass Playwright options after it, such as `-g "/docs/bar$"` for one page. A failure names the page, the example, and the step, and leaves a trace under `apps/demo/test-results/`.
+Pass Playwright options after it, such as `-g "/docs/bar$"` for one page. A failure names the page and the example, and leaves a trace under `apps/demo/test-results/`.
 
-### Test time limits
-
-Every runner takes its limits from `packages/test-config` (`@repo/test-config`): Vitest's test and hook timeouts, Testing Library's `findBy*` and `waitFor`, and Playwright's action, `expect`, per-test, and whole-run limits. On CI, Playwright retries a failed page once and reports a pass on retry as flaky. Each CI job and slow step also has `timeout-minutes`, so a hang fails in minutes. When a check is slow on CI, change the shared limit; don't add a timeout to one test or config.
-
-### Memory
-
-Many agent sessions share one 18 GB laptop, and full test runs from several of them once pushed it 12 GB into swap. Keep each check small:
-
-- Run the test files you changed (`vitest run <files>`), not the whole suite. A full library run takes about 50 s and peaks near 1.6 GB; `pnpm check` takes about 2 minutes.
-- Vitest runs 2 test files at a time (`testWorkers` in `@repo/test-config`). Each worker is a Node process with its own jsdom, at 300 MB to 1 GB. Don't raise the cap in a config. For one faster run on an idle machine, pass `--maxWorkers=4`.
-- `check-types` runs `tsgo` (the Go port of TypeScript, `@typescript/native-preview`) with one checker: about 4 s and 0.8 GB for the library, against 30 s for `tsc`. The library build still uses `tsc` 5.4 to emit declarations, because tsgo writes TypeScript 5.7+ types such as `Float64Array<ArrayBuffer>` that older package users can't read.
-- `pnpm check` runs each package's build, type check, and tests one package at a time.
-- Leave no processes behind. Run long commands with `run_in_background` and wait for the exit notice. Stop `vitest --ui`, `vitest` watch mode, and `pnpm dev:agent` servers before the session ends.
+### Branches and releases
 
 ```bash
-pnpm check
+pnpm restack 390
 ```
 
-`pnpm check` takes about 2 minutes. It builds the package, so run it once before a PR, from one worktree at a time.
-
-```bash
-pnpm -s pgm node list --roots --compact --json 2>/dev/null
-```
+`pnpm restack <pr|branch>` brings a stack of PRs up to date with `main`. It finds the whole stack from any PR in it, merges `main` into the bottom branch and each branch into the one above in a scratch worktree (`tmp/restack`), and stops at the first conflict with the file list. Resolve there, commit, and run `pnpm restack --continue`. It then type-checks the top of the stack, which catches conflicts git can't see, and pushes as fast-forwards. `--no-push` stops before pushing, `--merge` merges the PRs bottom-up afterwards, and `--abort` drops the scratch worktree. `git rerere` is on in this repo, so check any resolution it fills in.
 
 ```bash
 pnpm changeset:add minor "What users can now do."
 ```
 
-A pre-commit hook (`.githooks/pre-commit`, installed by `pnpm install`) formats the staged files with Prettier and fails on oxlint errors in them, so don't run Prettier by hand before committing. A file with unstaged edits as well is only checked; format it and stage it again. Never format a whole folder; it rewrites unrelated files. `pnpm lint` runs [oxlint](https://oxc.rs/docs/guide/usage/linter) on the library, demo, and app in under a second and reports errors only, since the codebase already has thousands of `curly` warnings. The rules are in the root `.oxlintrc.json`: ESLint's and typescript-eslint's recommended sets, react-hooks, and react-refresh, as the old ESLint configs had them. `eslint-disable` comments still work. `pnpm check` and CI do not run the linter.
+### Product Grid
+
+```bash
+pnpm -s pgm node list --roots --compact --json 2>/dev/null
+```
 
 ## Traps
 
@@ -145,19 +167,36 @@ A pre-commit hook (`.githooks/pre-commit`, installed by `pnpm install`) formats 
 
 ## Tests
 
-- Vitest with Testing Library and jsdom. Call `registerAllCharts()` in `beforeAll` before rendering charts.
-- The library's tests run in three groups (`packages/explorEDA/vitest.config.ts`). `pnpm --filter exploreda test` runs them one after another in about 50 s:
-  - `unit`: `*.test.ts` outside `src/server`, `src/node`, and `src/cli`. Node, no jsdom, and one shared module graph per worker. 161 files run in about 4 s. A test here must not mutate a shared object. The chart defaults in `src/utils/defaultSettings.ts` are frozen, so changing a new chart's axes in place throws; copy the part first (`chart.xAxis = { ...chart.xAxis, grid: true }`). An order-dependent failure shows up with `vitest run --project unit --sequence.shuffle`.
-  - `io`: `*.test.ts` in `src/server`, `src/node`, and `src/cli`. Node, with a fresh module graph per file, because these tests share temp folders and mocks.
-  - `dom`: every `*.test.tsx`. jsdom in Vitest's VM pool, with heavy packages pre-bundled. A test that needs the DOM must be a `.tsx` file, even without JSX.
-- Import cost dominates: a DOM test that imports `registerAllCharts` spends about 1 s importing, against milliseconds in its tests. Import the narrowest module a test needs.
-- React waits at least 300 ms before it swaps a Suspense fallback for lazy content. A test that renders many lazy pages one by one pays that each time; `DocsSite.test.tsx` loads the pages in batches first.
-- To find where a slow test spends its time, profile it: `vitest run <file> --pool=forks --poolOptions.forks.singleFork --poolOptions.forks.execArgv=--cpu-prof --poolOptions.forks.execArgv=--cpu-prof-dir=tmp/prof`. Mostly idle time means a timer or a Suspense wait, not work.
+Vitest with Testing Library. The rules are in [Coding standards](../CODING_STANDARDS.md#tests); this section is the map.
+
+### Where a test runs
+
+`pnpm --filter exploreda test` runs the library's three groups (`packages/explorEDA/vitest.config.ts`) one after another, in about 50 s:
+
+| Group  | Files                                                       | Runs in                                                                                                    | Time                    |
+| ------ | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------- |
+| `unit` | `*.test.ts` outside `src/server`, `src/node`, and `src/cli` | Node, on the `threads` pool without isolation: one module graph per worker, shared by its files            | about 4 s for 161 files |
+| `io`   | `*.test.ts` in `src/server`, `src/node`, and `src/cli`      | Node, a fresh module graph per file, because these tests share temp folders and mocks                      | about 7 s               |
+| `dom`  | every `*.test.tsx`                                          | jsdom on the `vmThreads` pool: a fresh VM context per file, recycled at 256 MB; heavy packages pre-bundled | about 36 s              |
+
+- A test that needs the DOM must be a `.tsx` file, even without JSX.
+- A `unit` test shares modules with the other files in its worker. An order-dependent failure shows up with `vitest run --project unit --sequence.shuffle`.
+- The demo and app suites run each file in a fresh fork with jsdom (the demo uses `src/test/environment.ts`, which keeps Node's `AbortController`).
+
+### Where the time goes
+
+- Importing dominates. A DOM test that imports `registerAllCharts` spends about 1 s importing, against milliseconds in its tests.
+- React waits at least 300 ms before it swaps a Suspense fallback for lazy content. A test that renders many lazy pages one by one pays that wait each time; `DocsSite.test.tsx` loads its pages in batches first.
+- Profile a slow test before you change it: `vitest run <file> --pool=forks --poolOptions.forks.singleFork --poolOptions.forks.execArgv=--cpu-prof --poolOptions.forks.execArgv=--cpu-prof-dir=tmp/prof`. Mostly idle time means a timer or a Suspense wait, not work. Hot product code shows by name; fix it there, so users get the speed too.
+
+### Writing one
+
+- Call `registerAllCharts()` in `beforeAll` before rendering charts.
 - Stub `ResizeObserver`. For pointer gestures, set `window.PointerEvent = MouseEvent` as `ScatterSvg.test.tsx` does.
 - jsdom has no layout: `getBoundingClientRect()` returns zeros, so pass `clientX` and `clientY` values relative to 0.
-- A new demo example in `apps/demo/src/demos/examples.ts` also needs an entry in `coverage.ts` (and, for `chart:row`, the expected list in `coverage.test.ts`). `dashboardText.test.ts` exports and recompiles every example, so invalid settings fail there. Run `pnpm --filter demo exec vitest run src/demos/coverage.test.ts src/dashboardText.test.ts` right after adding one; targeted library tests don't cover it.
-- The demo's type check resolves `exploreda` types from `packages/explorEDA/dist`. After adding a library type, run `pnpm --filter exploreda build` before `pnpm --filter demo check-types`.
+- jsdom in the VM pool has no User Timing API; `src/test/setup.ts` copies `mark`, `measure`, and `getEntriesByName` from Node.
 - Render `PlotChartPanel` inside `DataLayerProvider` with `charts={[...]}` and read settings back through `useDataLayer`. See `components/__tests__/PlotChartPanel.test.tsx`.
+- A new demo example in `apps/demo/src/demos/examples.ts` also needs an entry in `coverage.ts` (and, for `chart:row`, the expected list in `coverage.test.ts`). `dashboardText.test.ts` exports and recompiles every example, so invalid settings fail there. Run `pnpm --filter demo exec vitest run src/demos/coverage.test.ts src/dashboardText.test.ts` right after adding one; targeted library tests don't cover it.
 
 ## Browser checks and screenshots
 
