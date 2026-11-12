@@ -37,9 +37,9 @@ group @revenue-by-region sum(Revenue) by=Region name="Revenue by region"
 group @revenue-by-product sum(Revenue) by=Product name="Revenue by product"
 
 view "Order book" {
-  metric @shop-count count title="Matching orders"
-  metric @shop-revenue sum(Revenue) title="Revenue in this selection"
-  metric @shop-average avg(Revenue) title="Average order value"
+  metric @shop-count count title="Matching orders" trendField="Order Date"
+  metric @shop-revenue sum(Revenue) title="Revenue in this selection" trendField="Order Date"
+  metric @shop-average avg(Revenue) title="Average order value" trendField="Order Date"
   scatter @shop-margin x=Revenue y=Margin color=Category {
     title="Revenue and margin per order" x.scale=symlog y.scale=symlog
     x.title="Revenue ($)" y.title="Margin ($)"
