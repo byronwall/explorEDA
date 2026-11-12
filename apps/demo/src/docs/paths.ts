@@ -32,6 +32,11 @@ export function liveShotPath(id: string) {
   return `/docs-shots/example-${id}.png`;
 }
 
+/** Where the docs check saves a page's index thumbnail: one chart. */
+export function thumbPath(topic: string) {
+  return `/docs-shots/thumb-${topic}.png`;
+}
+
 /** A heading's anchor id, from its visible text. */
 export function slugify(text: string) {
   return text

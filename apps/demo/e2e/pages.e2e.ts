@@ -74,6 +74,57 @@ for (const topic of topics) {
       });
     }
 
+    // The index thumbnail: one chart from the page's example, drawn in a
+    // narrow column so it fills its card, without its panel border. A
+    // faceted chart stops after its first facet. With no chart to crop (a
+    // notebook), it is the whole example.
+    const article = page.locator("article.docs-article");
+    const thumb = await article.getAttribute("data-docs-thumb");
+    if (thumb) {
+      const chart = await article.getAttribute("data-docs-thumb-chart");
+      await test.step(`thumbnail from "${thumb}"`, async () => {
+        const capture = await browser.newPage({
+          viewport: { width: 1132, height: 900 },
+          deviceScaleFactor: 2,
+        });
+        try {
+          await capture.goto(`/docs/_capture/${thumb}`);
+          await capture.addStyleTag({
+            content: `main[data-docs-capture] { width: 600px; }
+              .eda-panel { border: 0; border-radius: 0; }`,
+          });
+          await waitForWorkspace(capture, thumb);
+          await capture.waitForTimeout(500);
+          const target = chart
+            ? liveExample(capture, thumb).locator(
+                `[data-chart-id="${chart}"] .eda-panel`
+              )
+            : liveExample(capture, thumb);
+          const clip = await target.evaluate((node) => {
+            const box = node.getBoundingClientRect();
+            const facet = node.querySelector(".grid > .rounded-md");
+            const bottom = facet
+              ? facet.getBoundingClientRect().bottom + 8
+              : box.bottom;
+            return {
+              x: box.left + window.scrollX,
+              y: box.top + window.scrollY,
+              width: box.width,
+              height: bottom - box.top,
+            };
+          });
+          const image = await capture.screenshot({
+            clip,
+            fullPage: true,
+            animations: "disabled",
+          });
+          writeFileSync(join(shotsDir, `thumb-${topic}.png`), image);
+        } finally {
+          await capture.close();
+        }
+      });
+    }
+
     // Narrow widths: no overflow, and the screenshots load.
     for (const width of [783, 390]) {
       await test.step(`${width}px`, async () => {

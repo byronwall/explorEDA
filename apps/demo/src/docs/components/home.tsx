@@ -13,7 +13,7 @@ import { catalogue, type DocsPage } from "../catalogue";
 import { CHART_QUESTIONS } from "../chooser";
 import { GLANCES } from "../glance";
 import { WORKFLOWS } from "../../landing/workflows";
-import { docsPath, liveShotPath } from "../paths";
+import { docsPath, thumbPath } from "../paths";
 import { cardLinkClass, stretchedLinkClass } from "./chrome";
 
 const START_LINKS = [
@@ -83,29 +83,24 @@ function PickCard({
   best: boolean;
 }) {
   const [thumbMissing, setThumbMissing] = useState(false);
-  const Icon = page.icon;
   const gestures = page.chartType ? GLANCES[page.chartType]?.gestures : [];
   return (
     <article className={cn(cardLinkClass, "flex flex-col overflow-hidden")}>
       {/* Without a live shot (a dev server that hasn't made them), the card
           is text only rather than a grey placeholder. */}
       {page.thumbnail && !thumbMissing && (
-        <div className="aspect-[16/9] overflow-hidden border-b border-border bg-muted/60">
+        <div className="aspect-[7/5] overflow-hidden border-b border-border bg-card">
           <img
-            src={liveShotPath(page.thumbnail)}
+            src={thumbPath(page.topic)}
             alt=""
             loading="lazy"
             onError={() => setThumbMissing(true)}
-            className="h-full w-full object-cover object-left-top transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            className="h-full w-full object-contain"
           />
         </div>
       )}
       <div className="flex flex-1 flex-col p-4">
         <h3 className="flex items-baseline gap-2 font-semibold">
-          <Icon
-            aria-hidden="true"
-            className="size-4 shrink-0 translate-y-0.5"
-          />
           <Link className={stretchedLinkClass} to={docsPath(page.topic)}>
             {page.title}
           </Link>

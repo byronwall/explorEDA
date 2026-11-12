@@ -32,6 +32,7 @@ import {
   OnThisPage,
   type TocEntry,
 } from "./components/toc";
+import { findLiveExample } from "./live/examples";
 import { LiveExample } from "./live/LiveExample";
 import {
   chartWordOf,
@@ -41,7 +42,7 @@ import {
 } from "../daily/corpus";
 import { useDailyCatalog } from "../daily/useDailyCatalog";
 import { usePageTitle } from "../pageTitle";
-import { captureId, docsPath, docsTopic, liveShotPath } from "./paths";
+import { captureId, docsPath, docsTopic, thumbPath } from "./paths";
 
 const loaded = new Map<string, ComponentType>();
 
@@ -164,7 +165,11 @@ function GuidePage({ page }: { page: DocsPage }) {
         </PageHeader>
         {page.chartType && <AtAGlance chartType={page.chartType} />}
         <InlineContents entries={contents} />
-        <article className="docs-article mt-10 min-w-0">
+        <article
+          className="docs-article mt-10 min-w-0"
+          data-docs-thumb={page.chartType && page.thumbnail}
+          data-docs-thumb-chart={thumbChart(page)}
+        >
           {Content && (
             <Suspense
               fallback={
@@ -185,37 +190,49 @@ function GuidePage({ page }: { page: DocsPage }) {
   );
 }
 
-/** A page with its example screenshot, for the chart and table sections. */
+/**
+ * The chart the docs check crops from a page's thumbnail example: the first
+ * one of the page's chart type. A notebook example has none, so its whole
+ * shot is the thumbnail.
+ */
+function thumbChart(page: DocsPage) {
+  const spec = page.thumbnail ? findLiveExample(page.thumbnail) : undefined;
+  if (!page.chartType || !spec || !("savedData" in spec)) {
+    return undefined;
+  }
+  return spec.savedData.charts.find((chart) => chart.type === page.chartType)
+    ?.id;
+}
+
+/** A page with one of its charts, for the chart and table sections. */
 function ShotCard({ page }: { page: DocsPage }) {
   const Icon = page.icon;
-  // Screenshots come from the docs check, so a dev server may not have them.
+  // Thumbnails come from the docs check, so a dev server may not have them.
   const [thumbMissing, setThumbMissing] = useState(false);
-  const showThumb = page.thumbnail && !thumbMissing;
   return (
     <article className={`${cardLinkClass} flex flex-col overflow-hidden`}>
-      <div className="aspect-[16/9] overflow-hidden border-b border-border bg-muted/60">
-        {showThumb ? (
+      <div className="aspect-[7/5] overflow-hidden border-b border-border bg-card">
+        {thumbMissing ? (
+          <div className="flex h-full items-center justify-center bg-muted/60">
+            <Icon aria-hidden="true" className="size-10 text-docs-accent/30" />
+          </div>
+        ) : (
           <img
-            src={liveShotPath(page.thumbnail!)}
+            src={thumbPath(page.topic)}
             alt=""
             loading="lazy"
             onError={() => setThumbMissing(true)}
-            className="h-full w-full object-cover object-left-top transition-transform duration-300 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            className="h-full w-full object-contain"
           />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <Icon aria-hidden="true" className="size-10 text-docs-accent/30" />
-          </div>
         )}
       </div>
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="flex items-center gap-2 font-semibold">
-          <Icon aria-hidden="true" className="size-4 shrink-0" />
+        <h3 className="font-semibold">
           <Link className={stretchedLinkClass} to={docsPath(page.topic)}>
             {page.title}
           </Link>
         </h3>
-        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
           {page.summary}
         </p>
       </div>
@@ -300,7 +317,7 @@ function IndexPage() {
             <div
               className={
                 withShots
-                  ? "mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
+                  ? "mt-5 grid gap-5 sm:grid-cols-2 2xl:grid-cols-3"
                   : "mt-5 grid gap-3 md:grid-cols-2 2xl:grid-cols-3"
               }
             >
