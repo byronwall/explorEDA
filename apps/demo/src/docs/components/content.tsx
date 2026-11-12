@@ -14,6 +14,7 @@ import { inlineCodeClass, inlineLinkClass, proseClass } from "./chrome";
 import { CodeBlock } from "./code";
 import { WorkedOrder } from "./workedOrder";
 import { Part, ReadingGuide } from "./readingGuide";
+import { ChartQuestions, ChartTypeList } from "./chooseChart";
 import {
   DashboardTextReference,
   ExampleText,
@@ -335,6 +336,8 @@ export const mdxComponents: MDXComponents = {
   // Blocks a page can use without importing them.
   Callout,
   CalcChain,
+  ChartQuestions,
+  ChartTypeList,
   DocsLink,
   DashboardTextReference,
   ExampleText,

@@ -1,0 +1,129 @@
+Start from the question you have. Pick a chart that answers it, then add the fields it needs. Each chart page also opens with a short note: when to use that chart, and which lookalike to use instead.
+
+## By question
+
+<ChartQuestions />
+
+## Every chart type
+
+Each line says when to use the chart and the fields it needs before it can draw.
+
+<ChartTypeList />
+
+## Charts that need more setup
+
+Most charts draw from one or two fields. The charts below read the data in a special way, or need settings before the result is true. Read this before you use them.
+
+### ECDF
+
+Use an [ECDF](/docs/ecdf) to read any percentile, or what share of rows fall past a limit. It has no bins, so two curves never differ only because of a bin width.
+
+- Set one numeric field. Set **Split by** to draw one curve per group. Each curve uses its own rows as 100%, so groups of different sizes compare fairly.
+- Set **Read as** to "at or above" when the question is how many values exceed a limit.
+- Turn on the log X scale only when every value is positive.
+
+### Funnel
+
+Use a [funnel](/docs/funnel) to count how many people or accounts reach each step of a process, in order.
+
+- The data must be an event log: one row per event.
+- Set the **entity** field (who, such as a user ID), the **event** field (what happened), and the **time** field (when).
+- Add the steps in order. Each step is a value of the event field. A step counts only at its first event after the step before it.
+- Set a **Window** in days to count later steps only near the first step. Leave it blank to count them at any time.
+
+### Retention
+
+Use [retention](/docs/retention) to see whether each group of people who started in the same week or month keeps coming back.
+
+- The data must be an event log: one row per event, with an **entity** field and a **time** field.
+- Add the event field to choose the **entry event**, such as signup, and the **active events**. Without it, each entity's first event is its entry, and every event at or after entry counts as active.
+- Set the **period** to a day, a week (Monday to Sunday, in UTC), or a month, and set how many periods to show.
+- Do not use a line chart of active users for this question. It mixes new and returning people, so growth can hide churn.
+
+### Sankey chart
+
+Use a [Sankey chart](/docs/sankey) to follow rows through a sequence of category fields, such as source, then plan, then status.
+
+- Each row must already be one path. Set two or more **stages**, in order.
+- Flow width is a count of rows, or a sum of a measure. The chart leaves out negative and missing measure values.
+- When each row is one event, use a funnel instead. The funnel builds each path from events in time order.
+
+### Joint missingness
+
+Use [joint missingness](/docs/joint-missingness) before you model or join data, to see which fields are missing together.
+
+- Set two to twelve fields. The chart counts rows by their exact set of missing fields.
+- Blank text, null, and null tokens such as `NA` count as missing. Zero and false are present.
+- Set **Compare groups** to compare the gap patterns of each group, such as each sales channel.
+- Check **Inputs a later step needs** to count the rows that a later step can use.
+
+### Parallel coordinates
+
+Use [parallel coordinates](/docs/parallel-coordinates) to follow each row across many numeric fields, and to select ranges on several axes at once.
+
+- Add two or more axes. Put fields you want to compare next to each other.
+- Draw an axis high-to-low when that makes the lines cross less. The selection on that axis keeps its bounds.
+- Lower the line opacity when many lines overlap.
+
+### Scatter matrix
+
+Use a [scatter matrix](/docs/scatter-matrix) to check every pair of fields before you choose one pair to chart.
+
+- Set two to ten fields. Numeric and category fields both work.
+- Choose what each part of the grid draws: points, correlation, boxes, tiles, or shares below and above the diagonal, and a distribution on it.
+- Set the correlation **Method**: Pearson for straight-line trends, Spearman for any steady rise or fall.
+
+### Hierarchy
+
+Use a [hierarchy](/docs/hierarchy) to show how a total divides through nested categories.
+
+- Set one to three **levels**, from the outermost category in. Each row is one path through them.
+- Node size is a count of rows, or a sum of a measure.
+- Set **Arrangement** to a treemap for areas, an icicle for depth, or a sunburst for a radial view. All three show the same values.
+
+### Timeline
+
+Use a [timeline](/docs/timeline) for rows that last from a start to an end, such as bookings, shifts, or jobs.
+
+- Set a **lane** field, such as a room or a person, and **start** and **end** fields. Times read as UTC.
+- A blank end means the row has not ended. The bar runs to the last time in the data, with a dashed edge.
+- Drag across time to keep every row that overlaps that window.
+
+### Waterfall
+
+Use a [waterfall](/docs/waterfall) to explain how one total became another, such as plan to actual.
+
+- Set a **step** field and a measure. The measure must add up: a sum or a row count, not an average.
+- Define the **start state** and the **end state**. Give each state its own measure, such as Plan and Actual, or a condition, such as Year is 2025.
+- Set **Shows** to **Running total** to add each step to a total in order instead. Store inflows as positive values and outflows as negative values.
+
+### Calendar heatmap
+
+Use a [calendar heatmap](/docs/calendar) to see weekday rhythm and seasons in daily values.
+
+- Set a date field. Each cell is one day, shaded by a count of rows or a summary of a measure.
+- The chart shows one year at a time: the year you choose, or the latest year with dates.
+- Set the week to start on Sunday or Monday.
+
+### 3D scatter plot
+
+Use a [3D scatter plot](/docs/3d-scatter) only when the shape that three numeric fields make is the point, such as a cluster in space.
+
+- Set the X, Y, and Z fields. Color and size can show two more fields.
+- Drag to turn the scene. The chart saves the camera position.
+- For exact values, use a scatter plot of two fields. Depth makes values hard to read.
+
+### Composition
+
+Use a [composition](/docs/composition) for a finished graphic whose layout carries meaning, such as one lane per seat or a plate of small charts.
+
+- First check whether a built-in chart answers the question. A scatter, a bar chart, or a line chart with a few settings covers most report graphics, and they filter, trace, and save like any chart.
+- A composition places text, guides, and chart units on an artboard. Chart units draw marks from the rows through shared scales, and can repeat for each value of a field.
+
+### Map
+
+Use a [map](/docs/map) when location is the point.
+
+- For points, set latitude and longitude fields, in degrees.
+- For shaded regions, choose the region geometry, such as world countries or an imported GeoJSON file. Then set a region field whose values match the GeoJSON key exactly, in value and type.
+- Region shades are a count of rows, or a sum or average of a measure.

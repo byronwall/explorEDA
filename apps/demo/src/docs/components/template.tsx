@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { catalogue } from "../catalogue";
+import { CHART_CHOICES } from "../chooser";
 import { GLANCES } from "../glance";
 import { SettingsReference } from "../reference/SettingsReference";
 import { inlineCodeClass, proseClass } from "./chrome";
@@ -49,6 +51,46 @@ export function AtAGlance({ chartType }: { chartType: string }) {
         )}
       </Cell>
     </dl>
+  );
+}
+
+/** The topic of the page that compares every chart type. */
+export const CHOOSE_TOPIC = "choose-a-chart";
+
+/** When to pick this chart, and which lookalike to pick instead. */
+export function ChartChoiceNote({ chartType }: { chartType: string }) {
+  const choice = CHART_CHOICES[chartType];
+  if (!choice) {
+    return null;
+  }
+  return (
+    <aside
+      aria-label="When to use this chart"
+      className="mt-4 rounded-xl border border-border bg-card px-4 py-3.5 text-sm leading-6 text-foreground/85"
+    >
+      <p>
+        <span className="font-semibold text-foreground">Use this when</span>{" "}
+        {choice.when}
+      </p>
+      <ul className="mt-1.5 space-y-1">
+        {choice.instead.map(([type, when]) => {
+          const page = catalogue.find((item) => item.chartType === type);
+          return (
+            <li key={type}>
+              Use{" "}
+              <DocsLink topic={page?.topic ?? type}>
+                {page?.title ?? type}
+              </DocsLink>{" "}
+              instead when {when}
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Compare every chart type in{" "}
+        <DocsLink topic={CHOOSE_TOPIC}>Choose a chart</DocsLink>.
+      </p>
+    </aside>
   );
 }
 

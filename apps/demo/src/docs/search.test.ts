@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { catalogue } from "./catalogue";
-import { CHART_QUESTIONS } from "./chooser";
+import { CHART_CHOICES, CHART_QUESTIONS } from "./chooser";
 import { plainText, searchDocs, sectionsOf } from "./search";
 import { loadSearchEntries } from "./searchIndex";
 
@@ -80,6 +80,19 @@ describe("chart chooser", () => {
     for (const question of CHART_QUESTIONS) {
       for (const [chartType] of question.picks) {
         expect(documented, `${question.id}: ${chartType}`).toContain(chartType);
+      }
+    }
+  });
+
+  it("gives every chart page a choice note whose lookalikes have pages", () => {
+    const documented = new Set(catalogue.map((page) => page.chartType));
+    for (const page of catalogue) {
+      if (!page.chartType) continue;
+      const choice = CHART_CHOICES[page.chartType];
+      expect(choice, page.topic).toBeDefined();
+      for (const [chartType] of choice!.instead) {
+        expect(chartType, page.topic).not.toBe(page.chartType);
+        expect(documented, `${page.topic}: ${chartType}`).toContain(chartType);
       }
     }
   });
