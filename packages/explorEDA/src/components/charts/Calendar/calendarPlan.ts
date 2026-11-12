@@ -183,8 +183,12 @@ export function planCalendar({
     (width - left - right) / (weekCount + 11 * MONTH_GAP),
     yearCellHeight * 1.8
   );
+  // The gaps must not push a panel that fit a year into the month view.
   const view: CalendarPlan["view"] =
-    Math.min(yearCellWidth, yearCellHeight) >= MIN_YEAR_CELL ? "year" : "month";
+    Math.min((width - left - right) / weekCount, yearCellHeight) >=
+    MIN_YEAR_CELL
+      ? "year"
+      : "month";
 
   const allDays = Array.from(
     { length: dayCount },
