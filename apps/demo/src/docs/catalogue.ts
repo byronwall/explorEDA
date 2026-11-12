@@ -318,7 +318,7 @@ export const catalogue: readonly DocsPage[] = [
     highlights: ["Quartiles", "Violins", "Outliers"],
     covers: ["chart:boxplot"],
     chartType: "boxplot",
-    examples: ["shop-operations"],
+    examples: ["box-plot", "shop-operations"],
     related: ["ecdf", "bar"],
   },
   {
