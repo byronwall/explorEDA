@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { examplePath } from "@/routes";
 import type { DatumObject } from "@/LandingPage";
 import { readTableText } from "exploreda/readers";
@@ -13,7 +14,7 @@ import {
 } from "react";
 import { Link } from "react-router-dom";
 import { LIVE_MIN_WIDTH, liveShotPath } from "../paths";
-import { describeStep, findLiveExample, liveExampleHeight } from "./examples";
+import { findLiveExample, liveExampleHeight } from "./examples";
 
 const ExplorEda = lazy(() =>
   import("exploreda").then(({ ExplorEda: Workspace }) => ({
@@ -88,6 +89,10 @@ function Status({ children }: { children: ReactNode }) {
  * focused layout. It never reads or writes a saved session, so trying it
  * leaves the reader's own analyses alone. Narrow screens see a screenshot
  * of the same layout instead.
+ *
+ * The frame shows the charts and little else: the workspace toolbar and
+ * status bar stay hidden unless the example is about them (`chrome`), and
+ * Full example opens the whole workspace.
  */
 export function LiveExample({
   id,
@@ -135,65 +140,33 @@ export function LiveExample({
     return null;
   }
 
+  // A loaded workspace or notebook takes its own height. A settings surface,
+  // and the placeholder before anything loads, take the example's height.
+  const fixedHeight = !rows || (spec.notebook === undefined && spec.surface);
+
   return (
     <figure
       ref={root}
-      className="my-8"
+      className="my-6"
       data-docs-example={id}
       data-docs-steps={JSON.stringify(spec.steps)}
       data-docs-shot={`example-${id}`}
     >
-      <div className="landing-shot overflow-hidden rounded-xl border border-border bg-card">
-        <div className="flex items-center gap-2 border-b border-border bg-muted/40 py-1 pl-3.5 pr-1.5">
-          <span className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-            {wide && (
-              <span
-                aria-hidden="true"
-                className="size-1.5 rounded-full bg-[var(--eda-dsl-string)] shadow-[0_0_0_3px_color-mix(in_oklab,var(--eda-dsl-string)_20%,transparent)]"
-              />
-            )}
-            {wide ? "Live example" : "Screenshot"}
-          </span>
-          <div className="ml-auto flex items-center gap-1">
-            {wide && (
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={!edited}
-                onClick={() => {
-                  setEdited(false);
-                  setMount((key) => key + 1);
-                }}
-              >
-                <RotateCcw aria-hidden="true" />
-                Reset
-              </Button>
-            )}
-            <Button asChild variant="ghost" size="sm">
-              <Link
-                to={
-                  spec.notebook !== undefined
-                    ? spec.fullPath
-                    : examplePath(spec.exampleId)
-                }
-              >
-                <Maximize2 aria-hidden="true" />
-                {spec.notebook !== undefined ? "Daily example" : "Full example"}
-              </Link>
-            </Button>
-          </div>
-        </div>
+      <div className="overflow-hidden rounded-lg border border-border bg-background">
         {wide ? (
           <div
             role="region"
             aria-label={spec.label}
             // The workspace's drawers stay fixed to the viewport, as in any
             // host. Containing them here would misplace anchored menus.
-            className="bg-background p-3"
+            className="docs-live"
             style={
-              rows ? { minHeight: 420 } : { height: liveExampleHeight(spec) }
+              fixedHeight ? { height: liveExampleHeight(spec) } : undefined
             }
             data-docs-live={id}
+            data-docs-chrome={
+              spec.notebook === undefined && spec.chrome ? "" : undefined
+            }
           >
             {failed ? (
               <Status>Could not load the example data.</Status>
@@ -233,7 +206,7 @@ export function LiveExample({
             )}
           </div>
         ) : shotMissing ? (
-          <div className="p-6 text-sm text-muted-foreground">
+          <div className="p-4 text-sm text-muted-foreground">
             Open the full example on a wider screen to try this view.
           </div>
         ) : (
@@ -245,34 +218,39 @@ export function LiveExample({
           />
         )}
       </div>
-      {caption && (
-        <figcaption className="mt-3 text-sm leading-6 text-muted-foreground">
-          {caption}
-        </figcaption>
-      )}
-      {wide && spec.steps.length > 0 && (
-        <div className="mt-4 rounded-lg border border-border bg-card px-4 py-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-foreground/70">
-            Try this
-          </p>
-          <ol
-            aria-label="Try this"
-            className="mt-2 space-y-1.5 text-sm leading-6 text-foreground/80"
-          >
-            {spec.steps.map((step, index) => (
-              <li key={index} className="flex gap-3">
-                <span
-                  aria-hidden="true"
-                  className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-docs-accent/10 text-[0.7rem] font-semibold text-docs-accent"
-                >
-                  {index + 1}
-                </span>
-                {describeStep(spec, step)}
-              </li>
-            ))}
-          </ol>
-        </div>
-      )}
+      <figcaption className="mt-1.5 flex items-start gap-3 text-sm leading-6 text-muted-foreground">
+        <span className="min-w-0 flex-1">{caption}</span>
+        <span className="flex shrink-0 items-center gap-0.5">
+          {wide && edited && (
+            <ActionTooltip content="Reset the example">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-7"
+                aria-label="Reset the example"
+                onClick={() => {
+                  setEdited(false);
+                  setMount((key) => key + 1);
+                }}
+              >
+                <RotateCcw aria-hidden="true" />
+              </Button>
+            </ActionTooltip>
+          )}
+          <Button asChild variant="ghost" size="sm" className="h-7 px-2">
+            <Link
+              to={
+                spec.notebook !== undefined
+                  ? spec.fullPath
+                  : examplePath(spec.exampleId)
+              }
+            >
+              <Maximize2 aria-hidden="true" />
+              {spec.notebook !== undefined ? "Daily example" : "Full example"}
+            </Link>
+          </Button>
+        </span>
+      </figcaption>
     </figure>
   );
 }

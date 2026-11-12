@@ -31,11 +31,14 @@ export function liveExample(page: Page, id: string) {
   return page.locator(`[data-docs-live="${id}"]`);
 }
 
-/** Waits for a live workspace, or a live surface, to finish loading. */
+/**
+ * Waits for a live workspace, or a live surface, to finish loading. Most
+ * examples hide the workspace status bar, so wait for a chart panel.
+ */
 export async function waitForWorkspace(page: Page, id: string) {
   await expect(
     liveExample(page, id)
-      .locator(".eda-row-count, [data-docs-surface], .eda-notebook-output")
+      .locator(".eda-panel, [data-docs-surface], .eda-notebook-output")
       .first()
   ).toBeVisible();
 }
