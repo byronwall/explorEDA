@@ -487,15 +487,6 @@ export function CalendarHeatmap({
               );
             })}
           </g>
-          <path
-            d={plan.monthBoundaries.join("")}
-            fill="none"
-            stroke="var(--muted-foreground)"
-            strokeOpacity={0.35}
-            strokeWidth={1}
-            pointerEvents="none"
-            aria-hidden="true"
-          />
           {annotationSlot(settings, annotationFrame)?.(`url(#${baseId}-plot)`)}
         </g>
       </svg>

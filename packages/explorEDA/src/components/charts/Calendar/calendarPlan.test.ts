@@ -224,15 +224,12 @@ describe("planCalendar", () => {
     ).toEqual([]);
   });
 
-  it("draws a line between each pair of months in year view", () => {
+  it("parts months in year view by a gap, not a line", () => {
     const result = plan();
-    expect(result.monthBoundaries).toHaveLength(11);
-    // 1 February 2024 was a Thursday, so February's edge steps across its first week.
-    const cell = result.days[0]!;
-    const column = day(result, "2024-02-01").column;
-    expect(result.monthBoundaries[0]).toBe(
-      `M${(column + 1) * cell.size},0V${3 * cell.height}H${column * cell.size}V${7 * cell.height}`
-    );
-    expect(plan({}, 360).monthBoundaries).toEqual([]);
+    // 1 February 2024 was a Thursday, so January's last week shares its column.
+    const jan31 = day(result, "2024-01-31");
+    const feb1 = day(result, "2024-02-01");
+    expect(feb1.column).toBe(jan31.column);
+    expect(feb1.x).toBeGreaterThan(jan31.x);
   });
 });
