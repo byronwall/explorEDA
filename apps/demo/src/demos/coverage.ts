@@ -1078,6 +1078,16 @@ export const exampleCoverage = [
     },
   },
   {
+    exampleId: "request-profile",
+    intent:
+      "Read sampled call stacks four frames deep as an icicle, beside the same stacks as a treemap.",
+    features: {
+      "chart:hierarchy": "shown",
+      "chart:data-table": "shown",
+      "table:sorting": "shown",
+    },
+  },
+  {
     exampleId: "categorical-charts",
     intent:
       "Break down a categorical catalog with counts, a pivot, a facet grid, and a table search.",

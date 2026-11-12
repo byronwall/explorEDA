@@ -145,7 +145,7 @@ export const CHART_SETTINGS: Readonly<
   hierarchy: {
     field: "Not read by this chart type.",
     levels:
-      "Category fields from outermost in, one to three. Each row is one path through them.",
+      "Category fields from outermost in, one to six. Each row is one path through them.",
     aggregation: "Node size: a count of rows, or a sum of the measure.",
     measureField:
       "Field summed for node size. Negative and missing values are left out.",

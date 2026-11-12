@@ -9,7 +9,7 @@
 
 <ReadingGuide chart="hierarchy">
   <Part at="level">
-    Levels are category fields from outermost in, one to three. Each row is one
+    Levels are category fields from outermost in, one to six. Each row is one
     path through them.
   </Part>
   <Part at="size">
@@ -27,3 +27,9 @@
     Zoom into a branch to see its parts; the zoom saves with the chart.
   </Part>
 </ReadingGuide>
+
+## Choose an arrangement
+
+- **Treemap** fits the most leaves in a box. Use it for two or three levels where leaf sizes matter most.
+- **Icicle** gives each level its own column, so labels stay readable at every depth and a parent sits beside its children. Use it for deep, ordered paths such as call stacks or folders. A profiler's flame graph is an icicle. See [where one request spends its time](/examples/request-profile).
+- **Sunburst** draws the icicle in rings. Outer rings get more room than inner ones, so compare sizes within a ring, not across rings.

@@ -1,0 +1,20 @@
+Frame 1,Frame 2,Frame 3,Frame 4,Frame 5,Self ms
+handleRequest,authMiddleware,verifyToken,jwt.verify,crypto.createVerify,38
+handleRequest,authMiddleware,verifyToken,jwt.verify,base64url.decode,6
+handleRequest,authMiddleware,loadSession,redis.get,socket.read,21
+handleRequest,authMiddleware,loadSession,redis.get,parseReply,4
+handleRequest,getOrders,orderService.list,db.query,pg.connect,12
+handleRequest,getOrders,orderService.list,db.query,socket.read,164
+handleRequest,getOrders,orderService.list,db.query,parseRows,41
+handleRequest,getOrders,orderService.list,applyDiscounts,priceRules.match,57
+handleRequest,getOrders,orderService.list,applyDiscounts,Math.round,3
+handleRequest,getOrders,enrichOrders,productCache.get,lru.lookup,9
+handleRequest,getOrders,enrichOrders,productCache.get,redis.get,33
+handleRequest,getOrders,enrichOrders,currency.convert,rates.fetch,72
+handleRequest,getOrders,enrichOrders,currency.convert,Number.toFixed,5
+handleRequest,renderResponse,serialize,JSON.stringify,stringifyObject,96
+handleRequest,renderResponse,serialize,JSON.stringify,escapeString,28
+handleRequest,renderResponse,compress,zlib.gzip,deflate,61
+handleRequest,renderResponse,compress,zlib.gzip,crc32,8
+handleRequest,logRequest,logger.info,formatLine,Date.toISOString,7
+handleRequest,logRequest,logger.info,formatLine,util.inspect,19
