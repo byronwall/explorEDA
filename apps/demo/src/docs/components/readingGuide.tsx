@@ -105,7 +105,7 @@ export function ReadingGuide({
       </svg>
       <ol
         id={keyId}
-        className="min-w-0 space-y-2.5 text-sm leading-6 text-foreground/80 [&_p]:m-0"
+        className="min-w-0 space-y-2.5 text-sm leading-6 text-foreground/80 [&_p]:m-0 [&_p]:text-sm [&_p]:leading-6"
       >
         {parts.map(({ n, body }, index) => (
           <li key={index} className="flex gap-2.5">
@@ -119,7 +119,8 @@ export function ReadingGuide({
                 –
               </span>
             )}
-            <span className="min-w-0">{body}</span>
+            {/* Prettier wraps long parts, so MDX may hand them over as a paragraph. */}
+            <div className="min-w-0">{body}</div>
           </li>
         ))}
       </ol>
