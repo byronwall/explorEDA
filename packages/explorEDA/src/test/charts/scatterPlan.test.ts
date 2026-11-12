@@ -26,7 +26,7 @@ it("plans scatter points, guides, and brush from distinct row populations", () =
   chart.id = "scatter";
   chart.xField = "x";
   chart.yField = "y";
-  // The axes are shared default objects; copy them instead of mutating.
+  // The default axes are frozen; copy them to change a setting.
   chart.xAxis = { ...chart.xAxis, grid: true };
   chart.yAxis = { ...chart.yAxis, grid: true };
   chart.filters = [{ type: "range", field: "x", min: 2, max: 3 }];
