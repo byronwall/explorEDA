@@ -38,6 +38,7 @@ import {
   Upload,
   Download,
   Code,
+  Compass,
   Ruler,
   Layers,
   CircleAlert,
@@ -204,6 +205,19 @@ export const catalogue: readonly DocsPage[] = [
     covers: ["surface:settings-popover"],
     examples: ["shop-operations"],
     related: ["bar"],
+  },
+  {
+    topic: "choose-a-chart",
+    title: "Choose a chart",
+    group: "start",
+    icon: Compass,
+    lede: "Find the chart type that answers your question, and the fields each one needs.",
+    summary:
+      "Every chart type by question, with the setup the special ones need.",
+    highlights: ["Which chart?", "Lookalikes", "Setup"],
+    covers: [],
+    examples: [],
+    related: ["bar", "line", "scatter", "chart-settings"],
   },
   {
     topic: "developers",

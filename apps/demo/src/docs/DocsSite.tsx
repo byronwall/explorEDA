@@ -25,7 +25,11 @@ import {
 import { DocsLink, mdxComponents } from "./components/content";
 import { ChartChooser, Hero } from "./components/home";
 import { DocsLayout, Rail } from "./components/layout";
-import { AtAGlance, SavedSettings } from "./components/template";
+import {
+  AtAGlance,
+  ChartChoiceNote,
+  SavedSettings,
+} from "./components/template";
 import {
   ContentsReader,
   InlineContents,
@@ -164,6 +168,7 @@ function GuidePage({ page }: { page: DocsPage }) {
           {page.lede}
         </PageHeader>
         {page.chartType && <AtAGlance chartType={page.chartType} />}
+        {page.chartType && <ChartChoiceNote chartType={page.chartType} />}
         <InlineContents entries={contents} />
         <article
           className="docs-article mt-10 min-w-0"

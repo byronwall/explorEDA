@@ -1,4 +1,5 @@
 import { catalogue, GROUP_LABELS } from "./catalogue";
+import { CHART_CHOICES } from "./chooser";
 import { GLANCES } from "./glance";
 import {
   COMMON_SETTINGS,
@@ -35,6 +36,7 @@ async function build(): Promise<SearchEntry[]> {
     catalogue.map(async (page) => {
       const entries: SearchEntry[] = [];
       const glance = page.chartType ? GLANCES[page.chartType] : undefined;
+      const choice = page.chartType ? CHART_CHOICES[page.chartType] : undefined;
       entries.push({
         kind: "page",
         topic: page.topic,
@@ -46,6 +48,7 @@ async function build(): Promise<SearchEntry[]> {
           page.highlights.join(", "),
           glance?.useFor,
           glance?.needs,
+          choice && `Use this when ${choice.when}`,
           ...(glance?.gestures.map(
             ([gesture, effect]) => `${gesture}: ${effect.toLowerCase()}.`
           ) ?? []),
