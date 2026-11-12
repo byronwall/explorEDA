@@ -7,7 +7,7 @@
   "scripts": {
     "pgm:view": "pgm viewer --data-dir ./pgm/data",
     "pgm": "pgm --local ./pgm/data --project untitled-project",
-    "check": "pnpm check:ui && pnpm --recursive --if-present run build && pnpm --recursive --if-present run check-types && pnpm --recursive --if-present run test",
+    "check": "pnpm check:ui && pnpm --recursive --workspace-concurrency=1 --if-present run build && pnpm --recursive --workspace-concurrency=1 --if-present run check-types && pnpm --recursive --workspace-concurrency=1 --if-present run test",
     "release": "pnpm check && changeset publish",
     "check:ui": "node scripts/check-ui.mjs",
     "changeset:add": "node scripts/add-changeset.mjs",
@@ -19,7 +19,7 @@
     "team-shot": "node scripts/team-shot.mjs",
     "restack": "node scripts/restack.mjs",
     "prepare": "git config core.hooksPath .githooks || true",
-    "lint": "pnpm --filter exploreda exec eslint src --quiet && pnpm --filter demo exec eslint . --quiet"
+    "lint": "oxlint --quiet packages/explorEDA/src apps/demo apps/app"
   },
   "dependencies": {
     "@changesets/cli": "^2.28.1",
@@ -29,6 +29,7 @@
   "packageManager": "pnpm@11.9.0",
   "devDependencies": {
     "@byronwallrus/product-grid-cli": "0.3.0",
+    "oxlint": "1.93.0",
     "playwright": "1.62.0"
   }
 }

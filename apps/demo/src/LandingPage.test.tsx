@@ -426,7 +426,7 @@ describe("LandingPage routing", () => {
     const bytes = readFileSync(
       "../../packages/explorEDA/src/lib/readers/fixtures/orders.xlsx"
     );
-    const file = new File([bytes], "orders.xlsx");
+    const file = new File([new Uint8Array(bytes)], "orders.xlsx");
     fireEvent.drop(window, {
       dataTransfer: { types: ["Files"], files: [file] },
     });

@@ -495,7 +495,7 @@ function nextBelow(value: number) {
   if (value === 0) return -Number.MIN_VALUE;
   const buffer = new Float64Array([value]);
   const bits = new BigInt64Array(buffer.buffer);
-  bits[0] += value > 0 ? -1n : 1n;
+  bits[0]! += value > 0 ? -1n : 1n;
   return buffer[0]!;
 }
 

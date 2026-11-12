@@ -1,5 +1,5 @@
 // Pre-commit hook (.githooks/pre-commit): formats the staged files with
-// Prettier and fails on ESLint errors in them. Warnings never block; the
+// Prettier and fails on oxlint errors in them. Warnings never block; the
 // codebase has thousands of `curly` warnings already.
 //
 // A fully staged file is formatted and restaged. A file with unstaged edits
@@ -8,7 +8,7 @@
 // reformats the other side's files. Skip once with `git commit --no-verify`.
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -66,24 +66,20 @@ if (unformatted.length) {
   failed = true;
 }
 
-// ESLint runs from each package so it finds that package's config.
-for (const pkg of ["packages/explorEDA", "apps/demo"]) {
-  const files = staged
-    .filter(
-      (file) =>
-        file.startsWith(`${pkg}/`) &&
-        /\.(ts|tsx)$/.test(file) &&
-        !file.includes("/dist/")
-    )
-    .map((file) => relative(join(root, pkg), join(root, file)));
-  const eslint = join(root, pkg, "node_modules/.bin/eslint");
-  if (!files.length || !existsSync(eslint)) continue;
-  const linted = spawnSync(eslint, ["--quiet", ...files], {
-    cwd: join(root, pkg),
+// oxlint reads the root .oxlintrc.json, which holds each package's rules.
+const lintable = staged.filter(
+  (file) =>
+    /^(packages\/explorEDA\/src|apps\/demo|apps\/app)\//.test(file) &&
+    /\.(ts|tsx)$/.test(file) &&
+    !file.includes("/dist/")
+);
+if (lintable.length && existsSync(bin("oxlint"))) {
+  const linted = spawnSync(bin("oxlint"), ["--quiet", ...lintable], {
+    cwd: root,
     encoding: "utf8",
   });
   if (linted.status !== 0) {
-    console.error(`pre-commit: ESLint errors in ${pkg}:\n${linted.stdout}`);
+    console.error(`pre-commit: oxlint errors:\n${linted.stdout}`);
     failed = true;
   }
 }

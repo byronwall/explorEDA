@@ -13,7 +13,10 @@ import { tableFileAccept, tableFormatList, tableFormatOf } from "./formats";
 import { TableReadError, type TableFile } from "./types";
 
 const fixture = async (name: string) =>
-  new File([await readFile(resolve(__dirname, "fixtures", name))], name);
+  new File(
+    [new Uint8Array(await readFile(resolve(__dirname, "fixtures", name)))],
+    name
+  );
 
 const typeOf = (table: TableFile) =>
   Object.fromEntries(table.fields.map((field) => [field.id, field.type]));
