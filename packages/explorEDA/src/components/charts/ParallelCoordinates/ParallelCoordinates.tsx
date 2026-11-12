@@ -45,11 +45,12 @@ import {
   parallelTraceTargets,
   resolveParallelTrace,
 } from "./parallelTrace";
+import { dragSpan, gripCursor, spanGrip, type Grip } from "@/hooks/brushSpan";
 
-type DragMode = "new" | "move" | "top" | "bottom";
 interface BrushDrag {
   axis: number;
-  mode: DragMode;
+  /** Draw a new range, move the range, or resize one of its ends. */
+  grip: Grip;
   start: number;
   origin: { y0: number; y1: number };
   y0: number;
@@ -58,7 +59,6 @@ interface BrushDrag {
 }
 
 const HEADER_WIDTH = 150;
-const EDGE = 5;
 
 const truncate = (text: string, pixels: number) => {
   const max = Math.max(2, Math.floor(pixels / 6));
@@ -330,19 +330,15 @@ export function ParallelCoordinates({
     event.currentTarget.setPointerCapture?.(event.pointerId);
     const y = clampY(plotY(event));
     const brush = axis.brush;
-    const mode: DragMode =
-      brush && axis.kind === "numeric" && Math.abs(y - brush.y0) <= EDGE
-        ? "top"
-        : brush && axis.kind === "numeric" && Math.abs(y - brush.y1) <= EDGE
-          ? "bottom"
-          : brush && y > brush.y0 && y < brush.y1
-            ? "move"
-            : "new";
-    const origin = brush ? { y0: brush.y0, y1: brush.y1 } : { y0: y, y1: y };
+    const grip = brush ? spanGrip([brush.y0, brush.y1], y) : "draw";
+    const origin =
+      brush && grip !== "draw"
+        ? { y0: brush.y0, y1: brush.y1 }
+        : { y0: y, y1: y };
     setHovered(null);
     setDrag({
       axis: axis.index,
-      mode,
+      grip,
       start: y,
       origin,
       y0: origin.y0,
@@ -355,25 +351,26 @@ export function ParallelCoordinates({
     axis: ParallelAxis
   ) => {
     if (!drag || drag.axis !== axis.index) {
+      // The cursor shows what a press here does to the axis's range.
+      if (!drag && !event.buttons) {
+        event.currentTarget.style.cursor = axis.brush
+          ? gripCursor(
+              "hold",
+              spanGrip([axis.brush.y0, axis.brush.y1], plotY(event))
+            )
+          : "";
+      }
       return;
     }
     const y = clampY(plotY(event));
     const delta = y - drag.start;
-    let { y0, y1 } = drag.origin;
-    if (drag.mode === "new") {
-      y0 = Math.min(drag.start, y);
-      y1 = Math.max(drag.start, y);
-    } else if (drag.mode === "move") {
-      const shift = Math.max(-y0, Math.min(plan.plotHeight - y1, delta));
-      y0 += shift;
-      y1 += shift;
-    } else if (drag.mode === "top") {
-      y0 = Math.min(y, y1);
-      y1 = Math.max(y, y1);
-    } else {
-      y1 = Math.max(y, y0);
-      y0 = Math.min(y, y0);
-    }
+    const [y0, y1] = dragSpan(
+      drag.grip,
+      [drag.origin.y0, drag.origin.y1],
+      drag.start,
+      y,
+      plan.plotHeight
+    );
     const moved = drag.moved || Math.abs(delta) > 2;
     setDrag({ ...drag, y0, y1, moved });
     if (moved && y1 - y0 > 1) {
@@ -387,7 +384,7 @@ export function ParallelCoordinates({
     cancelAnimationFrame(frame.current);
     if (!drag.moved) {
       // A click on an empty part of the axis clears its selection.
-      if (drag.mode === "new" && axis.brush) {
+      if (drag.grip === "draw" && axis.brush) {
         commitFilter(axis.field, undefined);
       }
     } else {
@@ -559,6 +556,9 @@ export function ParallelCoordinates({
               const line = findNearestLine(plan, plotX(event), plotY(event));
               if (line) {
                 inspect("polyline", `row:${line.id}`);
+              } else if (!event.altKey && settings.filters.length) {
+                // A click on empty space clears the chart's selection.
+                updateChart(settings.id, { filters: [] });
               }
             }}
           />
@@ -642,7 +642,7 @@ export function ParallelCoordinates({
               ? { y0: active.y0, y1: active.y1 }
               : axis.brush;
             const showExtent =
-              extent && (!active || active.moved || active.mode !== "new");
+              extent && (!active || active.moved || active.grip !== "draw");
             const labelRoom = Math.min(90, spacing * 0.42);
             const isTraced = tracedAxis === axis.id;
             return (

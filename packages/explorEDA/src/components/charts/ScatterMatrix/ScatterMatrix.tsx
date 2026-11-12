@@ -54,11 +54,25 @@ import {
   type MatrixPlan,
   type MatrixSnapshot,
 } from "./matrixPlan";
+import {
+  boxGrips,
+  dragSpan,
+  gripCursor,
+  gripsResize,
+  spanGrip,
+  type Grip,
+} from "@/hooks/brushSpan";
 
+type Box = [[number, number], [number, number]];
 interface Drag {
   cell: string;
   start: [number, number];
-  end: [number, number];
+  /** What the press does along x and y: draw, move, or resize an edge. */
+  grips: [Grip, Grip];
+  /** The selection when the press began, in cell offsets. */
+  original: Box;
+  /** The selection the drag has made so far. */
+  box: Box;
   moved: boolean;
 }
 
@@ -366,25 +380,91 @@ export function ScatterMatrix({
     event.currentTarget.focus({ preventScroll: true });
     event.currentTarget.setPointerCapture?.(event.pointerId);
     const point = local(event);
+    const grips = gripsAt(cell, point);
+    const diagonal = cell.row === cell.column;
+    const selection = selectionBox(cell);
     setHovered(null);
-    setDrag({ cell: cell.id, start: point, end: point, moved: false });
+    setDrag({
+      cell: cell.id,
+      start: point,
+      grips,
+      original: (grips[0] !== "draw" && selection) || [
+        [point[0], diagonal ? 0 : point[1]],
+        [point[0], diagonal ? size : point[1]],
+      ],
+      box: [point, point],
+      moved: false,
+    });
   };
-  const dragFilters = (cell: MatrixCell, current: Drag) =>
-    cell.row === cell.column
-      ? [
-          offsetFilter(plan.fields[cell.column]!, [
-            current.start[0],
-            current.end[0],
-          ]),
-        ]
-      : brushFilters(plan, cell, current.start, current.end);
+  // The cell's selection as a box in cell offsets, if it shows one.
+  const selectionBox = (cell: MatrixCell): Box | undefined => {
+    const rect = selectionRect(cell);
+    return (
+      rect && [
+        [rect.x, rect.y],
+        [rect.x + rect.w, rect.y + rect.h],
+      ]
+    );
+  };
+  // Like every brush: edges resize, the body moves, outside draws anew.
+  const gripsAt = (cell: MatrixCell, point: [number, number]) => {
+    const box = selectionBox(cell);
+    const diagonal = cell.row === cell.column;
+    if (!box) {
+      return ["draw", diagonal ? "hold" : "draw"] as [Grip, Grip];
+    }
+    return diagonal
+      ? ([spanGrip([box[0][0], box[1][0]], point[0]), "hold"] as [Grip, Grip])
+      : boxGrips(box, point);
+  };
+  const dragFilters = (cell: MatrixCell, current: Drag) => {
+    const [[x0, y0], [x1, y1]] = current.box;
+    const next =
+      cell.row === cell.column
+        ? [offsetFilter(plan.fields[cell.column]!, [x0, x1])]
+        : brushFilters(plan, cell, [x0, y0], [x1, y1]);
+    if (current.grips[0] === "draw") {
+      return next;
+    }
+    // Moving or resizing keeps the selection on the matrix's other fields.
+    const dragged = new Set(next.map((filter) => filter.field));
+    return [
+      ...settings.filters.filter(
+        (filter) =>
+          settings.fields.includes(filter.field) && !dragged.has(filter.field)
+      ),
+      ...next,
+    ];
+  };
   const moveDrag = (event: PointerEvent<SVGRectElement>, cell: MatrixCell) => {
     if (drag?.cell === cell.id) {
       const end = local(event);
       const moved =
         drag.moved ||
         Math.abs(end[0] - drag.start[0]) + Math.abs(end[1] - drag.start[1]) > 3;
-      const next = { ...drag, end, moved };
+      const [[x0, y0], [x1, y1]] = drag.original;
+      const [left, right] = dragSpan(
+        drag.grips[0],
+        [x0, x1],
+        drag.start[0],
+        end[0],
+        size
+      );
+      const [top, bottom] = dragSpan(
+        drag.grips[1],
+        [y0, y1],
+        drag.start[1],
+        end[1],
+        size
+      );
+      const next: Drag = {
+        ...drag,
+        box: [
+          [left, top],
+          [right, bottom],
+        ],
+        moved,
+      };
       setDrag(next);
       if (moved) {
         scheduleFilters(dragFilters(cell, next));
@@ -393,6 +473,12 @@ export function ScatterMatrix({
     }
     if (event.buttons) {
       return;
+    }
+    // The cursor shows what a press here does to the cell's selection.
+    if (cell.kind === "points" || cell.row === cell.column) {
+      event.currentTarget.style.cursor = gripCursor(
+        ...gripsAt(cell, local(event))
+      );
     }
     setHoverCell(cell.id);
     if (cell.kind !== "points") {
@@ -411,6 +497,10 @@ export function ScatterMatrix({
     if (drag.moved) {
       setPreview(null);
       setFilters(dragFilters(cell, drag));
+      return;
+    }
+    // A click on a selection's edge leaves it as it is.
+    if (gripsResize(...drag.grips)) {
       return;
     }
     // A click selects the mark under it, or clears the selection on empty space.
@@ -637,15 +727,12 @@ export function ScatterMatrix({
             {plan.cells.map((cell) => {
               const active =
                 drag?.cell === cell.id && drag.moved ? drag : undefined;
-              const diagonal = cell.row === cell.column;
               const rect = active
                 ? {
-                    x: Math.min(active.start[0], active.end[0]),
-                    y: diagonal ? 0 : Math.min(active.start[1], active.end[1]),
-                    w: Math.abs(active.end[0] - active.start[0]),
-                    h: diagonal
-                      ? size
-                      : Math.abs(active.end[1] - active.start[1]),
+                    x: active.box[0][0],
+                    y: active.box[0][1],
+                    w: active.box[1][0] - active.box[0][0],
+                    h: active.box[1][1] - active.box[0][1],
                   }
                 : selectionRect(cell);
               return (

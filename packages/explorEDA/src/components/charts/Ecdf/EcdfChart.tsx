@@ -47,6 +47,13 @@ import {
   findEcdfTraceRow,
   resolveEcdfTrace,
 } from "./ecdfTrace";
+import {
+  dragSpan,
+  gripCursor,
+  gripsResize,
+  spanGrip,
+  type Grip,
+} from "@/hooks/brushSpan";
 
 const pct = (share: number) =>
   share.toLocaleString("en-US", { style: "percent", maximumFractionDigits: 1 });
@@ -114,8 +121,16 @@ export function EcdfChart({
   const [hovered, setHovered] = useState<number | null>(null);
   const [focusValue, setFocusValue] = useState<number | null>(null);
   const [drag, setDrag] = useState<{
-    start: number;
-    end: number;
+    /** Draw a new span, move the selection, or resize one of its ends. */
+    grip: Grip;
+    /** Where the press began, in plot pixels. */
+    at: number;
+    /** The selection's ends in pixels when the press began. */
+    origin: [number, number];
+    /** Which ends are open, as in a threshold; a move keeps them open. */
+    open: [boolean, boolean];
+    /** Where the pointer is now, in plot pixels. */
+    x: number;
     moved: boolean;
   } | null>(null);
 
@@ -314,11 +329,44 @@ export function EcdfChart({
     }
   };
 
-  const hoverValue = drag ? drag.end : hovered;
-  const dragSpan =
-    drag?.moved && drag.start !== drag.end
-      ? [Math.min(drag.start, drag.end), Math.max(drag.start, drag.end)]
-      : undefined;
+  // Like every brush: an edge resizes, the body moves, outside draws a span.
+  // An open end sits at the plot's edge and has nothing to resize.
+  const gripAt = (x: number): Grip => {
+    const selection = plan.selection;
+    if (!selection) {
+      return "draw";
+    }
+    const grip = spanGrip([selection.x0, selection.x1], x);
+    return (grip === "start" && selection.filter.min === undefined) ||
+      (grip === "end" && selection.filter.max === undefined)
+      ? "move"
+      : grip;
+  };
+  // The values the drag has reached so far; an open end stays undefined.
+  const dragEnds = (current: NonNullable<typeof drag>) => {
+    // A threshold's origin is its one bound, so any press on it moves it.
+    const threshold = current.open[0] || current.open[1];
+    const [a, b] = dragSpan(
+      threshold ? "move" : current.grip,
+      current.origin,
+      current.at,
+      current.x,
+      plan.plotWidth
+    );
+    return [
+      current.open[0] ? undefined : snapToValue(plan, a),
+      current.open[1] ? undefined : snapToValue(plan, b),
+    ] as const;
+  };
+  const hoverValue = drag ? (snapToValue(plan, drag.x) ?? null) : hovered;
+  const ends = drag?.moved ? dragEnds(drag) : undefined;
+  const dragRange = ends && ends[0] !== ends[1] ? ends : undefined;
+  const rangeText = (low?: number, high?: number) =>
+    low !== undefined && high !== undefined
+      ? `${format(low)} to ${format(high)}`
+      : low !== undefined
+        ? `≥ ${format(low)}`
+        : `≤ ${format(high!)}`;
   // Rows read top to bottom in the order the curves stack at the value.
   const readoutRows = (
     share: (curve: EcdfPlan["curves"][number]) => number,
@@ -342,11 +390,11 @@ export function EcdfChart({
       (curve) => countInRange(curve, min, max)
     );
   let readout: { label: string; value: string; rows: ReadoutRow[] } | undefined;
-  if (dragSpan) {
+  if (dragRange) {
     readout = {
       label: plan.fieldLabel,
-      value: `${format(dragSpan[0]!)} to ${format(dragSpan[1]!)}`,
-      rows: spanRows(dragSpan[0], dragSpan[1]),
+      value: rangeText(dragRange[0], dragRange[1]),
+      rows: spanRows(dragRange[0], dragRange[1]),
     };
   } else if (hoverValue !== null) {
     readout = {
@@ -361,7 +409,7 @@ export function EcdfChart({
   }
   // Each curve's share beside its dot, so a clipped header loses nothing.
   const hoverDots =
-    hoverValue !== null && !dragSpan
+    hoverValue !== null && !dragRange
       ? plan.curves
           .filter((curve) => curve.count)
           .map((curve) => {
@@ -386,8 +434,11 @@ export function EcdfChart({
   const axisValueX = (x: number, text: string) =>
     pillX(x, text, plan.plotWidth);
 
-  const selection = dragSpan
-    ? { x0: plan.px(dragSpan[0]!), x1: plan.px(dragSpan[1]!) }
+  const selection = dragRange
+    ? {
+        x0: dragRange[0] === undefined ? 0 : plan.px(dragRange[0]),
+        x1: dragRange[1] === undefined ? plan.plotWidth : plan.px(dragRange[1]),
+      }
     : plan.selection;
 
   return (
@@ -546,7 +597,7 @@ export function EcdfChart({
           </g>
           {hoverValue !== null && (
             <g pointerEvents="none" aria-hidden="true">
-              {!dragSpan && (
+              {!dragRange && (
                 <line
                   x1={hoverX}
                   x2={hoverX}
@@ -580,7 +631,7 @@ export function EcdfChart({
                   {pct(share)}
                 </text>
               ))}
-              {!dragSpan && (
+              {!dragRange && (
                 <AxisValue
                   x={axisValueX(hoverX, format(hoverValue))}
                   y={plan.plotHeight + 3}
@@ -589,16 +640,19 @@ export function EcdfChart({
               )}
             </g>
           )}
-          {dragSpan && (
+          {dragRange && (
             <g pointerEvents="none" aria-hidden="true">
-              {dragSpan.map((value, index) => (
-                <AxisValue
-                  key={index}
-                  x={axisValueX(plan.px(value), format(value))}
-                  y={plan.plotHeight + 3}
-                  text={format(value)}
-                />
-              ))}
+              {dragRange.map(
+                (value, index) =>
+                  value !== undefined && (
+                    <AxisValue
+                      key={index}
+                      x={axisValueX(plan.px(value), format(value))}
+                      y={plan.plotHeight + 3}
+                      text={format(value)}
+                    />
+                  )
+              )}
             </g>
           )}
           {traced && (
@@ -640,17 +694,20 @@ export function EcdfChart({
             }
             aria-description="Arrow keys move through observed values. Enter selects rows past this value; Delete clears. Alt-Enter traces it."
             onPointerMove={(event) => {
-              const value = snapToValue(plan, plotX(event.clientX));
+              const x = plotX(event.clientX);
+              const value = snapToValue(plan, x);
               if (value === undefined) {
                 return;
               }
               if (drag) {
                 setDrag({
                   ...drag,
-                  end: value,
-                  moved: drag.moved || value !== drag.start,
+                  x,
+                  moved: drag.moved || Math.abs(x - drag.at) >= 3,
                 });
               } else {
+                // The cursor shows what a press here does to the selection.
+                event.currentTarget.style.cursor = gripCursor(gripAt(x));
                 setHovered(value);
               }
             }}
@@ -664,12 +721,41 @@ export function EcdfChart({
               if (event.button !== 0 || event.altKey) {
                 return;
               }
-              const value = snapToValue(plan, plotX(event.clientX));
-              if (value === undefined) {
+              const x = plotX(event.clientX);
+              const selection = plan.selection;
+              if (snapToValue(plan, x) === undefined) {
                 return;
               }
               event.currentTarget.setPointerCapture?.(event.pointerId);
-              setDrag({ start: value, end: value, moved: false });
+              const grip = gripAt(x);
+              if (grip === "draw" || !selection) {
+                setDrag({
+                  grip: "draw",
+                  at: x,
+                  origin: [x, x],
+                  open: [false, false],
+                  x,
+                  moved: false,
+                });
+                return;
+              }
+              const open: [boolean, boolean] = [
+                selection.filter.min === undefined,
+                selection.filter.max === undefined,
+              ];
+              // A threshold has one bound: a press anywhere on it moves that bound.
+              const bound = open[0] ? selection.x1 : selection.x0;
+              setDrag({
+                grip,
+                at: x,
+                origin:
+                  open[0] || open[1]
+                    ? [bound, bound]
+                    : [selection.x0, selection.x1],
+                open,
+                x,
+                moved: false,
+              });
             }}
             onClick={(event) => {
               if (!event.altKey) {
@@ -689,12 +775,18 @@ export function EcdfChart({
                 setDrag(null);
                 return;
               }
-              if (drag.moved && drag.start !== drag.end) {
-                commit(drag.start, drag.end);
-              } else {
-                commit(sameThreshold(drag.start) ? undefined : drag.start);
-              }
               setDrag(null);
+              const [low, high] = dragEnds(drag);
+              if (drag.moved && drag.grip !== "draw") {
+                // A moved threshold keeps its open end.
+                commit(low ?? high, low === undefined ? undefined : high);
+              } else if (drag.moved && low !== high) {
+                commit(low, high);
+              } else if (!gripsResize(drag.grip)) {
+                // A click picks a threshold; a second click on it clears it.
+                const value = snapToValue(plan, drag.at)!;
+                commit(sameThreshold(value) ? undefined : value);
+              }
             }}
             onPointerCancel={() => setDrag(null)}
             onFocus={() =>

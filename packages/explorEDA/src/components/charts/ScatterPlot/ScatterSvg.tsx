@@ -378,9 +378,9 @@ function Primitive({
     );
   }
   if (item.kind === "rect") {
-    const { kind, id, cursor, ...props } = item;
+    const { kind, id, ...props } = item;
     void kind;
-    return <rect data-plan-id={id} {...props} style={{ cursor }} />;
+    return <rect data-plan-id={id} {...props} />;
   }
   if (item.kind === "circle") {
     const { kind, id, ...props } = item;
