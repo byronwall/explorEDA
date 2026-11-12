@@ -301,6 +301,22 @@ export function withoutNegativeZero(text: string): string {
 /** A field named for years, such as "year", "fiscal_year", or "gaps.year". */
 const YEAR_FIELD = /(^|[\s_.-])years?($|[\s_.-])/i;
 
+// Making an Intl formatter costs far more than using one, and tables and
+// axes format every value they show, so each set of options gets one.
+const formatters = new Map<string, Intl.NumberFormat | Intl.DateTimeFormat>();
+function formatter<T extends Intl.NumberFormat | Intl.DateTimeFormat>(
+  Format: new (locale: string, options: object) => T,
+  options: Intl.NumberFormatOptions | Intl.DateTimeFormatOptions
+): T {
+  const key = `${Format.name}:${JSON.stringify(options)}`;
+  let made = formatters.get(key) as T | undefined;
+  if (!made) {
+    made = new Format("en-US", options);
+    formatters.set(key, made);
+  }
+  return made;
+}
+
 export function formatFieldValue(
   field: string,
   value: datum,
@@ -339,7 +355,7 @@ export function formatFieldValue(
         dateStyle: "medium",
       };
       if (format === "datetime") options.timeStyle = "short";
-      const text = new Intl.DateTimeFormat("en-US", options).format(date);
+      const text = formatter(Intl.DateTimeFormat, options).format(date);
       return settings.unit ? `${text} ${settings.unit}` : text;
     }
     return String(value);
@@ -415,7 +431,7 @@ export function formatFieldValue(
       options.style = "percent";
     }
     const text = withoutNegativeZero(
-      new Intl.NumberFormat("en-US", options).format(numberValue)
+      formatter(Intl.NumberFormat, options).format(numberValue)
     );
     return settings.unit ? `${text} ${settings.unit}` : text;
   }
