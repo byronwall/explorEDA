@@ -84,9 +84,6 @@ describe("Retention", () => {
       "Jan 13 cohort, Week 1: 100%, 1 of 1",
       "Jan 13 cohort, Week 2: 0%, 0 of 1, partial period",
     ]);
-    expect(container.querySelector(".eda-chart-status")).toHaveTextContent(
-      "3 entered in 2 cohorts · 1 without the entry event"
-    );
   });
 
   it("names the year in cohort labels when the cohorts span more than one", () => {

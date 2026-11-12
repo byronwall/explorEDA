@@ -121,7 +121,7 @@ export function ScaleToChip({
   );
 }
 
-/** Places the chip under the chart while other charts filter it. */
+/** Places the chip in the chart header while other charts filter it. */
 export function ScaleToChipSlot({ settings }: { settings: ChartSettings }) {
   const updateChart = useDataLayer((state) => state.updateChart);
   const liveCount = useGetLiveIds(settings).length;

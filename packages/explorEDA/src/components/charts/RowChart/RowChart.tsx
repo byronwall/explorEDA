@@ -2,7 +2,6 @@ import {
   SMALL_SAMPLE,
   isAdditiveSpec,
   poolAggregateRows,
-  rowsWithoutMeasure,
   type AggregateResult,
 } from "@/lib/aggregates";
 import {
@@ -60,11 +59,6 @@ import {
 import type { TraceSource } from "../trace/traceTypes";
 import type { RowTrace } from "./RowTraceBody";
 import { ChartReadout } from "../ChartReadout";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
 
 type RowChartProps = BaseChartProps<RowChartSettings>;
 
@@ -74,9 +68,6 @@ const TOP_N_ROW_FLOOR = 12;
 /** Each group's value, for statistics such as rule x=mean. */
 const summaryValues = (summary: AggregateResult) =>
   summary.rows.flatMap((row) => (row.value === undefined ? [] : [row.value]));
-
-/** Room the status line leaves for the Show all button. */
-const SHOW_ALL_WIDTH = 76;
 
 export function RowChart({
   settings,
@@ -484,9 +475,7 @@ export function RowChart({
     ...baseMargin,
     left: Math.min(labelMargin, width * 0.42),
     right: Math.max(baseMargin.right, 48),
-    bottom:
-      Math.max(baseMargin.bottom, (xAxisLabel ? 42 : 26) + typeGrowth) +
-      STATUS_LINE_HEIGHT,
+    bottom: Math.max(baseMargin.bottom, (xAxisLabel ? 42 : 26) + typeGrowth),
   };
   // Few categories keep their bar height, so the X axis rises to sit under
   // the last bar instead of leaving a gap above it.
@@ -573,35 +562,13 @@ export function RowChart({
   const hoveredRows = counted.find((item) => item.key === hovered);
   // A rate or average over a few rows looks as solid as one over many.
   const small = (n: number | undefined) => n !== undefined && n < SMALL_SAMPLE;
-  const faded = displayCounts.some((item) => small(item.n));
   const liveRows = liveIds.length;
-  const leftOut = rowsWithoutMeasure(liveSummary);
   // Other categories hide the tail, so the chart offers to show every one.
-  // More than fit still fold, and the status line says so.
   const categoryCount = plan.visible.length + plan.other.length;
   const showAll =
     plan.other.length > 0 && !facetIds && settings.topN !== categoryCount
       ? categoryCount
       : undefined;
-  // A chart too short for its Top N folds the rest; say so before anything
-  // a narrow status line could cut.
-  const tooShort = Boolean(
-    settings.topN && plan.visible.length < settings.topN && plan.other.length
-  );
-  const statusParts = [
-    tooShort && `Top ${settings.topN} needs a taller chart`,
-    valueFilter && `${filterValues.length} categories selected`,
-    // Faded bars need their reason first, before a narrow chart cuts it.
-    faded && `faded: fewer than ${SMALL_SAMPLE} rows`,
-    leftOut > 0 &&
-      `${leftOut.toLocaleString()} ${leftOut === 1 ? "row" : "rows"} without ${getFieldLabel(liveSummary!.spec.measureField ?? "")} left out`,
-    plan.other.length > 0 &&
-      `${plan.other.length} smaller categories in Other categories`,
-    !tooShort &&
-      Boolean(settings.topN) &&
-      displayCounts.length > fitRows &&
-      `Rows compressed to show the top ${settings.topN}`,
-  ];
   // A bar runs from zero to its value, on either side.
   const zero = xScale(0);
   const span = (value: number | undefined) => {
@@ -619,11 +586,16 @@ export function RowChart({
       (Math.sign(count) === Math.sign(total) &&
         Math.abs(count) < Math.abs(total))
     );
-  const statusHint =
-    !valueFilter &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    "Click rows or labels to select categories";
+
+  // Show all sits in the chart, on the Other categories row, after its value.
+  const otherRow = displayCounts.find((item) => item.key === "__other");
+  const showAllPlace = (item: NonNullable<typeof otherRow>) => {
+    const end = xScale(Math.max(item.count ?? 0, item.total ?? 0, 0));
+    const label = valueText(item.count, item.rows).length * 6.5;
+    const top = margin.top + yScale(item.key)! + yScale.bandwidth() / 2;
+    const left = margin.left + end + 5 + label + 8;
+    return left + 80 <= width ? { top, left } : { top, right: 4 };
+  };
 
   return (
     <div className="relative" style={{ width, height }}>
@@ -682,7 +654,7 @@ export function RowChart({
       <BaseChart
         width={width}
         height={chartHeight}
-        footer={axisRise + STATUS_LINE_HEIGHT}
+        footer={axisRise}
         hidden={{
           x: hiddenByBounds(
             settings.xAxis,
@@ -910,18 +882,11 @@ export function RowChart({
           </g>
         )}
       </BaseChart>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={margin.left}
-        right={margin.right + (showAll ? SHOW_ALL_WIDTH : 0)}
-        bottom={34}
-      />
-      {showAll && (
+      {showAll && otherRow && (
         <button
           type="button"
-          className="eda-row-show-all absolute text-xs text-primary hover:underline"
-          style={{ right: margin.right, bottom: 34 }}
+          className="eda-row-show-all absolute -translate-y-1/2 whitespace-nowrap rounded-sm bg-background/90 px-1 text-xs text-primary hover:underline"
+          style={showAllPlace(otherRow)}
           data-export="omit"
           aria-label={`Show all ${showAll} categories`}
           onClick={() => updateChart(settings.id, { topN: showAll })}

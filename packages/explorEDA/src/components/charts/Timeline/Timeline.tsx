@@ -10,11 +10,6 @@ import type { ValueFilter } from "@/types/FilterTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
 import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
-import {
   useChartTrace,
   useChartTraceApi,
   useTraceRevision,
@@ -184,7 +179,7 @@ export function Timeline({
     top: showLegend ? LEGEND_HEIGHT + 4 : 6,
     left: 8 + labelWidth + 8,
     right: 14,
-    bottom: AXIS_HEIGHT + STATUS_LINE_HEIGHT + 6,
+    bottom: AXIS_HEIGHT + 6,
   };
   const innerWidth = Math.max(40, width - margin.left - margin.right);
   const innerHeight = Math.max(20, height - margin.top - margin.bottom);
@@ -273,24 +268,6 @@ export function Timeline({
     hovered === null
       ? undefined
       : plan.intervals.find((item) => item.id === hovered);
-  const selectedCount = hasSelection
-    ? plan.intervals.filter(isSelected).length
-    : 0;
-  const statusParts = [
-    hasSelection
-      ? `${selectedCount.toLocaleString()} of ${plan.intervals.length.toLocaleString()} rows selected`
-      : `${plan.intervals.length.toLocaleString()} rows in ${plan.lanes.length} lanes`,
-    window && `${timelineTime(window.min)} to ${timelineTime(window.max)}`,
-    openCount > 0 && `${openCount} with no end`,
-    ...plan.excluded.map(
-      (item) => `${item.count.toLocaleString()} ${item.reason} left out`
-    ),
-  ];
-  const statusHint =
-    !hasSelection &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    "Drag across time to select · click a bar";
   const legend = colors
     ? [...colors.order.keys()].slice(0, 8).map((key) => {
         const id = allIds.find(
@@ -506,13 +483,6 @@ export function Timeline({
           })}
         </g>
       </svg>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={8}
-        right={margin.right}
-        bottom={4}
-      />
     </div>
   );
 }

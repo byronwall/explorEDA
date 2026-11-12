@@ -5,11 +5,6 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
 import { isEmptyPlotTarget } from "../emptyPlotClick";
 import {
   useChartTrace,
@@ -197,7 +192,7 @@ export function Funnel({
   };
 
   const top = 6;
-  const bottom = STATUS_LINE_HEIGHT + 6;
+  const bottom = 6;
   const labelWidth = Math.round(Math.min(160, Math.max(72, width * 0.24)));
   const left = 12 + labelWidth + 8;
   const valueRoom = Math.min(150, Math.max(64, width * 0.22));
@@ -207,24 +202,6 @@ export function Funnel({
   const max = Math.max(plans!.max, plan.steps[0]?.count ?? 0, 1);
   const x = (count: number) => (count / max) * plotWidth;
   const markColor = themeColors.mark;
-
-  const first = plan.steps[0]!;
-  const last = plan.steps[plan.steps.length - 1]!;
-  const statusParts = [
-    `${first.count.toLocaleString()} entered · ${last.count.toLocaleString()} completed (${funnelPercent(last.ofFirst)})`,
-    windowDays ? `within ${windowDays} days` : undefined,
-    hasSelection &&
-      `${plans!.selectedCounts[0]!.toLocaleString()} ${entityLabel} selected`,
-    ...plan.excluded.map(
-      (item) =>
-        `${item.count.toLocaleString()} rows left out: ${item.reason.toLowerCase()}`
-    ),
-  ];
-  const statusHint =
-    !hasSelection &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    "Click a step to select who reached it";
 
   const focusStep = (index: number) => {
     const next = Math.max(0, Math.min(plan.steps.length - 1, index));
@@ -410,13 +387,6 @@ export function Funnel({
           );
         })}
       </svg>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={12}
-        right={12}
-        bottom={4}
-      />
     </div>
   );
 }

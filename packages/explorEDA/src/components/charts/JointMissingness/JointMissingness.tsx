@@ -8,11 +8,6 @@ import type { BaseChartProps } from "@/types/ChartTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
 import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
-import {
   useChartTraceApi,
   useTraceRevision,
   useTraceSource,
@@ -292,12 +287,6 @@ export function JointMissingness({
   const selectedRows = plan.patterns
     .filter((pattern) => selectedKeys.has(pattern.key))
     .reduce((sum, pattern) => sum + pattern.ids.length, 0);
-  // A kept pattern with no current rows still belongs to the selection.
-  const zeroSelected =
-    selection?.patterns.filter(
-      (pattern) =>
-        !plan.patterns.some((item) => item.key === patternKey(pattern))
-    ) ?? [];
   const selectedByGroup =
     groups &&
     selection &&
@@ -307,26 +296,6 @@ export function JointMissingness({
         .flatMap((pattern) => pattern.ids),
       groups
     );
-  const groupShares = groups?.columns
-    .filter((column) => column.total > 0)
-    .map((column) => ({
-      column,
-      share: (selectedByGroup?.get(column.key) ?? 0) / column.total,
-    }));
-  const highest = groupShares?.reduce(
-    (a, b) => (b.share > a.share ? b : a),
-    groupShares[0]!
-  );
-  const lowest = groupShares?.reduce(
-    (a, b) => (b.share < a.share ? b : a),
-    groupShares[0]!
-  );
-  const gapText =
-    selectedByGroup &&
-    highest &&
-    lowest &&
-    highest !== lowest &&
-    `${highest.column.label} − ${lowest.column.label}: ${((highest.share - lowest.share) * 100).toFixed(1)} points`;
   const groupCell = (count: number, total: number) => {
     const share = total ? count / total : 0;
     return (
@@ -343,22 +312,6 @@ export function JointMissingness({
   const hiddenRows = plan.patterns
     .filter((_, index) => Math.floor(index / PATTERN_PAGE_SIZE) !== current)
     .reduce((sum, pattern) => sum + pattern.ids.length, 0);
-  const statusParts = [
-    inputs &&
-      usable &&
-      `${inputs.side === "admitted" ? "Usable" : "Excluded"} rows selected · ${(inputs.side === "admitted" ? usable.admitted : plan.total - usable.admitted).toLocaleString()} of ${plan.total.toLocaleString()}`,
-    selection &&
-      `${selection.patterns.length} ${selection.patterns.length === 1 ? "pattern" : "patterns"} selected · ${selectedRows.toLocaleString()} of ${plan.total.toLocaleString()} rows (${sharePercent(selectedRows, plan.total)})`,
-    gapText,
-    zeroSelected.length > 0 &&
-      `${zeroSelected.length} selected with no rows: ${zeroSelected.map(label).join("; ")}`,
-  ];
-  const statusHint =
-    !selection &&
-    !inputs &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    "Click a pattern to select its rows · Shift-click to add";
 
   const rowAction = (pattern: MissingPattern) => ({
     onClick: (event: React.MouseEvent) => {
@@ -522,7 +475,7 @@ export function JointMissingness({
       )}
       <div
         className="min-h-0 flex-1 overflow-auto px-3"
-        style={{ marginBottom: STATUS_LINE_HEIGHT + 6 }}
+        style={{ marginBottom: 6 }}
       >
         <table className="eda-missingness-table">
           <thead>
@@ -723,13 +676,6 @@ export function JointMissingness({
           </div>
         )}
       </div>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={12}
-        right={12}
-        bottom={4}
-      />
     </div>
   );
 }

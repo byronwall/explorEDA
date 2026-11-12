@@ -44,7 +44,6 @@ it("steps through observed values with the keyboard and selects a threshold", ()
   fireEvent.keyDown(slider, { key: "Enter" });
   expect(filters()).toEqual([{ type: "range", field: "Wait", max: 2 }]);
   expect(screen.getByText("≤ 2")).toBeInTheDocument();
-  expect(screen.getByText("Selected ≤ 2: 75%")).toBeInTheDocument();
   fireEvent.keyDown(slider, { key: "Delete" });
   expect(filters()).toEqual([]);
 });

@@ -241,11 +241,3 @@ export function selectBoxGroup(
     ? [...rest, { type: "value", field, values: next }]
     : rest;
 }
-
-/** The groups with the lowest and highest medians, for the status line. */
-export function medianRange<T extends { stats: BoxPlotStats }>(groups: T[]) {
-  const counted = groups.filter((group) => group.stats.totalCount > 0);
-  if (counted.length < 2) return undefined;
-  const sorted = [...counted].sort((a, b) => a.stats.median - b.stats.median);
-  return { low: sorted[0]!, high: sorted.at(-1)! };
-}

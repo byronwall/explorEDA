@@ -298,7 +298,6 @@ it("brushes a date x axis into a date range that keeps the rows inside it", () =
   );
   // The selection is drawn again from the saved filter.
   expect(container.querySelector(".eda-brush rect")).toBeInTheDocument();
-  expect(container.textContent).toMatch(/of 4 rows selected/);
 });
 
 it("explains an x field with no numeric or date values", () => {

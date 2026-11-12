@@ -4,10 +4,11 @@ import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
 import { useId, useMemo, useRef, useState } from "react";
 import { scaleUtc } from "d3-scale";
+import { TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { convertFieldValue } from "@/lib/fieldSettings";
 import { utcPeriod } from "@/lib/dailyRollup";
-import { isAdditiveAggregation } from "@/lib/aggregates";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import { BaseChart } from "../BaseChart";
@@ -121,7 +122,7 @@ export function TimeSeriesChart({
           : undefined,
       },
       width,
-      Math.max(1, height - 28),
+      Math.max(1, height),
       getLabel,
       format,
       typography
@@ -262,7 +263,7 @@ export function TimeSeriesChart({
       ) : (
         <BaseChart
           width={width}
-          height={Math.max(1, height - 28)}
+          height={Math.max(1, height)}
           settings={{
             ...settings,
             margin: plan.margin,
@@ -457,26 +458,24 @@ export function TimeSeriesChart({
           ))}
         </BaseChart>
       )}
-      <div className="absolute inset-x-2 bottom-0 flex items-center justify-between gap-2 text-xs text-muted-foreground">
-        <span className="min-w-0 truncate">
-          {plan.stacked && plan.incompletePeriods
-            ? `${plan.incompletePeriods} incomplete ${plan.incompletePeriods === 1 ? "period breaks" : "periods break"} the stack`
-            : !isAdditiveAggregation(time.aggregation) ||
-                time.missingPeriods === "gap"
-              ? "Missing periods are gaps"
-              : "Missing periods are zero"}
-        </span>
-        {plan.invalidDateIds.length > 0 && (
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-7 px-1 text-xs"
-            onClick={() => api?.inspect(owner, "time-omissions", "dates")}
+      {plan.invalidDateIds.length > 0 && (
+        <div className="absolute bottom-0 right-2">
+          <ActionTooltip
+            content={`${plan.invalidDateIds.length.toLocaleString()} rows are left out because their date is unreadable. Activate to inspect them.`}
           >
-            {plan.invalidDateIds.length} unreadable dates
-          </Button>
-        )}
-      </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-5 text-warning"
+              aria-label={`${plan.invalidDateIds.length.toLocaleString()} unreadable dates. Inspect them.`}
+              onClick={() => api?.inspect(owner, "time-omissions", "dates")}
+            >
+              <TriangleAlert aria-hidden="true" className="size-3.5" />
+            </Button>
+          </ActionTooltip>
+        </div>
+      )}
       {active && (
         <ChartReadout fallbackClassName="sr-only">
           {width < 500 ? (

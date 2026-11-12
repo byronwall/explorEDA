@@ -81,9 +81,6 @@ describe("Timeline", () => {
       "B: Mar 3, 2:00 PM to no end",
       "C: Mar 3, 3:00 PM to Mar 3, 4:00 PM",
     ]);
-    expect(container.querySelector(".eda-chart-status")).toHaveTextContent(
-      "5 rows in 3 lanes · 1 with no end"
-    );
   });
 
   it("brushes a window that keeps every overlapping row, open ends too", () => {
@@ -95,9 +92,6 @@ describe("Timeline", () => {
     fireEvent.pointerUp(svg, { clientX: xFor(15), clientY: 60 });
     expect(screen.getByLabelText("Matching IDs")).toHaveTextContent(
       /^1,2,3,4$/
-    );
-    expect(container.querySelector(".eda-chart-status")).toHaveTextContent(
-      "4 of 5 rows selected · Mar 3, 12:00 PM to Mar 3, 3:00 PM"
     );
   });
 

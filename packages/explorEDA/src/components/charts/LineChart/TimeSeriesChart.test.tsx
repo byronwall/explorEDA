@@ -121,7 +121,7 @@ it("selects exact period and series IDs, traces inputs, and follows another char
   expect(
     screen.queryByRole("button", { name: /Store ·/ })
   ).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: "1 unreadable dates" }));
+  fireEvent.click(screen.getByRole("button", { name: /1 unreadable dates/ }));
   expect(screen.getByLabelText("Time series trace")).toHaveTextContent('"bad"');
   fireEvent.click(screen.getByRole("button", { name: "North facet" }));
   fireEvent.click(

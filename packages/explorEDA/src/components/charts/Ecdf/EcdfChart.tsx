@@ -2,9 +2,7 @@ import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useAxisTypography } from "../chartTypography";
 import { useDataLayer } from "@/providers/DataLayerProvider";
-import { hasFieldDisplayFormat, readableNumber } from "@/lib/fieldSettings";
 import type { BaseChartProps } from "@/types/ChartTypes";
-import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import {
   useCallback,
@@ -388,53 +386,6 @@ export function EcdfChart({
   const axisValueX = (x: number, text: string) =>
     pillX(x, text, plan.plotWidth);
 
-  const selected = plan.selection?.filter;
-  const selectedRows = selected ? spanRows(selected.min, selected.max) : [];
-  const selectedText = selected
-    ? selected.min !== undefined && selected.max !== undefined
-      ? `${format(selected.min)} to ${format(selected.max)}`
-      : selected.min !== undefined
-        ? `≥ ${format(selected.min)}`
-        : `≤ ${format(selected.max!)}`
-    : "";
-  // Medians read from lowest to highest, the order the curves cross 50%.
-  const medians = plan.curves
-    .flatMap((curve) => {
-      const median = curve.quantiles.find((item) => item.level === 0.5);
-      return median ? [{ label: curve.label, x: median.x }] : [];
-    })
-    .sort((a, b) => a.x - b.x)
-    // A summary line reads to a few figures unless the field sets a format.
-    .map((item) => ({
-      label: item.label,
-      text: hasFieldDisplayFormat(fieldSettings[settings.field])
-        ? format(item.x)
-        : readableNumber(item.x),
-    }));
-  const statusParts = [
-    selected
-      ? `Selected ${selectedText}: ${selectedRows
-          .map((row) =>
-            selectedRows.length === 1
-              ? pct(row.share)
-              : `${row.label} ${pct(row.share)}`
-          )
-          .join(", ")}`
-      : medians.length > 0 &&
-        width >= STATUS_HINT_MIN_WIDTH &&
-        (medians.length === 1
-          ? `Median ${medians[0]!.text}`
-          : `Median: ${medians.map((item) => `${item.label} ${item.text}`).join(", ")}`),
-    plan.excluded.length > 0 &&
-      `${plan.excluded.reduce((total, item) => total + item.count, 0).toLocaleString()} rows without a number left out`,
-    plan.otherGroups > 0 && `${plan.otherGroups} smaller groups in Other`,
-    plan.logUnavailable && "Log scale needs values above zero",
-  ].filter(Boolean);
-  const statusHint =
-    !selected &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    `Click to select ${plan.direction === "below" ? "up to" : "from"} a value, drag for a span`;
   const selection = dragSpan
     ? { x0: plan.px(dragSpan[0]!), x1: plan.px(dragSpan[1]!) }
     : plan.selection;
@@ -762,13 +713,6 @@ export function EcdfChart({
         </g>
       </svg>
       {readout && <Readout {...readout} />}
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={settings.margin.left}
-        right={settings.margin.right}
-        bottom={settings.margin.bottom}
-      />
     </div>
   );
 }

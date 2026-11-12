@@ -6,7 +6,7 @@ import { categoryKey, categoryLabel } from "@/lib/categories";
 import { defaultCategoricalColors, makeColorScale } from "@/lib/colorScaleMath";
 import { planObservationSeries } from "./observationSeries";
 import { THEME_PALETTE, resolvePaletteColor } from "@/lib/themePalettes";
-import { dateBound, finiteNumber, timestampOf } from "@/lib/valueParsing";
+import { finiteNumber, timestampOf } from "@/lib/valueParsing";
 import {
   boundedDomain,
   hasAxisBounds,
@@ -32,11 +32,6 @@ import {
   type ChartAnnotationFrame,
 } from "../annotations/ChartAnnotations";
 import { ChartReadout } from "../ChartReadout";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
 import { AxisValuePill, pillX, spreadLabels } from "../PlotValueLabels";
 import { getChartAxisFields, getChartAxisLabel } from "../chartAccessibility";
 import {
@@ -211,8 +206,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
   const margin = {
     ...baseMargin,
     left: Math.min(requestedLabelMargin, maxLabelMargin),
-    bottom:
-      Math.max(baseMargin.bottom, xAxisLabel ? 46 : 28) + STATUS_LINE_HEIGHT,
+    bottom: Math.max(baseMargin.bottom, xAxisLabel ? 46 : 28),
   };
   if (
     settings.seriesField.some(
@@ -543,7 +537,7 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
         ? { top: 0, left: margin.left, right: baseMargin.right }
         : settings.legendPosition === "bottom"
           ? {
-              bottom: STATUS_LINE_HEIGHT,
+              bottom: 0,
               left: margin.left,
               right: baseMargin.right,
             }
@@ -634,63 +628,6 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
         : (formatFieldValue?.(settings.xField, hoverX) ??
           displayValue(settings.xField, hoverX));
 
-  // A date axis saves its selection as dates, so the row test reads the
-  // column's date text; a numeric axis saves numbers.
-  const xFilter = settings.filters.find(
-    (filter) =>
-      filter.field === settings.xField &&
-      filter.type === (xIsDate ? "date-range" : "range")
-  );
-  const range =
-    xFilter?.type === "range"
-      ? xFilter
-      : xFilter?.type === "date-range"
-        ? {
-            type: "range" as const,
-            min: xFilter.min === undefined ? undefined : dateBound(xFilter.min),
-            max:
-              xFilter.max === undefined
-                ? undefined
-                : dateBound(xFilter.max, true),
-          }
-        : undefined;
-  // A dragged range has arbitrary decimals; show about three significant digits.
-  const spanDigits = Math.max(
-    0,
-    2 - Math.floor(Math.log10(Math.abs(xExtent[1] - xExtent[0]) || 1))
-  );
-  const rangeValue = (value: number) =>
-    xIsDate
-      ? new Date(value).toISOString().slice(0, 16).replace("T", " ")
-      : hasFieldDisplayFormat(fieldSettings[settings.xField])
-        ? displayValue(settings.xField, value)
-        : value.toLocaleString("en-US", { maximumFractionDigits: spanDigits });
-  const rangeText =
-    range?.type === "range"
-      ? `${rangeValue(range.min ?? xExtent[0])} to ${rangeValue(range.max ?? xExtent[1])}`
-      : undefined;
-  const inRange = (value: number) =>
-    range?.type === "range" &&
-    (range.min === undefined || value >= range.min) &&
-    (range.max === undefined || value <= range.max);
-  const liveRows = liveXData.filter(
-    (value) => xNumber(value) !== undefined
-  ).length;
-  const statusParts = [
-    // Counts lead, so a narrow chart that cuts the line keeps them.
-    rangeText &&
-      `${liveXData
-        .filter((value) => {
-          const x = xNumber(value);
-          return x !== undefined && inRange(x);
-        })
-        .length.toLocaleString()} of ${liveRows.toLocaleString()} rows selected: ${xAxisLabel || settings.xField} ${rangeText}`,
-  ];
-  const statusHint =
-    !rangeText &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    `Drag across to select a range of ${xAxisLabel || settings.xField}`;
   const seriesOpacity = (name: string) =>
     legendHover && legendHover !== name ? 0.2 : 1;
 
@@ -850,7 +787,6 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
             )}
           </>
         }
-        footer={STATUS_LINE_HEIGHT}
         brushingMode="horizontal"
         onBrushChange={(extent) =>
           updateChart(settings.id, {
@@ -956,12 +892,6 @@ const ObservationLineChart: FC<BaseChartProps<LineChartSettings>> = ({
           ))}
         </ChartReadout>
       )}
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={margin.left}
-        right={baseMargin.right}
-      />
     </div>
   );
 };

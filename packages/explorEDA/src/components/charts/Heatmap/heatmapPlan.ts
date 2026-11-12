@@ -5,7 +5,6 @@ import {
   type AggregateContributor,
   type AggregateInputRow,
 } from "@/lib/aggregates";
-import { STATUS_LINE_HEIGHT } from "../ChartStatusLine";
 import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import { applyFilter } from "@/hooks/applyFilter";
 import type { datum } from "@/types/ChartTypes";
@@ -353,8 +352,7 @@ export function planHeatmap({
     ? Math.min(110, longestColumnLabel * 0.71 + 18)
     : 22;
   const top = settings.margin.top + LEGEND_HEIGHT;
-  const bottom =
-    settings.margin.bottom + columnLabelHeight + 16 + STATUS_LINE_HEIGHT;
+  const bottom = settings.margin.bottom + columnLabelHeight + 16;
   const plotHeight = Math.max(0, height - top - bottom);
   const cellWidth = naturalColumnWidth;
   const cellHeight = plotHeight / Math.max(1, rowRank.shown.length);

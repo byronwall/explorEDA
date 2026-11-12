@@ -8,7 +8,6 @@ import {
   type FieldSettingsMap,
 } from "@/lib/fieldSettings";
 import { makeColorScale } from "@/lib/colorScaleMath";
-import { STATUS_LINE_HEIGHT } from "../ChartStatusLine";
 import {
   categoryIncludes,
   categoryKey,
@@ -446,9 +445,6 @@ export function planScatter(
     margin.top += MARGINAL_SIZE + MARGINAL_GAP;
     margin.right += MARGINAL_SIZE + MARGINAL_GAP;
   }
-  // A lone chart keeps a line under its axis title for the status line.
-  const footer = snapshot.facetIds ? 0 : STATUS_LINE_HEIGHT;
-  margin.bottom += footer;
   const plotWidth = width - margin.left - margin.right;
   const plotHeight = height - margin.top - margin.bottom;
   const inset = size ? bubbleRadius : 0;
@@ -619,7 +615,6 @@ export function planScatter(
           : 0),
     },
     marginPolicy,
-    footer,
     x: {
       typography,
       scale: xScale,
