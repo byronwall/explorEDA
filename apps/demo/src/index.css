@@ -101,6 +101,11 @@
   margin: 0;
   border: 0;
 }
+/* The grid keeps a spare row and a 400px floor for adding charts. A docs
+   example adds none, so the frame ends at its last chart. */
+.docs-live:not([data-docs-chrome]) .eda-chart-area > div {
+  min-height: 0 !important;
+}
 .docs-live[data-docs-chrome] {
   padding: 0 8px;
 }
