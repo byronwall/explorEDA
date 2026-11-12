@@ -1,5 +1,6 @@
 import {
   SMALL_SAMPLE,
+  aggregationLabel,
   isAdditiveSpec,
   poolAggregateRows,
   type AggregateResult,
@@ -186,7 +187,7 @@ export function RowChart({
           ? "Count of rows"
           : spec.denominatorField
             ? `Sum of ${getFieldLabel(spec.measureField ?? "")} ÷ sum of ${getFieldLabel(spec.denominatorField)}`
-            : `${spec.aggregation === "sum" ? "Sum" : "Average"} of ${getFieldLabel(spec.measureField ?? "")}`
+            : `${aggregationLabel(spec.aggregation)} of ${getFieldLabel(spec.measureField ?? "")}`
       }${spec.entityField ? `, once per ${getFieldLabel(spec.entityField)}` : ""}`
     : "";
 

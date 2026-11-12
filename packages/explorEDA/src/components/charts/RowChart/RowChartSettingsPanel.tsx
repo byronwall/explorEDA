@@ -9,6 +9,7 @@ import { ColorScaleControl } from "@/components/colorScales/ColorScaleControl";
 import { Input } from "@/components/ui/input";
 import {
   ONCE_PER_HELP,
+  aggregationLabel,
   isAdditiveSpec,
   type AggregateSpec,
 } from "@/lib/aggregates";
@@ -208,9 +209,7 @@ export function RowChartSettingsPanel({
             </ActionTooltip>
             {aggregate.aggregation !== "count" && (
               <>
-                <Label>
-                  {aggregate.aggregation === "sum" ? "Sum of" : "Average of"}
-                </Label>
+                <Label>{aggregationLabel(aggregate.aggregation)} of</Label>
                 <FieldSelector
                   label=""
                   placeholder="Measure"
