@@ -665,7 +665,7 @@ export function planAxes({
   plotHeight: number;
   margin: MarginSettings;
   marginPolicy?: MarginPolicy;
-  /** Bottom margin kept below the axis title, such as for a status line. */
+  /** Bottom margin kept below the axis title, such as for a summary row. */
   footer?: number;
 }): ChartAxesPlan {
   return {

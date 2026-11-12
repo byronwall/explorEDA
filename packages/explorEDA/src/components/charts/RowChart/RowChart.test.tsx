@@ -366,21 +366,3 @@ it("traces a ranked value to its included and excluded rows", () => {
   expect(member("East")).toBe("East8Inspect");
   expect(screen.getByText("Value").nextSibling?.textContent).toBe("6");
 });
-
-it("says why a saved Top N folds rows in a short chart", () => {
-  render(
-    <DataLayerProvider
-      charts={[{ ...settings, topN: 30 }]}
-      data={Array.from({ length: 40 }, (_, index) => ({
-        category: `C${index}`,
-      }))}
-    >
-      <RowChart settings={{ ...settings, topN: 30 }} width={600} height={160} />
-    </DataLayerProvider>
-  );
-  expect(
-    screen.getByText(
-      /^Top 30 needs a taller chart · \d+ smaller categories in Other categories/
-    )
-  ).toBeTruthy();
-});

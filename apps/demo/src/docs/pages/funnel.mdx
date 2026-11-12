@@ -15,7 +15,7 @@ A funnel reads an event log: one row per event, with a field that names **who** 
 - Beside each bar: the count, its share of the first step, and its share of the step before.
 - Steps count in order. A step counts at its first event after the step before it was reached, so a step done too early never counts. Events at the same moment keep their row order.
 - Set a **Window** to count later steps only within that many days of an entity's first step. Blank counts them at any time.
-- Rows with no entity or no readable time are left out, and the status line says how many.
+- Rows with no entity or no readable time are left out.
 - The bars span every row, so filtering another chart shortens them without changing the scale.
 
 ## Select and trace

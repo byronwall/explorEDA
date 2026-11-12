@@ -17,11 +17,6 @@ import type { BaseChartProps, datum } from "@/types/ChartTypes";
 import type { ValueFilter } from "@/types/FilterTypes";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
 import { isEmptyPlotTarget } from "../emptyPlotClick";
 import {
   useChartTraceApi,
@@ -255,7 +250,7 @@ export function Donut({
   }
 
   const side = width >= SIDE_LEGEND_MIN_WIDTH;
-  const bodyHeight = Math.max(80, height - 32 - STATUS_LINE_HEIGHT - 8);
+  const bodyHeight = Math.max(80, height - 32 - 8);
   const legendRows = plan.slices.length;
   const ringSize = side
     ? Math.min(bodyHeight, width * 0.55)
@@ -280,17 +275,6 @@ export function Donut({
   const centerLabel = centerName.length * 6.2 <= hole ? centerName : undefined;
   const hasSelection = Boolean(valueFilter);
   const hoveredSlice = plan.slices.find((slice) => slice.key === hovered);
-  const statusHint =
-    !hasSelection &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    "Click a slice to select its rows";
-  const otherSlice = plan.slices.find((slice) => slice.key === "__other");
-  const statusParts = [
-    valueFilter &&
-      `${selectedValues.length} ${selectedValues.length === 1 ? "category" : "categories"} selected`,
-    otherSlice && `${otherSlice.members!.length} smaller categories in Other`,
-  ];
   const sliceAction = (slice: DonutSlice) => ({
     onPointerEnter: () => setHovered(slice.key),
     onPointerLeave: () => setHovered(null),
@@ -414,13 +398,6 @@ export function Donut({
           })}
         </ul>
       </div>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={12}
-        right={12}
-        bottom={4}
-      />
     </div>
   );
 }

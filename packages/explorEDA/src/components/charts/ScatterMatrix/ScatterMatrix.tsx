@@ -29,11 +29,6 @@ import {
 } from "./matrixTrace";
 import { ChartMessage } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { drawMatrixPoints, toRgb, type Rgb } from "./matrixCanvas";
 import type { MatrixBoxStats } from "./matrixCells";
@@ -127,15 +122,13 @@ export function ScatterMatrix({
     cell: string;
     index: number;
   } | null>(null);
-  const [focused, setFocused] = useState(false);
   const [hoverCell, setHoverCell] = useState<string | null>(null);
   const owner = useId();
   const revision = useTraceRevision(settings);
   const trace = useChartTrace();
   const traceApi = useChartTraceApi();
 
-  // The status line sits under the scrolling plot, so it never scrolls away.
-  const plotHeight = Math.max(1, height - STATUS_LINE_HEIGHT);
+  const plotHeight = Math.max(1, height);
   // Brushes filter the matrix's own fields, so the key holds still while brushing.
   const fieldKey = [
     ...new Set([
@@ -475,25 +468,6 @@ export function ScatterMatrix({
   const hoveredCell =
     hovered && plan.cells.find((cell) => cell.id === hovered.cell);
   const hoveredId = hovered ? plan.liveIds[hovered.index] : undefined;
-  const narrow = width < STATUS_HINT_MIN_WIDTH;
-  const rows = plan.liveIds.length.toLocaleString();
-  const fewest = Math.min(...plan.cells.map((cell) => cell.n));
-  const statusParts = [
-    plan.hasSelection
-      ? `${plan.selectedCount.toLocaleString()} of ${rows} ${narrow ? "selected" : "rows selected"}`
-      : `${rows} rows`,
-    fewest < plan.liveIds.length &&
-      (narrow
-        ? `up to ${(plan.liveIds.length - fewest).toLocaleString()} missing`
-        : `up to ${(plan.liveIds.length - fewest).toLocaleString()} rows missing a value per cell`),
-  ];
-  const statusHint =
-    focused &&
-    !narrow &&
-    !facetIds &&
-    (plan.hasSelection
-      ? "Drag in a cell for a new selection, click empty space or press Esc to clear"
-      : "Drag in a cell to select, click a mark to select its values, Alt-click to trace");
 
   const cellName = (cell: MatrixCell) =>
     cell.row === cell.column
@@ -514,9 +488,7 @@ export function ScatterMatrix({
     <div
       className="relative select-none"
       style={{ width, height }}
-      onPointerEnter={() => setFocused(true)}
       onPointerLeave={() => {
-        setFocused(false);
         setHovered(null);
         setHoverCell(null);
       }}
@@ -779,13 +751,6 @@ export function ScatterMatrix({
           </svg>
         </div>
       </div>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={settings.margin.left + 4}
-        right={settings.margin.right}
-        bottom={settings.margin.bottom}
-      />
       {!hovered && !drag && hoverCell && (
         <CellReadout
           cell={plan.cells.find((cell) => cell.id === hoverCell)}
@@ -831,7 +796,7 @@ function MatrixCellMarks({
   liveCount: number;
 }) {
   const size = plan.cellSize;
-  // Small gaps are noted in the status line; larger ones label the cell.
+  // Larger gaps label the cell.
   // Both methods always name their rows, so two numbers never stand alone.
   const reduced = cell.n < liveCount * 0.98 || cellMethods(cell).length > 1;
   const count = reduced && (

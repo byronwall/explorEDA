@@ -83,7 +83,6 @@ it("selects a branch by click, adds a sibling with Shift, and clears on empty sp
     { shiftKey: true }
   );
   expect(filters()[1].values).toEqual(["Home", "Office"]);
-  expect(screen.getByText(/same parent only/)).toBeInTheDocument();
 
   fireEvent.click(document.querySelector("svg > rect")!);
   expect(filters()).toEqual([]);
@@ -121,7 +120,6 @@ it("keeps the tab stop on a drawn box when the selected one is too small", () =>
       <Live />
     </DataLayerProvider>
   );
-  expect(screen.getByText(/1 box too small to draw/)).toBeInTheDocument();
   expect(screen.queryByRole("button", { name: /^South/ })).toBeNull();
   expect(screen.getByRole("button", { name: /^North/ })).toHaveAttribute(
     "tabindex",

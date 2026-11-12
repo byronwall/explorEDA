@@ -4,7 +4,6 @@ import {
   calculateBoxPlotStats,
   calculateKernelDensity,
   MAX_BEE_SWARM_POINTS_PER_GROUP,
-  medianRange,
   selectBoxGroup,
 } from "./boxPlotCalculations";
 
@@ -81,23 +80,5 @@ describe("selectBoxGroup", () => {
     expect(selectBoxGroup(two, "mood", 3, true)).toEqual([
       { type: "value", field: "mood", values: [5] },
     ]);
-  });
-});
-
-describe("medianRange", () => {
-  it("names the lowest and highest medians among groups with rows", () => {
-    const group = (name: string, data: number[]) => ({
-      name,
-      stats: calculateBoxPlotStats(data, "tukey"),
-    });
-    const range = medianRange([
-      group("a", [5, 6, 7]),
-      group("b", []),
-      group("c", [1, 2, 3]),
-      group("d", [9, 10]),
-    ]);
-    expect(range?.low.name).toBe("c");
-    expect(range?.high.name).toBe("d");
-    expect(medianRange([group("a", [1])])).toBeUndefined();
   });
 });

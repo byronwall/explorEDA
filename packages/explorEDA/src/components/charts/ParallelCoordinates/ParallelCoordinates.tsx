@@ -1,7 +1,6 @@
 import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { detectColumnType } from "@/components/SummaryTable/utils/dataTypeDetection";
 import { Button } from "@/components/ui/button";
-import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage } from "../ChartMessage";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { categoryKey, categoryValue } from "@/lib/categories";
@@ -519,26 +518,6 @@ export function ParallelCoordinates({
     labeledLine &&
     categoryKey(categoryValue(snapshot.columns[axis.field]?.[labeledLine.id]));
   const headerWidth = Math.min(HEADER_WIDTH, Math.max(56, spacing - 8));
-  const narrow = width < STATUS_HINT_MIN_WIDTH;
-  const statusParts = [
-    plan.hasSelection
-      ? `${plan.selectedCount.toLocaleString()} of ${plan.lines.length.toLocaleString()} ${narrow ? "selected" : "lines selected"}`
-      : `${plan.lines.length.toLocaleString()} lines`,
-    plan.omittedIds.length > 0 &&
-      (narrow
-        ? `${plan.omittedIds.length.toLocaleString()} incomplete rows hidden`
-        : `${plan.omittedIds.length.toLocaleString()} rows missing an axis value are not drawn`),
-    ...plan.rejected.map(
-      (item) => `${item.label} has ${item.count} values, too many for an axis`
-    ),
-  ];
-  const statusHint =
-    !plan.hasSelection &&
-    !narrow &&
-    !facetIds &&
-    (plan.axes.some((axis) => axis.kind === "categorical")
-      ? "Drag along an axis or click a value to select"
-      : "Drag along an axis to select a range");
 
   return (
     <div
@@ -965,13 +944,6 @@ export function ParallelCoordinates({
           </div>
         );
       })}
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={settings.margin.left}
-        right={settings.margin.right}
-        bottom={settings.margin.bottom}
-      />
       {hoveredLine && !drag && !reorder && (
         <HoverReadout
           line={hoveredLine}

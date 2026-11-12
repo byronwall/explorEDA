@@ -14,11 +14,6 @@ import { numericScale } from "../Axis/numericScale";
 import { BaseChart } from "../BaseChart";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
-import {
-  ChartStatusLine,
-  STATUS_HINT_MIN_WIDTH,
-  STATUS_LINE_HEIGHT,
-} from "../ChartStatusLine";
 import { useAxisTypography } from "../chartTypography";
 import {
   useChartTraceApi,
@@ -385,9 +380,7 @@ export function Waterfall({
       Math.max(0, width - settings.margin.right - 80)
     ),
     right: Math.max(settings.margin.right, valueLabelRoom),
-    bottom:
-      Math.max(settings.margin.bottom, xAxisLabel ? 42 : 26) +
-      STATUS_LINE_HEIGHT,
+    bottom: Math.max(settings.margin.bottom, xAxisLabel ? 42 : 26),
   };
   const innerWidth = Math.max(0, width - margin.left - margin.right);
   const rowHeight = 30;
@@ -461,17 +454,6 @@ export function Waterfall({
       height,
     };
   };
-  const statusParts = [
-    valueFilter &&
-      `${selectedValues.length} ${selectedValues.length === 1 ? "step" : "steps"} selected`,
-    stateSelected(0) && `${states[0]!.label} rows selected`,
-    stateSelected(1) && `${states[1]!.label} rows selected`,
-  ];
-  const statusHint =
-    !hasSelection &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    "Click a step to select its rows";
   const zero = xScale(0);
 
   return (
@@ -504,7 +486,7 @@ export function Waterfall({
       <BaseChart
         width={width}
         height={chartHeight}
-        footer={axisRise + STATUS_LINE_HEIGHT}
+        footer={axisRise}
         xScale={xScale}
         yScale={yScale}
         settings={{ ...settings, margin, xAxisLabel }}
@@ -686,13 +668,6 @@ export function Waterfall({
           })}
         </g>
       </BaseChart>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={margin.left}
-        right={margin.right}
-        bottom={34}
-      />
     </div>
   );
 }

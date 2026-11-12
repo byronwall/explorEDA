@@ -166,7 +166,7 @@ export function SeriesBarChart({
       summaries,
       domainSummaries,
       width,
-      height: Math.max(1, height - 28),
+      height: Math.max(1, height),
       revision: `${revision}:${JSON.stringify(aggregate)}:${JSON.stringify(fieldSettings)}`,
       getLabel,
       format,
@@ -252,7 +252,7 @@ export function SeriesBarChart({
       ) : (
         <BaseChart
           width={width}
-          height={Math.max(1, height - 28)}
+          height={Math.max(1, height)}
           settings={{ ...settings, margin: plan.axes.margin }}
           axes={plan.axes}
           xScale={plan.x}
@@ -360,15 +360,6 @@ export function SeriesBarChart({
           ))}
         </BaseChart>
       )}
-      <div className="absolute inset-x-2 bottom-0 flex h-7 items-center justify-between gap-2 text-xs text-muted-foreground">
-        <span className="truncate">
-          {plan.zeroTotals
-            ? "Zero-total categories have no share"
-            : plan.bars.some((bar) => bar.row.value === undefined)
-              ? "Outline marks have no valid values"
-              : null}
-        </span>
-      </div>
       {active && (
         <ChartReadout fallbackClassName="sr-only">
           {active.label} · {active.valueText} · {active.row.rowCount} rows

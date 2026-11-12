@@ -933,6 +933,9 @@ export function PlotChartPanel({
               </ActionTooltip>
             </div>
           )}
+          {!faceted && hasScaleTo(settings) && (
+            <ScaleToChipSlot settings={settings} />
+          )}
           {hasFilter && (
             <ActionTooltip content="Clear this chart’s filters">
               <Button
@@ -1147,9 +1150,6 @@ export function PlotChartPanel({
                 width={Math.max(1, panelWidth - 24)}
                 height={bodyHeight(autoLegendHeight)}
               />
-            )}
-            {!faceted && hasScaleTo(settings) && (
-              <ScaleToChipSlot settings={settings} />
             )}
           </div>
         </ChartReadoutProvider>

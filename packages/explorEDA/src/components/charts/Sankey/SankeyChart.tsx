@@ -2,7 +2,6 @@ import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import { useDisplayColorScale } from "@/hooks/useDisplayColorScales";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { BaseChartProps } from "@/types/ChartTypes";
-import { ChartStatusLine, STATUS_HINT_MIN_WIDTH } from "../ChartStatusLine";
 import { ChartMessage, NO_MATCHING_ROWS } from "../ChartMessage";
 import { isEmptyPlotTarget } from "../emptyPlotClick";
 import {
@@ -341,22 +340,6 @@ export function SankeyChart({
         ? link.source.id === hoveredNode.id || link.target.id === hoveredNode.id
         : undefined;
   const lastStage = plan.stages.length - 1;
-  const statusParts = [
-    plan.hasSelection
-      ? `${format(plan.selectedWeight)} of ${format(plan.totalWeight)} ${plan.unit} selected`
-      : `${format(plan.totalWeight)} ${plan.unit}`,
-    plan.incompleteIds.length > 0 &&
-      `${plan.incompleteIds.length.toLocaleString()} rows with a missing stage not drawn`,
-    ...plan.excluded.map(
-      (item) =>
-        `${item.count.toLocaleString()} rows left out: ${item.reason.toLowerCase()}`
-    ),
-  ];
-  const statusHint =
-    !plan.hasSelection &&
-    !facetIds &&
-    width >= STATUS_HINT_MIN_WIDTH &&
-    "Click a value or flow to select";
 
   return (
     <div
@@ -673,13 +656,6 @@ export function SankeyChart({
           </g>
         </g>
       </svg>
-      <ChartStatusLine
-        parts={statusParts}
-        hint={statusHint}
-        left={settings.margin.left}
-        right={settings.margin.right}
-        bottom={settings.margin.bottom}
-      />
       {(hoveredNode || hoveredLink) && (
         <Readout
           plan={plan}

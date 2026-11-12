@@ -151,7 +151,6 @@ it("selects exactly a histogram bar's rows when values sit on its upper edge", (
 
   clickBar("0 to 0.5: 2 records");
   expect(selectedRows()).toBe(2);
-  expect(container.textContent).toContain("2 of 5 rows selected: 0 to < 0.5");
 
   clickBar("0.5 to 1: 3 records");
   expect(selectedRows()).toBe(3);

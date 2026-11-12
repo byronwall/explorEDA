@@ -201,12 +201,12 @@
   position: relative;
   padding: 0 5px;
 }
-/* Sits at the status line's right end, over the chart's own status text. */
+/* Sits in the header beside Clear filters. */
 .eda-scale-chip-slot {
-  position: absolute;
-  right: 8px;
-  bottom: 1px;
-  z-index: 2;
+  display: flex;
+  flex: none;
+  align-items: center;
+  order: 2;
 }
 .eda-scale-chip {
   height: 18px;
@@ -1910,15 +1910,6 @@ html {
   .eda-panel:focus-within .eda-surface-action {
     opacity: 1;
   }
-}
-.eda-chart-hint {
-  font-size: 11px;
-  opacity: 0;
-  transition: opacity 120ms ease;
-}
-.eda-panel:hover .eda-chart-hint,
-.eda-panel:focus-within .eda-chart-hint {
-  opacity: 0.8;
 }
 
 /* Quiet controls keep the plotting area primary, without moving the title. */
