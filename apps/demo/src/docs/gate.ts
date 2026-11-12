@@ -14,7 +14,7 @@ export type DocsGateInput = {
   exampleIds: readonly string[];
   /** The coverage features each example shows or has reviewed. */
   exampleFeatures: Readonly<Record<string, readonly string[]>>;
-  /** Live examples by id: their example, data file, charts, and step charts. */
+  /** Live examples by id: their example, data file, charts, and surface chart. */
   liveExamples: Readonly<
     Record<
       string,
@@ -23,7 +23,7 @@ export type DocsGateInput = {
         exampleId?: string;
         data: string;
         charts: readonly string[];
-        stepCharts: readonly string[];
+        surfaceCharts: readonly string[];
       }
     >
   >;
@@ -175,9 +175,9 @@ export function findDocsErrors(input: DocsGateInput): string[] {
     if (!publicFiles.has(spec.data)) {
       errors.push(`${where} loads missing data "${spec.data}"`);
     }
-    for (const chart of spec.stepCharts) {
+    for (const chart of spec.surfaceCharts) {
       if (!spec.charts.includes(chart)) {
-        errors.push(`${where} has a step on missing chart "${chart}"`);
+        errors.push(`${where} shows missing chart "${chart}"`);
       }
     }
   }
