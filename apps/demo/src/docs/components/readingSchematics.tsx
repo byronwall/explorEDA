@@ -95,7 +95,7 @@ const ROWS = [
   { name: "Store", y: 56, to: 168, all: 236 },
   { name: "Phone", y: 84, to: 196 },
   { name: "Refund", y: 112, to: 76 },
-  { name: "Other", y: 140, to: 142, other: true },
+  { name: "+3 more", y: 140, to: 142, other: true },
 ];
 
 const row: Schematic = {
