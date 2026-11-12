@@ -4,7 +4,7 @@
 - Keep this existing React library and demo in React and TypeScript.
 - Use pnpm. Run `pnpm check` after a broad change; see [Verifying changes](#verifying-changes).
 - Read [UI defaults](docs/ui-defaults.md) before changing controls, tables, overlays, or field details.
-- Follow [Coding standards](CODING_STANDARDS.md) for UI, copy, and data rules, and check your diff against it before opening a PR. `pnpm check:ui` enforces the mechanical ones.
+- Follow [Coding standards](CODING_STANDARDS.md) for UI, copy, data, settings, hot-path, and test rules, and check your diff against it before opening a PR. `pnpm check:ui` enforces the mechanical ones.
 - When shaping or planning an initiative under `docs/intent/`, treat docs and demo examples as part of each user-visible feature's scope. List the docs page or section and the example in the same milestone as the feature. The docs gate (`apps/demo/src/docs/gate.ts`) requires a page only for registered chart types; nothing enforces examples, Composition marks, or other features.
 - Verify changed flows in the browser at wide, intermediate, and narrow widths.
 - Keep existing user edits. Do not commit on `main` without an explicit request.
@@ -13,9 +13,11 @@
 ## Verifying changes
 
 - The demo dev server and demo tests run the library from source. Do not build the library to see a change; `pnpm --filter demo dev` picks it up. Set `EXPLOREDA_DIST=1` only to try the built package.
-- While working, run targeted tests (`pnpm --filter exploreda exec vitest run <files>`) and `pnpm --filter exploreda check-types`.
-- Take test time limits from `@repo/test-config`. Don't set a timeout in one test or one config; see [Test time limits](docs/agent-guide.md#test-time-limits).
-- Run `pnpm check` once, before opening a PR. It builds the package, so never run it from several worktrees at the same time.
+- While working, run the test files you changed (`pnpm --filter exploreda exec vitest run <files>`), `pnpm --filter exploreda check-types`, and `pnpm lint`. Each takes seconds.
+- Other agent sessions share this laptop. Run one heavy command at a time, in the background, and stop every server and watcher you start. See [Memory](docs/agent-guide.md#memory).
+- Put a test where its environment fits: `.test.ts` runs in Node, `.test.tsx` in jsdom. See [Tests](docs/agent-guide.md#tests) and the test rules in [Coding standards](CODING_STANDARDS.md#tests).
+- Take test time limits and the worker cap from `@repo/test-config`. Don't set a timeout or a worker count in one test or one config.
+- Run `pnpm check` once, before opening a PR. It takes about 2 minutes and builds the package, so never run it from several worktrees at the same time.
 
 ## Pull requests
 

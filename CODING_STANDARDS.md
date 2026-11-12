@@ -1,6 +1,6 @@
 # Coding standards
 
-Check a diff against these before opening a PR, and when reviewing one. `pnpm check:ui` already enforces the mechanical ones (marked _checked_); the rest are judgement calls. [UI defaults](docs/ui-defaults.md) has the detail behind each UI rule.
+Check a diff against these before opening a PR, and when reviewing one. `pnpm check:ui` already enforces the mechanical ones (marked _checked_); the rest are judgement calls. [UI defaults](docs/ui-defaults.md) has the detail behind each UI rule, and the [agent guide](docs/agent-guide.md) has the map and commands.
 
 ## UI
 
@@ -23,6 +23,26 @@ Check a diff against these before opening a PR, and when reviewing one. `pnpm ch
 
 - Raw row values are read only through `src/lib/valueParsing.ts`. No `Date.parse`, `new Date(text)`, or `Number(value)` on row data. _`Date.parse` is checked._
 
+## Settings and state
+
+- **Never change settings in place.** Make a new object for the part you change: `{ ...chart, xAxis: { ...chart.xAxis, grid: true } }`. The defaults in `src/utils/defaultSettings.ts` are frozen, and a new chart shares their nested objects, so an in-place edit throws.
+- **Chart settings change through `updateChart`**, the one write path in `DataLayerProvider`. A continuous edit, such as typing or dragging, goes through `useChartEdit` or `holdStateChanges`, so it is one undo step.
+- **A shared constant holds no mutable state.** An object or array that many callers spread or read is frozen, or every caller gets a fresh copy.
+
+## Code that runs per row or per value
+
+Rows reach 27,000 and more, and a table or axis formats every value it shows. In these paths:
+
+- **Do per-step work once, outside the loop:** field ids, lookups, parsed expressions, `fieldGetter` calls, and regular expressions. A chart's filter function calls `fieldGetter` before it returns the row test.
+- **Touch only the fields you need.** Don't copy a whole row into a `Map` or a new object to read two fields.
+- **Reuse `Intl` formatters.** Making an `Intl.NumberFormat` or `Intl.DateTimeFormat` costs far more than using one. Go through `formatFieldValue`, which caches them by options, or keep one at module level.
+- **Measure before and after.** Profile a hot path ([Performance checks](docs/performance-checks.md), or `--cpu-prof` for a test) and put the numbers in the PR.
+
 ## Tests
 
-- Time limits come from `@repo/test-config`. No timeout in a single test or config.
+- **Few tests, each protecting behavior.** Test what a user or caller can see. Don't write a test that only repeats the implementation or its internal structure.
+- **The file extension picks the environment.** A `.test.ts` file runs in Node with no DOM; a test that needs the DOM is a `.test.tsx` file, even without JSX.
+- **A test never changes shared state in place:** module-level objects, registered definitions, chart defaults, or globals. In the library's `unit` group, files share modules within a worker, so a leak breaks another file's test. Restore what you patch in `afterEach`.
+- **Import the narrowest module.** A test that needs one chart's plan imports that plan, not `registerAllCharts` or the package entry; importing costs more than most tests run.
+- **Wait for an event, not a time.** No fixed sleeps. Use `findBy*`, `waitFor`, or the event the code emits. Don't render lazy pages one by one in a loop; see [Where the time goes](docs/agent-guide.md#where-the-time-goes).
+- **Time limits come from `@repo/test-config`.** No timeout in a single test or config, and no worker count in a config.
