@@ -23,9 +23,20 @@ export const testTiming = {
   browserRetries: onCI ? 1 : 0,
 };
 
+/**
+ * How many test files Vitest runs at once. Each worker is a Node process
+ * with its own jsdom and module graph, at 300 MB to 1 GB each, and Vitest's
+ * default of one per core swamped laptops running several agents at once.
+ * Pass `--maxWorkers=<n>` on the command line to change it for one run.
+ */
+export const testWorkers = 2;
+
 /** The Vitest `test` options every package starts from. */
 export const vitestDefaults = {
   globals: true,
   testTimeout: testTiming.testMs,
   hookTimeout: testTiming.hookMs,
+  pool: "forks",
+  maxWorkers: testWorkers,
+  minWorkers: 1,
 };
