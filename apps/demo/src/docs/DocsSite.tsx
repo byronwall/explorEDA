@@ -1,4 +1,3 @@
-import { examples } from "@/demos/examples";
 import { examplePath } from "@/routes";
 import type { MDXContent } from "mdx/types";
 import { lazy, Suspense, useState, type ComponentType } from "react";
@@ -23,6 +22,7 @@ import {
   stretchedLinkClass,
 } from "./components/chrome";
 import { DocsLink, mdxComponents } from "./components/content";
+import { railExamples } from "./railExamples";
 import { ChartChooser, Hero } from "./components/home";
 import { DocsLayout, Rail } from "./components/layout";
 import {
@@ -111,6 +111,36 @@ function DailyUses({ page }: { page: DocsPage }) {
   );
 }
 
+/** The closest example as a card, and any others as a short list. */
+function RailExamples({ page }: { page: DocsPage }) {
+  const [first, ...more] = railExamples(page);
+  if (!first) return null;
+  return (
+    <>
+      <RailCard
+        label="Full example"
+        heading={first.title}
+        meta={`${first.dataset.rows} · ${first.dataset.source} data`}
+        to={examplePath(first.id)}
+      />
+      {more.length > 0 && (
+        <div>
+          <p className={labelClass}>More examples</p>
+          <ul className="mt-3 space-y-2 text-sm">
+            {more.map((example) => (
+              <li key={example.id}>
+                <Link to={examplePath(example.id)} className={inlineLinkClass}>
+                  {example.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </>
+  );
+}
+
 /** The right rail: sections, the page's examples, and related pages. */
 function GuideRail({
   page,
@@ -122,18 +152,7 @@ function GuideRail({
   return (
     <div className="space-y-8">
       <OnThisPage entries={contents} />
-      {page.examples.map((id) => {
-        const example = examples.find((item) => item.id === id);
-        return example ? (
-          <RailCard
-            key={id}
-            label="Full example"
-            heading={example.title}
-            meta={`${example.dataset.rows} · ${example.dataset.source} data`}
-            to={examplePath(id)}
-          />
-        ) : null;
-      })}
+      <RailExamples page={page} />
       <DailyUses page={page} />
       {page.related.length > 0 && (
         <div>
