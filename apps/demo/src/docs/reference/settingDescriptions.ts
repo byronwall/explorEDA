@@ -47,11 +47,11 @@ export const CHART_SETTINGS: Readonly<
   row: {
     field: "Category field; each value gets its own row.",
     minRowHeight:
-      "Smallest row height in pixels. When rows would be shorter, the chart shows fewer categories.",
+      "Preferred smallest row height in pixels. To show every category, rows shrink below it to 12 pixels before the rest fold into a +N more row.",
     maxRowHeight: "Largest row height in pixels, so a few rows stay compact.",
     aggregateId:
       "Grouped summary to rank instead of counting rows: a count, sum, average, or rate (one sum divided by another). Its group field must match `field`.",
-    topN: "Number of categories to show, with the rest gathered in Other. Leave unset to fit as many rows as the height allows.",
+    topN: "Number of categories to show, with the rest gathered in a +N more row. Leave unset to show every category.",
     share:
       "Shows each bar as its share of the total of all bars, so they add to 100%. Counts and sums only.",
     valueFormat:

@@ -246,18 +246,14 @@ export function RowChart({
 
   const available =
     chartHeight - baseMargin.top - Math.max(baseMargin.bottom, 42);
-  const fitRows = Math.max(
-    2,
-    Math.floor(available / Math.max(1, settings.minRowHeight))
-  );
   // Top N rows may compress below the minimum height, but not below this.
   const floorRows = Math.max(2, Math.floor(available / TOP_N_ROW_FLOOR));
   const plan = useMemo((): RowSummaryPlan => {
-    // Top N keeps the same members at every usable size; unset fits the
-    // height. A chart too short for Top N shows as many as it can.
+    // Top N keeps the same members at every usable size; unset shows every
+    // category. Both compress rows to the floor before the rest fold.
     const maxRows = settings.topN
       ? Math.min(settings.topN + 1, floorRows)
-      : fitRows;
+      : floorRows;
     if (liveSummary && allSummary)
       return planRowSummary(liveSummary, allSummary, maxRows);
     // Context bars count the rows the chart's own filter keeps, so a chart
@@ -273,7 +269,7 @@ export function RowChart({
     liveIds,
     liveSummary,
     allSummary,
-    fitRows,
+    floorRows,
     settings.topN,
     settings.localFilters,
     allIds,
@@ -298,7 +294,7 @@ export function RowChart({
             {
               key: "__other",
               value: undefined,
-              label: "Other categories",
+              label: `+${plan.other.length} more`,
               count: plan.otherSummary
                 ? plan.otherSummary.current
                 : plan.other.reduce(
@@ -563,12 +559,23 @@ export function RowChart({
   // A rate or average over a few rows looks as solid as one over many.
   const small = (n: number | undefined) => n !== undefined && n < SMALL_SAMPLE;
   const liveRows = liveIds.length;
-  // Other categories hide the tail, so the chart offers to show every one.
+  // A Top N that hides the tail offers to clear it when every category fits.
   const categoryCount = plan.visible.length + plan.other.length;
   const showAll =
-    plan.other.length > 0 && !facetIds && settings.topN !== categoryCount
+    plan.other.length > 0 &&
+    !facetIds &&
+    settings.topN &&
+    categoryCount <= floorRows
       ? categoryCount
       : undefined;
+  // The folded row names its members on hover.
+  const otherNames = (members: { value: unknown }[]) =>
+    members.length > 8
+      ? `${members
+          .slice(0, 8)
+          .map((item) => categoryLabel(item.value as datum))
+          .join(", ")}, and ${members.length - 8} more`
+      : members.map((item) => categoryLabel(item.value as datum)).join(", ");
   // A bar runs from zero to its value, on either side.
   const zero = xScale(0);
   const span = (value: number | undefined) => {
@@ -603,7 +610,11 @@ export function RowChart({
         <ChartReadout fallbackClassName="eda-chart-readout-inline">
           <span className="eda-readout-item">
             <span>{fieldLabel}</span>
-            <b>{hoveredItem.label}</b>
+            <b>
+              {hoveredItem.other
+                ? otherNames(hoveredItem.members)
+                : hoveredItem.label}
+            </b>
           </span>
           {summarized && spec ? (
             <>
@@ -814,8 +825,8 @@ export function RowChart({
                   tabIndex={0}
                   aria-label={
                     summarized && spec
-                      ? `${label}, ${spec.name}: ${valueText(count, rows)}`
-                      : `${label}: ${rows.toLocaleString()} rows`
+                      ? `${other ? "Other categories" : label}, ${spec.name}: ${valueText(count, rows)}`
+                      : `${other ? "Other categories" : label}: ${rows.toLocaleString()} rows`
                   }
                   aria-pressed={
                     other
@@ -889,7 +900,7 @@ export function RowChart({
           style={showAllPlace(otherRow)}
           data-export="omit"
           aria-label={`Show all ${showAll} categories`}
-          onClick={() => updateChart(settings.id, { topN: showAll })}
+          onClick={() => updateChart(settings.id, { topN: undefined })}
         >
           Show all {showAll}
         </button>
