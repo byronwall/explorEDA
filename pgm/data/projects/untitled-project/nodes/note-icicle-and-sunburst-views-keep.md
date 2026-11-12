@@ -2,7 +2,7 @@
 id: note-icicle-and-sunburst-views-keep
 label: Icicle and sunburst views — keep?
 type: note
-status: blocked
+status: implemented
 priority: low
 parent: area-3-needs-input
 metadata:

@@ -2,7 +2,7 @@
 id: note-metric-tiles-repeat-text-and-leave-a-large-gap
 label: Metric tiles repeat text and leave a large gap
 type: note
-status: blocked
+status: implemented
 priority: medium
 parent: area-3-needs-input
 metadata:

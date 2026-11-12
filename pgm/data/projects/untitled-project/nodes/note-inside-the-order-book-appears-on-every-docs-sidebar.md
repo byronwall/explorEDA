@@ -2,7 +2,7 @@
 id: note-inside-the-order-book-appears-on-every-docs-sidebar
 label: "'Inside the order book' appears on every docs sidebar"
 type: note
-status: blocked
+status: implemented
 priority: low
 parent: area-3-needs-input
 metadata:

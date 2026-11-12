@@ -1,0 +1,12 @@
+{
+  "id": "6c51afac-99c3-4eb1-9851-45a9fb62dd9f",
+  "kind": "node.status.updated",
+  "actor": {
+    "kind": "agent",
+    "id": "token:2dbcff",
+    "label": "Agent token ...2dbcff"
+  },
+  "createdAt": "2026-11-12T00:35:48.703Z",
+  "summary": "Changed \"'Inside the order book' appears on every docs sidebar\" status to implemented.",
+  "nodeIds": ["note-inside-the-order-book-appears-on-every-docs-sidebar"]
+}

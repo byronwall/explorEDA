@@ -2,7 +2,7 @@
 id: note-calendar-month-divider-color-and-style
 label: Calendar month divider color and style
 type: note
-status: blocked
+status: implemented
 priority: medium
 parent: area-3-needs-input
 metadata:
