@@ -31,6 +31,7 @@ import { ChartMessage } from "../ChartMessage";
 import { ChartReadout } from "../ChartReadout";
 import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { drawMatrixPoints, toRgb, type Rgb } from "./matrixCanvas";
+import { useThemeColors } from "@/hooks/useDisplayColorScales";
 import type { MatrixBoxStats } from "./matrixCells";
 import { MIN_MATRIX_FIELDS, type ScatterMatrixSettings } from "./definition";
 import {
@@ -39,7 +40,6 @@ import {
   cellPoint,
   filterOffsets,
   MATRIX_CONTEXT_COLOR,
-  MATRIX_POINT_COLOR,
   markFilters,
   nearestRow,
   offsetFilter,
@@ -87,8 +87,7 @@ const truncate = (text: string, pixels: number) => {
  */
 const LIVE_BRUSH_ROWS = 20_000;
 const UPDATE_MARK = "eda-scatter-matrix-filter";
-/** MATRIX_POINT_COLOR and MATRIX_CONTEXT_COLOR as channels. */
-const POINT_RGB: Rgb = [0x34, 0x79, 0xa8];
+/** MATRIX_CONTEXT_COLOR as channels. */
 const CONTEXT_RGB: Rgb = [156, 163, 175];
 const UPDATE_MEASURE = "eda-scatter-matrix-update";
 
@@ -125,6 +124,8 @@ export function ScatterMatrix({
       ? s.colorScales.find((item) => item.id === settings.colorScaleId)
       : undefined
   );
+  // One-color marks take the theme's mark color, as the scatter plot does.
+  const mark = useThemeColors().mark;
   const liveIds = useStableIds(useGetLiveIds(settings, facetIds) as number[]);
   const allIds = useStableIds(useGetAllIds(settings) as number[]);
   const contextRef = useRef<HTMLCanvasElement>(null);
@@ -255,7 +256,7 @@ export function ScatterMatrix({
     drawMatrixPoints(
       canvasRef.current,
       plan,
-      POINT_RGB,
+      toRgb(mark),
       plan.pointOpacity,
       plan.hasSelection ? plan.selected : undefined,
       plan.groups && {
@@ -267,7 +268,7 @@ export function ScatterMatrix({
       performance.measure(UPDATE_MEASURE, UPDATE_MARK);
       performance.clearMarks(UPDATE_MARK);
     }
-  }, [plan]);
+  }, [plan, mark]);
   useEffect(() => () => cancelAnimationFrame(frame.current), []);
 
   const source = useMemo(
@@ -377,7 +378,11 @@ export function ScatterMatrix({
     }
     event.preventDefault();
     // Keep keyboard focus on the cell, so Escape clears what the drag sets.
-    event.currentTarget.focus({ preventScroll: true });
+    // A press draws no focus ring: the brush alone marks the cell.
+    event.currentTarget.focus({
+      preventScroll: true,
+      focusVisible: false,
+    } as FocusOptions);
     event.currentTarget.setPointerCapture?.(event.pointerId);
     const point = local(event);
     const grips = gripsAt(cell, point);
@@ -687,7 +692,7 @@ export function ScatterMatrix({
                       >
                         {truncate(
                           tick.label,
-                          Math.max(30, size / field.ticks.length)
+                          Math.max(30, size / field.ticks.length - 8)
                         )}
                       </text>
                     </g>
@@ -716,11 +721,15 @@ export function ScatterMatrix({
               );
             })}
             {plan.cells.map((cell) => (
+              <CellTicks key={`ticks-${cell.id}`} cell={cell} plan={plan} />
+            ))}
+            {plan.cells.map((cell) => (
               <MatrixCellMarks
                 key={cell.id}
                 cell={cell}
                 plan={plan}
                 label={plan.fields[cell.column]!.label}
+                mark={mark}
                 liveCount={plan.liveIds.length}
               />
             ))}
@@ -735,21 +744,52 @@ export function ScatterMatrix({
                     h: active.box[1][1] - active.box[0][1],
                   }
                 : selectionRect(cell);
+              if (!rect) {
+                return null;
+              }
+              const x = cell.x + rect.x;
+              const y = cell.y + rect.y;
+              const w = Math.max(1, rect.w);
+              const h = Math.max(1, rect.h);
+              // Grips on each edge it can drag, as on the scatter plot's brush.
+              const grips =
+                cell.row === cell.column
+                  ? [
+                      [x - 2, y + h / 2 - 8, 4, 16],
+                      [x + w - 2, y + h / 2 - 8, 4, 16],
+                    ]
+                  : [
+                      [x - 2, y + h / 2 - 8, 4, 16],
+                      [x + w - 2, y + h / 2 - 8, 4, 16],
+                      [x + w / 2 - 8, y - 2, 16, 4],
+                      [x + w / 2 - 8, y + h - 2, 16, 4],
+                    ];
               return (
-                rect && (
+                <g key={`sel-${cell.id}`} pointerEvents="none">
                   <rect
-                    key={`sel-${cell.id}`}
-                    x={cell.x + rect.x}
-                    y={cell.y + rect.y}
-                    width={Math.max(1, rect.w)}
-                    height={Math.max(1, rect.h)}
+                    x={x}
+                    y={y}
+                    width={w}
+                    height={h}
                     fill="var(--primary)"
-                    fillOpacity={0.08}
+                    fillOpacity={0.09}
                     stroke="var(--primary)"
                     strokeWidth={1.25}
-                    pointerEvents="none"
                   />
-                )
+                  <g data-export="omit">
+                    {grips.map(([gx, gy, gw, gh], index) => (
+                      <rect
+                        key={index}
+                        x={gx}
+                        y={gy}
+                        width={gw}
+                        height={gh}
+                        rx={2}
+                        fill="var(--primary)"
+                      />
+                    ))}
+                  </g>
+                </g>
               );
             })}
             {[
@@ -871,15 +911,64 @@ export function ScatterMatrix({
   );
 }
 
+/**
+ * Short ticks inside each plotted cell's bottom and left edges, at the outer
+ * axes' tick values, so a cell far from the axes can still be read without
+ * grid lines. A diagonal cell's height is a count, so it ticks x only.
+ */
+function CellTicks({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
+  if (
+    cell.kind === "blank" ||
+    cell.kind === "label" ||
+    cell.kind === "correlation"
+  ) {
+    return null;
+  }
+  const size = plan.cellSize;
+  const bottom = cell.y + size;
+  const xTicks = plan.fields[cell.column]!.ticks;
+  const yTicks = cell.row === cell.column ? [] : plan.fields[cell.row]!.ticks;
+  return (
+    <g
+      className="text-muted-foreground"
+      stroke="currentColor"
+      strokeOpacity={0.6}
+      pointerEvents="none"
+    >
+      {xTicks.map((tick, index) => (
+        <line
+          key={`x-${index}`}
+          x1={cell.x + tick.offset}
+          x2={cell.x + tick.offset}
+          y1={bottom}
+          y2={bottom - 4}
+        />
+      ))}
+      {yTicks.map((tick, index) => (
+        <line
+          key={`y-${index}`}
+          x1={cell.x}
+          x2={cell.x + 4}
+          y1={bottom - tick.offset}
+          y2={bottom - tick.offset}
+        />
+      ))}
+    </g>
+  );
+}
+
 function MatrixCellMarks({
   cell,
   plan,
   label,
+  mark,
   liveCount,
 }: {
   cell: MatrixCell;
   plan: MatrixPlan;
   label: string;
+  /** The color of one-color marks. */
+  mark: string;
   liveCount: number;
 }) {
   const size = plan.cellSize;
@@ -908,7 +997,7 @@ function MatrixCellMarks({
   if (cell.density) {
     return (
       <g pointerEvents="none">
-        <DensityCell cell={cell} plan={plan} />
+        <DensityCell cell={cell} plan={plan} mark={mark} />
         {count}
       </g>
     );
@@ -932,7 +1021,7 @@ function MatrixCellMarks({
   if (cell.boxes) {
     return (
       <g pointerEvents="none">
-        <BoxCell cell={cell} plan={plan} />
+        <BoxCell cell={cell} plan={plan} mark={mark} />
         {count}
       </g>
     );
@@ -940,7 +1029,7 @@ function MatrixCellMarks({
   if (cell.pairs) {
     return (
       <g pointerEvents="none">
-        <PairCell cell={cell} plan={plan} />
+        <PairCell cell={cell} plan={plan} mark={mark} />
         {count}
       </g>
     );
@@ -949,7 +1038,13 @@ function MatrixCellMarks({
     return (
       <g pointerEvents="none">
         {cell.bars.map((bar) => (
-          <DiagonalBar key={bar.id} bar={bar} cell={cell} plan={plan} />
+          <DiagonalBar
+            key={bar.id}
+            bar={bar}
+            cell={cell}
+            plan={plan}
+            mark={mark}
+          />
         ))}
         {count}
       </g>
@@ -962,10 +1057,12 @@ function DiagonalBar({
   bar,
   cell,
   plan,
+  mark,
 }: {
   bar: MatrixBar;
   cell: MatrixCell;
   plan: MatrixPlan;
+  mark: string;
 }) {
   const size = plan.cellSize;
   const scale = (size - 4) / cell.maxBar!;
@@ -1004,7 +1101,6 @@ function DiagonalBar({
               width={w}
               height={height}
               fill={groups.colors[group]}
-              fillOpacity={0.85}
             />
           );
         })}
@@ -1023,24 +1119,28 @@ function DiagonalBar({
           fillOpacity={0.45}
         />
       )}
-      <rect
-        x={x}
-        y={base - selected}
-        width={w}
-        height={selected}
-        fill={MATRIX_POINT_COLOR}
-        fillOpacity={0.85}
-      />
+      <rect x={x} y={base - selected} width={w} height={selected} fill={mark} />
     </>
   );
 }
 
 /**
- * One box per category: the box spans the quartiles, a line marks the median,
- * and whiskers reach the furthest values within 1.5 IQR. With a selection,
- * gray boxes summarize every row and narrower colored boxes the selection.
+ * One box per category, drawn as the box plot draws it: the box spans the
+ * quartiles in its category's color, a white median sits on a dark halo, and
+ * capped whiskers reach the furthest values within 1.5 IQR. Boxes take the
+ * color field's colors when they split by it, and the mark color otherwise.
+ * With a selection, a gray box summarizes every row, as gray points do, and a
+ * narrower colored box the selected rows.
  */
-function BoxCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
+function BoxCell({
+  cell,
+  plan,
+  mark,
+}: {
+  cell: MatrixCell;
+  plan: MatrixPlan;
+  mark: string;
+}) {
   const size = plan.cellSize;
   const boxes = cell.boxes!;
   const bandField = plan.fields[boxes.horizontal ? cell.row : cell.column]!;
@@ -1050,6 +1150,12 @@ function BoxCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
   if (bandAxis.kind !== "band" || valueAxis.kind !== "numeric") {
     return null;
   }
+  const groups =
+    plan.groups?.field === bandField.field ? plan.groups : undefined;
+  const colorOf = (label: string) => {
+    const group = groups ? groups.labels.indexOf(label) : -1;
+    return group >= 0 ? groups!.colors[group]! : mark;
+  };
   const bandwidth = bandAxis.scale.bandwidth();
   // Map (band offset, value) to cell pixels for either orientation.
   const point = (along: number, value: number) => {
@@ -1058,36 +1164,59 @@ function BoxCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
       ? { x: cell.x + across, y: cell.y + size - along }
       : { x: cell.x + along, y: cell.y + size - across };
   };
+  const line = (
+    along0: number,
+    value0: number,
+    along1: number,
+    value1: number
+  ) => {
+    const a = point(along0, value0);
+    const b = point(along1, value1);
+    return { x1: a.x, y1: a.y, x2: b.x, y2: b.y };
+  };
   const draw = (
     key: string,
     center: number,
     width: number,
     stats: MatrixBoxStats,
     color: string,
-    fillOpacity: number
+    context: boolean
   ) => {
     const half = width / 2;
     const a = point(center - half, stats.q1);
     const b = point(center + half, stats.q3);
-    const m0 = point(center - half, stats.median);
-    const m1 = point(center + half, stats.median);
-    const w0 = point(center, stats.low);
-    const w1 = point(center, stats.high);
-    const q1 = point(center, stats.q1);
-    const q3 = point(center, stats.q3);
+    const median = line(
+      center - half,
+      stats.median,
+      center + half,
+      stats.median
+    );
+    const cap = width / 4;
     return (
-      <g key={key} stroke={color} strokeWidth={1}>
-        <line x1={w0.x} y1={w0.y} x2={q1.x} y2={q1.y} />
-        <line x1={q3.x} y1={q3.y} x2={w1.x} y2={w1.y} />
+      <g key={key} opacity={context ? 0.45 : 1}>
+        <g stroke={color} strokeWidth={1}>
+          <line {...line(center, stats.low, center, stats.q1)} />
+          <line {...line(center, stats.q3, center, stats.high)} />
+          <line {...line(center - cap, stats.low, center + cap, stats.low)} />
+          <line {...line(center - cap, stats.high, center + cap, stats.high)} />
+        </g>
         <rect
           x={Math.min(a.x, b.x)}
           y={Math.min(a.y, b.y)}
           width={Math.max(1, Math.abs(b.x - a.x))}
           height={Math.max(1, Math.abs(b.y - a.y))}
+          rx={2}
           fill={color}
-          fillOpacity={fillOpacity}
+          stroke={context ? color : "var(--eda-box-stroke)"}
+          strokeWidth={1}
         />
-        <line x1={m0.x} y1={m0.y} x2={m1.x} y2={m1.y} strokeWidth={2} />
+        {!context && (
+          <>
+            {/* A dark halo keeps the median readable on light and dark fills. */}
+            <line {...median} stroke="rgb(0 0 0 / 0.55)" strokeWidth={4} />
+            <line {...median} stroke="white" strokeWidth={2} />
+          </>
+        )}
       </g>
     );
   };
@@ -1097,17 +1226,18 @@ function BoxCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
         const label = bandField.bands!.labels[group.band]!;
         const center = (bandAxis.scale(label) ?? 0) + bandwidth / 2;
         const width = Math.min(bandwidth * 0.7, 28);
-        const selected = boxes.selected?.[index];
+        const color = colorOf(label);
         if (!plan.hasSelection) {
           return draw(
             group.band.toString(),
             center,
             width,
             group.stats,
-            MATRIX_POINT_COLOR,
-            0.3
+            color,
+            false
           );
         }
+        const selected = boxes.selected?.[index];
         return (
           <g key={group.band}>
             {draw(
@@ -1116,17 +1246,10 @@ function BoxCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
               width,
               group.stats,
               MATRIX_CONTEXT_COLOR,
-              0.25
+              true
             )}
             {selected &&
-              draw(
-                "selected",
-                center,
-                width * 0.55,
-                selected,
-                MATRIX_POINT_COLOR,
-                0.45
-              )}
+              draw("selected", center, width * 0.6, selected, color, false)}
           </g>
         );
       })}
@@ -1139,7 +1262,15 @@ function BoxCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
  * pair, its length the share of the column category's rows. With a selection,
  * the selected count fills inside the gray total.
  */
-function PairCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
+function PairCell({
+  cell,
+  plan,
+  mark,
+}: {
+  cell: MatrixCell;
+  plan: MatrixPlan;
+  mark: string;
+}) {
   const size = plan.cellSize;
   const pairs = cell.pairs!;
   const column = plan.fields[cell.column]!;
@@ -1189,8 +1320,7 @@ function PairCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
                 y={yCenter - inner / 2}
                 width={inner}
                 height={inner}
-                fill={MATRIX_POINT_COLOR}
-                fillOpacity={0.85}
+                fill={mark}
               />
             )}
           </g>
@@ -1219,8 +1349,7 @@ function PairCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
                 y={yCenter - height / 2}
                 width={Math.max(1, xWidth * selectedShare)}
                 height={height}
-                fill={MATRIX_POINT_COLOR}
-                fillOpacity={0.85}
+                fill={mark}
               />
             )}
           </g>
@@ -1392,7 +1521,15 @@ function areaPath(
  * area shows the selected share. With a color field, each group's curve
  * overlaps the others.
  */
-function DensityCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
+function DensityCell({
+  cell,
+  plan,
+  mark,
+}: {
+  cell: MatrixCell;
+  plan: MatrixPlan;
+  mark: string;
+}) {
   const size = plan.cellSize;
   const density = cell.density!;
   const scale = (size - 6) / Math.max(1e-9, density.max);
@@ -1428,9 +1565,9 @@ function DensityCell({ cell, plan }: { cell: MatrixCell; plan: MatrixPlan }) {
               : density.total,
             scale
           )}
-          fill={MATRIX_POINT_COLOR}
+          fill={mark}
           fillOpacity={0.55}
-          stroke={MATRIX_POINT_COLOR}
+          stroke={mark}
           strokeWidth={1}
         />
       )}
