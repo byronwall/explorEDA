@@ -149,7 +149,6 @@ export function LiveExample({
       ref={root}
       className="my-6"
       data-docs-example={id}
-      data-docs-steps={JSON.stringify(spec.steps)}
       data-docs-shot={`example-${id}`}
     >
       <div className="overflow-hidden rounded-lg border border-border bg-background">

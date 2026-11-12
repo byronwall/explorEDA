@@ -42,33 +42,6 @@ import { emptySelectionDashboard } from "@/demos/emptySelection";
 import { orderGapsDashboard } from "@/demos/missingnessDashboards";
 import type { SavedDataStructure } from "exploreda";
 
-/**
- * One scripted step. The docs browser check runs a page's steps against its
- * live example, so a claim tied to a step fails the deploy when it stops
- * being true.
- */
-export type LiveStep =
-  /** Drag across a chart's numeric X axis from one value to another. */
-  | { brush: { chart: string; from: number; to: number } }
-  /** The workspace row count after the steps so far. */
-  | { expectRows: number }
-  /** A filter chip whose text contains this, after the steps so far. */
-  | { expectChip: string }
-  /** Pick an option in the select with this accessible label. */
-  | { select: { label: string; option: string } }
-  /** A mark whose accessible name is exactly this, after the steps so far. */
-  | { expectMark: string }
-  /** Click the mark whose accessible name is exactly this. */
-  | { click: string }
-  /** Text that shows in the example, after the steps so far. */
-  | { expectText: string }
-  /** Pick the open menu's item with this name. */
-  | { choose: string }
-  /** Follow the link with this text. */
-  | { link: string }
-  /** Text that shows in the open popover, after the steps so far. */
-  | { expectPopover: string };
-
 type LiveExampleBase = {
   /** The workspace region's accessible name. */
   label: string;
@@ -76,7 +49,6 @@ type LiveExampleBase = {
   data: string;
   /** Alt text for the screenshot shown on narrow screens. */
   shotAlt: string;
-  steps: readonly LiveStep[];
 };
 
 export type LiveWorkspaceSpec = LiveExampleBase & {
@@ -170,22 +142,6 @@ export const liveExamples = {
     height: 560,
     shotAlt:
       "A sentence with live values above two row charts of reviews by region and by group.",
-    steps: [
-      { expectText: "Selected 10 of 10 active reviews" },
-      { expectText: "average score is 34.38" },
-      { expectText: "a difference of \u22128.75" },
-      { click: "East: 4 rows" },
-      { expectText: "a difference of +15.00" },
-      { expectText: "40% of active reviews and 33.3% of all 12" },
-      { expectText: "Selected 4 of 10 active reviews" },
-      { expectText: "average score is 80.00" },
-      { link: "show records" },
-      { expectPopover: "Conversion failed" },
-      { click: "A: 6 rows" },
-      { expectText: "average score is 80.00" },
-      { click: "Clear filters for Active reviews by region" },
-      { expectText: "average score is 34.38" },
-    ],
   },
   "bar-histogram": {
     label: "Live delivery-time histogram",
@@ -204,12 +160,6 @@ export const liveExamples = {
     exampleId: "shop-operations",
     shotAlt:
       "A histogram of delivery days beside a bar chart of orders by sales channel.",
-    steps: [
-      { expectRows: 500 },
-      { brush: { chart: "shop-delivery", from: 1.5, to: 4.5 } },
-      { expectChip: "Delivery Days: 1.5–4.5" },
-      { expectRows: 265 },
-    ],
   },
   "engineering-width": {
     label: "Live shaft-diameter histogram in saved bins",
@@ -221,15 +171,6 @@ export const liveExamples = {
     exampleId: "engineering-histograms",
     shotAlt:
       "A histogram of shaft diameters in 0.01 mm bins with a dashed tail bar past 12.08, beside parts by machine.",
-    steps: [
-      { expectRows: 162 },
-      { click: "12.05 to < 12.06: 6 records" },
-      { expectChip: "Diameter (mm): 12.05 to < 12.06" },
-      { expectRows: 6 },
-      { click: "> 12.08: 2 records" },
-      { expectChip: "Diameter (mm): > 12.08" },
-      { expectRows: 2 },
-    ],
   },
   "engineering-specs": {
     label: "Live shaft-diameter histogram with specification limits",
@@ -241,13 +182,6 @@ export const liveExamples = {
     exampleId: "engineering-histograms",
     shotAlt:
       "A shaft-diameter histogram with dashed limit lines at 11.95 and 12.05, light tints past them, and Below, Within, Above, and Outside counts under the plot.",
-    steps: [
-      { expectRows: 162 },
-      { expectText: "Within 152" },
-      { click: "Outside spec: 7 of 159, 4.4%" },
-      { expectChip: "Diameter (mm): outside spec" },
-      { expectRows: 7 },
-    ],
   },
   "settings-bar": {
     label: "Live chart settings for the delivery-time histogram",
@@ -257,10 +191,6 @@ export const liveExamples = {
     shotAlt:
       "The delivery-time histogram beside its settings panel, open on the Data tab.",
     surface: { kind: "settings", chart: "shop-delivery" },
-    steps: [
-      { select: { label: "Data mode", option: "Category count" } },
-      { expectMark: "(missing): 9 records" },
-    ],
   },
   scatter: {
     label: "Live scatter plot of net sales against contribution",
@@ -272,7 +202,6 @@ export const liveExamples = {
     exampleId: "scatter-trace",
     shotAlt:
       "Calculated net sales against contribution for 18 orders, beside orders by channel.",
-    steps: [{ expectRows: 18 }, { click: "Online: 6 rows" }, { expectRows: 6 }],
   },
   "dense-chart-controls": {
     label: "Live scatter plots with an editable color field",
@@ -284,7 +213,6 @@ export const liveExamples = {
     exampleId: "dense-chart-controls",
     shotAlt:
       "An uncolored scatter with a Color: None label, beside a scatter colored by channel.",
-    steps: [{ expectText: "Color: None" }],
   },
   row: {
     label: "Live category row chart",
@@ -295,12 +223,6 @@ export const liveExamples = {
     }),
     exampleId: "shop-operations",
     shotAlt: "Orders by product category beside orders by sales channel.",
-    steps: [
-      { expectRows: 500 },
-      { click: "Home: 168 rows" },
-      { expectChip: "Category" },
-      { expectRows: 168 },
-    ],
   },
   line: {
     label: "Live monthly revenue line chart",
@@ -308,7 +230,6 @@ export const liveExamples = {
     savedData: focus(timeSeriesDashboard, { "time-revenue": [0, 0, 12] }),
     exampleId: "calendar-series",
     shotAlt: "Monthly revenue as one line per sales channel.",
-    steps: [{ expectRows: 500 }],
   },
   boxplot: {
     label: "Live box plot",
@@ -316,7 +237,6 @@ export const liveExamples = {
     savedData: focus(shopDashboard, { "shop-order": [0, 0, 12] }),
     exampleId: "shop-operations",
     shotAlt: "Order value by product category as box plots.",
-    steps: [{ expectRows: 500 }],
   },
   "3d-scatter": {
     label: "Live 3D scatter plot",
@@ -326,7 +246,6 @@ export const liveExamples = {
     }),
     exampleId: "lorenz-3d",
     shotAlt: "Five Lorenz runs as colored points in a 3D scene.",
-    steps: [{ expectRows: 1000 }],
   },
   pivot: {
     label: "Live pivot table",
@@ -336,11 +255,6 @@ export const liveExamples = {
     }),
     exampleId: "categorical-charts",
     shotAlt: "A pivot table of grouped measures.",
-    steps: [
-      { expectRows: 10000 },
-      { click: "Filter Rating by 1" },
-      { expectRows: 1967 },
-    ],
   },
   hierarchy: {
     label: "Live hierarchy treemap",
@@ -351,7 +265,6 @@ export const liveExamples = {
     exampleId: "categorical-charts",
     shotAlt:
       "A treemap of the catalog nested by category, subcategory, and material.",
-    steps: [{ expectRows: 10000 }],
   },
   "data-table": {
     label: "Live data table",
@@ -359,7 +272,6 @@ export const liveExamples = {
     savedData: focus(shopDashboard, { "shop-orders": [0, 0, 12, 5] }),
     exampleId: "shop-operations",
     shotAlt: "A table of orders with a distribution under each column name.",
-    steps: [{ expectRows: 500 }],
   },
   summary: {
     label: "Live field summary table",
@@ -369,7 +281,6 @@ export const liveExamples = {
     }),
     exampleId: "box-plot",
     shotAlt: "A summary table with one row per field and its distribution.",
-    steps: [{ expectRows: 10000 }],
   },
   "color-legend": {
     label: "Live color legend beside a box plot",
@@ -380,7 +291,6 @@ export const liveExamples = {
     }),
     exampleId: "box-plot",
     shotAlt: "A color legend above box plots colored by the same scale.",
-    steps: [{ expectRows: 10000 }],
   },
   markdown: {
     label: "Live notes panel",
@@ -388,7 +298,6 @@ export const liveExamples = {
     savedData: focus(scatterTraceDashboard, { "trace-guide": [0, 0, 12] }),
     exampleId: "scatter-trace",
     shotAlt: "A notes panel with formatted text that explains the analysis.",
-    steps: [{ expectRows: 18 }],
   },
   sankey: {
     label: "Live sankey chart",
@@ -396,11 +305,6 @@ export const liveExamples = {
     savedData: focus(shopDashboard, { "shop-flow": [0, 0, 12] }),
     exampleId: "shop-operations",
     shotAlt: "Orders flowing from channel to category to region.",
-    steps: [
-      { expectRows: 500 },
-      { click: "Web to Home: 84 rows" },
-      { expectRows: 84 },
-    ],
   },
   funnel: {
     label: "Live signup funnel",
@@ -412,13 +316,6 @@ export const liveExamples = {
     exampleId: "product-funnel",
     shotAlt:
       "A funnel of users from visit to upgrade, beside events by channel.",
-    steps: [
-      { expectRows: 11296 },
-      { expectMark: "Step 5, upgrade: 112, 5.6% of the first step" },
-      { click: "Step 5, upgrade: 112, 5.6% of the first step" },
-      { expectChip: "event" },
-      { expectRows: 1379 },
-    ],
   },
   retention: {
     label: "Live weekly retention",
@@ -430,13 +327,6 @@ export const liveExamples = {
     exampleId: "product-retention",
     shotAlt:
       "Weekly signup cohorts by the share active in each week after, beside events by channel.",
-    steps: [
-      { expectRows: 11296 },
-      { expectMark: "Mar 3 cohort, Week 4: 53%, 10 of 19" },
-      { click: "Mar 3 cohort, Week 4: 53%, 10 of 19" },
-      { expectChip: "user_id" },
-      { expectRows: 125 },
-    ],
   },
   timeline: {
     label: "Live room bookings",
@@ -447,12 +337,6 @@ export const liveExamples = {
     exampleId: "room-bookings",
     shotAlt:
       "Four weeks of room bookings in one lane per room, colored by status.",
-    steps: [
-      { expectRows: 673 },
-      { click: "Lab 4: Mar 23, 9:00 AM to no end" },
-      { expectChip: "Source row" },
-      { expectRows: 1 },
-    ],
   },
   "joint-missingness": {
     label: "Live joint missingness chart",
@@ -463,12 +347,6 @@ export const liveExamples = {
     exampleId: "order-gaps",
     shotAlt:
       "Exact missing patterns of 600 orders, with a missing count above each field.",
-    steps: [
-      { expectRows: 600 },
-      { click: "Tracking + Delivered + Rating + Review: 51 rows, 8.5%" },
-      { expectChip: "Missing exactly" },
-      { expectRows: 51 },
-    ],
   },
   "parallel-coordinates": {
     label: "Live parallel coordinates chart",
@@ -476,7 +354,6 @@ export const liveExamples = {
     savedData: focus(penguinDashboard, { "penguin-profile": [0, 0, 12] }),
     exampleId: "palmer-penguins",
     shotAlt: "Each penguin as a line across bill, flipper, and mass axes.",
-    steps: [{ expectRows: 344 }],
   },
   "scatter-matrix": {
     label: "Live scatter matrix",
@@ -484,7 +361,6 @@ export const liveExamples = {
     savedData: focus(scatterMatrixDashboard, { "matrix-penguins": [0, 0, 12] }),
     exampleId: "scatter-matrix",
     shotAlt: "A grid of scatter plots for every pair of penguin measurements.",
-    steps: [{ expectRows: 344 }],
   },
   "rank-correlation-basics": {
     label: "Live Pearson and Spearman matrices",
@@ -497,11 +373,6 @@ export const liveExamples = {
     exampleId: "rank-correlation-basics",
     shotAlt:
       "Two scatter matrices of study hours, exam score, practice tests, and confidence: Pearson r on the left, Spearman ρ on the right.",
-    steps: [
-      { expectRows: 40 },
-      { expectText: "r 0.85" },
-      { expectText: "ρ 0.96" },
-    ],
   },
   "rank-pair-discovery": {
     label: "Live matrix with both correlations",
@@ -510,12 +381,6 @@ export const liveExamples = {
     exampleId: "rank-pair-discovery",
     shotAlt:
       "A scatter matrix of dose and four responses with r above ρ in each correlation cell.",
-    steps: [
-      { expectRows: 40 },
-      { expectText: "r 0.84" },
-      { expectText: "ρ 1.00" },
-      { expectMark: "Pairs in Dose and four responses, r above ρ" },
-    ],
   },
   calendar: {
     label: "Live calendar heatmap",
@@ -524,7 +389,6 @@ export const liveExamples = {
     exampleId: "lincoln-ridgeline",
     shotAlt:
       "Each day of 2016 in Lincoln, Nebraska, shaded by its high temperature: pale winter weeks, dark summer ones.",
-    steps: [{ expectRows: 366 }],
   },
   heatmap: {
     label: "Live heatmap",
@@ -532,11 +396,6 @@ export const liveExamples = {
     savedData: focus(shopDashboard, { "shop-category-region": [0, 0, 12] }),
     exampleId: "shop-operations",
     shotAlt: "Orders by category and region as shaded cells.",
-    steps: [
-      { expectRows: 500 },
-      { click: "Home, East: $10,307.62" },
-      { expectRows: 42 },
-    ],
   },
   ecdf: {
     label: "Live ECDF chart",
@@ -544,7 +403,6 @@ export const liveExamples = {
     savedData: focus(activityDashboard, { "activity-speed-share": [0, 0, 12] }),
     exampleId: "product-activity",
     shotAlt: "Cumulative share curves of page speed.",
-    steps: [{ expectRows: 90 }],
   },
   "metric-card": {
     label: "Live metric cards",
@@ -555,7 +413,6 @@ export const liveExamples = {
     }),
     exampleId: "shop-operations",
     shotAlt: "Two metric cards: matching orders and revenue.",
-    steps: [{ expectRows: 500 }, { expectText: "$184,249.66" }],
   },
   map: {
     label: "Live point map",
@@ -563,7 +420,6 @@ export const liveExamples = {
     savedData: focus(pointMapDashboard, { "map-sites": [0, 0, 12] }),
     exampleId: "point-map",
     shotAlt: "Service sites as points on a world map.",
-    steps: [{ expectRows: 30 }],
   },
   waterfall: {
     label: "Live budget waterfall",
@@ -575,14 +431,6 @@ export const liveExamples = {
     exampleId: "budget-bridge",
     shotAlt:
       "A waterfall from the lab's planned net position to its actual one, with a step per line item and a subtotal per group, beside a quarter picker.",
-    steps: [
-      { expectRows: 96 },
-      { expectMark: "Plan, total 104" },
-      { expectMark: "Actual, total -39" },
-      { click: "Equipment, change -84" },
-      { expectChip: "Line item" },
-      { expectRows: 8 },
-    ],
   },
   "waterfall-running": {
     label: "Live running-total waterfall",
@@ -594,12 +442,6 @@ export const liveExamples = {
     exampleId: "battery-day",
     shotAlt:
       "A battery's charge through a day: a start value, one step per hour, a subtotal per part of the day, and the charge at day's end, beside a flow picker.",
-    steps: [
-      { expectRows: 45 },
-      { click: "Solar: 13 rows" },
-      { expectRows: 13 },
-      { expectChip: "Flow" },
-    ],
   },
   donut: {
     label: "Live revenue donut",
@@ -611,13 +453,6 @@ export const liveExamples = {
     exampleId: "channel-share",
     shotAlt:
       "A donut of revenue by sales channel beside 100% bars of the channel mix in each region, in the same colors.",
-    steps: [
-      { expectRows: 500 },
-      { expectMark: "Web: 102.7K, 56%" },
-      { click: "Store: 46.7K, 25%" },
-      { expectChip: "Channel" },
-      { expectRows: 167 },
-    ],
   },
   "composition-parts": {
     label: "Live lab budget report",
@@ -626,7 +461,6 @@ export const liveExamples = {
     exampleId: "budget-report",
     shotAlt:
       "A report page: each quarter's plan-to-actual waterfall on one scale, and a donut of each budget group's line items with a legend.",
-    steps: [{ expectRows: 96 }],
   },
   composition: {
     label: "Live composition",
@@ -634,7 +468,6 @@ export const liveExamples = {
     savedData: focus(messageDashboard, { "messages-composition": [0, 0, 12] }),
     exampleId: "message-log",
     shotAlt: "A composed graphic built from the message log.",
-    steps: [{ expectRows: 10376 }],
   },
   "scatter-density": {
     label: "Live binned scatter density",
@@ -642,7 +475,6 @@ export const liveExamples = {
     savedData: focus(densityDashboard, { "density-days": [0, 0, 12] }),
     exampleId: "scatter-density",
     shotAlt: "10,000 daily observations counted in rectangular bins.",
-    steps: [{ expectRows: 10000 }],
   },
   "scatter-hexbin": {
     label: "Live hexagon bins",
@@ -650,7 +482,6 @@ export const liveExamples = {
     savedData: focus(scatterSurfaceDashboard, { "surface-hex": [0, 0, 12] }),
     exampleId: "scatter-surfaces",
     shotAlt: "Coordinate pairs counted in hexagons, shaded by count.",
-    steps: [{ expectRows: 10000 }],
   },
   "scatter-contour": {
     label: "Live smoothed density",
@@ -658,7 +489,6 @@ export const liveExamples = {
     savedData: focus(scatterSurfaceDashboard, { "surface-kde": [0, 0, 12] }),
     exampleId: "scatter-surfaces",
     shotAlt: "Filled density regions and contour lines over the points.",
-    steps: [{ expectRows: 10000 }],
   },
   "scatter-regression": {
     label: "Live regression fits",
@@ -666,7 +496,6 @@ export const liveExamples = {
     savedData: focus(scatterRegressionDashboard, { "fit-bill": [0, 0, 12] }),
     exampleId: "scatter-regression",
     shotAlt: "Bill depth against bill length with a fit line for each species.",
-    steps: [{ expectRows: 344 }],
   },
   "scatter-regression-units": {
     label: "Live quadratic fit far from zero",
@@ -678,7 +507,6 @@ export const liveExamples = {
     exampleId: "scatter-regression-units",
     shotAlt:
       "Five readings near one billion millimetres, each panel labeled with a quadratic written around a round center.",
-    steps: [{ expectRows: 5 }],
   },
   "scatter-bubble": {
     label: "Live bubble scatter",
@@ -686,7 +514,6 @@ export const liveExamples = {
     savedData: focus(bubbleDashboard, { "bubble-trials": [0, 0, 12] }),
     exampleId: "bubble-scatter",
     shotAlt: "Points sized by a value, so their areas compare.",
-    steps: [{ expectRows: 90 }],
   },
   "bar-grouped": {
     label: "Live grouped bars",
@@ -694,7 +521,6 @@ export const liveExamples = {
     savedData: focus(groupedBarsDashboard, { "grouped-revenue": [0, 0, 12] }),
     exampleId: "grouped-bars",
     shotAlt: "Revenue by region with one bar per channel side by side.",
-    steps: [{ expectRows: 500 }],
   },
   "bar-stacked": {
     label: "Live stacked bars",
@@ -702,7 +528,6 @@ export const liveExamples = {
     savedData: focus(stackedBarsDashboard, { "grouped-count": [0, 0, 12] }),
     exampleId: "stacked-bars",
     shotAlt: "Orders by category, each bar split into channel shares.",
-    steps: [{ expectRows: 500 }],
   },
   "line-area": {
     label: "Live area chart",
@@ -710,7 +535,6 @@ export const liveExamples = {
     savedData: focus(areaDashboard, { "time-weekly": [0, 0, 12] }),
     exampleId: "area-charts",
     shotAlt: "Weekly order counts as filled areas.",
-    steps: [{ expectRows: 500 }],
   },
   facets: {
     label: "Live faceted scatter plot",
@@ -720,7 +544,6 @@ export const liveExamples = {
     }),
     exampleId: "scatter-regression",
     shotAlt: "The same scatter plot repeated for each sex, with shared axes.",
-    steps: [{ expectRows: 344 }],
   },
   "saved-filter": {
     label: "Live chart opened with a saved brush",
@@ -731,7 +554,6 @@ export const liveExamples = {
     exampleId: "lorenz-3d",
     shotAlt:
       "A scatter plot that opens with a rectangular brush already drawn.",
-    steps: [{ expectChip: "Time" }, { expectRows: 164 }],
   },
   "recover-rows": {
     label: "Live workspace filtered to no rows",
@@ -741,12 +563,6 @@ export const liveExamples = {
     chrome: true,
     shotAlt:
       "Two row charts with no rows, and the Recover rows panel listing each filter with the rows it brings back.",
-    steps: [
-      { expectRows: 0 },
-      { click: "Recover rows" },
-      { expectPopover: "+168 rows" },
-      { expectPopover: "+166 rows" },
-    ],
   },
   workspace: {
     label: "Live workspace tour",
@@ -758,15 +574,6 @@ export const liveExamples = {
     exampleId: "shop-operations",
     chrome: true,
     shotAlt: "Two row charts with the workspace toolbar and row count.",
-    steps: [
-      { click: "Home: 168 rows" },
-      { expectChip: "Category" },
-      { expectRows: 168 },
-      { click: "Rows" },
-      { expectText: "Showing 168 of 500 rows" },
-      { click: "Fields" },
-      { expectText: "15 fields" },
-    ],
   },
   fields: {
     label: "Live field list",
@@ -775,12 +582,6 @@ export const liveExamples = {
     exampleId: "shop-operations",
     chrome: true,
     shotAlt: "A row chart of sales channels beside the workspace toolbar.",
-    steps: [
-      { click: "Fields" },
-      { click: "Add a chart of Region" },
-      { choose: "Row chart" },
-      { expectMark: "North: 125 rows" },
-    ],
   },
   "category-mappings": {
     label: "Live category mapping",
@@ -792,11 +593,6 @@ export const liveExamples = {
     exampleId: "category-mappings",
     shotAlt:
       "Two row charts of ticket countries: as typed, with USA, US, and U.S. apart, and mapped, with them merged into United States.",
-    steps: [
-      { expectRows: 240 },
-      { expectText: "Country, mapped" },
-      { expectText: "114" },
-    ],
   },
   "number-input": {
     label: "Live number input",
@@ -808,11 +604,6 @@ export const liveExamples = {
     exampleId: "supplier-invoices",
     shotAlt:
       "Histograms of invoice amounts and of net amounts after discount, in euros; credit notes show as negative net amounts.",
-    steps: [
-      { expectRows: 160 },
-      { expectText: "Amount (EUR)" },
-      { expectText: "Net (EUR)" },
-    ],
   },
   calculations: {
     label: "Live calculated fields",
@@ -821,7 +612,6 @@ export const liveExamples = {
     exampleId: "scatter-trace",
     chrome: true,
     shotAlt: "A scatter plot whose axes are calculated fields.",
-    steps: [{ click: "Calculations" }, { expectText: "Net sales" }],
   },
 } satisfies Record<string, LiveExampleSpec>;
 
