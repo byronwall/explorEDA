@@ -4,11 +4,11 @@
     "title": "Find missing values and missing observations",
     "slug": "missingness-and-expected-records",
     "scale": "feature",
-    "current_phase": "plan",
-    "last_updated": "2026-10-30",
+    "current_phase": "execution",
+    "last_updated": "2026-11-12",
     "summary": "Analysts may need to see whether missing values cluster together, or discover records that should exist but do not.",
-    "status": "planned",
-    "next_action": "Implement the exact-pattern, record, Keep, and reopen proof in implementation-plan.md after review."
+    "status": "active",
+    "next_action": "Joint missingness (M1, M2) shipped. Expected-record reconciliation is unbuilt; its plan is open in PR #579. Decide whether to build it here or split it into its own initiative, then retire."
   },
   "artifacts": {
     "intent_brief": {
@@ -301,14 +301,20 @@
       {
         "id": "M1",
         "title": "Exact patterns, records, and kept notebooks",
-        "status": "planned",
-        "plan": "implementation-plan.md"
+        "status": "completed",
+        "plan": "implementation-plan.md",
+        "evidence": [
+          "PRs #600, #603, #607 merged 2026-11-04; docs page apps/demo/src/docs/pages/joint-missingness.mdx; released in exploreda 0.4.0"
+        ]
       },
       {
         "id": "M2",
         "title": "Group consequences and chosen inputs",
-        "status": "planned",
-        "plan": "implementation-plan.md"
+        "status": "completed",
+        "plan": "implementation-plan.md",
+        "evidence": [
+          "PRs #604 (group compare) and #606 (usable rows) merged 2026-11-04; released in exploreda 0.4.0"
+        ]
       }
     ],
     "cut_line": [],
@@ -351,6 +357,16 @@
       "action": "Planned exact effective missingness patterns and kept notebook findings.",
       "reason": "Owner Design mission supersedes outside-demand gates; expected-record scope stays separate.",
       "evidence": "Source review, independent fixture arithmetic, preserved nine Pro originals; no feature implementation or browser acceptance."
+    },
+    {
+      "date": "2026-11-12",
+      "event": "status-assessed",
+      "status": "active",
+      "evidence": [
+        "M1 shipped in #600, #603, #607",
+        "M2 shipped in #604, #606",
+        "Expected-record reconciliation not built; plan PR #579 open"
+      ]
     }
   ],
   "closure": null,
