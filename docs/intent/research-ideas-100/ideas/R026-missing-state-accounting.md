@@ -24,7 +24,7 @@ This is a bounded robustness follow-up to the missingness and current-analysis-t
 - Repository: `packages/explorEDA/src/lib/fieldSettings.ts` — `convertFieldValue`, `buildConversionPreview`. Conversion previews separate missing and failed values.
 - Repository: `packages/explorEDA/src/components/SummaryTable/utils/statisticsCalculator.ts` — `calculateValueStatistics`. Numeric and categorical profiling take distinct counting paths.
 - Repository: `packages/explorEDA/src/lib/valueParsing.test.ts` — `numeric eligibility`. Tests compare eligibility across profiles and reducers.
-- Related intent: `docs/intent/missingness-and-expected-records/intent-brief.md`.
+- Related docs: `apps/demo/src/docs/pages/joint-missingness.mdx` (the retired missingness-and-expected-records initiative).
 - Related intent: `docs/intent/current-analysis-trust/intent-brief.md`.
 
 ## Research follow-up, October 21

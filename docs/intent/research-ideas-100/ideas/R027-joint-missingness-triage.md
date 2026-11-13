@@ -14,8 +14,8 @@ The October 30 Design run replaces the historical outside-demand gate below.
 Build a registered exact-pattern chart over effective values, with complete record traces and kept notebook selections.
 Then add bounded group shares and presence/finite input checks.
 See the [research summary](../../../research/joint-missingness-design-2026-10-30/README.md),
-[implementation plan](../../missingness-and-expected-records/implementation-plan.md), and
-[original artifacts](../../missingness-and-expected-records/assets/pro-results/joint-missingness-design-2026-10-30/README.md).
+[implementation plan](https://github.com/byronwall/explorEDA/blob/c7646682b6b645ccdddaa15457e30b02a9004c82/docs/intent/missingness-and-expected-records/implementation-plan.md), and
+[original artifacts](https://github.com/byronwall/explorEDA/blob/c7646682b6b645ccdddaa15457e30b02a9004c82/docs/intent/missingness-and-expected-records/assets/pro-results/joint-missingness-design-2026-10-30/README.md).
 No feature has been implemented by this research. The following brief remains historical context.
 
 An analyst may see modest missing counts in several columns while overlooking that the same observations lack all of them. `buildFieldProfiles` already provides individual summaries, and field conversion previews expose invalid inputs. The missingness intent explicitly proposes joint patterns, so requesting another missing-count display would repeat delivered work. The useful follow-up is choosing a representation that helps someone identify the affected records and judge whether the pattern changes a planned analysis.
@@ -31,4 +31,4 @@ The existing intent remains a candidate seed, and this research narrows its firs
 - Repository: `packages/explorEDA/src/lib/fieldProfiles.ts` — `buildFieldProfiles`, `buildFieldProfile`. Profiles already expose individual field summaries.
 - Repository: `packages/explorEDA/src/lib/fieldSettings.ts` — `buildConversionPreview`. Conversion failure counts can remain distinct from missingness.
 - Repository: `packages/explorEDA/src/types/ChartTypes.ts` — `datum`. The scalar cell model bounds the initial diagnostic.
-- Related intent: `docs/intent/missingness-and-expected-records/intent-brief.md`.
+- Related docs: `apps/demo/src/docs/pages/joint-missingness.mdx` (the retired missingness-and-expected-records initiative).

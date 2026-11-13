@@ -23,4 +23,4 @@ This is a precise follow-up to an uncommitted intent, not a data-quality rules p
 - Repository: `packages/explorEDA/src/types/AnalysisProject.ts` — `SourceDefinition`, `RelationshipDefinition`, `AnalysisDiagnostic`. Projects already describe source keys, relations, and diagnostics.
 - Repository: `packages/explorEDA/src/lib/analysis/evaluateProject.ts` — `sourceReferences`, `lookupFrame`. Existing lookup and identity diagnostics offer a baseline for explicit reconciliation.
 - Repository: `packages/explorEDA/src/test/lib/analysis/evaluateProject.test.ts` — `reports ambiguity and duplicate identity without choosing the first match`. Duplicate identities and ambiguous lookups have existing tests.
-- Related intent: `docs/intent/missingness-and-expected-records/intent-brief.md`.
+- Related intent: `docs/intent/expected-records/intent-brief.md`.

@@ -23,4 +23,4 @@ A cutoff may require one validated setting or source annotation and a small chan
 - Repository: `packages/explorEDA/src/components/charts/Retention/retentionPlan.ts` — `RetentionInput`, `RetentionCell`, `planRetention`. The plan derives lastTime from allIds and uses observed/partial flags in cohort cells.
 - Repository: `packages/explorEDA/src/components/charts/Retention/retentionPlan.test.ts` — `leaves periods past the data blank and marks the one it ends in`, `pools cohorts only over the periods each has reached`. Future-cell and maturity behavior already has focused tests.
 - Related intent: `docs/intent/domain-analysis-views/intent-brief.md`.
-- Related intent: `docs/intent/missingness-and-expected-records/intent-brief.md`.
+- Related intent: `docs/intent/expected-records/intent-brief.md`.

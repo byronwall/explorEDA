@@ -1030,5 +1030,24 @@
         "destination": "docs/composition-mode.md#not-built"
       }
     ]
+  },
+  {
+    "title": "Joint missingness",
+    "slug": "missingness-and-expected-records",
+    "outcome": "completed",
+    "retired_at": "2026-11-12",
+    "summary": "Joint missingness shipped: the joint-missingness chart counts rows by exact missing-field pattern, selects unions of exact patterns, traces rows with raw values, compares within-group shares, counts rows usable for chosen inputs, and saves selections as text kept in notebooks (PRs #600, #603, #604, #606, #607; exploreda 0.4.0). Expected-record reconciliation was not built; Byron split it into docs/intent/expected-records on 2026-11-12, with its draft plan in open PR #579. Reconciled against origin/main c7646682; the only uncommitted changes were this retirement's docs edits. No new browser or pnpm check ran for retirement. Not delivered as written: claim-1 changed: Missing-value clustering delivered by the joint-missingness chart (apps/demo/src/docs/pages/joint-missingness.mdx). Records that should exist but do not moved to docs/intent/expected-records by Byron's 2026-11-12 split decision. priority-1 changed: Missing, zero, false, and non-finite values are separated (apps/demo/src/docs/pages/joint-missingness.mdx 'How it reads' and 'Have finite numbers'). Absent records moved to docs/intent/expected-records. priority-3 changed: Moved unchanged to docs/intent/expected-records (claim explicit-expected-set); Joint missingness makes no missing-record claim. keep-resources-local changed: Pro assets and references were removed at retirement; they remain in Git history at c7646682. Research summaries stay in docs/research/joint-missingness-design-2026-10-30. current-foundation changed: The registry now has the joint-missingness diagnostic view; fieldProfiles.ts still supplies per-field missing counts.",
+    "reason": "Joint missingness milestones M1 and M2 merged and released; Byron asked on 2026-11-12 to retire as much as possible and split the unbuilt expected-record scope into its own initiative.",
+    "documentation": [
+      "apps/demo/src/docs/pages/joint-missingness.mdx",
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "c7646682b6b645ccdddaa15457e30b02a9004c82",
+    "follow_ups": [
+      {
+        "scope": "Expected-record reconciliation",
+        "destination": "docs/intent/expected-records/intent-brief.md"
+      }
+    ]
   }
 ]

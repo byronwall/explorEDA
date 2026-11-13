@@ -4,9 +4,9 @@ Design follow-up: [exact empty-selection recovery](../../research/empty-selectio
 adds a staged capability plan to R052. Rank stays unchanged; no next topic is assigned.
 
 R027 now has an October 30 [Design review](../../research/joint-missingness-design-2026-10-30/README.md)
-and an [implementation plan](../missingness-and-expected-records/implementation-plan.md).
+and an [implementation plan](https://github.com/byronwall/explorEDA/blob/c7646682b6b645ccdddaa15457e30b02a9004c82/docs/intent/missingness-and-expected-records/implementation-plan.md).
 Build exact patterns, record traces, and kept notebook findings before group/input extensions.
-This supersedes its earlier outside-demand gate. The feature remains unbuilt.
+This supersedes its earlier outside-demand gate. It shipped in exploreda 0.4.0; see [Joint missingness](../../../apps/demo/src/docs/pages/joint-missingness.mdx).
 
 Design follow-up: [selections and live findings through refresh](../../research/selection-refresh-design-2026-10-29/README.md)
 adds a keyed-refresh capability plan to R077's earlier audit. It does not change catalogue rank or set the next topic.

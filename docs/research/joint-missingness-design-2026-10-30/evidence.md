@@ -3,8 +3,8 @@
 Checked October 30 against `ab4ecd2aa98f3fd1da11e8f552efdb269f4b65a6`.
 Refreshed origin/main and checked open PRs through #573. Main is unchanged from the submitted baseline.
 Read both complete reports, the notebook companion, JSON fixtures, verification log/program, and SVG. Visually inspected the PNG.
-The [asset index](../../intent/missingness-and-expected-records/assets/pro-results/joint-missingness-design-2026-10-30/README.md)
-preserves every supplied original. The [local plan](../../intent/missingness-and-expected-records/implementation-plan.md) governs proposed implementation.
+The [asset index](https://github.com/byronwall/explorEDA/blob/c7646682b6b645ccdddaa15457e30b02a9004c82/docs/intent/missingness-and-expected-records/assets/pro-results/joint-missingness-design-2026-10-30/README.md)
+preserves every supplied original. The [local plan](https://github.com/byronwall/explorEDA/blob/c7646682b6b645ccdddaa15457e30b02a9004c82/docs/intent/missingness-and-expected-records/implementation-plan.md) governs proposed implementation.
 
 ## Decisive source claims
 
