@@ -19,7 +19,7 @@ Current source was inspected at `a50df9985ed3ff54d0f6ca368c0b369829b8a927` on 20
 ## Related existing intent
 
 - [in-app-analysis-agent](../../in-app-analysis-agent/intent-brief.md)
-- [composed-analytical-graphics](../../composed-analytical-graphics/intent-brief.md)
+- [Composition mode](../../../composition-mode.md), from the retired composed-analytical-graphics initiative
 
 ## Product feedback
 
