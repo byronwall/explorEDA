@@ -1,7 +1,7 @@
 # Composition mode
 
-Reviewed against `5cf144d` on 2026-10-10. This guide describes the delivered `composition` view, its model, and its limits.
-Open work is tracked in the [Composed analytical graphics](intent/composed-analytical-graphics/intent-brief.md) initiative.
+Reviewed against `5cf144d` on 2026-10-10. Stable scales through filtering (PR #619) checked against `c7646682` on 2026-11-12. This guide describes the delivered `composition` view, its model, and its limits.
+The Composed analytical graphics initiative built this mode and retired on 2026-11-12. Its closure record is in [initiative history](initiative-history.json).
 
 ## What it is for
 
@@ -143,4 +143,20 @@ Paths are relative to `packages/explorEDA/src/components/charts/Composition/`.
 - `CompositionQuickMenu.tsx`, `quickActions.ts`, `markSummary.ts`: the right-click menu and mark summaries.
 - `compositionOutput.ts`: PNG copy.
 
-Each reference example has a focused resolver test beside these files, such as `measles.test.ts` or `insets.test.ts`. Research images and saved source data remain in the initiative's `raw/` and `references/` folders.
+Each reference example has a focused resolver test beside these files, such as `measles.test.ts` or `insets.test.ts`. The research images, the 2026-10-10 Pro reference collection, and saved source data (such as the Bank of England fan workbook) are in git history under [`docs/intent/composed-analytical-graphics/` at `c7646682`](https://github.com/byronwall/explorEDA/tree/c7646682b6b645ccdddaa15457e30b02a9004c82/docs/intent/composed-analytical-graphics).
+
+## Not built
+
+Each of these needs Byron's go-ahead before it becomes work:
+
+- Hide one repeat, or override one repeat's label text, as a visual override.
+- Place point labels on a side read from a field, such as the Driving year labels.
+- Replace the forecast fan's illustrative intervals with the saved Bank of England workbook. This is a data step, not a new capability.
+- Build an unbuilt research reference as an authoring check. Candidates: the yield-gap squares, the banana mixed-frame table (insets with per-repeat path domains), IPCC temperature bands, and the recycling waffle tiles.
+
+Out of scope until a selected reference needs it:
+
+- Gradients along paths and areas (research entries 22 and 23).
+- Weighted summaries and a survey-weighting engine.
+- Automatic annotation collision resolution beyond the path-end label dodge.
+- Exact publication replicas, or live reference data fetched during tests.
