@@ -2,7 +2,7 @@
 
 Build a registered Joint missingness chart with exact pattern frequencies, complete record traces, and semantic selections.
 Keep those selections in notebook text. Then add descriptive group comparisons and chosen-input checks.
-The [implementation plan](../../intent/missingness-and-expected-records/implementation-plan.md) gives two milestones with docs and runnable examples.
+The [implementation plan](https://github.com/byronwall/explorEDA/blob/c7646682b6b645ccdddaa15457e30b02a9004c82/docs/intent/missingness-and-expected-records/implementation-plan.md) gives two milestones with docs and runnable examples.
 Build is a planning disposition, not implementation approval.
 
 Topic score: **17/20**, Design. [Pro conversation](https://chatgpt.com/c/6ae4ab2c-5840-83ea-a089-c2fc4d70681e),
@@ -35,7 +35,7 @@ These primary sources support design choices, not measured superiority of the pr
 
 ## Originals and checks
 
-[All nine original Pro artifacts](../../intent/missingness-and-expected-records/assets/pro-results/joint-missingness-design-2026-10-30/README.md)
+[All nine original Pro artifacts](https://github.com/byronwall/explorEDA/blob/c7646682b6b645ccdddaa15457e30b02a9004c82/docs/intent/missingness-and-expected-records/assets/pro-results/joint-missingness-design-2026-10-30/README.md)
 are preserved byte for byte: both reports, notebook specification, fixture data, expected results, verifier/log, and SVG/PNG wireframes.
 The supplied program remains unexecuted locally. Its 41 checks are Pro-reported.
 Local independent fixture arithmetic and existing repository/doc tests are recorded in the evidence and run record.

@@ -225,7 +225,7 @@
     "source_id": "DATA-02,DATA-09,UX-02",
     "title": "Find missing values and missing observations",
     "disposition": "seed",
-    "intent": "../missingness-and-expected-records/intent-brief.md",
+    "intent": "../expected-records/intent-brief.md",
     "current_assessment": "fieldProfiles.ts supplies missing counts. Heatmap operates on categorical groups and metrics. The registry has no missingness diagnostic view. The October 5 Pro ledger distinguishes field missingness from absent expected observations.",
     "evidence_revision": "a50df9985ed3ff54d0f6ca368c0b369829b8a927"
   },

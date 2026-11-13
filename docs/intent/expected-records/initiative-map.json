@@ -1,0 +1,270 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Find records that should exist but do not",
+    "slug": "expected-records",
+    "scale": "feature",
+    "current_phase": "plan",
+    "last_updated": "2026-11-12",
+    "summary": "Compare an explicit expected set with actual rows on typed keys, and keep absent, unexpected, excluded, and invalid keys inspectable.",
+    "status": "planned",
+    "next_action": "Rebase PR #579 so its expected-record plan and assets land in docs/intent/expected-records, then review the plan and start M1."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-11-12"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "split-decision",
+      "type": "direct-user-input",
+      "location": "conversation, 2026-11-12",
+      "anchor": "Retire as much as possible: retire Joint missingness and keep expected-record reconciliation as its own initiative",
+      "authority": "user"
+    },
+    {
+      "id": "parent-closure",
+      "type": "doc",
+      "location": "../../initiative-history.json",
+      "anchor": "slug missingness-and-expected-records",
+      "authority": "repo"
+    },
+    {
+      "id": "parent-intent",
+      "type": "doc",
+      "location": "https://github.com/byronwall/explorEDA/blob/c7646682b6b645ccdddaa15457e30b02a9004c82/docs/intent/missingness-and-expected-records/intent-brief.md",
+      "anchor": "My read; What matters most; Boundaries",
+      "authority": "user"
+    },
+    {
+      "id": "draft-plan",
+      "type": "doc",
+      "location": "https://github.com/byronwall/explorEDA/pull/579",
+      "anchor": "docs/intent/missingness-and-expected-records/expected-records-implementation-plan.md on codex/expected-records-design-2026-10-31",
+      "authority": "inferred"
+    },
+    {
+      "id": "research-idea",
+      "type": "doc",
+      "location": "../research-ideas-100/ideas/R028-expected-record-reconciliation.md",
+      "anchor": "Research brief",
+      "authority": "inferred"
+    },
+    {
+      "id": "repo-evaluate",
+      "type": "repo",
+      "location": "../../../packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+      "anchor": "sourceReferences, lookupFrame",
+      "authority": "repo"
+    },
+    {
+      "id": "repo-folder",
+      "type": "repo",
+      "location": "../../../packages/explorEDA/src/lib/project/folder.ts",
+      "anchor": "missingSources; tables[source.id] = []",
+      "authority": "repo"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "outcome",
+        "type": "outcome",
+        "statement": "Analysts can find records that should exist but do not, from an explicit expected set compared with actual rows.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          { "source_id": "parent-intent", "anchor": "My read" },
+          {
+            "source_id": "split-decision",
+            "anchor": "keep expected-record reconciliation as its own initiative"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Carried from claim-1 of the retired missingness-and-expected-records initiative."
+      },
+      {
+        "id": "explicit-expected-set",
+        "type": "constraint",
+        "statement": "Require an explicit expected set, such as a key table or a bounded schedule, for every missing-record claim.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "parent-intent",
+            "anchor": "What matters most; priority-3"
+          }
+        ],
+        "confidence": "high",
+        "notes": "Carried from priority-3 of the retired initiative."
+      },
+      {
+        "id": "separate-states",
+        "type": "desired experience",
+        "statement": "Keep absent, unexpected, excluded, and invalid keys separate, and lead each count back to its evidence rows.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          { "source_id": "parent-intent", "anchor": "priority-1, priority-2" },
+          { "source_id": "draft-plan", "anchor": "Contract" }
+        ],
+        "confidence": "medium",
+        "notes": "priority-1 and priority-2 were delivered for missing values by Joint missingness; this applies them to absent records."
+      },
+      {
+        "id": "input-availability",
+        "type": "constraint",
+        "statement": "A failed, missing, or partial input never establishes absence; a loaded empty input can.",
+        "commitment": "derived",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          { "source_id": "draft-plan", "anchor": "Contract; M2" },
+          {
+            "source_id": "repo-folder",
+            "anchor": "failed reads become empty arrays"
+          }
+        ],
+        "confidence": "medium",
+        "notes": ""
+      },
+      {
+        "id": "no-inferred-expectations",
+        "type": "constraint",
+        "statement": "Do not infer expected records from observed combinations, fill zeros, impute, match fuzzily, or grade data quality.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          { "source_id": "parent-intent", "anchor": "Boundaries" },
+          { "source_id": "research-idea", "anchor": "store closed on Sundays" }
+        ],
+        "confidence": "high",
+        "notes": ""
+      }
+    ],
+    "themes": [
+      "Require an explicit expected set.",
+      "Keep absent, unexpected, excluded, and invalid keys inspectable.",
+      "Never treat a failed input as absence."
+    ],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "/Users/byronwall/Projects/explorEDA",
+      "revision": "c7646682b6b645ccdddaa15457e30b02a9004c82",
+      "worktree_status": "docs only; no expected-record code on main",
+      "subsystems": [
+        "packages/explorEDA/src/lib/analysis/evaluateProject.ts",
+        "packages/explorEDA/src/lib/project/folder.ts",
+        "packages/explorEDA/src/lib/notebook/findings.ts"
+      ],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [
+      {
+        "id": "M1",
+        "title": "Exact core and embedded inspector",
+        "status": "planned",
+        "plan": "PR #579 draft plan"
+      },
+      {
+        "id": "M2",
+        "title": "Saved two-input analysis",
+        "status": "planned",
+        "plan": "PR #579 draft plan"
+      },
+      {
+        "id": "M3",
+        "title": "Notebook findings and refresh",
+        "status": "planned",
+        "plan": "PR #579 draft plan"
+      },
+      {
+        "id": "M4",
+        "title": "Bounded date expectations",
+        "status": "planned",
+        "plan": "PR #579 draft plan"
+      }
+    ],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-11-12",
+      "event": "created",
+      "status": "planned",
+      "action": "Split expected-record reconciliation out of missingness-and-expected-records when Joint missingness retired.",
+      "reason": "Byron asked to retire as much as possible. Joint missingness shipped; expected records did not.",
+      "evidence": [
+        "Closure record missingness-and-expected-records in docs/initiative-history.json",
+        "No expected-record code on main at c7646682",
+        "Draft plan in open PR #579"
+      ]
+    },
+    {
+      "date": "2026-10-31",
+      "action": "Planned expected-record reconciliation through a Pro Design run (in the old folder).",
+      "reason": "Byron demand superseded the historical demand gate.",
+      "evidence": "PR #579; not merged. Implementation not started."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "split",
+    "related_initiatives": [
+      "missingness-and-expected-records (retired 2026-11-12)"
+    ],
+    "audience": "End users; developers deliver their experience.",
+    "priority": "Plan in PR #579 awaits review; implementation not started"
+  }
+}

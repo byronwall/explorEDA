@@ -23,5 +23,5 @@ This simplification candidate respects the missingness intent’s explicit bound
 - Repository: `packages/explorEDA/src/lib/calculations/engine/Calculator.ts` — `Calculator`, `validateExpression`. Expressions already support comparisons, logic, and explicit errors.
 - Repository: `packages/explorEDA/src/lib/calculations/CalculationState.ts` — `getErrors`, `traceRow`. Per-row failures and dependency inspection are available.
 - Repository: `packages/explorEDA/src/types/AnalysisProject.ts` — `FilterStep`, `AnalysisDiagnostic`. Projects already have filter stages and structured diagnostics.
-- Related intent: `docs/intent/missingness-and-expected-records/intent-brief.md`.
+- Related intent: `docs/intent/expected-records/intent-brief.md`; related docs: `apps/demo/src/docs/pages/joint-missingness.mdx`.
 - Related intent: `docs/intent/current-analysis-trust/intent-brief.md`.
