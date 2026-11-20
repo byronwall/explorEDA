@@ -63,7 +63,7 @@ const SALES = [
 ];
 
 export const SIDE_BY_SIDE_CODE = `import { Chart } from "exploreda/chart";
-import "exploreda/dist/ExplorEda.css";
+import "exploreda/dist/chart.css";
 
 const rows = [
   { Region: "West", Price: 12, Rating: 4.1 },

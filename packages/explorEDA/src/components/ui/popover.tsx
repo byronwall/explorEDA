@@ -1,3 +1,4 @@
+import { usePortalContainer } from "./portalContainer";
 import * as React from "react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 
@@ -29,9 +30,10 @@ function PopoverContent({
    */
   container?: HTMLElement | null;
 }) {
+  const portal = usePortalContainer();
   // A popover closes at once, so the next one never opens over a fading one.
   return (
-    <PopoverPrimitive.Portal container={container}>
+    <PopoverPrimitive.Portal container={container ?? portal}>
       <PopoverPrimitive.Content
         data-slot="popover-content"
         align={align}

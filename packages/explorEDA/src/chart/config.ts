@@ -5,13 +5,21 @@ import type { SavedDataStructure } from "@/types/SavedDataStructure";
 /** Settings a standalone chart manages itself. */
 type Managed = "type" | "id" | "layout" | "filters";
 
+/** Every member optional at any depth, except inside lists. */
+type DeepPartial<T> = T extends readonly unknown[]
+  ? T
+  : T extends object
+    ? { [K in keyof T]?: DeepPartial<T[K]> }
+    : T;
+
 /**
  * One chart's settings: its `type`, plus any saved settings of that type.
- * A setting left out takes the type's default, as in a new workspace chart.
+ * A setting left out takes the type's default, as in a new workspace chart,
+ * at any depth: `time: { interval: "week" }` keeps the other time settings.
  */
 export type ChartConfig = ChartSettings extends infer S
   ? S extends ChartSettings
-    ? { type: S["type"] } & Partial<Omit<S, Managed>>
+    ? { type: S["type"] } & DeepPartial<Omit<S, Managed>>
     : never
   : never;
 

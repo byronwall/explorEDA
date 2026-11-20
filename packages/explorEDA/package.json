@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup && node scripts/build-types.mjs && node scripts/copy-examples.mjs",
+    "build": "tsup && node scripts/build-chart-css.mjs && node scripts/build-types.mjs && node scripts/copy-examples.mjs",
     "check-types": "tsgo --noEmit --checkers 1",
     "lint": "oxlint --quiet src",
     "test": "vitest run --project unit && vitest run --project io && vitest run --project dom",
@@ -63,7 +63,8 @@
       "types": "./dist/readers.d.ts",
       "require": "./dist/readers.cjs",
       "import": "./dist/readers.js"
-    }
+    },
+    "./dist/chart.css": "./dist/chart.css"
   },
   "bin": {
     "exploreda": "./dist/cli/exploreda.js",
@@ -127,7 +128,6 @@
     "hyparquet-compressors": "^1.1.2",
     "lucide-react": "^0.475.0",
     "markdown-it": "^14.1.0",
-    "natsort": "^2.0.3",
     "next-themes": "^0.4.4",
     "ohm-js": "^17.1.0",
     "papaparse": "^5.5.2",
@@ -175,7 +175,6 @@
     "@types/jest": "^29.5.14",
     "@types/markdown-it": "^14.1.2",
     "@types/mssql": "^9.1.11",
-    "@types/natsort": "^2.0.0",
     "@types/node": "^22.13.4",
     "@types/papaparse": "^5.3.15",
     "@types/pg": "^8.11.10",
