@@ -24,6 +24,7 @@ import { LiveExample } from "../live/LiveExample";
 import { SettingsReference } from "../reference/SettingsReference";
 import {
   ChartPropsReference,
+  StandaloneEditable,
   StandaloneGallery,
   StandaloneSideBySide,
 } from "../standalone/StandaloneCharts";
@@ -353,6 +354,7 @@ export const mdxComponents: MDXComponents = {
   PropsReference,
   ReadingGuide,
   SettingsReference,
+  StandaloneEditable,
   StandaloneGallery,
   StandaloneSideBySide,
   Steps,

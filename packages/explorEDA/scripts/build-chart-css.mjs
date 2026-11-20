@@ -60,6 +60,13 @@ export function scopeSelector(selector) {
 
 export function scopeCss(css) {
   const root = postcss.parse(css);
+  // Unwrap cascade layers. A host's unlayered rules, such as a page-wide
+  // `button {}`, beat any layered rule, so they would restyle the chart's
+  // controls. Unlayered, the chart's class rules win by specificity.
+  root.walkAtRules("layer", (layer) => {
+    if (layer.nodes) layer.replaceWith(layer.nodes);
+    else layer.remove();
+  });
   root.walkRules((rule) => {
     // Keyframe steps and nested rules inherit their scope.
     if (rule.parent?.type === "atrule" && /keyframes$/.test(rule.parent.name))

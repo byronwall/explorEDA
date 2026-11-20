@@ -8,16 +8,20 @@ import {
 import { ChartColorLegend } from "@/components/charts/ColorLegend/ChartColorLegend";
 import { FacetContainer } from "@/components/charts/FacetRelated/FacetContainer";
 import { FacetBarSlotContext } from "@/components/charts/FacetRelated/facetBarSlot";
-import { ChartEditableContext } from "@/components/charts/chartEditable";
+import { ChartSettingsContent } from "@/components/ChartSettingsContent";
+import { SettingsPopoverContext } from "@/components/chartDetailsStore";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { PortalContainerContext } from "@/components/ui/portalContainer";
+import { Settings2 } from "lucide-react";
 import { getChartTitle } from "@/components/charts/chartAccessibility";
 import { resolveThemeId } from "@/lib/themes";
 import { useColorScales } from "@/hooks/useColorScales";
-import {
-  DataLayerProvider,
-  type DatumObject,
-  useDataLayer,
-} from "@/providers/DataLayerProvider";
+import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import {
   type CSSProperties,
@@ -27,13 +31,9 @@ import {
   useState,
   useEffect,
 } from "react";
-import { toSavedData, type ChartConfig } from "./config";
+import { StandaloneProvider, type StandaloneProps } from "./StandaloneProvider";
 
-export interface ChartProps {
-  /** The rows to draw, one object per row. */
-  data: DatumObject[];
-  /** The chart type and any settings that differ from its defaults. */
-  config: ChartConfig;
+export interface ChartProps extends StandaloneProps {
   /**
    * The heading above the plot. By default it is `config.title`, or a name
    * built from the chart's fields. `false` hides it.
@@ -43,6 +43,11 @@ export interface ChartProps {
   width?: number;
   /** Height in pixels. Without it, the chart fills its parent's height. */
   height?: number;
+  /**
+   * Shows the settings button when editing is on. Pass false to edit only
+   * through a `ChartSettings` the host places.
+   */
+  settingsButton?: boolean;
   className?: string;
   style?: CSSProperties;
 }
@@ -55,10 +60,11 @@ const FALLBACK_HEIGHT = 300;
 
 /** The element's content size, kept current. */
 function useSize() {
-  const ref = useRef<HTMLDivElement>(null);
+  // A callback ref: the element mounts after the chart's first settings
+  // arrive, which can be after this hook's first effect.
+  const [element, ref] = useState<HTMLDivElement | null>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
   useEffect(() => {
-    const element = ref.current;
     if (!element || typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver(([entry]) => {
       const box = entry?.contentRect;
@@ -67,7 +73,7 @@ function useSize() {
     });
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [element]);
   return [ref, size] as const;
 }
 
@@ -76,15 +82,29 @@ function useSize() {
  * Each chart keeps its own data layer, so charts on one page never filter
  * each other. Hover readouts work; clicks and brushes select nothing.
  */
-export function Chart({ data, config, ...props }: ChartProps) {
+export function Chart({
+  data,
+  config,
+  onConfigChange,
+  fields,
+  settingsButton = true,
+  ...props
+}: ChartProps) {
   const id = useId();
-  const savedData = useMemo(() => toSavedData(config, id), [config, id]);
   return (
-    <DataLayerProvider data={data} savedData={savedData} selections={false}>
-      <ChartEditableContext.Provider value={false}>
-        <ChartBody chartId={id} {...props} />
-      </ChartEditableContext.Provider>
-    </DataLayerProvider>
+    <StandaloneProvider
+      data={data}
+      config={config}
+      onConfigChange={onConfigChange}
+      fields={fields}
+      chartId={id}
+    >
+      <ChartBody
+        chartId={id}
+        gear={Boolean(onConfigChange) && settingsButton}
+        {...props}
+      />
+    </StandaloneProvider>
   );
 }
 
@@ -95,7 +115,11 @@ function ChartBody({
   height,
   className,
   style,
-}: Omit<ChartProps, "data" | "config"> & { chartId: string }) {
+  gear,
+}: Pick<ChartProps, "title" | "width" | "height" | "className" | "style"> & {
+  chartId: string;
+  gear: boolean;
+}) {
   const settings = useDataLayer((state) =>
     state.charts.find((chart) => chart.id === chartId)
   );
@@ -145,13 +169,17 @@ function ChartBody({
         ...style,
       }}
     >
-      {heading && (
-        <div className="eda-standalone-heading">
-          <span className="eda-standalone-title">{heading}</span>
-          <div ref={setReadout} className="eda-standalone-readout" />
-        </div>
-      )}
       <PortalContainerContext.Provider value={layer ?? undefined}>
+        {(heading || gear) && (
+          <div
+            className="eda-standalone-heading"
+            data-floating={heading ? undefined : ""}
+          >
+            {heading && <span className="eda-standalone-title">{heading}</span>}
+            <div ref={setReadout} className="eda-standalone-readout" />
+            {gear && <SettingsButton settings={settings} name={heading} />}
+          </div>
+        )}
         <AxisTypographyProvider value={axisTypography}>
           <ChartReadoutProvider value={readout}>
             {faceted ? (
@@ -197,6 +225,42 @@ function ChartBody({
       {/* Tooltips and menus mount here, inside the scoped stylesheet. */}
       <div ref={setLayer} className="eda-standalone-layer" />
     </div>
+  );
+}
+
+/** The gear that opens the chart's settings, as in a workspace panel. */
+function SettingsButton({
+  settings,
+  name,
+}: {
+  settings: ChartSettings;
+  name: string | undefined;
+}) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="eda-standalone-gear"
+          aria-label={name ? `Configure ${name}` : "Configure chart"}
+        >
+          <Settings2 className="h-4 w-4" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        aria-label={name ? `Settings for ${name}` : "Chart settings"}
+        className="eda-settings-popover w-[min(21.5rem,calc(100vw-1rem))]"
+        style={{ overflow: "hidden" }}
+        side="bottom"
+        align="end"
+        collisionPadding={12}
+      >
+        <SettingsPopoverContext.Provider value={true}>
+          <ChartSettingsContent settings={settings} />
+        </SettingsPopoverContext.Provider>
+      </PopoverContent>
+    </Popover>
   );
 }
 

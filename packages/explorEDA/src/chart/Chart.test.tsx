@@ -55,6 +55,32 @@ describe("Chart", () => {
     }
   );
 
+  it("fills its parent when no size is given", () => {
+    const sized = class {
+      constructor(private report: ResizeObserverCallback) {}
+      observe(element: Element) {
+        const contentRect = { width: 420, height: 260 } as DOMRectReadOnly;
+        this.report(
+          [{ target: element, contentRect } as ResizeObserverEntry],
+          this as unknown as ResizeObserver
+        );
+      }
+      unobserve() {}
+      disconnect() {}
+    };
+    const original = globalThis.ResizeObserver;
+    globalThis.ResizeObserver = sized as unknown as typeof ResizeObserver;
+    try {
+      const { container } = render(
+        <Chart data={ROWS} config={{ type: "bar", field: "Region" }} />
+      );
+      const svg = container.querySelector(".eda-standalone svg");
+      expect(svg?.getAttribute("width")).toBe("420");
+    } finally {
+      globalThis.ResizeObserver = original;
+    }
+  });
+
   it("shows the config title, a field-based name, or nothing", () => {
     const { container, rerender } = render(
       <Chart
