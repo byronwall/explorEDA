@@ -1,4 +1,8 @@
-import type { ChartConfig, ChartProps } from "exploreda/chart";
+import type {
+  ChartConfig,
+  ChartProps,
+  ChartSettingsProps,
+} from "exploreda/chart";
 import { useEffect, useState, type ReactNode } from "react";
 import { CodeFrame } from "../components/code";
 import { Link } from "react-router-dom";
@@ -163,6 +167,72 @@ export function StandaloneGallery() {
   );
 }
 
+export const EDITABLE_CODE = `import { Chart, ChartSettings, type ChartConfig } from "exploreda/chart";
+import { useState } from "react";
+
+export function EditableChart({ rows }) {
+  const [config, setConfig] = useState<ChartConfig>({
+    type: "scatter",
+    xField: "Price",
+    yField: "Rating",
+  });
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
+      {/* The gear opens settings; each edit comes back through setConfig. */}
+      <div style={{ flex: "1 1 320px" }}>
+        <Chart data={rows} config={config} onConfigChange={setConfig} height={300} />
+      </div>
+      {/* Or place the same settings yourself, bound to the same state. */}
+      <ChartSettings
+        data={rows}
+        config={config}
+        onConfigChange={setConfig}
+        fields={["Region", "Product", "Price", "Rating", "Units"]}
+        style={{ flex: "0 1 21rem" }}
+      />
+    </div>
+  );
+}`;
+
+/** A chart with its gear, and the same settings placed beside it. */
+export function StandaloneEditable() {
+  const loaded = useModules();
+  const modules = loaded && { chart: loaded[0], kit: loaded[1] };
+  const [config, setConfig] = useState<ChartConfig>({
+    type: "scatter",
+    xField: "Price",
+    yField: "Rating",
+  });
+  return (
+    <>
+      <Frame>
+        {modules ? (
+          <div className="flex flex-wrap gap-4" data-docs-standalone="editable">
+            <div style={{ flex: "1 1 320px", minWidth: 0 }}>
+              <modules.chart.Chart
+                data={modules.kit.SAMPLE_ROWS}
+                config={config}
+                onConfigChange={setConfig}
+                height={300}
+              />
+            </div>
+            <modules.chart.ChartSettings
+              data={modules.kit.SAMPLE_ROWS}
+              config={config}
+              onConfigChange={setConfig}
+              fields={["Region", "Product", "Price", "Rating", "Units"]}
+              style={{ flex: "0 1 21rem", minWidth: 0 }}
+            />
+          </div>
+        ) : (
+          <Loading height={300} />
+        )}
+      </Frame>
+      <CodeFrame code={EDITABLE_CODE} language="tsx" />
+    </>
+  );
+}
+
 /** A link to the saved settings a chart type's docs page lists. */
 function SettingsLink({ type }: { type: string }) {
   const page = catalogue.find((item) => item.chartType === type);
@@ -191,17 +261,39 @@ const CHART_PROPS: Record<keyof ChartProps, string> = {
     "Width in pixels. Without it, the chart fills the width of its parent.",
   height:
     "Height in pixels, heading included. Without it, the chart fills the height of its parent, or takes 300 px when the parent has no height.",
+  onConfigChange:
+    "Called with the whole config after each edit. Passing it turns editing on: the settings button, and edits inside the chart such as a note's text. The chart is controlled, so an edit shows only once you pass the new config back as config.",
+  fields:
+    'The fields that settings offer, such as ["Region", "Price"]. Fields the config already uses stay available. Without it, settings offer every field in data.',
+  settingsButton:
+    "Shows the settings button when editing is on. Pass false to edit only through a ChartSettings you place yourself.",
   className: "A class for the chart's outer element.",
   style: "Inline styles for the chart's outer element.",
 };
 
-export function ChartPropsReference() {
+/** The same record for `ChartSettings`; a new prop must be described. */
+const SETTINGS_PROPS: Record<keyof ChartSettingsProps, string> = {
+  data: "The same rows as the chart. Settings read them to list fields and values.",
+  config: "The same config as the chart.",
+  onConfigChange:
+    "Called with the whole config after each edit. Store it and pass it to both the chart and the panel.",
+  fields: "The fields the panel offers, as for Chart.",
+  className: "A class for the panel's outer element.",
+  style: "Inline styles for the panel's outer element.",
+};
+
+export function ChartPropsReference({
+  component = "Chart",
+}: {
+  component?: "Chart" | "ChartSettings";
+}) {
+  const props = component === "Chart" ? CHART_PROPS : SETTINGS_PROPS;
   return (
     <dl
-      aria-label="Chart props"
+      aria-label={`${component} props`}
       className="mt-5 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card"
     >
-      {Object.entries(CHART_PROPS).map(([prop, line]) => (
+      {Object.entries(props).map(([prop, line]) => (
         <div
           key={prop}
           className="grid gap-x-6 gap-y-1 px-4 py-3 sm:grid-cols-[10rem_minmax(0,1fr)]"

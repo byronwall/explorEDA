@@ -37,7 +37,27 @@ Setting names are the names the workspace saves. Each chart's page lists every s
 
 - **Hover:** tooltips and hover readouts work as in the workspace.
 - **Click and brush:** nothing is selected. A standalone chart has no filter state.
-- **Edit:** nothing, unless the host turns on editing.
+- **Edit:** only when you pass `onConfigChange`.
+
+## Edit settings at runtime
+
+Pass `onConfigChange` to let readers change a chart's settings. The chart shows a settings button that opens the same settings the workspace uses. Each edit calls `onConfigChange` with the whole new config.
+
+The chart is controlled, like a React `<input value>`: an edit shows only once you pass the new config back as `config`. Keep the config in state, and the chart and your state never disagree. Leave `onConfigChange` out, and the chart is read-only.
+
+To put the settings somewhere else, such as a sidebar, place a `ChartSettings` with the same `data` and `config`, and pass its `onConfigChange` result to both. Pass `settingsButton={false}` to hide the chart's own button.
+
+<StandaloneEditable />
+
+Try the gear on the chart, or the panel beside it: both edit the same state. The panel offers only the five fields listed in `fields`.
+
+- `onConfigChange` gets every setting of the chart, defaults included. Store it as it is.
+- A color scale picked for a `colorField` is not part of the config. The chart picks the workspace's default scale again each time.
+- Settings that need the workspace, such as filters and calculated fields, have no effect on a standalone chart.
+
+### ChartSettings props
+
+<ChartPropsReference component="ChartSettings" />
 
 ## Styles
 
@@ -45,6 +65,7 @@ Import `exploreda/dist/chart.css` once. It styles only the charts:
 
 - It has no global reset. Your page's buttons, headings, and fonts stay as they are.
 - Its theme variables, such as `--background` and `--primary`, sit on each chart's element, not on `:root`. A host that uses the same names keeps its own values.
+- Your page's element rules, such as a page-wide `button {}` style, do not restyle the chart's own controls.
 - Text in a chart takes your page's font, as the workspace does.
 - Tooltips, menus, and popovers mount inside the chart's element, so the same styles reach them.
 

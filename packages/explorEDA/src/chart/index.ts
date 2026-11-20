@@ -7,6 +7,7 @@ import { registerAllCharts } from "@/charts/registerAllCharts";
 registerAllCharts();
 
 export { Chart, type ChartProps } from "./Chart";
+export { ChartSettings, type ChartSettingsProps } from "./ChartSettings";
 export type { ChartConfig } from "./config";
 export type { DatumObject } from "@/providers/DataLayerProvider";
 export type { ChartType } from "@/types/ChartTypes";

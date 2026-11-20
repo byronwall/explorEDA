@@ -192,6 +192,30 @@
   align-items: center;
   gap: 4px;
 }
+/* Without a title, the heading floats so the plot keeps its height. */
+.eda-standalone-heading[data-floating] {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  min-height: 0;
+}
+.eda-standalone-heading[data-floating] .eda-standalone-readout:empty {
+  display: none;
+}
+.eda-standalone-gear {
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+  color: var(--muted-foreground);
+}
+.eda-standalone-gear:hover {
+  color: var(--primary);
+  background: var(--muted);
+}
+.eda-standalone-settings {
+  min-width: 0;
+}
 .eda-workspace-controls {
   position: sticky;
   top: 0;
