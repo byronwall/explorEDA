@@ -1,0 +1,434 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Standalone charts from data plus a config",
+    "slug": "standalone-charts",
+    "scale": "feature",
+    "current_phase": "plan",
+    "last_updated": "2026-11-19",
+    "summary": "A React host draws any explorEDA chart from rows plus a partial config through a new exploreda/chart entry, with no workspace or cross-chart filtering.",
+    "status": "planned",
+    "next_action": "Build M1: read-only <Chart> in exploreda/chart with a smoke test over every registered chart type."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-11-19"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-11-19"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "current",
+      "updated_at": "2026-11-19"
+    }
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "type": "doc",
+      "location": "~/Projects/planning/tasks/TASK-0051/TASK-0051.md",
+      "anchor": "Updates: Created",
+      "authority": "user"
+    },
+    {
+      "id": "S2",
+      "type": "repo",
+      "location": "packages/explorEDA/src/docsKit/ChartSettingsSurface.tsx",
+      "anchor": "ChartSettingsSurface",
+      "authority": "repo"
+    },
+    {
+      "id": "S3",
+      "type": "repo",
+      "location": "packages/explorEDA/package.json",
+      "anchor": "exports",
+      "authority": "repo"
+    },
+    {
+      "id": "S4",
+      "type": "repo",
+      "location": "packages/explorEDA/src/providers/DataLayerProvider.tsx",
+      "anchor": "DataLayerProvider, updateChart, getSavedStateFingerprint",
+      "authority": "repo"
+    },
+    {
+      "id": "S5",
+      "type": "repo",
+      "location": "packages/explorEDA/src/lib/dsl/normalize.ts",
+      "anchor": "normalizeChart",
+      "authority": "repo"
+    },
+    {
+      "id": "qa-round-1",
+      "type": "qa",
+      "location": "conversation",
+      "anchor": "round 1: host, delivery, config, interaction",
+      "authority": "user"
+    },
+    {
+      "id": "qa-round-2",
+      "type": "qa",
+      "location": "conversation",
+      "anchor": "round 2: charts, chrome, CSS, sizing",
+      "authority": "user"
+    },
+    {
+      "id": "qa-round-3",
+      "type": "qa",
+      "location": "conversation",
+      "anchor": "round 3: edit state, settings UI, fields",
+      "authority": "user"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "C1",
+        "type": "outcome",
+        "statement": "A colleague renders single explorEDA charts side by side from data plus a config, without the workspace or cross-chart filtering.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["S1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C2",
+        "type": "decision",
+        "statement": "React host; deliver as a new exploreda/chart entry in the existing package.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["qa-round-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C3",
+        "type": "decision",
+        "statement": "Config is a partial JSON object first; a Dashboard text line is wanted if close to free.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["qa-round-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C4",
+        "type": "decision",
+        "statement": "Hover only; no click or brush selection.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["qa-round-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C5",
+        "type": "decision",
+        "statement": "All registered chart types, checked by a smoke render.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C6",
+        "type": "decision",
+        "statement": "Plot only, with a title prop that can be turned off; runtime settings editing is key but can be disabled.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C7",
+        "type": "decision",
+        "statement": "Scoped CSS with no global reset or :root variables.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C8",
+        "type": "decision",
+        "statement": "Explicit width and height win; otherwise fill the parent.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C9",
+        "type": "decision",
+        "statement": "Editing is fully controlled: config in, onConfigChange out, host passes it back.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["qa-round-3"],
+        "confidence": "high"
+      },
+      {
+        "id": "C10",
+        "type": "decision",
+        "statement": "Settings UI as both a gear popover and a separate host-placed ChartSettings component.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["qa-round-3"],
+        "confidence": "high"
+      },
+      {
+        "id": "C11",
+        "type": "decision",
+        "statement": "A fields prop limits settings choices; without it every data column is offered.",
+        "commitment": "explicit",
+        "importance": "supporting",
+        "status": "active",
+        "time_horizon": "first release",
+        "sources": ["qa-round-3"],
+        "confidence": "high"
+      }
+    ],
+    "themes": [],
+    "conflicts": [],
+    "human_questions": [],
+    "question_rounds": [
+      {
+        "round": 1,
+        "questions": ["Host stack", "Delivery", "Config format", "Interaction"],
+        "answers": [
+          "React",
+          "New npm export exploreda/chart",
+          "Partial JSON first; DSL if trivial",
+          "Hover only"
+        ]
+      },
+      {
+        "round": 2,
+        "questions": ["First charts", "Chrome", "CSS", "Sizing"],
+        "answers": [
+          "All registered types",
+          "Plot, title prop, runtime settings editing that can be disabled",
+          "Scope it",
+          "Explicit width/height, else fill parent"
+        ]
+      },
+      {
+        "round": 3,
+        "questions": ["Edit state", "Settings UI", "Field choices"],
+        "answers": [
+          "Fully controlled",
+          "Both gear popover and ChartSettings component",
+          "Host-listed fields, else all columns"
+        ]
+      }
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 7,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "About one week, four milestones.",
+    "problem": "The only public way to draw a chart is the full workspace.",
+    "recommended_shape": "exploreda/chart exports Chart and ChartSettings; each Chart mounts the existing DataLayerProvider with one chart and draws it through ChartRenderer.",
+    "alternatives_considered": [
+      "Per-chart components (BarChart, ScatterChart): more exports, same internals; rejected.",
+      "Framework-free render(el, data, config): not needed for a React colleague; below the cut line.",
+      "Separate package: extra release work for no gain; rejected."
+    ],
+    "success_moves": [
+      {
+        "move": "Reuse the docs kit path (DataLayerProvider + ChartRenderer) instead of a new chart host.",
+        "risk_reduced": "Avoids rewriting chart internals.",
+        "proof": "Smoke test renders every registered type through Chart."
+      },
+      {
+        "move": "Fill partial configs with normalizeChart.",
+        "risk_reduced": "Hosts need no knowledge of full settings shapes.",
+        "proof": "A config with only type and field draws."
+      },
+      {
+        "move": "Drop filters in updateChart for standalone stores.",
+        "risk_reduced": "Turns off selection without touching each chart.",
+        "proof": "A click on a bar leaves filters empty."
+      },
+      {
+        "move": "Make ChartSettings its own provider wired through host state.",
+        "risk_reduced": "No shared store or context between separately placed components.",
+        "proof": "Editing in the side panel redraws the chart."
+      },
+      {
+        "move": "Scope CSS before editing ships.",
+        "risk_reduced": "Style clashes block real use of even a read-only chart.",
+        "proof": "Host button unchanged beside a styled chart tooltip."
+      }
+    ],
+    "first_proof": {
+      "question": "Can the existing data layer host one chart of every registered type with no workspace?",
+      "artifact": "packages/explorEDA/src/chart/Chart.test.tsx smoke test over all registered types",
+      "decision_rule": "Types that fail are fixed in M1 or listed as unsupported before M2 starts."
+    },
+    "rabbit_holes": [
+      "Portaled tooltips and popovers render outside the scoped CSS wrapper.",
+      "Some chart types (Composition, Markdown) may need workspace context."
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "planned",
+    "repository_snapshot": {
+      "root": "packages/explorEDA",
+      "revision": "1b4f57af",
+      "worktree_status": "clean",
+      "subsystems": [
+        "providers/DataLayerProvider",
+        "components/charts/ChartRenderer",
+        "docsKit",
+        "lib/dsl",
+        "entries.json"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/chart",
+        "pnpm --filter exploreda check-types",
+        "pnpm lint"
+      ],
+      "deployment_surfaces": ["npm package exploreda", "exploreda.dev docs"]
+    },
+    "dependencies": [
+      {
+        "id": "D1",
+        "name": "DataLayerProvider store",
+        "material": true,
+        "application_seam": "Chart passes savedData with one chart; standalone flag drops filters in updateChart.",
+        "failure_modes": [
+          "A chart type reads workspace-only state",
+          "Controlled config echo loop"
+        ],
+        "proof_rungs": [
+          "jsdom smoke render of every type",
+          "browser check on docs page"
+        ],
+        "first_proof_role": {
+          "mode": "real",
+          "rationale": "The real store is cheap to run in jsdom."
+        },
+        "local_proof": "Chart.test.tsx",
+        "live_proof": "Docs page on the demo dev server",
+        "rollout": "Additive entry; workspace untouched."
+      },
+      {
+        "id": "D2",
+        "name": "Tailwind CSS build",
+        "material": true,
+        "application_seam": "src/chart/chart.css imported by the chart entry; tsup writes dist/chart.css.",
+        "failure_modes": [
+          "Preflight or :root rules leak",
+          "Portaled content unstyled"
+        ],
+        "proof_rungs": [
+          "rg over dist/chart.css",
+          "screenshot of host button beside chart"
+        ],
+        "first_proof_role": {
+          "mode": "absent",
+          "rationale": "M1 uses the existing workspace CSS; M2 scopes it."
+        },
+        "local_proof": "pnpm --filter exploreda build then rg dist/chart.css",
+        "live_proof": "Docs page screenshot",
+        "rollout": "New CSS file; ExplorEda.css unchanged."
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/chart"
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Read-only Chart",
+        "outcome": "Every chart type draws from data plus a partial config; two charts side by side on a docs page; hover only.",
+        "dependencies_introduced": ["D1"],
+        "proof": "Smoke test over every registered type; click leaves filters empty; screenshots at three widths.",
+        "valid_intermediate_state": "Usable read-only charts with workspace CSS.",
+        "rollback": "Remove the chart entry.",
+        "status": "planned"
+      },
+      {
+        "id": "m2",
+        "title": "Scoped CSS",
+        "outcome": "dist/chart.css styles charts without touching host styles.",
+        "dependencies_introduced": ["D2"],
+        "proof": "No :root or element reset in dist/chart.css; host button unchanged in screenshot.",
+        "valid_intermediate_state": "Read-only charts safe to embed.",
+        "rollback": "Point the entry back at the workspace CSS.",
+        "status": "planned"
+      },
+      {
+        "id": "m3",
+        "title": "Controlled editing",
+        "outcome": "onConfigChange, gear popover, ChartSettings, and fields prop.",
+        "dependencies_introduced": [],
+        "proof": "Tests for one onConfigChange per edit and fields filtering; browser edit redraws.",
+        "valid_intermediate_state": "Editable or read-only charts by host choice.",
+        "rollback": "Hide the gear; Chart stays read-only.",
+        "status": "planned"
+      },
+      {
+        "id": "m4",
+        "title": "Dashboard text config",
+        "outcome": "config accepts one Dashboard text line.",
+        "dependencies_introduced": [],
+        "proof": "Text and object forms draw the same chart.",
+        "valid_intermediate_state": "Object configs unaffected.",
+        "rollback": "Drop string support.",
+        "status": "planned"
+      }
+    ],
+    "cut_line": [
+      "Framework-free render(el, data, config)",
+      "Linked filtering between standalone charts",
+      "Lean per-type registration",
+      "Image export from a standalone chart",
+      "Theme switching beyond the existing theme setting"
+    ],
+    "open_decisions": [
+      "Chart types that need workspace context are listed as unsupported in M1 rather than given that context."
+    ]
+  },
+  "history": [
+    {
+      "date": "2026-11-19",
+      "event": "Created from TASK-0051; three question rounds answered by Byron; intent, shape, and plan written.",
+      "status": "planned"
+    }
+  ],
+  "closure": null
+}
