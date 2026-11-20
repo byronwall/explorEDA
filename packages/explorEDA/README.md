@@ -174,6 +174,32 @@ observed.
 
 React and ReactDOM are peer dependencies.
 
+## Draw one chart
+
+To use explorEDA's charts in your own layout, without the workspace, import
+`Chart` from `exploreda/chart`. Give it rows and a config: the chart `type`
+plus the settings that differ from that type's defaults.
+
+```tsx
+import { Chart } from "exploreda/chart";
+import "exploreda/dist/ExplorEda.css";
+
+<div style={{ display: "flex", gap: 16 }}>
+  <Chart data={rows} config={{ type: "bar", field: "Region" }} height={260} />
+  <Chart
+    data={rows}
+    config={{ type: "scatter", xField: "Price", yField: "Rating" }}
+    height={260}
+  />
+</div>;
+```
+
+Each chart is independent: hover works, and clicks and brushes select
+nothing. `width` and `height` set the size in pixels; without them the chart
+fills its parent. `title={false}` hides the heading. Every chart type works
+this way. See [Standalone charts](https://exploreda.dev/docs/standalone-charts)
+for the props and a config for each chart type.
+
 ## Read local files
 
 `exploreda/readers` reads a local file into rows and field types. It reads

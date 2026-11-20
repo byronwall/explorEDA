@@ -2,6 +2,7 @@
   "entries": {
     "ExplorEda": "src/components/ExplorEda.tsx",
     "core": "src/charts/registry.ts",
+    "chart": "src/chart/index.ts",
     "calculations": "src/lib/calculations/parser/semantics.ts",
     "analysis": "src/analysis.ts",
     "readers": "src/readers.ts",

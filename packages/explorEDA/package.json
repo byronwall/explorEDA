@@ -38,6 +38,11 @@
       "require": "./dist/core.cjs",
       "import": "./dist/core.js"
     },
+    "./chart": {
+      "types": "./dist/chart.d.ts",
+      "require": "./dist/chart.cjs",
+      "import": "./dist/chart.js"
+    },
     "./charts/*": {
       "types": "./dist/charts/*.d.ts",
       "require": "./dist/charts/*.cjs",
@@ -71,6 +76,9 @@
       ],
       "readers": [
         "./dist/readers.d.ts"
+      ],
+      "chart": [
+        "./dist/chart.d.ts"
       ]
     }
   },

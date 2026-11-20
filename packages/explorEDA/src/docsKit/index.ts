@@ -41,3 +41,4 @@ export function chartTypes(): string[] {
 }
 
 export { ChartSettingsSurface } from "./ChartSettingsSurface";
+export { SAMPLE_CONFIGS, SAMPLE_ROWS } from "@/chart/samples";

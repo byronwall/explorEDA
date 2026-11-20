@@ -232,6 +232,19 @@ export const catalogue: readonly DocsPage[] = [
     related: ["rendering", "dashboard-text"],
   },
   {
+    topic: "standalone-charts",
+    title: "Standalone charts",
+    group: "start",
+    icon: LayoutGrid,
+    lede: "Draw one chart from rows and a config, with no workspace around it.",
+    summary:
+      "The Chart component, its props, and a config for every chart type.",
+    highlights: ["Chart", "Config", "Every type"],
+    covers: [],
+    examples: [],
+    related: ["developers", "chart-settings"],
+  },
+  {
     topic: "scatter",
     thumbnail: "scatter",
     title: "Scatter plot",

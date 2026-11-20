@@ -22,6 +22,11 @@ import {
 } from "../reference/generated";
 import { LiveExample } from "../live/LiveExample";
 import { SettingsReference } from "../reference/SettingsReference";
+import {
+  ChartPropsReference,
+  StandaloneGallery,
+  StandaloneSideBySide,
+} from "../standalone/StandaloneCharts";
 
 function textOf(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") {
@@ -336,6 +341,7 @@ export const mdxComponents: MDXComponents = {
   // Blocks a page can use without importing them.
   Callout,
   CalcChain,
+  ChartPropsReference,
   ChartQuestions,
   ChartTypeList,
   DocsLink,
@@ -347,6 +353,8 @@ export const mdxComponents: MDXComponents = {
   PropsReference,
   ReadingGuide,
   SettingsReference,
+  StandaloneGallery,
+  StandaloneSideBySide,
   Steps,
   Terms,
   WorkedOrder,
