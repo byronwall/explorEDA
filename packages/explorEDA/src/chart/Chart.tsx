@@ -1,3 +1,4 @@
+import { useHostDarkMode } from "@/hooks/useHostDarkMode";
 import { ChartReadoutProvider } from "@/components/charts/ChartReadout";
 import { ChartRenderer } from "@/components/charts/ChartRenderer";
 import {
@@ -143,6 +144,7 @@ function ChartBody({
   const [facetSlot, setFacetSlot] = useState<HTMLDivElement | null>(null);
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   useColorScale(settings);
+  useHostDarkMode(rootRef);
 
   if (!settings) return null;
 

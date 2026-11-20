@@ -28,6 +28,7 @@ export function ScatterPlotSettingsPanel({
   const { getOrCreateScaleForField } = useColorScales();
   const profiles = useDataLayer((s) => s.fieldProfiles);
   const calculations = useDataLayer((s) => s.calculations);
+  const selections = useDataLayer((s) => s.selections !== false);
   const sizeFields = [
     ...new Set([
       ...profiles
@@ -242,8 +243,12 @@ export function ScatterPlotSettingsPanel({
             : density
               ? "Each bin counts rows with numeric X and Y values. Darker color means more rows. Bin widths use equal numeric intervals; a symmetric log axis changes their screen widths. Click a bin to select its source rows."
               : settings.sizeField
-                ? "Bubble area represents a nonnegative value. The scale uses all source rows and stays fixed during filtering. Click a bubble to select its row. Drag a rectangle to select a range."
-                : "Smaller, transparent points reveal overlap. Drag a rectangle to filter the other views."}
+                ? selections
+                  ? "Bubble area represents a nonnegative value. The scale uses all source rows and stays fixed during filtering. Click a bubble to select its row. Drag a rectangle to select a range."
+                  : "Bubble area represents a nonnegative value, scaled over all rows."
+                : selections
+                  ? "Smaller, transparent points reveal overlap. Drag a rectangle to filter the other views."
+                  : "Smaller, transparent points reveal overlap."}
       </p>
     </div>
   );

@@ -226,6 +226,7 @@
 .builder-button {
   padding: 0 10px;
   font-weight: 500;
+  white-space: nowrap;
 }
 .builder-select {
   padding: 0 6px;

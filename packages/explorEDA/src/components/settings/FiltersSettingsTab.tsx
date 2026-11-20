@@ -129,6 +129,7 @@ export function FiltersSettingsTab({
   const getColumnData = useDataLayer((state) => state.getColumnData);
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
+  const selections = useDataLayer((state) => state.selections !== false);
   const fields = chartFilterFields(settings, aggregate);
   // The chart ignores its own filters, so each field keeps its full shape.
   const scoped = useFilteredFieldProfiles(
@@ -148,6 +149,19 @@ export function FiltersSettingsTab({
       <ScaleToSetting settings={settings} onSettingChange={onSettingChange} />
     </>
   );
+
+  // A standalone chart selects nothing and has no other charts to filter,
+  // so only the rows it draws can be limited.
+  if (!selections) {
+    return (
+      <div className="eda-chart-filters">
+        <ChartRowsFilters
+          settings={settings}
+          onSettingChange={onSettingChange}
+        />
+      </div>
+    );
+  }
 
   if (fields.length === 0) {
     return (

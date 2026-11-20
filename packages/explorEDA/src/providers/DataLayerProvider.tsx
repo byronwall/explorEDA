@@ -686,6 +686,7 @@ const createDataLayerStore = <T extends DatumObject>(
     return {
       ...initialState,
       localSelections: initProps?.localSelections ?? false,
+      selections: initProps?.selections ?? true,
       liveItems: {},
       filterReset: 0,
       stateChangeHolds: 0,
