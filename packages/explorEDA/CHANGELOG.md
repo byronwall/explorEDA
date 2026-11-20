@@ -1,5 +1,21 @@
 # exploreda
 
+## 0.5.0
+
+### Minor Changes
+
+- 6cc9a3d: `Chart` and `ChartSettings` accept one chart's Dashboard text as `config`, such as `"scatter x=Price y=Rating"`. A line that builds no chart shows the compiler's message.
+- 6b7b1eb: Draw one chart from rows and a config with `Chart` from `exploreda/chart`, without the workspace. Each chart is independent and shows hover readouts; clicks select nothing.
+- bb2cd65: Edit standalone charts at runtime: pass `onConfigChange` to `Chart` for a settings button, or place `ChartSettings` yourself. Both are controlled by `config`, and `fields` limits the fields they offer. `chart.css` rules now win over a host page's element rules, such as a page-wide `button` style.
+- c0382b8: `exploreda/chart` now loads each chart type's code the first time a chart of that type draws, so a page downloads only the types it shows. To register types up front instead, import `Chart` from `exploreda/chart-core` and call `registerCharts`. Every chart type has its own `exploreda/charts/<type>` import, and with `chart-core` an unregistered type shows the import to add.
+- 6ddac42: Import `exploreda/dist/chart.css` to style standalone charts without changing the host page: it has no global reset and keeps its theme variables on each chart. Box plots no longer fail in apps whose bundler loads `natsort` as CommonJS.
+
+### Patch Changes
+
+- 54ed024: `onConfigChange` no longer fires when a chart fills in its own defaults after mounting, such as a line chart's series colors. It fires only for a reader's edits.
+- fd82628: `onConfigChange` now reports the short config: the type, its main field, and only the settings that differ from the defaults. A config that cannot draw, such as a mistyped `type`, shows its error in that chart's place instead of failing the host page.
+- 3c1453a: Standalone charts follow a dark host page's palette. Their settings no longer show workspace-only filter controls and selection hints. In every settings panel, native selects match the other controls, and all tabs fit.
+
 ## 0.4.0
 
 ### Minor Changes
