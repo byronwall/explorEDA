@@ -3,6 +3,7 @@ import type {
   ChartProps,
   ChartSettingsProps,
 } from "exploreda/chart";
+import { CHART_IMPORTS } from "exploreda/docs-kit";
 import { useEffect, useState, type ReactNode } from "react";
 import { CodeFrame, HighlightedCode } from "../components/code";
 import { Link } from "react-router-dom";
@@ -270,6 +271,45 @@ export function StandaloneText() {
           </pre>
         </figure>
       ))}
+    </div>
+  );
+}
+
+/** Every chart type's import for `exploreda/chart-core`, in docs order. */
+export function ChartImportsTable() {
+  const pages = catalogue.filter((page) => page.chartType);
+  return (
+    <div className="mt-5 overflow-x-auto rounded-lg border border-border">
+      <table className="w-full text-left text-sm" aria-label="Chart imports">
+        <thead className="bg-muted/40 text-xs text-muted-foreground">
+          <tr>
+            <th className="px-3 py-2 font-medium">Chart</th>
+            <th className="px-3 py-2 font-medium">Import from</th>
+            <th className="px-3 py-2 font-medium">Definition</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border">
+          {pages.map((page) => {
+            const known =
+              CHART_IMPORTS[page.chartType as keyof typeof CHART_IMPORTS];
+            return (
+              <tr key={page.topic}>
+                <td className="px-3 py-1.5">
+                  <Link className="text-docs-accent" to={docsPath(page.topic)}>
+                    {page.title}
+                  </Link>
+                </td>
+                <td className="whitespace-nowrap px-3 py-1.5 font-mono text-xs">
+                  exploreda/charts/{known.entry}
+                </td>
+                <td className="whitespace-nowrap px-3 py-1.5 font-mono text-xs">
+                  {known.name}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

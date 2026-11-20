@@ -93,6 +93,42 @@ Import `exploreda/dist/chart.css` once. It styles only the charts:
 - Leave them out to fill the parent element. Give the parent a height, or the chart takes 300 px.
 - `height` includes the title line. Pass `title={false}` to give all of it to the plot.
 
+## Load only the charts you use
+
+`exploreda/chart` loads each chart type's code the first time a chart of that type draws. A page with a bar chart never downloads the 3D scatter or the note editor. Until a type's code arrives, which is one small request, the chart holds its box.
+
+Two things load every type, because they can name any type:
+
+- A `ChartSettings` panel or a settings button, once it opens, so its **Chart Type** list is complete.
+- A Dashboard text config.
+
+To have no request at all before a chart draws, import from `exploreda/chart-core` and register the types up front:
+
+```tsx
+import { Chart, registerCharts } from "exploreda/chart-core";
+import { barChartDefinition } from "exploreda/charts/bar";
+import { scatterPlotDefinition } from "exploreda/charts/scatter";
+import "exploreda/dist/chart.css";
+
+registerCharts(barChartDefinition, scatterPlotDefinition);
+
+<Chart data={rows} config={{ type: "bar", field: "Region" }} />;
+```
+
+- Call `registerCharts` once, before the first chart draws, such as at the top of the module.
+- With `chart-core`, a chart whose type isn't registered shows the two lines to add in its place.
+- Map shapes load only when a map draws, with either entry.
+
+What the example app's pages load up front, React included:
+
+| Page                                                             | Entry                  |                             Up front |
+| ---------------------------------------------------------------- | ---------------------- | -----------------------------------: |
+| 34 charts covering all 27 types, with settings and a text config | `exploreda/chart`      | 1,283 KB, the rest after first paint |
+| A bar chart and a scatter plot                                   | `exploreda/chart-core` |                             1,425 KB |
+| The first page, before types loaded on demand                    | `exploreda/chart`      |                             2,987 KB |
+
+<ChartImportsTable />
+
 ## Every chart type
 
 Each chart below is a `Chart` drawn from the same 48 sample rows, with the config under it.

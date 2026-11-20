@@ -45,6 +45,7 @@ export function chartTypes(): string[] {
 
 export { ChartSettingsSurface } from "./ChartSettingsSurface";
 export { SAMPLE_CONFIGS, SAMPLE_ROWS } from "@/chart/samples";
+export { CHART_IMPORTS } from "@/chart/imports";
 
 /**
  * One chart's Dashboard text: the lines that build `config` over `rows`,

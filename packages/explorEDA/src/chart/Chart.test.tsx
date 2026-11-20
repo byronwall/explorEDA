@@ -25,6 +25,10 @@ import {
   useDataLayerSnapshot,
 } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
+import { registerAllCharts } from "@/charts/registerAllCharts";
+
+// These tests draw charts; loading types on demand has its own test.
+registerAllCharts();
 
 // jsdom has no 2D canvas either; canvas charts skip their drawing.
 HTMLCanvasElement.prototype.getContext = (() =>
