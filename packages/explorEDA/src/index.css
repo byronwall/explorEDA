@@ -213,6 +213,17 @@
   color: var(--primary);
   background: var(--muted);
 }
+/* A config that cannot draw says why, in the chart's place. */
+.eda-standalone-error {
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 1.45;
+}
 .eda-standalone-settings {
   min-width: 0;
 }

@@ -62,6 +62,64 @@ export function toSavedData(
   };
 }
 
+/** JSON with object keys sorted, so equal settings give equal text. */
+export function sortedText(value: unknown) {
+  return JSON.stringify(value, (_key, item: unknown) =>
+    isRecord(item)
+      ? Object.fromEntries(
+          Object.entries(item).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+        )
+      : item
+  );
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+/** The members of `value` that differ from `base`, at any depth. */
+function changes(
+  value: Record<string, unknown>,
+  base: Record<string, unknown>
+) {
+  const out: Record<string, unknown> = {};
+  for (const [key, item] of Object.entries(value)) {
+    const prior = base[key];
+    if (item === undefined || sortedText(item) === sortedText(prior)) continue;
+    if (isRecord(item) && isRecord(prior)) {
+      const inner = changes(item, prior);
+      if (Object.keys(inner).length) out[key] = inner;
+    } else {
+      out[key] = item;
+    }
+  }
+  return out;
+}
+
+/**
+ * The shortest config that draws `chart`: its type, its main field, and
+ * only the settings that differ from that type's defaults. `Chart` reports
+ * edits in this form, so a host stores a few keys, not every setting.
+ */
+export function shortConfig(chart: ChartSettings): ChartConfig {
+  const {
+    id,
+    layout: _layout,
+    filters: _filters,
+    colorScaleId: _scale,
+    ...rest
+  } = chart as ChartSettings & { colorScaleId?: string };
+  const head = {
+    type: chart.type,
+    ...(chart.field ? { field: chart.field } : {}),
+  };
+  const base = toChartSettings(head as ChartConfig, id);
+  return {
+    ...head,
+    ...changes(rest, base as unknown as Record<string, unknown>),
+  } as ChartConfig;
+}
+
 /** A chart's settings as a config: without the settings `Chart` manages. */
 export function toChartConfig(chart: ChartSettings): ChartConfig {
   const { id: _id, layout: _layout, filters: _filters, ...config } = chart;

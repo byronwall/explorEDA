@@ -51,7 +51,7 @@ Setting names are the names the workspace saves. Each chart's page lists every s
 
 ## Edit settings at runtime
 
-Pass `onConfigChange` to let readers change a chart's settings. The chart shows a settings button that opens the same settings the workspace uses. Each edit calls `onConfigChange` with the whole new config.
+Pass `onConfigChange` to let readers change a chart's settings. The chart shows a settings button that opens the same settings the workspace uses. Each edit calls `onConfigChange` with the new config in its short form: the type, its main field, and only the settings that differ from the defaults.
 
 The chart is controlled, like a React `<input value>`: an edit shows only once you pass the new config back as `config`. Keep the config in state, and the chart and your state never disagree. Leave `onConfigChange` out, and the chart is read-only.
 
@@ -61,7 +61,7 @@ To put the settings somewhere else, such as a sidebar, place a `ChartSettings` w
 
 Try the gear on the chart, or the panel beside it: both edit the same state. The panel offers only the five fields listed in `fields`.
 
-- `onConfigChange` gets every setting of the chart, defaults included. Store it as it is.
+- The short config draws exactly the same chart, so store it as it is.
 - A color scale picked for a `colorField` is not part of the config. The chart picks the workspace's default scale again each time.
 - Settings that need the workspace, such as filters and calculated fields, have no effect on a standalone chart.
 
