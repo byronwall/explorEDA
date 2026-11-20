@@ -28,6 +28,7 @@ import {
   type SlashQuery,
 } from "./blocks";
 import { MarkdownSettings } from "./definition";
+import { useChartEditable } from "../chartEditable";
 
 const extensions = [
   // Color and TextStyle keep colored text from older notes intact.
@@ -64,9 +65,11 @@ export function Markdown({
   onSettingsChangeRef.current = onSettingsChange;
 
   const slashMenu = useSlashMenu();
+  const editable = useChartEditable();
 
   const editor = useEditor({
     extensions,
+    editable,
     content: settings.content,
     editorProps: {
       attributes: {
@@ -87,6 +90,9 @@ export function Markdown({
     },
   });
   slashMenu.bind(editor);
+  useEffect(() => {
+    if (editor && editor.isEditable !== editable) editor.setEditable(editable);
+  }, [editor, editable]);
 
   return (
     <div

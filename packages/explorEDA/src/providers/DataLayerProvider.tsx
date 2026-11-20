@@ -303,6 +303,11 @@ interface DataLayerProps<T extends DatumObject> {
    */
   localSelections?: boolean;
   /**
+   * False turns chart clicks and brushes off: `updateChart` drops the
+   * `filters` a chart writes. Standalone charts show hover only.
+   */
+  selections?: boolean;
+  /**
    * The settings as the workspace holds them once `savedData` is applied,
    * at mount and after each restore. Edits reported to `onStateChange`
    * start from these.
@@ -1066,8 +1071,16 @@ const createDataLayerStore = <T extends DatumObject>(
         set({ charts: [], liveItems: crossfilterWrapper.getAllData() });
       },
 
-      updateChart: (id, settings) => {
+      updateChart: (id, update) => {
         const { crossfilterWrapper } = get();
+        let settings = update;
+        if (initProps?.selections === false && "filters" in update) {
+          const { filters: _filters, ...rest } = update;
+          if (Object.keys(rest).length === 0) {
+            return;
+          }
+          settings = rest;
+        }
 
         const chart = get().charts.find((chart) => chart.id === id);
 

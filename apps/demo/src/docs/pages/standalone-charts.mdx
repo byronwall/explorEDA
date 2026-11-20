@@ -1,0 +1,52 @@
+## Quick start
+
+Use `Chart` from `exploreda/chart` when you want explorEDA's charts in your own React layout, without the workspace. Give it rows and a config, and it draws one chart. There is no toolbar, no grid, and no filtering between charts.
+
+```bash
+pnpm add exploreda
+```
+
+<StandaloneSideBySide />
+
+Each `Chart` is independent. Put as many on a page as you need, in any layout.
+
+## The config
+
+A config is the chart's `type` plus the settings that differ from that type's defaults. Every setting you leave out takes the same default as a new chart in the workspace.
+
+```tsx
+<Chart data={rows} config={{ type: "bar", field: "Region" }} />
+<Chart data={rows} config={{ type: "line", xField: "Date", seriesField: ["Units"] }} />
+<Chart
+  data={rows}
+  config={{ type: "scatter", xField: "Price", yField: "Rating", colorField: "Region" }}
+/>
+```
+
+Setting names are the names the workspace saves. Each chart's page lists every setting of that type, with its default, under **Saved settings**. For example, see [Bar chart](/docs/bar#saved-settings) and [Scatter plot](/docs/scatter#saved-settings). The gallery at the end of this page links each chart type to its list.
+
+- `ChartConfig` is typed per chart type, so your editor completes the settings of the `type` you set.
+- A `colorField` is enough to color a chart. `Chart` picks the color scale that the workspace would pick.
+- A config that is missing a setting the type needs, such as a scatter plot without `yField`, shows the chart's own empty message.
+
+## Props
+
+<ChartPropsReference />
+
+## What a reader can do
+
+- **Hover:** tooltips and hover readouts work as in the workspace.
+- **Click and brush:** nothing is selected. A standalone chart has no filter state.
+- **Edit:** nothing, unless the host turns on editing.
+
+## Size
+
+- Pass `width` and `height` to set the size in pixels.
+- Leave them out to fill the parent element. Give the parent a height, or the chart takes 300 px.
+- `height` includes the title line. Pass `title={false}` to give all of it to the plot.
+
+## Every chart type
+
+Each chart below is a `Chart` drawn from the same 48 sample rows, with the config under it.
+
+<StandaloneGallery />
