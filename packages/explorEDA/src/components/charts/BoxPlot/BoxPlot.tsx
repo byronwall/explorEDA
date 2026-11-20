@@ -29,7 +29,6 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { BaseChartProps } from "@/types/ChartTypes";
 import { Filter, datum } from "@/types/FilterTypes";
 import { ScaleLinear, scaleBand } from "d3-scale";
-import natsort from "natsort";
 import { useCallback, useId, useMemo, useState } from "react";
 import { BaseChart } from "../BaseChart";
 import { useAxisTypography } from "../chartTypography";
@@ -52,6 +51,8 @@ import {
 import { ChartMessage } from "../ChartMessage";
 import { BoxPlotSettings } from "./definition";
 
+/** Group labels in natural order: "Lot 2" before "Lot 10". */
+const NATURAL_ORDER = new Intl.Collator(undefined, { numeric: true });
 const Y_SCALE_PADDING = 0.1; // 10% padding for whiskers
 const BOX_PADDING = 0.2; // Padding between boxes in a group
 
@@ -285,7 +286,7 @@ export function BoxPlot({
       if (settings.sortBy === "median") {
         return (medians.get(b) ?? 0) - (medians.get(a) ?? 0);
       }
-      return natsort()(a, b);
+      return NATURAL_ORDER.compare(a, b);
     });
 
     const scale = scaleBand()

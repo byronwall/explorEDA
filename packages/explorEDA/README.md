@@ -182,7 +182,7 @@ plus the settings that differ from that type's defaults.
 
 ```tsx
 import { Chart } from "exploreda/chart";
-import "exploreda/dist/ExplorEda.css";
+import "exploreda/dist/chart.css";
 
 <div style={{ display: "flex", gap: 16 }}>
   <Chart data={rows} config={{ type: "bar", field: "Region" }} height={260} />
@@ -195,7 +195,9 @@ import "exploreda/dist/ExplorEda.css";
 ```
 
 Each chart is independent: hover works, and clicks and brushes select
-nothing. `width` and `height` set the size in pixels; without them the chart
+nothing. `chart.css` styles only the charts: it has no global reset and
+puts its theme variables on the chart element, so your page keeps its own
+styles. `width` and `height` set the size in pixels; without them the chart
 fills its parent. `title={false}` hides the heading. Every chart type works
 this way. See [Standalone charts](https://exploreda.dev/docs/standalone-charts)
 for the props and a config for each chart type.

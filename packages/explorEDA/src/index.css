@@ -163,6 +163,35 @@
 .eda-workspace {
   font-size: 13px;
 }
+/* A standalone chart (exploreda/chart): the plot and an optional heading. */
+.eda-standalone {
+  position: relative;
+  color: var(--foreground);
+  /* Text takes the host page's font, as in the workspace. */
+  font-family: inherit;
+}
+.eda-standalone-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 28px;
+}
+.eda-standalone-title {
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--eda-headline-font, inherit);
+  font-size: var(--eda-headline-size, 14px);
+  font-weight: var(--eda-headline-weight, 600);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.eda-standalone-readout {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 .eda-workspace-controls {
   position: sticky;
   top: 0;

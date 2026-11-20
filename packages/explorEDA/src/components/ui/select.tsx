@@ -1,4 +1,5 @@
 "use client";
+import { usePortalContainer } from "./portalContainer";
 
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
@@ -53,7 +54,7 @@ function SelectContent({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Content>) {
   return (
-    <SelectPrimitive.Portal>
+    <SelectPrimitive.Portal container={usePortalContainer()}>
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(

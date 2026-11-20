@@ -377,9 +377,6 @@ importers:
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
-      natsort:
-        specifier: ^2.0.3
-        version: 2.0.3
       next-themes:
         specifier: ^0.4.4
         version: 0.4.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -486,9 +483,6 @@ importers:
       '@types/mssql':
         specifier: ^9.1.11
         version: 9.1.11
-      '@types/natsort':
-        specifier: ^2.0.0
-        version: 2.0.0
       '@types/node':
         specifier: ^22.13.4
         version: 22.13.10

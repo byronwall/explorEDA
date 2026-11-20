@@ -39,6 +39,21 @@ Setting names are the names the workspace saves. Each chart's page lists every s
 - **Click and brush:** nothing is selected. A standalone chart has no filter state.
 - **Edit:** nothing, unless the host turns on editing.
 
+## Styles
+
+Import `exploreda/dist/chart.css` once. It styles only the charts:
+
+- It has no global reset. Your page's buttons, headings, and fonts stay as they are.
+- Its theme variables, such as `--background` and `--primary`, sit on each chart's element, not on `:root`. A host that uses the same names keeps its own values.
+- Text in a chart takes your page's font, as the workspace does.
+- Tooltips, menus, and popovers mount inside the chart's element, so the same styles reach them.
+
+<Callout type="note" title="Workspace and charts on one page">
+  A page that also shows the full `ExplorEda` workspace already loads
+  `exploreda/dist/ExplorEda.css`. That file styles standalone charts too, so the
+  page does not need `chart.css`.
+</Callout>
+
 ## Size
 
 - Pass `width` and `height` to set the size in pixels.

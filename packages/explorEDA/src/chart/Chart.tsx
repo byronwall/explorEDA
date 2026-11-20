@@ -9,6 +9,7 @@ import { ChartColorLegend } from "@/components/charts/ColorLegend/ChartColorLege
 import { FacetContainer } from "@/components/charts/FacetRelated/FacetContainer";
 import { FacetBarSlotContext } from "@/components/charts/FacetRelated/facetBarSlot";
 import { ChartEditableContext } from "@/components/charts/chartEditable";
+import { PortalContainerContext } from "@/components/ui/portalContainer";
 import { getChartTitle } from "@/components/charts/chartAccessibility";
 import { resolveThemeId } from "@/lib/themes";
 import { useColorScales } from "@/hooks/useColorScales";
@@ -110,6 +111,7 @@ function ChartBody({
   );
   const [readout, setReadout] = useState<HTMLDivElement | null>(null);
   const [facetSlot, setFacetSlot] = useState<HTMLDivElement | null>(null);
+  const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   useColorScale(settings);
 
   if (!settings) return null;
@@ -149,47 +151,51 @@ function ChartBody({
           <div ref={setReadout} className="eda-standalone-readout" />
         </div>
       )}
-      <AxisTypographyProvider value={axisTypography}>
-        <ChartReadoutProvider value={readout}>
-          {faceted ? (
-            <div className="eda-facet-bar">
-              {legend > 0 && (
-                <ChartColorLegend
-                  settings={settings}
-                  width={Math.max(1, plotWidth - 150)}
-                />
-              )}
-              <div ref={setFacetSlot} className="eda-facet-bar-slot" />
-            </div>
-          ) : (
-            legend > 0 &&
-            plotWidth > 0 && (
-              <ChartColorLegend settings={settings} width={plotWidth} />
-            )
-          )}
-          <div
-            ref={plotRef}
-            style={{ flex: "1 1 auto", minWidth: 0, minHeight: 0 }}
-          >
-            {plotWidth > 0 &&
-              (faceted ? (
-                <FacetBarSlotContext.Provider value={facetSlot}>
-                  <FacetContainer
+      <PortalContainerContext.Provider value={layer ?? undefined}>
+        <AxisTypographyProvider value={axisTypography}>
+          <ChartReadoutProvider value={readout}>
+            {faceted ? (
+              <div className="eda-facet-bar">
+                {legend > 0 && (
+                  <ChartColorLegend
+                    settings={settings}
+                    width={Math.max(1, plotWidth - 150)}
+                  />
+                )}
+                <div ref={setFacetSlot} className="eda-facet-bar-slot" />
+              </div>
+            ) : (
+              legend > 0 &&
+              plotWidth > 0 && (
+                <ChartColorLegend settings={settings} width={plotWidth} />
+              )
+            )}
+            <div
+              ref={plotRef}
+              style={{ flex: "1 1 auto", minWidth: 0, minHeight: 0 }}
+            >
+              {plotWidth > 0 &&
+                (faceted ? (
+                  <FacetBarSlotContext.Provider value={facetSlot}>
+                    <FacetContainer
+                      settings={settings}
+                      width={plotWidth}
+                      height={plotHeight}
+                    />
+                  </FacetBarSlotContext.Provider>
+                ) : (
+                  <ChartRenderer
                     settings={settings}
                     width={plotWidth}
                     height={plotHeight}
                   />
-                </FacetBarSlotContext.Provider>
-              ) : (
-                <ChartRenderer
-                  settings={settings}
-                  width={plotWidth}
-                  height={plotHeight}
-                />
-              ))}
-          </div>
-        </ChartReadoutProvider>
-      </AxisTypographyProvider>
+                ))}
+            </div>
+          </ChartReadoutProvider>
+        </AxisTypographyProvider>
+      </PortalContainerContext.Provider>
+      {/* Tooltips and menus mount here, inside the scoped stylesheet. */}
+      <div ref={setLayer} className="eda-standalone-layer" />
     </div>
   );
 }
