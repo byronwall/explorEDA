@@ -37,6 +37,25 @@ export interface StandaloneProps {
   fields?: string[];
 }
 
+/** When a person last clicked, typed, or changed a control on the page. */
+let lastInput = -Infinity;
+if (typeof window !== "undefined") {
+  for (const type of ["pointerdown", "click", "keydown", "input", "change"]) {
+    window.addEventListener(type, () => (lastInput = performance.now()), {
+      capture: true,
+      passive: true,
+    });
+  }
+}
+
+/**
+ * An edit follows a person's input. A change with no input just before it
+ * is the chart settling, such as a default it fills in after mounting.
+ */
+function recentInput() {
+  return performance.now() - lastInput < 1500;
+}
+
 /** Rows with only the offered fields and the fields the chart uses. */
 function useOfferedRows(
   data: DatumObject[],
@@ -89,6 +108,12 @@ export function StandaloneProvider({
   // is recognized as soon as the host passes it back.
   const current = useRef("");
   current.current = shown ? sortedText(shortConfig(shown)) : "";
+  // States the chart reached on its own for this config, such as a line
+  // chart filling in its series colors. They are not edits.
+  const settled = useRef({ config: "", states: new Set<string>() });
+  if (settled.current.config !== current.current) {
+    settled.current = { config: current.current, states: new Set() };
+  }
   const onChange = useRef(onConfigChange);
   onChange.current = onConfigChange;
 
@@ -97,8 +122,11 @@ export function StandaloneProvider({
     if (!chart || !onChange.current) return;
     const next = shortConfig(chart as ChartSettings);
     const text = sortedText(next);
-    // Picking a color scale or filling defaults is not an edit.
-    if (text === current.current) return;
+    if (text === current.current || settled.current.states.has(text)) return;
+    if (!recentInput()) {
+      settled.current.states.add(text);
+      return;
+    }
     onChange.current(next);
     // Controlled: unless the host passed the edit back, show `config`.
     setTimeout(() => {

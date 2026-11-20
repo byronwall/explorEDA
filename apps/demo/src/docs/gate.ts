@@ -1,3 +1,4 @@
+import { BUILDER_TOPIC } from "./paths";
 import type { DocsPage } from "./catalogue";
 
 /** Everything the docs gate checks, passed in so tests can break each part. */
@@ -47,7 +48,8 @@ export type DocsGateInput = {
  */
 export function findDocsErrors(input: DocsGateInput): string[] {
   const errors: string[] = [];
-  const topics = new Set<string>();
+  // The builder is a route of its own; pages may link to it.
+  const topics = new Set<string>([BUILDER_TOPIC]);
   const targets = new Set(input.targets);
   const examples = new Set(input.exampleIds);
   const assets = new Set(input.assets);

@@ -1,7 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Chart, type ChartConfig } from "./index";
-import { shortConfig, sortedText, toChartSettings } from "./config";
+import { chartText } from "@/docsKit/index";
+import type { ChartSettings } from "@/types/ChartTypes";
+import {
+  shortConfig,
+  sortedText,
+  textToSavedData,
+  toChartSettings,
+} from "./config";
 import { SAMPLE_CONFIGS, SAMPLE_ROWS } from "./samples";
 
 vi.stubGlobal(
@@ -21,6 +28,18 @@ describe("short configs", () => {
       const short = shortConfig(full);
       expect(sortedText(toChartSettings(short, "c1"))).toBe(sortedText(full));
       expect(sortedText(short).length).toBeLessThan(sortedText(full).length);
+    }
+  );
+
+  it.each(Object.entries(SAMPLE_CONFIGS))(
+    "%s: its Dashboard text builds the same short config",
+    (_, config) => {
+      const text = chartText(config, SAMPLE_ROWS);
+      const chart = textToSavedData(text, SAMPLE_ROWS, "c1").savedData
+        .charts[0] as ChartSettings;
+      expect(sortedText(shortConfig(chart))).toBe(
+        sortedText(shortConfig(toChartSettings(config, "c1")))
+      );
     }
   );
 

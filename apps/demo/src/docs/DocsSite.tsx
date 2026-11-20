@@ -46,7 +46,13 @@ import {
 } from "../daily/corpus";
 import { useDailyCatalog } from "../daily/useDailyCatalog";
 import { usePageTitle } from "../pageTitle";
-import { captureId, docsPath, docsTopic, thumbPath } from "./paths";
+import {
+  BUILDER_TOPIC,
+  captureId,
+  docsPath,
+  docsTopic,
+  thumbPath,
+} from "./paths";
 
 const loaded = new Map<string, ComponentType>();
 
@@ -376,12 +382,19 @@ function MissingPage() {
   );
 }
 
+const ChartBuilder = lazy(() =>
+  import("./standalone/ChartBuilder").then(({ ChartBuilder: Builder }) => ({
+    default: Builder,
+  }))
+);
+
 /** The docs: an index at `/docs` and one page at each `/docs/<topic>`. */
 export function DocsSite() {
   const { pathname } = useLocation();
   const topic = docsTopic(pathname);
   const page = topic ? findPage(topic) : undefined;
-  usePageTitle(topic === "" ? "Docs" : page?.title);
+  const builder = topic === BUILDER_TOPIC;
+  usePageTitle(topic === "" ? "Docs" : builder ? "Chart builder" : page?.title);
   const capture = captureId(pathname);
   if (capture) {
     // The docs check screenshots each live example here, without page chrome.
@@ -395,6 +408,10 @@ export function DocsSite() {
     <DocsLayout withRail={page !== undefined}>
       {!topic ? (
         <IndexPage />
+      ) : builder ? (
+        <Suspense fallback={null}>
+          <ChartBuilder />
+        </Suspense>
       ) : page ? (
         <GuidePage key={page.topic} page={page} />
       ) : (

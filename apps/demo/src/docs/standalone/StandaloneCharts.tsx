@@ -4,10 +4,10 @@ import type {
   ChartSettingsProps,
 } from "exploreda/chart";
 import { useEffect, useState, type ReactNode } from "react";
-import { CodeFrame } from "../components/code";
+import { CodeFrame, HighlightedCode } from "../components/code";
 import { Link } from "react-router-dom";
 import { catalogue } from "../catalogue";
-import { docsPath } from "../paths";
+import { BUILDER_TOPIC as BUILDER, docsPath } from "../paths";
 
 type ChartModule = typeof import("exploreda/chart");
 type KitModule = typeof import("exploreda/docs-kit");
@@ -16,7 +16,7 @@ type KitModule = typeof import("exploreda/docs-kit");
  * The standalone chart entry, loaded in the browser only: the docs
  * prerender must not draw charts.
  */
-function useModules() {
+export function useModules() {
   const [modules, setModules] = useState<[ChartModule, KitModule]>();
   useEffect(() => {
     let live = true;
@@ -157,10 +157,18 @@ export function StandaloneGallery() {
             <code className="font-mono font-semibold text-foreground">
               {type}
             </code>
-            <SettingsLink type={type} />
+            <span className="flex items-center gap-3">
+              <SettingsLink type={type} />
+              <Link
+                className="text-docs-accent"
+                to={`${docsPath(BUILDER)}?type=${encodeURIComponent(type)}`}
+              >
+                Open in builder
+              </Link>
+            </span>
           </figcaption>
-          <pre className="m-0 overflow-x-auto border-t border-border bg-muted/40 px-3 py-2 font-mono text-xs leading-5 text-foreground/80">
-            {configText(config)}
+          <pre className="m-0 whitespace-pre-wrap break-words border-t border-border bg-muted/30 px-3 py-2 font-mono text-xs leading-5 text-foreground">
+            <HighlightedCode code={configText(config)} language="tsx" />
           </pre>
         </figure>
       ))}
@@ -257,8 +265,8 @@ export function StandaloneText() {
           <div className="p-3">
             <Chart data={SAMPLE_ROWS} config={line} height={220} />
           </div>
-          <pre className="m-0 whitespace-pre-wrap break-words border-t border-border bg-muted/40 px-3 py-2 font-mono text-xs leading-5 text-foreground/80">
-            {`config="${line}"`}
+          <pre className="m-0 whitespace-pre-wrap break-words border-t border-border bg-muted/30 px-3 py-2 font-mono text-xs leading-5 text-foreground">
+            <HighlightedCode code={`config="${line}"`} language="tsx" />
           </pre>
         </figure>
       ))}
@@ -272,10 +280,10 @@ function SettingsLink({ type }: { type: string }) {
   if (!page) return null;
   return (
     <Link
-      className="text-primary underline-offset-4 hover:underline"
+      className="text-docs-accent"
       to={`${docsPath(page.topic)}#saved-settings`}
     >
-      {page.title} settings
+      Settings
     </Link>
   );
 }

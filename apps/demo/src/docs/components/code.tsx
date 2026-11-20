@@ -149,7 +149,7 @@ function ShellCode({ code }: { code: string }) {
   });
 }
 
-function HighlightedCode({
+export function HighlightedCode({
   code,
   language,
 }: {

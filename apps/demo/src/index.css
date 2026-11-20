@@ -208,3 +208,65 @@
 .docs-theme-switching * {
   transition: none !important;
 }
+
+/* Chart builder (/docs/chart-builder): one control height for the toolbar,
+   one state model for its buttons. */
+.builder-button,
+.builder-select {
+  height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 13px;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+.builder-button {
+  padding: 0 10px;
+  font-weight: 500;
+}
+.builder-select {
+  padding: 0 6px;
+}
+.builder-button[data-primary] {
+  border-color: var(--docs-accent);
+  background: var(--docs-accent);
+  color: var(--docs-accent-foreground);
+}
+@media (hover: hover) {
+  .builder-button:hover,
+  .builder-select:hover {
+    background: var(--muted);
+  }
+  .builder-button[data-primary]:hover {
+    background: color-mix(in oklab, var(--docs-accent) 88%, black);
+  }
+}
+.builder-button:active {
+  transform: scale(0.97);
+  transition-duration: 0ms;
+}
+.builder-button:focus-visible,
+.builder-select:focus-visible {
+  outline: 2px solid var(--docs-accent);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .builder-button:active {
+    transform: none;
+  }
+}
+/* The settings panel stays beside the chart while the page scrolls. */
+@media (min-width: 1024px) {
+  .builder-settings {
+    position: sticky;
+    top: 4.5rem;
+    max-height: calc(100vh - 5.5rem);
+    overflow: auto;
+  }
+}
+.builder [data-builder-code] > * {
+  margin-top: 0;
+}
