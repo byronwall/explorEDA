@@ -1,3 +1,5 @@
+import { chartRegistry } from "@/charts/registry";
+import { registerHint } from "./imports";
 import { ChartEditableContext } from "@/components/charts/chartEditable";
 import { getChartFields } from "@/components/charts/chartAccessibility";
 import {
@@ -56,6 +58,19 @@ function recentInput() {
   return performance.now() - lastInput < 1500;
 }
 
+/** What to add when a page draws a type it never registered. */
+function unregistered(type: string): ReactNode {
+  const hint = registerHint(type);
+  return hint ? (
+    <>
+      The {type} chart isn&apos;t registered. Add:
+      <code className="eda-standalone-error-code">{hint}</code>
+    </>
+  ) : (
+    `"${type}" isn't a chart type.`
+  );
+}
+
 /** Rows with only the offered fields and the fields the chart uses. */
 function useOfferedRows(
   data: DatumObject[],
@@ -97,7 +112,12 @@ export function StandaloneProvider({
     () =>
       typeof config === "string"
         ? textToSavedData(config, data, chartId)
-        : { savedData: toSavedData(config, chartId), error: undefined },
+        : chartRegistry.has(config.type)
+          ? { savedData: toSavedData(config, chartId), error: undefined }
+          : {
+              savedData: { ...toSavedData(config, chartId), charts: [] },
+              error: unregistered(config.type),
+            },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [config, chartId, declined, typeof config === "string" ? data : undefined]
   );
@@ -136,9 +156,9 @@ export function StandaloneProvider({
 
   if (error) {
     return (
-      <p className="eda-standalone eda-standalone-error" role="alert">
+      <div className="eda-standalone eda-standalone-error" role="alert">
         {error}
-      </p>
+      </div>
     );
   }
 

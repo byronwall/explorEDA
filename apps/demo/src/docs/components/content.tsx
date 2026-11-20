@@ -23,6 +23,7 @@ import {
 import { LiveExample } from "../live/LiveExample";
 import { SettingsReference } from "../reference/SettingsReference";
 import {
+  ChartImportsTable,
   ChartPropsReference,
   StandaloneEditable,
   StandaloneGallery,
@@ -343,6 +344,7 @@ export const mdxComponents: MDXComponents = {
   // Blocks a page can use without importing them.
   Callout,
   CalcChain,
+  ChartImportsTable,
   ChartPropsReference,
   ChartQuestions,
   ChartTypeList,

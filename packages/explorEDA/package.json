@@ -43,6 +43,11 @@
       "require": "./dist/chart.cjs",
       "import": "./dist/chart.js"
     },
+    "./chart-core": {
+      "types": "./dist/chart-core.d.ts",
+      "require": "./dist/chart-core.cjs",
+      "import": "./dist/chart-core.js"
+    },
     "./charts/*": {
       "types": "./dist/charts/*.d.ts",
       "require": "./dist/charts/*.cjs",
@@ -80,6 +85,9 @@
       ],
       "chart": [
         "./dist/chart.d.ts"
+      ],
+      "chart-core": [
+        "./dist/chart-core.d.ts"
       ]
     }
   },

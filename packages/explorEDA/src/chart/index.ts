@@ -1,13 +1,10 @@
 /**
  * Standalone charts: one explorEDA chart from rows and a config, without
- * the workspace. Importing this entry registers every chart type.
+ * the workspace. Importing this entry registers every chart type; import
+ * `exploreda/chart-core` instead to register only the types a page draws.
  */
 import { registerAllCharts } from "@/charts/registerAllCharts";
 
 registerAllCharts();
 
-export { Chart, type ChartProps } from "./Chart";
-export { ChartSettings, type ChartSettingsProps } from "./ChartSettings";
-export type { ChartConfig } from "./config";
-export type { DatumObject } from "@/providers/DataLayerProvider";
-export type { ChartType } from "@/types/ChartTypes";
+export * from "./core";

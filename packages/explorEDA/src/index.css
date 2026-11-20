@@ -224,6 +224,18 @@
   font-size: 13px;
   line-height: 1.45;
 }
+.eda-standalone-error-code {
+  display: block;
+  margin-top: 6px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .eda-standalone-settings {
   min-width: 0;
 }

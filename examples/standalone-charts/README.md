@@ -18,3 +18,12 @@ pnpm dev
 `install-lib` packs the built library into `vendor/exploreda.tgz` and installs
 it. Run it again after each library build. `pnpm build` type-checks the app
 against the package's published types and builds it.
+
+`lean.html` draws a bar chart and a scatter plot through
+`exploreda/chart-core`, with only those two types registered. After
+`pnpm build`, `pnpm sizes` prints the JavaScript each page loads up front:
+
+```
+index.html   up front  2,987 KB   loaded on demand 1,040 KB
+lean.html    up front  1,422 KB   loaded on demand 2,605 KB
+```

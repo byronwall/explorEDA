@@ -93,6 +93,30 @@ Import `exploreda/dist/chart.css` once. It styles only the charts:
 - Leave them out to fill the parent element. Give the parent a height, or the chart takes 300 px.
 - `height` includes the title line. Pass `title={false}` to give all of it to the plot.
 
+## Load only the charts you use
+
+`exploreda/chart` registers all 27 chart types, so your bundle carries every one of them, including the 3D scatter and the note editor. To ship only the types a page draws, import from `exploreda/chart-core` and register those types:
+
+```tsx
+import { Chart, registerCharts } from "exploreda/chart-core";
+import { barChartDefinition } from "exploreda/charts/bar";
+import { scatterPlotDefinition } from "exploreda/charts/scatter";
+import "exploreda/dist/chart.css";
+
+registerCharts(barChartDefinition, scatterPlotDefinition);
+
+<Chart data={rows} config={{ type: "bar", field: "Region" }} />;
+```
+
+In the example app, a page with a bar chart and a scatter plot loads about half the JavaScript up front that the same page loads with `exploreda/chart`: 1,422 KB against 2,987 KB, React included.
+
+- Call `registerCharts` once, before the first chart draws, such as at the top of the module.
+- A chart whose type isn't registered shows the two lines to add in its place.
+- `ChartSettings` offers only registered types in its **Chart Type** list.
+- Map shapes load only when a map draws, with either entry.
+
+<ChartImportsTable />
+
 ## Every chart type
 
 Each chart below is a `Chart` drawn from the same 48 sample rows, with the config under it.
