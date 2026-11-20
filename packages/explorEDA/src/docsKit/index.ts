@@ -8,6 +8,9 @@ import { registerAllCharts } from "@/charts/registerAllCharts";
 import { getChartDefinition } from "@/charts/registry";
 import { CHART_SETTING_KEYS } from "@/lib/dsl/settingKeys";
 import type { ChartType } from "@/types/ChartTypes";
+import { toSavedData, type ChartConfig } from "@/chart/config";
+import { exportDocument } from "@/lib/dsl/export";
+import type { DatumObject } from "@/providers/DataLayerProvider";
 
 export { CHART_SETTING_KEYS };
 export { settingWords } from "@/lib/dsl/schema";
@@ -42,3 +45,19 @@ export function chartTypes(): string[] {
 
 export { ChartSettingsSurface } from "./ChartSettingsSurface";
 export { SAMPLE_CONFIGS, SAMPLE_ROWS } from "@/chart/samples";
+
+/**
+ * One chart's Dashboard text: the lines that build `config` over `rows`,
+ * without the dashboard, grid, and layout lines a whole dashboard needs.
+ */
+export function chartText(config: ChartConfig, rows: DatumObject[]): string {
+  const { text } = exportDocument(toSavedData(config, "chart"), { rows });
+  const lines = text.split("\n");
+  const start = lines.indexOf("") + 1;
+  const end = lines.findIndex((line) => line.startsWith("layout"));
+  return lines
+    .slice(start, end === -1 ? undefined : end)
+    .filter(Boolean)
+    .map((line) => line.replace(/ @chart\b/, ""))
+    .join("\n");
+}

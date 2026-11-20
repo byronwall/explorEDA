@@ -102,13 +102,16 @@ function changes(
  * edits in this form, so a host stores a few keys, not every setting.
  */
 export function shortConfig(chart: ChartSettings): ChartConfig {
+  // Normalizing drops placeholders that mean nothing, such as `xAxis.min`.
   const {
     id,
     layout: _layout,
     filters: _filters,
     colorScaleId: _scale,
     ...rest
-  } = chart as ChartSettings & { colorScaleId?: string };
+  } = toChartSettings(toChartConfig(chart), chart.id) as ChartSettings & {
+    colorScaleId?: string;
+  };
   const head = {
     type: chart.type,
     ...(chart.field ? { field: chart.field } : {}),

@@ -91,6 +91,25 @@ describe("editing a standalone chart", () => {
     expect(options).not.toContain("Rating");
   });
 
+  it("reports nothing when a chart only settles after mounting", async () => {
+    // Earlier tests clicked; this mount comes long after any input.
+    const later = performance.now() + 60_000;
+    const clock = vi.spyOn(performance, "now").mockReturnValue(later);
+    const onChange = vi.fn();
+    render(
+      <Chart
+        data={SAMPLE_ROWS}
+        config={{ type: "line", xField: "Date", seriesField: ["Units"] }}
+        onConfigChange={onChange}
+        width={400}
+        height={240}
+      />
+    );
+    await act(() => new Promise((resolve) => setTimeout(resolve, 20)));
+    expect(onChange).not.toHaveBeenCalled();
+    clock.mockRestore();
+  });
+
   it("shows a settings button only when editing is on", () => {
     const { rerender } = render(
       <Chart data={SAMPLE_ROWS} config={BAR} width={300} height={200} />

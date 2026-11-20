@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import { EXAMPLES_PATH } from "@/routes";
 import { cn } from "@/lib/utils";
-import { BookOpen, Menu, Search, X } from "lucide-react";
+import { BookOpen, Menu, Search, SlidersHorizontal, X } from "lucide-react";
 import {
   createContext,
   useContext,
@@ -15,7 +15,7 @@ import { createPortal } from "react-dom";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { catalogue, GROUP_LABELS, type DocsGroup } from "../catalogue";
 import { BrandIcon } from "../../landing/BrandMark";
-import { docsPath } from "../paths";
+import { BUILDER_TOPIC, docsPath } from "../paths";
 import { SearchButton, SearchProvider, useOpenSearch } from "./search";
 import { ThemeToggle, useDocsTheme } from "./theme";
 
@@ -64,6 +64,29 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                   </li>
                 );
               })}
+              {group === "start" && (
+                <li>
+                  <NavLink
+                    to={docsPath(BUILDER_TOPIC)}
+                    onClick={onNavigate}
+                    className={({ isActive }) =>
+                      cn(
+                        "group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors",
+                        focusRing,
+                        isActive
+                          ? "bg-docs-accent/10 font-medium text-docs-accent"
+                          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                      )
+                    }
+                  >
+                    <SlidersHorizontal
+                      aria-hidden="true"
+                      className="size-4 shrink-0 opacity-70 group-aria-[current=page]:opacity-100"
+                    />
+                    Chart builder
+                  </NavLink>
+                </li>
+              )}
             </ul>
           </div>
         ))}

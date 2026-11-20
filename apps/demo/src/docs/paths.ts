@@ -44,3 +44,6 @@ export function slugify(text: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 }
+
+/** The chart builder: a docs route that is a tool, not a catalogue page. */
+export const BUILDER_TOPIC = "chart-builder";

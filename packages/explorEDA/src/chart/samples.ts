@@ -18,8 +18,9 @@ export const SAMPLE_ROWS = Array.from({ length: 48 }, (_, i) => {
   const noise = random(i);
   const price = Math.round((6 + random(i + 100) * 24) * 100) / 100;
   return {
-    Region: REGIONS[i % 4]!,
-    Product: PRODUCTS[i % 3]!,
+    // Uneven on purpose, so bars and cells differ.
+    Region: REGIONS[Math.floor(random(i + 500) ** 1.6 * 4)]!,
+    Product: PRODUCTS[Math.floor(random(i + 600) ** 1.3 * 3)]!,
     Price: price,
     Rating: Math.round((2 + price / 12 + noise * 1.4) * 10) / 10,
     Units: 1 + Math.floor(random(i + 200) * 12),

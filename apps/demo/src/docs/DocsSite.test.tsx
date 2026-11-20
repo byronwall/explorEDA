@@ -93,7 +93,8 @@ describe("docs routes", () => {
   it("lists every page in the sidebar, marking the current one", () => {
     renderAt("/docs/bar");
     const nav = within(screen.getByRole("navigation", { name: "Docs pages" }));
-    expect(nav.getAllByRole("link")).toHaveLength(catalogue.length);
+    // Every catalogue page, plus the chart builder.
+    expect(nav.getAllByRole("link")).toHaveLength(catalogue.length + 1);
     expect(nav.getByRole("link", { name: "Bar chart" })).toHaveAttribute(
       "aria-current",
       "page"
