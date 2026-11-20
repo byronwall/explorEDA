@@ -29,6 +29,16 @@ Setting names are the names the workspace saves. Each chart's page lists every s
 - A `colorField` is enough to color a chart. `Chart` picks the color scale that the workspace would pick.
 - A config that is missing a setting the type needs, such as a scatter plot without `yField`, shows the chart's own empty message.
 
+### Dashboard text
+
+`config` also takes one chart's [Dashboard text](/docs/dashboard-text): the same line that builds that chart in a dashboard.
+
+<StandaloneText />
+
+- A line can use what Dashboard text offers, such as `sum(Units)` or a calculated field, and the chart keeps it.
+- A line that builds no chart shows the compiler's message in place of the chart.
+- After an edit, `onConfigChange` gives the object form. Store that, or keep the text and leave editing off.
+
 ## Props
 
 <ChartPropsReference />

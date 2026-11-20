@@ -87,6 +87,10 @@ export function App() {
               title={false}
             />
           </div>
+          <div className="card" style={{ height: 300 }}>
+            {/* One line of Dashboard text works as a config too. */}
+            <Chart data={sales} config="metric average(Price)" />
+          </div>
         </div>
       </section>
       <section>

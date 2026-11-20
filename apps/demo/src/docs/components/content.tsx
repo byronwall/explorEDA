@@ -27,6 +27,7 @@ import {
   StandaloneEditable,
   StandaloneGallery,
   StandaloneSideBySide,
+  StandaloneText,
 } from "../standalone/StandaloneCharts";
 
 function textOf(node: ReactNode): string {
@@ -357,6 +358,7 @@ export const mdxComponents: MDXComponents = {
   StandaloneEditable,
   StandaloneGallery,
   StandaloneSideBySide,
+  StandaloneText,
   Steps,
   Terms,
   WorkedOrder,

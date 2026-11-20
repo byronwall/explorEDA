@@ -1,4 +1,6 @@
+import { compileDocument } from "@/lib/dsl/compile";
 import { normalizeChart } from "@/lib/dsl/normalize";
+import type { DatumObject } from "@/providers/DataLayerProvider";
 import type { ChartLayout, ChartSettings } from "@/types/ChartTypes";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
 
@@ -64,4 +66,31 @@ export function toSavedData(
 export function toChartConfig(chart: ChartSettings): ChartConfig {
   const { id: _id, layout: _layout, filters: _filters, ...config } = chart;
   return config as ChartConfig;
+}
+
+/**
+ * Workspace settings from one chart's Dashboard text, such as
+ * `scatter x=Price y=Rating color=Region`. The settings keep what the chart
+ * needs besides itself: a grouped summary, a calculation, or a color scale.
+ */
+export function textToSavedData(
+  text: string,
+  rows: DatumObject[],
+  id: string
+): { savedData: SavedDataStructure; error?: string } {
+  const result = compileDocument(text, {
+    rows,
+    now: () => new Date(0),
+  });
+  const chart = result.settings.charts[0];
+  if (!chart) {
+    const problem = result.diagnostics.find((d) => d.severity === "error");
+    return {
+      savedData: { ...result.settings, charts: [] },
+      error: problem
+        ? `${problem.message}${problem.suggestion ? ` ${problem.suggestion}` : ""}`
+        : "The text has no chart.",
+    };
+  }
+  return { savedData: { ...result.settings, charts: [{ ...chart, id }] } };
 }
