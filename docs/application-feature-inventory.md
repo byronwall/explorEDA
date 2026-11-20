@@ -50,6 +50,7 @@ Choose useful defaults from field types. Show advanced controls only when the da
 Comparison views should use deliberate shared scales, legends, and headers.
 
 Preserve analysis settings without copying source rows into each view. Keep storage outside the package.
+The package also draws single charts without the workspace: `Chart` and `ChartSettings` from `exploreda/chart`, styled by the scoped `exploreda/dist/chart.css`. Each standalone chart has its own data layer and no selection state.
 During current development, breaking API changes are acceptable. Do not add compatibility layers without a concrete need.
 
 ### Retired workspace initiative
@@ -166,6 +167,10 @@ Five initiatives retired on 2026-10-23. Every PR had merged to `main` at `6d9130
 | Landing and docs      | A proof-screenshot strip; a sidebar restructure; a PostgreSQL walkthrough beyond the linked `docker/demo` stack. File and React lessons are the [docs walkthroughs seed](intent/docs-walkthroughs/intent-brief.md).                 |
 | Progressive built-ins | The [built-in chart extensions seed](intent/built-in-chart-extensions/intent-brief.md) lists each candidate with its proof.                                                                                                         |
 | Domain views          | Timeline concurrency strip and same-lane overlap highlighting; funnel and retention segment breakdowns; a drop-off selection; wide stage-date input; survival-style retention.                                                      |
+
+### Initiative retired 2026-11-19
+
+- **Standalone charts.** A React host draws any registered chart type from rows and a config with `<Chart data config />` from `exploreda/chart`, with no workspace and no cross-chart filtering. A config is the chart `type` plus settings that differ from its defaults (a deep partial), or one chart's Dashboard text. Hover readouts work; the store drops the `filters` a chart writes, so clicks select nothing. `onConfigChange` turns on editing through a settings button, and `ChartSettings` places the same settings anywhere; both are controlled by `config`, and `fields` limits the fields they offer. `exploreda/dist/chart.css` is the workspace stylesheet with every rule scoped to `.eda-standalone` through `:where()` and its cascade layers unwrapped, so it neither restyles the host nor loses to the host's element rules; menus and tooltips mount inside each chart. `examples/standalone-charts` installs the packed package into a separate Vite app and draws every chart type; it found the Box plot `natsort` crash, now fixed. See [Standalone charts](../apps/demo/src/docs/pages/standalone-charts.mdx). Deferred: a framework-free `render(el, …)`, linked filtering between standalone charts, lean per-type imports, image export from a standalone chart, and keeping a picked color scale in the config.
 
 ### Follow-up scope
 

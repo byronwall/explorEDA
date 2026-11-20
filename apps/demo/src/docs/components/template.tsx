@@ -2,7 +2,10 @@ import type { ReactNode } from "react";
 import { catalogue } from "../catalogue";
 import { CHART_CHOICES } from "../chooser";
 import { GLANCES } from "../glance";
+import { SAMPLE_CONFIGS } from "exploreda/docs-kit";
 import { SettingsReference } from "../reference/SettingsReference";
+import { configText } from "../standalone/StandaloneCharts";
+import { CodeFrame } from "./code";
 import { inlineCodeClass, proseClass } from "./chrome";
 import { DocsLink, Heading } from "./content";
 
@@ -111,6 +114,31 @@ export function SavedSettings({ chartType }: { chartType: string }) {
         <code className={inlineCodeClass}>margin.left=40</code>.
       </p>
       <SettingsReference type={chartType} />
+      <StandaloneSnippet chartType={chartType} />
+    </>
+  );
+}
+
+/** The same chart on its own, outside the workspace. */
+function StandaloneSnippet({ chartType }: { chartType: string }) {
+  const config = SAMPLE_CONFIGS[chartType];
+  if (!config) return null;
+  const code = `import { Chart } from "exploreda/chart";
+import "exploreda/dist/chart.css";
+
+<Chart
+  data={rows}
+  config={${configText(config).replace(/\n/g, "\n  ")}}
+/>`;
+  return (
+    <>
+      <Heading level={3}>On its own</Heading>
+      <p className={`mt-4 ${proseClass}`}>
+        Draw this chart in your own React layout with{" "}
+        <DocsLink topic="standalone-charts">Chart</DocsLink>. Its config takes
+        any setting above; settings you leave out keep these defaults.
+      </p>
+      <CodeFrame code={code} language="tsx" />
     </>
   );
 }

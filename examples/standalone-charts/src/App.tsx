@@ -2,6 +2,7 @@ import { Chart, ChartSettings, type ChartConfig } from "exploreda/chart";
 import { useState } from "react";
 import "exploreda/dist/chart.css";
 import { sales } from "./data";
+import { SAMPLE_CONFIGS, SAMPLE_ROWS } from "./samples";
 
 export function App() {
   const [config, setConfig] = useState<ChartConfig>({
@@ -128,6 +129,16 @@ export function App() {
             2
           )}
         </pre>
+      </section>
+      <section>
+        <h2>Every chart type</h2>
+        <div className="row" data-example="all-types">
+          {Object.entries(SAMPLE_CONFIGS).map(([type, config]) => (
+            <div className="card" key={type} data-chart-type={type}>
+              <Chart data={SAMPLE_ROWS} config={config} height={260} />
+            </div>
+          ))}
+        </div>
       </section>
     </main>
   );
