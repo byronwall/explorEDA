@@ -8,7 +8,8 @@ import type { ChartSettings } from "@/types/ChartTypes";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import {
-  toChartConfig,
+  shortConfig,
+  sortedText,
   textToSavedData,
   toSavedData,
   type ChartConfig,
@@ -23,7 +24,8 @@ export interface StandaloneProps {
    */
   config: ChartConfig | string;
   /**
-   * Called with the whole config after each edit. Passing it turns editing
+   * Called with the short config after each edit: the type, its main field,
+   * and the settings that differ from defaults. Passing it turns editing
    * on. The chart is controlled: an edit shows only once the host passes the
    * new config back as `config`.
    */
@@ -33,25 +35,6 @@ export interface StandaloneProps {
    * available. Without it, settings offer every field in `data`.
    */
   fields?: string[];
-}
-
-/** The settings the host sees: the chart's, without what `Chart` manages. */
-function hostConfig(chart: ChartSettings): ChartConfig {
-  const { colorScaleId: _scale, ...config } = toChartConfig(chart) as {
-    colorScaleId?: string;
-  } & ChartConfig;
-  return config as ChartConfig;
-}
-
-/** JSON with object keys sorted, so equal settings give equal text. */
-function sortedText(value: unknown) {
-  return JSON.stringify(value, (_key, item: unknown) =>
-    item && typeof item === "object" && !Array.isArray(item)
-      ? Object.fromEntries(
-          Object.entries(item).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-        )
-      : item
-  );
 }
 
 /** Rows with only the offered fields and the fields the chart uses. */
@@ -105,14 +88,14 @@ export function StandaloneProvider({
   // The config the chart shows, as text. Read in render so an edit's echo
   // is recognized as soon as the host passes it back.
   const current = useRef("");
-  current.current = shown ? sortedText(hostConfig(shown)) : "";
+  current.current = shown ? sortedText(shortConfig(shown)) : "";
   const onChange = useRef(onConfigChange);
   onChange.current = onConfigChange;
 
   const onStateChange = (state: SavedDataStructure) => {
     const chart = state.charts[0];
     if (!chart || !onChange.current) return;
-    const next = hostConfig(chart as ChartSettings);
+    const next = shortConfig(chart as ChartSettings);
     const text = sortedText(next);
     // Picking a color scale or filling defaults is not an edit.
     if (text === current.current) return;
@@ -125,7 +108,7 @@ export function StandaloneProvider({
 
   if (error) {
     return (
-      <p className="eda-standalone-error" role="alert">
+      <p className="eda-standalone eda-standalone-error" role="alert">
         {error}
       </p>
     );

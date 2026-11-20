@@ -295,7 +295,7 @@ const CHART_PROPS: Record<keyof ChartProps, string> = {
   height:
     "Height in pixels, heading included. Without it, the chart fills the height of its parent, or takes 300 px when the parent has no height.",
   onConfigChange:
-    "Called with the whole config after each edit. Passing it turns editing on: the settings button, and edits inside the chart such as a note's text. The chart is controlled, so an edit shows only once you pass the new config back as config.",
+    "Called after each edit with the short config: the type, its main field, and only the settings that differ from the defaults. Passing it turns editing on: the settings button, and edits inside the chart such as a note's text. The chart is controlled, so an edit shows only once you pass the new config back as config.",
   fields:
     'The fields that settings offer, such as ["Region", "Price"]. Fields the config already uses stay available. Without it, settings offer every field in data.',
   settingsButton:
@@ -309,7 +309,7 @@ const SETTINGS_PROPS: Record<keyof ChartSettingsProps, string> = {
   data: "The same rows as the chart. Settings read them to list fields and values.",
   config: "The same config as the chart.",
   onConfigChange:
-    "Called with the whole config after each edit. Store it and pass it to both the chart and the panel.",
+    "Called after each edit with the short config. Store it and pass it to both the chart and the panel.",
   fields: "The fields the panel offers, as for Chart.",
   className: "A class for the panel's outer element.",
   style: "Inline styles for the panel's outer element.",

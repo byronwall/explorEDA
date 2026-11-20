@@ -3,6 +3,8 @@ import { PortalContainerContext } from "@/components/ui/portalContainer";
 import { resolveThemeId } from "@/lib/themes";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { type CSSProperties, useId, useState } from "react";
+import { ChartErrorBoundary } from "./ChartErrorBoundary";
+import { sortedText } from "./config";
 import { StandaloneProvider, type StandaloneProps } from "./StandaloneProvider";
 
 export interface ChartSettingsProps extends StandaloneProps {
@@ -25,15 +27,19 @@ export function ChartSettings({
 }: ChartSettingsProps) {
   const id = useId();
   return (
-    <StandaloneProvider
-      data={data}
-      config={config}
-      onConfigChange={onConfigChange}
-      fields={fields}
-      chartId={id}
+    <ChartErrorBoundary
+      resetKey={typeof config === "string" ? config : sortedText(config)}
     >
-      <SettingsBody chartId={id} className={className} style={style} />
-    </StandaloneProvider>
+      <StandaloneProvider
+        data={data}
+        config={config}
+        onConfigChange={onConfigChange}
+        fields={fields}
+        chartId={id}
+      >
+        <SettingsBody chartId={id} className={className} style={style} />
+      </StandaloneProvider>
+    </ChartErrorBoundary>
   );
 }
 

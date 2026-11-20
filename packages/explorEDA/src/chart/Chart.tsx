@@ -31,6 +31,8 @@ import {
   useState,
   useEffect,
 } from "react";
+import { ChartErrorBoundary } from "./ChartErrorBoundary";
+import { sortedText } from "./config";
 import { StandaloneProvider, type StandaloneProps } from "./StandaloneProvider";
 
 export interface ChartProps extends StandaloneProps {
@@ -92,19 +94,23 @@ export function Chart({
 }: ChartProps) {
   const id = useId();
   return (
-    <StandaloneProvider
-      data={data}
-      config={config}
-      onConfigChange={onConfigChange}
-      fields={fields}
-      chartId={id}
+    <ChartErrorBoundary
+      resetKey={typeof config === "string" ? config : sortedText(config)}
     >
-      <ChartBody
+      <StandaloneProvider
+        data={data}
+        config={config}
+        onConfigChange={onConfigChange}
+        fields={fields}
         chartId={id}
-        gear={Boolean(onConfigChange) && settingsButton}
-        {...props}
-      />
-    </StandaloneProvider>
+      >
+        <ChartBody
+          chartId={id}
+          gear={Boolean(onConfigChange) && settingsButton}
+          {...props}
+        />
+      </StandaloneProvider>
+    </ChartErrorBoundary>
   );
 }
 
