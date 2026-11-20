@@ -128,7 +128,7 @@
     "slug": "analytical-chart-coverage",
     "outcome": "completed",
     "retired_at": "2026-10-04",
-    "summary": "Delivered analytical chart expansion. Byron waived remaining cross-view and browser-restore acceptance checks; no ongoing initiative obligations remain. Reconciled against 3873c2766be43a3f970a2ba62c80d459979234ea and the prior Node 24 pnpm check pass (530 library and 21 demo tests). Relevant uncommitted changes are this review’s durable chart documentation and planning cleanup. No new browser check ran.",
+    "summary": "Delivered analytical chart expansion. Byron waived remaining cross-view and browser-restore acceptance checks; no ongoing initiative obligations remain. Reconciled against 3873c2766be43a3f970a2ba62c80d459979234ea and the prior Node 24 pnpm check pass (530 library and 21 demo tests). Relevant uncommitted changes are this review\u2019s durable chart documentation and planning cleanup. No new browser check ran.",
     "reason": "Byron explicitly requested whole-initiative retirement and said the remaining work was not needed.",
     "documentation": [
       "docs/analytical-chart-coverage.md",
@@ -160,7 +160,7 @@
       {
         "claim_id": "c7",
         "disposition": "delivered",
-        "evidence": "Grouped-bar selection, heatmap, and Calendar initial slices are present; prior plan records #105, #103, and #104 with screenshots. Later stack #114–#123 is merged."
+        "evidence": "Grouped-bar selection, heatmap, and Calendar initial slices are present; prior plan records #105, #103, and #104 with screenshots. Later stack #114\u2013#123 is merged."
       }
     ],
     "waived_work": [
@@ -558,7 +558,7 @@
     "slug": "schema-diagram",
     "outcome": "completed",
     "retired_at": "2026-10-10",
-    "summary": "Delivered all seven milestones: a wide schema drawer with tables, fields, keys, and relationships; queries, calculations, and views with lineage both ways; in-place editing of fields, keys, relationships, and query steps; usage folded across every saved view; and Add source with single-table promotion. Every intent claim is covered by the package README section. Reconciled against 5cf144d; merged PRs #222, #225–#230. No new browser check ran during retirement; milestone evidence recorded Vitest suites and Playwright screenshots.",
+    "summary": "Delivered all seven milestones: a wide schema drawer with tables, fields, keys, and relationships; queries, calculations, and views with lineage both ways; in-place editing of fields, keys, relationships, and query steps; usage folded across every saved view; and Add source with single-table promotion. Every intent claim is covered by the package README section. Reconciled against 5cf144d; merged PRs #222, #225\u2013#230. No new browser check ran during retirement; milestone evidence recorded Vitest suites and Playwright screenshots.",
     "reason": "Byron asked on 2026-10-10 to retire the completed docs/intent initiatives and approved this one by name. Every planned milestone's PR merged into main.",
     "documentation": [
       "packages/explorEDA/README.md",
@@ -595,7 +595,7 @@
     "slug": "in-place-chart-editing",
     "outcome": "completed",
     "retired_at": "2026-10-10",
-    "summary": "Delivered titles, axis titles, and numeric axis ranges edited where they are drawn, plus axis pan and stretch by drag, each one undo step through updateChart and useChartEdit. Subtitle editing, a named target, is not built; Byron approved retirement with it moved to the Product Grid rather than gating closure. Reconciled against 5cf144d; merged PRs #203–#206.",
+    "summary": "Delivered titles, axis titles, and numeric axis ranges edited where they are drawn, plus axis pan and stretch by drag, each one undo step through updateChart and useChartEdit. Subtitle editing, a named target, is not built; Byron approved retirement with it moved to the Product Grid rather than gating closure. Reconciled against 5cf144d; merged PRs #203\u2013#206.",
     "reason": "Byron asked on 2026-10-10 to retire the completed docs/intent initiatives and approved this one by name. Every planned milestone's PR merged into main.",
     "documentation": [
       "docs/ui-defaults.md",
@@ -1048,6 +1048,28 @@
         "scope": "Expected-record reconciliation",
         "destination": "docs/intent/expected-records/intent-brief.md"
       }
+    ]
+  },
+  {
+    "title": "Standalone charts from data plus a config",
+    "slug": "standalone-charts",
+    "outcome": "completed",
+    "retired_at": "2026-11-19",
+    "summary": "Standalone charts shipped as a six-layer stack (#673 plan, #674 Chart, #675 scoped CSS and example app, then editing, Dashboard text, and this docs and retirement layer). exploreda/chart exports Chart and ChartSettings; dist/chart.css is scoped; examples/standalone-charts installs the packed package and draws all 27 chart types. Reconciled against the stack top on branch claude/standalone-charts-docs-retire; the only uncommitted changes were this layer's docs and example edits.",
+    "reason": "Every milestone built and verified.",
+    "documentation": [
+      "apps/demo/src/docs/pages/standalone-charts.mdx",
+      "packages/explorEDA/README.md",
+      "docs/application-feature-inventory.md",
+      "docs/agent-guide.md"
+    ],
+    "revision": "claude/standalone-charts-docs-retire (stack #676)",
+    "follow_ups": [
+      "Framework-free render(el, data, config) if a non-React host needs it",
+      "Linked filtering between standalone charts",
+      "Lean per-type imports; exploreda/chart registers every chart type",
+      "Keep a picked color scale in the config",
+      "Hide the empty Composition chart's Open editor button when read-only"
     ]
   }
 ]

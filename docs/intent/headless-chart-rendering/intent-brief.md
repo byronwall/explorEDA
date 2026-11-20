@@ -39,7 +39,7 @@ The need is real and wanted, but it is not scheduled. Chart image export ships f
 
 ## Related intent
 
-[Renderer-independent replay](../renderer-independent-replay/intent-brief.md) covers semantic reproduction: values, sources, and contributors without the workspace. This seed is about pixels. A headless renderer could build on replay's evaluated result, or it could drive the existing React charts in a headless browser. Picking between those is the first real question.
+[Renderer-independent replay](../renderer-independent-replay/intent-brief.md) covers semantic reproduction: values, sources, and contributors without the workspace. This seed is about pixels. A headless renderer could build on replay's evaluated result, or it could drive the existing React charts in a headless browser. Picking between those is the first real question. Since 2026-11-19, `Chart` from `exploreda/chart` draws one chart from rows and settings with no workspace, which makes it the smallest host page for the headless-browser route.
 
 ## Possibilities, not decisions
 

@@ -127,7 +127,8 @@ export function StandaloneSideBySide() {
   );
 }
 
-function configText(config: ChartConfig) {
+/** A config as it reads in source: unquoted keys, two-space indent. */
+export function configText(config: ChartConfig) {
   return JSON.stringify(config, null, 2).replace(/"([A-Za-z]\w*)":/g, "$1:");
 }
 
