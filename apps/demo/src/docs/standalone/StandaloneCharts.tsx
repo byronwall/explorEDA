@@ -233,6 +233,38 @@ export function StandaloneEditable() {
   );
 }
 
+const TEXT_LINES = [
+  "scatter x=Price y=Rating color=Region",
+  "metric sum(Units)",
+  "heatmap Region columnField=Product aggregation=sum measureField=Units",
+];
+
+/** Charts from one line of Dashboard text each, with the line under each. */
+export function StandaloneText() {
+  const modules = useModules();
+  if (!modules) {
+    return <Loading height={240} />;
+  }
+  const [{ Chart }, { SAMPLE_ROWS }] = modules;
+  return (
+    <div className="mt-5 grid gap-4 sm:grid-cols-3" data-docs-standalone="text">
+      {TEXT_LINES.map((line) => (
+        <figure
+          key={line}
+          className="min-w-0 overflow-hidden rounded-lg border border-border bg-card"
+        >
+          <div className="p-3">
+            <Chart data={SAMPLE_ROWS} config={line} height={220} />
+          </div>
+          <pre className="m-0 whitespace-pre-wrap break-words border-t border-border bg-muted/40 px-3 py-2 font-mono text-xs leading-5 text-foreground/80">
+            {`config="${line}"`}
+          </pre>
+        </figure>
+      ))}
+    </div>
+  );
+}
+
 /** A link to the saved settings a chart type's docs page lists. */
 function SettingsLink({ type }: { type: string }) {
   const page = catalogue.find((item) => item.chartType === type);

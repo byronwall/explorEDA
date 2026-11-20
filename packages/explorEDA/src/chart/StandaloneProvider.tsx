@@ -9,7 +9,7 @@ import type { SavedDataStructure } from "@/types/SavedDataStructure";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import {
   toChartConfig,
-  toChartSettings,
+  textToSavedData,
   toSavedData,
   type ChartConfig,
 } from "./config";
@@ -17,8 +17,11 @@ import {
 export interface StandaloneProps {
   /** The rows to draw, one object per row. */
   data: DatumObject[];
-  /** The chart type and any settings that differ from its defaults. */
-  config: ChartConfig;
+  /**
+   * The chart type and any settings that differ from its defaults, or one
+   * chart's Dashboard text, such as `"scatter x=Price y=Rating"`.
+   */
+  config: ChartConfig | string;
   /**
    * Called with the whole config after each edit. Passing it turns editing
    * on. The chart is controlled: an edit shows only once the host passes the
@@ -54,10 +57,10 @@ function sortedText(value: unknown) {
 /** Rows with only the offered fields and the fields the chart uses. */
 function useOfferedRows(
   data: DatumObject[],
-  config: ChartConfig,
+  chart: ChartSettings | undefined,
   fields: string[] | undefined
 ) {
-  const used = getChartFields(toChartSettings(config, "fields"));
+  const used = chart ? getChartFields(chart) : [];
   const keep = fields ? [...new Set([...fields, ...used])] : undefined;
   // Field lists arrive as new arrays on each render; key on their content.
   const key = keep?.join("\u0000");
@@ -88,19 +91,21 @@ export function StandaloneProvider({
   // A restore from `config` happens when it changes, or when the host
   // declines an edit by not passing it back.
   const [declined, setDeclined] = useState(0);
-  const savedData = useMemo(
-    () => toSavedData(config, chartId),
+  const { savedData, error } = useMemo(
+    () =>
+      typeof config === "string"
+        ? textToSavedData(config, data, chartId)
+        : { savedData: toSavedData(config, chartId), error: undefined },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [config, chartId, declined]
+    [config, chartId, declined, typeof config === "string" ? data : undefined]
   );
-  const rows = useOfferedRows(data, config, fields);
+  const shown = savedData.charts[0] as ChartSettings | undefined;
+  const rows = useOfferedRows(data, shown, fields);
 
   // The config the chart shows, as text. Read in render so an edit's echo
   // is recognized as soon as the host passes it back.
   const current = useRef("");
-  current.current = sortedText(
-    hostConfig(savedData.charts[0] as ChartSettings)
-  );
+  current.current = shown ? sortedText(hostConfig(shown)) : "";
   const onChange = useRef(onConfigChange);
   onChange.current = onConfigChange;
 
@@ -117,6 +122,14 @@ export function StandaloneProvider({
       if (current.current !== text) setDeclined((n) => n + 1);
     });
   };
+
+  if (error) {
+    return (
+      <p className="eda-standalone-error" role="alert">
+        {error}
+      </p>
+    );
+  }
 
   return (
     <DataLayerProvider

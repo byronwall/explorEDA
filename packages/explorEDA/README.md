@@ -199,7 +199,9 @@ nothing. `chart.css` styles only the charts: it has no global reset and
 puts its theme variables on the chart element, so your page keeps its own
 styles. `width` and `height` set the size in pixels; without them the chart
 fills its parent. `title={false}` hides the heading. Every chart type works
-this way. See [Standalone charts](https://exploreda.dev/docs/standalone-charts)
+this way. `config` also takes one chart's Dashboard text, such as
+`config="scatter x=Price y=Rating"`. Pass `onConfigChange` to let readers
+edit settings, or place a `ChartSettings` beside the chart. See [Standalone charts](https://exploreda.dev/docs/standalone-charts)
 for the props and a config for each chart type.
 
 ## Read local files
