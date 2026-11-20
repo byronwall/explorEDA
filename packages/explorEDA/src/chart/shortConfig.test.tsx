@@ -10,6 +10,10 @@ import {
   toChartSettings,
 } from "./config";
 import { SAMPLE_CONFIGS, SAMPLE_ROWS } from "./samples";
+import { registerAllCharts } from "@/charts/registerAllCharts";
+
+// These tests draw charts; loading types on demand has its own test.
+registerAllCharts();
 
 vi.stubGlobal(
   "ResizeObserver",

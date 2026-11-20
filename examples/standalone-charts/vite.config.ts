@@ -2,7 +2,7 @@ import react from "@vitejs/plugin-react";
 import { resolve } from "node:path";
 import { defineConfig } from "vite";
 
-// Two pages: index.html registers every chart type through exploreda/chart;
+// Two pages: index.html loads chart types on demand through exploreda/chart;
 // lean.html registers two types through exploreda/chart-core.
 export default defineConfig({
   plugins: [react()],

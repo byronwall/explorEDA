@@ -6,7 +6,7 @@
  *   import { barChartDefinition } from "exploreda/charts/bar";
  *   registerCharts(barChartDefinition);
  *
- * `exploreda/chart` is this entry with every type registered.
+ * `exploreda/chart` is this entry with each type loaded on demand.
  */
 import { chartRegistry } from "@/charts/registry";
 import type { ChartDefinition, ChartSettings } from "@/types/ChartTypes";

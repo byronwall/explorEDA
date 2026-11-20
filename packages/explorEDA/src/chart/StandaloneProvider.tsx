@@ -1,5 +1,6 @@
 import { chartRegistry } from "@/charts/registry";
 import { registerHint } from "./imports";
+import { allRegistered, typeLoading, typeStatus } from "./typeLoading";
 import { ChartEditableContext } from "@/components/charts/chartEditable";
 import { getChartFields } from "@/components/charts/chartAccessibility";
 import {
@@ -8,7 +9,7 @@ import {
 } from "@/providers/DataLayerProvider";
 import type { ChartSettings } from "@/types/ChartTypes";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   shortConfig,
   sortedText,
@@ -71,6 +72,35 @@ function unregistered(type: string): ReactNode {
   );
 }
 
+/**
+ * Loads the chart types a config needs, when `exploreda/chart` loads them on
+ * demand: its own type, or every type for Dashboard text, which can name
+ * any. False until they arrive.
+ */
+function useTypesReady(config: ChartConfig | string) {
+  const need =
+    typeof config === "string"
+      ? typeLoading.loadAll && !allRegistered()
+        ? "all"
+        : undefined
+      : typeStatus(config.type) === "loading"
+        ? config.type
+        : undefined;
+  const [, setArrived] = useState(0);
+  useEffect(() => {
+    if (!need) return;
+    let live = true;
+    const done = () => live && setArrived((count) => count + 1);
+    const loading =
+      need === "all" ? typeLoading.loadAll!() : typeLoading.load!(need);
+    loading.then(done, done);
+    return () => {
+      live = false;
+    };
+  }, [need]);
+  return !need;
+}
+
 /** Rows with only the offered fields and the fields the chart uses. */
 function useOfferedRows(
   data: DatumObject[],
@@ -103,8 +133,15 @@ export function StandaloneProvider({
   onConfigChange,
   fields,
   chartId,
+  fallback = null,
   children,
-}: StandaloneProps & { chartId: string; children: ReactNode }) {
+}: StandaloneProps & {
+  chartId: string;
+  /** Shown while this config's chart types load. */
+  fallback?: ReactNode;
+  children: ReactNode;
+}) {
+  const ready = useTypesReady(config);
   // A restore from `config` happens when it changes, or when the host
   // declines an edit by not passing it back.
   const [declined, setDeclined] = useState(0);
@@ -119,7 +156,13 @@ export function StandaloneProvider({
               error: unregistered(config.type),
             },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [config, chartId, declined, typeof config === "string" ? data : undefined]
+    [
+      config,
+      chartId,
+      declined,
+      ready,
+      typeof config === "string" ? data : undefined,
+    ]
   );
   const shown = savedData.charts[0] as ChartSettings | undefined;
   const rows = useOfferedRows(data, shown, fields);
@@ -154,6 +197,7 @@ export function StandaloneProvider({
     });
   };
 
+  if (!ready) return fallback;
   if (error) {
     return (
       <div className="eda-standalone eda-standalone-error" role="alert">

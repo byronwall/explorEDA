@@ -3,6 +3,10 @@ import { useState } from "react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { Chart, ChartSettings, type ChartConfig } from "./index";
 import { SAMPLE_ROWS } from "./samples";
+import { registerAllCharts } from "@/charts/registerAllCharts";
+
+// These tests draw charts; loading types on demand has its own test.
+registerAllCharts();
 
 beforeAll(() => {
   Element.prototype.scrollIntoView = () => {};

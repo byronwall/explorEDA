@@ -204,8 +204,10 @@ this way. `config` also takes one chart's Dashboard text, such as
 edit settings, or place a `ChartSettings` beside the chart. See [Standalone charts](https://exploreda.dev/docs/standalone-charts)
 for the props and a config for each chart type.
 
-`exploreda/chart` registers every chart type. To ship only the types a page
-draws, import `Chart` from `exploreda/chart-core` and register them:
+`exploreda/chart` loads each chart type's code the first time a chart of
+that type draws, so a page downloads only the types it shows. To register
+types up front instead, with no request before the first draw, import from
+`exploreda/chart-core`:
 
 ```tsx
 import { Chart, registerCharts } from "exploreda/chart-core";

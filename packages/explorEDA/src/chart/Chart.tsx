@@ -34,6 +34,7 @@ import {
 } from "react";
 import { ChartErrorBoundary } from "./ChartErrorBoundary";
 import { sortedText } from "./config";
+import { useAllTypes } from "./typeLoading";
 import { StandaloneProvider, type StandaloneProps } from "./StandaloneProvider";
 
 export interface ChartProps extends StandaloneProps {
@@ -104,6 +105,24 @@ export function Chart({
         onConfigChange={onConfigChange}
         fields={fields}
         chartId={id}
+        fallback={
+          // The chart's box, held while its type's code loads.
+          <div
+            className={[
+              "eda-standalone eda-standalone-loading",
+              props.className,
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            role="status"
+            aria-label="Loading chart"
+            style={{
+              width: props.width ?? "100%",
+              height: props.height ?? "100%",
+              ...props.style,
+            }}
+          />
+        }
       >
         <ChartBody
           chartId={id}
@@ -244,8 +263,11 @@ function SettingsButton({
   settings: ChartSettings;
   name: string | undefined;
 }) {
+  const [open, setOpen] = useState(false);
+  // The Chart Type list offers every type once settings open.
+  useAllTypes(open);
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"

@@ -224,6 +224,13 @@
   font-size: 13px;
   line-height: 1.45;
 }
+/* A chart whose type is still loading keeps its box, so nothing moves. */
+.eda-standalone-loading {
+  min-height: 120px;
+  border-radius: 6px;
+  background: var(--muted);
+  opacity: 0.5;
+}
 .eda-standalone-error-code {
   display: block;
   margin-top: 6px;

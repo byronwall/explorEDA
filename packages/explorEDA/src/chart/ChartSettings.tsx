@@ -5,6 +5,7 @@ import { useDataLayer } from "@/providers/DataLayerProvider";
 import { type CSSProperties, useId, useState } from "react";
 import { ChartErrorBoundary } from "./ChartErrorBoundary";
 import { sortedText } from "./config";
+import { useAllTypes } from "./typeLoading";
 import { StandaloneProvider, type StandaloneProps } from "./StandaloneProvider";
 
 export interface ChartSettingsProps extends StandaloneProps {
@@ -56,6 +57,7 @@ function SettingsBody({
     state.charts.find((chart) => chart.id === chartId)
   );
   const theme = useDataLayer((state) => state.theme);
+  useAllTypes();
   const [layer, setLayer] = useState<HTMLDivElement | null>(null);
   if (!settings) return null;
   return (
