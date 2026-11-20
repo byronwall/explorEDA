@@ -18,7 +18,8 @@ function CopyButton({ text }: { text: string }) {
     <Button
       variant="ghost"
       size="sm"
-      className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+      // Wide enough for "Copied", so the header never shifts.
+      className="h-7 min-w-[5.5rem] justify-start px-2 text-xs text-muted-foreground hover:text-foreground"
       onClick={() => {
         void navigator.clipboard?.writeText(text).then(() => setCopied(true));
       }}

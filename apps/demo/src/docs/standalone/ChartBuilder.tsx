@@ -93,7 +93,7 @@ function readPasted(text: string): Data {
   return {
     rows: table.rows as Row[],
     fields: table.fields as Field[],
-    label: `Your rows: ${table.rows.length} rows, ${table.fields.length} fields`,
+    label: "Your rows",
     pasted: true,
   };
 }
@@ -105,6 +105,12 @@ function PasteRows({ onRows }: { onRows: (data: Data) => void }) {
   const [error, setError] = useState<string>();
   const root = useRef<HTMLDivElement>(null);
   const area = useRef<HTMLTextAreaElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  // Closing returns focus to the button that opened the panel.
+  const close = () => {
+    setOpen(false);
+    trigger.current?.focus();
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -120,15 +126,16 @@ function PasteRows({ onRows }: { onRows: (data: Data) => void }) {
     try {
       onRows(readPasted(text));
       setError(undefined);
-      setOpen(false);
+      close();
     } catch (problem) {
       setError(problem instanceof Error ? problem.message : String(problem));
     }
   };
 
   return (
-    <div ref={root} className="relative">
+    <div ref={root}>
       <button
+        ref={trigger}
         type="button"
         className="builder-button"
         aria-expanded={open}
@@ -142,7 +149,7 @@ function PasteRows({ onRows }: { onRows: (data: Data) => void }) {
           aria-label="Paste rows"
           className="absolute left-0 top-full z-30 mt-1 w-[min(32rem,calc(100vw-2rem))] rounded-lg border border-border bg-popover p-3 shadow-lg"
           onKeyDown={(event) => {
-            if (event.key === "Escape") setOpen(false);
+            if (event.key === "Escape") close();
             if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
               submit();
             }
@@ -167,16 +174,12 @@ function PasteRows({ onRows }: { onRows: (data: Data) => void }) {
           >
             {error}
           </p>
-          <div className="mt-1 flex items-center justify-between gap-3">
+          <div className="mt-1 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
             <span className="text-xs text-muted-foreground">
-              Rows stay in this tab. ⌘ Enter to use them.
+              Rows stay in this tab · ⌘ Enter
             </span>
             <div className="flex gap-2">
-              <button
-                type="button"
-                className="builder-button"
-                onClick={() => setOpen(false)}
-              >
+              <button type="button" className="builder-button" onClick={close}>
                 Cancel
               </button>
               <button
@@ -224,7 +227,7 @@ export function ChartBuilder() {
           name,
           type,
         })),
-        label: `Sample sales: ${modules[1].SAMPLE_ROWS.length} rows, ${Object.keys(SAMPLE_KINDS).length} fields`,
+        label: "Sample sales",
         pasted: false,
       },
     [modules]
@@ -258,7 +261,11 @@ export function ChartBuilder() {
 
   if (!modules || !data || !config) {
     return (
-      <p role="status" className="py-10 text-sm text-muted-foreground">
+      // As tall as the builder, so nothing jumps when it arrives.
+      <p
+        role="status"
+        className="min-h-[44rem] py-10 text-sm text-muted-foreground"
+      >
         Loading the builder…
       </p>
     );
@@ -268,9 +275,9 @@ export function ChartBuilder() {
 
   return (
     <div className="builder pb-10 pt-6" data-docs-builder="">
-      <header className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+      <header>
         <h1 className="text-2xl font-semibold tracking-tight">Chart builder</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-muted-foreground">
           Pick a chart, change its settings, and copy the code.{" "}
           <Link className="text-docs-accent" to={docsPath("standalone-charts")}>
             How Chart works
@@ -278,7 +285,8 @@ export function ChartBuilder() {
         </p>
       </header>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+      {/* The paste panel anchors to this row, so it never runs off screen. */}
+      <div className="relative mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
         <label className="flex items-center gap-2 text-sm font-medium">
           Chart
           <select
@@ -297,8 +305,12 @@ export function ChartBuilder() {
             ))}
           </select>
         </label>
-        <span className="text-sm text-muted-foreground" data-builder-data="">
-          {data.label}
+        <span className="flex items-center gap-2 text-sm" data-builder-data="">
+          <span className="font-medium">Rows</span>
+          <span className="text-muted-foreground tabular-nums">
+            {data.label} · {data.rows.length.toLocaleString()} rows ·{" "}
+            {data.fields.length} fields
+          </span>
         </span>
         <PasteRows
           onRows={(rows) => {
@@ -318,16 +330,9 @@ export function ChartBuilder() {
             Use sample rows
           </button>
         )}
-        <button
-          type="button"
-          className="builder-button"
-          onClick={() => choose(config.type)}
-        >
-          Reset settings
-        </button>
       </div>
 
-      <div className="mt-3 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_21rem]">
+      <div className="mt-3 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="min-w-0 space-y-4">
           <div className="rounded-lg border border-border bg-card p-3">
             <Chart

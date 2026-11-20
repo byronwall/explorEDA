@@ -55,6 +55,29 @@ describe("Chart", () => {
     }
   );
 
+  it("draws category colors for a dark host", () => {
+    const config = {
+      type: "bar",
+      field: "Region",
+      colorField: "Region",
+    } as const;
+    const fills = (container: HTMLElement) =>
+      [...container.querySelectorAll<SVGElement>("rect[data-plan-id]")]
+        .map((rect) => rect.getAttribute("fill") || rect.style.fill)
+        .sort()
+        .join(" ");
+    const light = render(
+      <Chart data={ROWS} config={config} width={400} height={300} />
+    );
+    const dark = render(
+      <div className="dark">
+        <Chart data={ROWS} config={config} width={400} height={300} />
+      </div>
+    );
+    expect(fills(light.container)).not.toBe("");
+    expect(fills(dark.container)).not.toBe(fills(light.container));
+  });
+
   it("fills its parent when no size is given", () => {
     const sized = class {
       constructor(private report: ResizeObserverCallback) {}

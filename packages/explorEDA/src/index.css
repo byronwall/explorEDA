@@ -1532,6 +1532,7 @@
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .eda-settings button[role="combobox"],
 .eda-settings [data-slot="select-trigger"],
+.eda-settings select,
 .eda-inspector
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 .eda-add-chart-fields
@@ -1547,6 +1548,10 @@
 .eda-add-chart-fields [data-slot="toggle-group-item"] {
   height: 26px;
   min-width: 0;
+}
+/* Eight tabs (Data through Spacing) fit the 21rem settings width. */
+.eda-settings [role="tablist"] [role="tab"] {
+  padding-inline: 4px;
 }
 .eda-settings label,
 .eda-add-chart-fields label {
