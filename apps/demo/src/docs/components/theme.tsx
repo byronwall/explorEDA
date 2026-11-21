@@ -24,10 +24,11 @@ function systemTheme(): Theme {
 }
 
 /**
- * The docs' light or dark theme: the reader's last choice, else the system's.
- * It marks the page root with `dark` while the docs are open, which is how
- * the workspace and its popovers learn the theme too, and puts the root back
- * as it was when the reader leaves.
+ * The site's light or dark theme: the reader's last choice, else the system's.
+ * It marks the page root with `dark`, which is how the workspace and its
+ * popovers learn the theme too. The theme holds for the whole site, so the
+ * root keeps it when this hook unmounts; `index.html` sets it before the
+ * first paint.
  */
 export function useDocsTheme() {
   const [theme, setTheme] = useState<Theme>(
@@ -37,7 +38,6 @@ export function useDocsTheme() {
   // Before paint, so the page never flashes the other theme.
   useLayoutEffect(() => {
     const root = document.documentElement;
-    const before = root.classList.contains("dark");
     // Switch every color at once instead of fading each control's own way.
     root.classList.add("docs-theme-switching");
     root.classList.toggle("dark", theme === "dark");
@@ -48,8 +48,6 @@ export function useDocsTheme() {
     return () => {
       cancelAnimationFrame(frame);
       root.classList.remove("docs-theme-switching");
-      root.classList.toggle("dark", before);
-      root.style.colorScheme = "";
     };
   }, [theme]);
 
@@ -119,4 +117,10 @@ export function ThemeToggle({
       </Button>
     </ActionTooltip>
   );
+}
+
+/** A theme toggle for a page that has no other use for the theme. */
+export function SiteThemeToggle() {
+  const { theme, toggle } = useDocsTheme();
+  return <ThemeToggle theme={theme} onToggle={toggle} />;
 }
