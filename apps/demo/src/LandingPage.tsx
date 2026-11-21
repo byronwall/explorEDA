@@ -63,6 +63,7 @@ import {
   type SavedViewsSession,
 } from "./savedViewsSession";
 import { isDocsPath } from "./docs/paths";
+import { SiteThemeToggle } from "./docs/components/theme";
 import {
   EXAMPLES_PATH,
   examplePath,
@@ -741,6 +742,7 @@ export function LandingPage() {
                   </span>
                   <ArrowRight className="size-3" aria-hidden="true" />
                 </Link>
+                <SiteThemeToggle />
               </header>
               <Suspense
                 fallback={
