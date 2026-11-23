@@ -4,7 +4,7 @@
  * loads this module on its first call, so the `exploreda` command starts
  * without chart code.
  */
-import { ProjectFileError, type ProjectFiles } from "@/lib/project/files";
+import type { ProjectFiles } from "@/lib/project/files";
 import {
   check,
   FEEDBACK_KINDS,
@@ -236,18 +236,15 @@ export async function handleMcpMessage(
           structuredContent: result,
         });
       } catch (caught) {
-        if (
-          !(caught instanceof ToolError) &&
-          !(caught instanceof ProjectFileError)
-        ) {
-          throw caught;
-        }
-        const fix = caught instanceof ToolError ? caught.fix : undefined;
+        // Every failure comes back as this call's result, so the agent
+        // never waits on a reply it can't match. Don't test the class:
+        // the command and this bundle each have their own copy of it.
+        const fix = (caught as { fix?: string }).fix;
         return reply({
           content: [
             {
               type: "text",
-              text: fix ? `${caught.message}\nfix: ${fix}` : caught.message,
+              text: `${caught instanceof Error ? caught.message : String(caught)}${fix ? `\nfix: ${fix}` : ""}`,
             },
           ],
           isError: true,

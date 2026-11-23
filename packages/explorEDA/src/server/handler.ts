@@ -112,8 +112,10 @@ export function createRequestHandler(options: HandlerOptions) {
       });
       return;
     }
+    let id: unknown = null;
     try {
       const message = JSON.parse(await readBody(req));
+      id = message?.id ?? null;
       const { handleMcpMessage } = await (mcp ??= options.loadMcp!());
       const reply = await handleMcpMessage(message, {
         files,
@@ -128,7 +130,7 @@ export function createRequestHandler(options: HandlerOptions) {
     } catch (error) {
       send(res, error instanceof SyntaxError ? 400 : 500, {
         jsonrpc: "2.0",
-        id: null,
+        id,
         error: {
           code: error instanceof SyntaxError ? -32700 : -32603,
           message: error instanceof Error ? error.message : String(error),

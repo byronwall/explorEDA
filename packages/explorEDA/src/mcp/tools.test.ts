@@ -121,4 +121,26 @@ describe("MCP tools", () => {
     expect(refused.result.isError).toBe(true);
     expect(refused.result.content[0]!.text).toMatch(/fix: Name it/);
   });
+
+  it("answers a failure it didn't expect as this call's tool error", async () => {
+    const broken = {
+      ...shop(),
+      list: () => Promise.reject(new Error("disk gone")),
+    };
+    const reply = (await handleMcpMessage(
+      {
+        jsonrpc: "2.0",
+        id: 7,
+        method: "tools/call",
+        params: { name: "fields", arguments: {} },
+      },
+      { files: broken, version: "test" }
+    )) as {
+      id: number;
+      result: { isError: boolean; content: Array<{ text: string }> };
+    };
+    expect(reply.id).toBe(7);
+    expect(reply.result).toMatchObject({ isError: true });
+    expect(reply.result.content[0]!.text).toBe("disk gone");
+  });
 });
