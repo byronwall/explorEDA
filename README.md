@@ -13,6 +13,8 @@ Or explore a folder of data files without writing any code:
 npx exploreda
 ```
 
+Or let an AI agent build the analyses: `npx exploreda mcp` connects Claude Code, Cursor, or any MCP client to the folder. See [Agents](https://exploreda.dev/docs/agents).
+
 [Live demo](https://exploreda.dev) ·
 [Package docs](packages/explorEDA/README.md) ·
 [Example source](apps/demo/src/demos)

@@ -85,7 +85,7 @@ async function main(args: string[]) {
   }
   console.log(`
 Only this machine can connect. Press Ctrl-C to stop.
-Connect an agent: exploreda mcp ${shellPath(path.relative(process.cwd(), opened.folder) || ".")}`);
+Connect an agent: exploreda mcp ${shellPath(agentFolder(opened.folder))}`);
   if (parsed.open) {
     openBrowser(opened.url);
   }
@@ -95,6 +95,12 @@ Connect an agent: exploreda mcp ${shellPath(path.relative(process.cwd(), opened.
   process.once("SIGINT", stop);
   process.once("SIGTERM", stop);
   return undefined;
+}
+
+/** The folder as the agent's config should name it: short when it's here. */
+function agentFolder(folder: string) {
+  const relative = path.relative(process.cwd(), folder);
+  return !relative ? "." : relative.startsWith("..") ? folder : relative;
 }
 
 /** A path quoted for a shell when it has spaces. */

@@ -16,6 +16,18 @@ disk. `npx exploreda --example` opens a sample project. See
 [Project folders](https://exploreda.dev/docs/project-folders) for the folder
 layout and the project text reference.
 
+### Let an agent build analyses
+
+```bash
+claude mcp add exploreda -- npx exploreda mcp /path/to/folder
+```
+
+`exploreda mcp` is an MCP server for AI agents such as Claude Code or Cursor.
+It joins the `exploreda` running on the folder, or starts one. The agent can
+add data, list fields, read the grammar, and write analyses that come back
+checked against your data, each problem with a fix. Its changes show in the
+open app. See [Agents](https://exploreda.dev/docs/agents).
+
 `npx exploreda server --data <folder>` runs the same projects for a team, with
 author and viewer accounts, file uploads and URL sources. The `docker/` folder
 in the repository has a Compose file for it. See
