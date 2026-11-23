@@ -250,6 +250,22 @@ try {
       console.log(
         `exploreda mcp check built ${checked.charts} charts over stdio`
       );
+    // A new file through the packed command: the call that once hung.
+    send({
+      id: 3,
+      method: "tools/call",
+      params: {
+        name: "write_eda",
+        arguments: {
+          path: "smoke-agent.eda",
+          text: "eda query=order-lines\nrow orders.channel\n",
+        },
+      },
+    });
+    const saved = await reply(3);
+    if (!saved.result?.structuredContent?.complete)
+      fail(`exploreda mcp write_eda answered ${JSON.stringify(saved)}`);
+    else console.log("exploreda mcp write_eda saved a new analysis over stdio");
   } catch (error) {
     fail(error.message);
   } finally {
