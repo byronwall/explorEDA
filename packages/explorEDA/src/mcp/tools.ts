@@ -179,7 +179,8 @@ async function readIfThere(files: ProjectFiles, path: string) {
   try {
     return await files.read(path);
   } catch (error) {
-    if (error instanceof ProjectFileError && error.code === "missing") {
+    // By code, not class: the command's file adapter is in another bundle.
+    if ((error as { code?: string }).code === "missing") {
       return undefined;
     }
     throw error;
