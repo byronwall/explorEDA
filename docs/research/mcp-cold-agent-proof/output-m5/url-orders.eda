@@ -1,0 +1,23 @@
+eda query=orders
+dashboard "Orders"
+grid columns=12 rowHeight=100
+
+group @revenueByChannel sum(orders.amount) by=orders.channel
+
+metric @revenue sum(orders.amount) title="Total revenue"
+metric @orderCount count title="Orders"
+row @byChannel orders.channel group=revenueByChannel title="Revenue by channel"
+line @perMonth x=orders.orderedAt {
+  title="Orders per month"
+  time.interval=month
+  time.aggregation=count
+  y.title="Orders"
+}
+hist @amounts orders.amount bins=20 title="Spread of order amounts"
+boxplot @amountBox orders.amount title="Order amount range"
+
+layout {
+  1: revenue orderCount
+  4: byChannel perMonth
+  4: amounts:8 amountBox:4
+}

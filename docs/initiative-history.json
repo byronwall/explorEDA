@@ -1071,5 +1071,28 @@
       "Keep a picked color scale in the config",
       "Hide the empty Composition chart's Open editor button when read-only"
     ]
+  },
+  {
+    "title": "MCP server for agent-driven analysis",
+    "slug": "mcp-server",
+    "outcome": "completed",
+    "retired_at": "2026-11-22",
+    "summary": "All five milestones built as one stack on #686: the shared tool module and /mcp route (M1, with submit_feedback from TASK-0045), .exploreda/server.json and the exploreda mcp stdio relay (M2), editing tools with a version guard and live tab updates (M3), checker messages from the cold-agent proof, add_data from a file, rows, or an address (M4), and the stdio CLI smoke, docs, README, and launch proof (M5). Four cold Claude Code runs reached complete dashboards in 0, 6, 0, and 5 check-and-fix rounds.",
+    "reason": "Every milestone built and verified; the plan's proof is kept in docs/research/mcp-cold-agent-proof.",
+    "documentation": [
+      "apps/demo/src/docs/pages/agents.mdx",
+      "packages/explorEDA/README.md",
+      "docs/application-feature-inventory.md",
+      "docs/agent-guide.md",
+      "docs/research/mcp-cold-agent-proof/README.md"
+    ],
+    "revision": "claude/mcp-m5-launch (stack on #686)",
+    "follow_ups": [
+      "Scope alias, calc, and group lines to a view's query, so one file can hold views on two queries",
+      "A value preview in check or describe (group rows, metric values) so an agent can cite numbers",
+      "Chart images for agents (headless-chart-rendering)",
+      "Try a second MCP client, such as Cursor, against exploreda mcp",
+      "Finer edit tools (add_chart, set_setting) only if later runs stall on syntax"
+    ]
   }
 ]

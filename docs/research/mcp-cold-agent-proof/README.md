@@ -1,4 +1,8 @@
-# M1 cold-agent proof (2026-11-22)
+# MCP cold-agent proof (2026-11-22)
+
+These runs proved the MCP server in `packages/explorEDA/src/mcp/`. Runs 1 and 2 used milestone 1's four tools over HTTP. Runs 3 and 4 used every tool through `exploreda mcp` from the packed tarball. Agent docs: [Agents](../../../apps/demo/src/docs/pages/agents.mdx).
+
+## Milestone 1 (runs 1 and 2)
 
 The question: can an agent with no explorEDA docs build a dashboard from tool results alone?
 
@@ -36,7 +40,7 @@ The saved files are in [output/](output/). The app, opened after the runs, liste
 4. **"spec.upper=100 bins.mode=width … doesn't fit histogram"** gave no fix, though `reference bar` lists each setting. Other "doesn't fit" warnings (`direction=`, `share=`) don't list the accepted values.
 5. **"pivot is missing a required setting"** doesn't name the setting.
 
-"Complete" didn't mean readable. In the app, run 2's dashboard has two cards titled "Composition", a small category chart, and customer bars with no names. `check` can't see layout, so this supports chart images for agents ([headless chart rendering](../../../headless-chart-rendering/intent-brief.md)).
+"Complete" didn't mean readable. In the app, run 2's dashboard has two cards titled "Composition", a small category chart, and customer bars with no names. `check` can't see layout, so this supports chart images for agents ([headless chart rendering](../../intent/headless-chart-rendering/intent-brief.md)).
 
 The agent also wanted computed values (a group's rows or a metric) to write prose that cites numbers and to confirm a rate.
 
@@ -51,3 +55,20 @@ Before or with M3, work on the checker's messages instead:
 - Give every "doesn't fit" and "missing a required setting" problem a fix that names the accepted values or the missing setting.
 - Scope definitions to the view's query, or say plainly why a shared definition fails, at its real line.
 - Consider a small value preview (each group's first rows, each metric's value) in `check` results. This is closer to `describe` in M3 than to chart images.
+
+## Launch (runs 3 and 4)
+
+Both agents connected with one config line, `node <tarball>/dist/cli/exploreda.js mcp <folder>`, with no other tools.
+
+| Run                      | Request                                                                     | Calls                                                   | Check-and-fix rounds                               | Outcome                                        |
+| ------------------------ | --------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------- | ---------------------------------------------- |
+| [3](run-3-transcript.md) | An empty folder: fetch the shop orders CSV by URL, then an orders dashboard | 6 (`add_data`, `reference` ×3, `write_eda`, `describe`) | 0                                                  | 6 charts, complete in 15 s                     |
+| [4](run-4-transcript.md) | Run 2's request again, with every tool                                      | 25                                                      | 5 for the dashboard (run 2: 6), 1 for the notebook | Both complete in 2 min 20 s; 1 feedback report |
+
+- In run 3, an app tab that was open on the empty folder before the agent started showed the dashboard without a reload.
+- In run 4, the agent changed `exploreda.eda` with the version from `read_eda` to test an idea, then restored it. The final file matched the original byte for byte.
+- The first try at these runs stalled for 40 minutes. `write_eda` of a new file failed in the packed command, because the command and the tools bundle each had their own copy of the file error class. The reply had no request ID, so the agent's client waited for its own 30-minute timeout. The fix answers every failure as the call's tool error, and the relay stops a call after two minutes. The CLI smoke now saves a new file over stdio.
+- Run 4 again hit the main gap from run 2: alias, calc, and group lines reach every view, so one file can't hold definitions for views on two queries. Its messages now name that rule. Scoping definitions per view is not built.
+- Run 3 found that `describe` named charts by internal type (`bar` for `hist`). It now uses the word the text starts the chart with.
+
+The run 4 files and feedback report are in [output-m5/](output-m5/).

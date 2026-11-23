@@ -104,6 +104,31 @@ Each call writes the file where the agent names it, such as `data/sales.csv`, an
 
 `add_data` never replaces a file. It refuses a file over 100 MB, a web page, an address that redirects more than five times, and an address that doesn't answer in 30 seconds. A refused call writes nothing.
 
+## An example session
+
+A real session, from an empty folder with `exploreda` open on it. The request: start from the shop's orders CSV, then build a dashboard of revenue by channel, orders per month, and the spread of order amounts.
+
+1. `add_data` with `path: "data/orders.csv"` and the CSV's address. It saved 80 rows, wrote `exploreda.eda` with a source named `orders`, and returned its fields: `orders.channel`, `orders.orderedAt`, `orders.amount`, and two IDs.
+2. `reference`, then `reference` for `line` and `row`, to learn the grammar and those charts' settings.
+3. `write_eda` of `orders.eda`, which came back complete on the first try:
+
+   ```text
+   eda query=orders
+   dashboard "Orders"
+   group @revenueByChannel sum(orders.amount) by=orders.channel
+   metric @revenue sum(orders.amount) title="Total revenue"
+   row @byChannel orders.channel group=revenueByChannel title="Revenue by channel"
+   line @perMonth x=orders.orderedAt {
+     time.interval=month
+     time.aggregation=count
+   }
+   hist @amounts orders.amount bins=20 title="Spread of order amounts"
+   ```
+
+4. `describe` of `orders.eda`, to confirm each chart built on 80 rows.
+
+The open tab showed the new data and the dashboard as each file saved. The session took six tool calls and 15 seconds. The text above is shortened; the saved file also has an order count, a box plot, and a layout.
+
 ## Read the agent's feedback
 
 When a tool confuses the agent or lacks something it needs, the agent saves a short report in `.exploreda/feedback/`: what it called, what came back, and the change it proposes. Read these files to see where the tools fall short for your data.
