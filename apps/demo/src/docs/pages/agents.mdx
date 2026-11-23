@@ -47,6 +47,7 @@ That key changes on every run, so `exploreda mcp` is the easier choice.
 | `fields`          | Lists each query's fields as an analysis names them, such as `orders.amount`, with types and example values.                                              |
 | `reference`       | Returns the dashboard grammar, the project and notebook grammar, or every setting of one chart, such as `hist`.                                           |
 | `check`           | Builds an analysis's text against your data without saving it, and returns its views, chart counts, and each problem with its fix.                        |
+| `add_data`        | Adds a data file from a local path, rows the agent sends, or a CSV or JSON address, and a source for it in the project text.                              |
 | `read_eda`        | Returns a file's text and its version.                                                                                                                    |
 | `write_eda`       | Saves an analysis (`.eda`), a notebook (`.eda.md`), or the project text (`exploreda.eda`), then returns what `check` returns.                             |
 | `rename_eda`      | Moves an analysis or notebook to a free path.                                                                                                             |
@@ -90,6 +91,18 @@ The open app shows each file the agent saves, renames, or deletes within about a
 To change a file that already exists, the agent sends the `version` that `read_eda` gave. If you edited the file since then, the agent's change is refused and your edit stays on disk. The agent then reads the file again and merges its change. A new file needs no version.
 
 When the agent writes the project text in a folder that has none, it goes where the app would put it: `exploreda.eda`, or `.exploreda/project.eda` when the server runs with `--hidden`.
+
+## Start a project from data
+
+An agent can start from an empty folder. `add_data` takes one of three kinds of data:
+
+- `from`: the full path of a CSV or JSON file on this computer. It copies the file into the folder.
+- `rows`: CSV text, JSON text, or an array of rows that the agent writes itself.
+- `url`: the address of a CSV or JSON file. The project text records where it came from, as `# data/sales.csv fetched from <address> on <date>` above the source line.
+
+Each call writes the file where the agent names it, such as `data/sales.csv`, and adds a source for it to the project text, which it creates if needed. The result lists the new source's fields, ready for an analysis that starts with `eda query=sales`.
+
+`add_data` never replaces a file. It refuses a file over 100 MB, a web page, an address that redirects more than five times, and an address that doesn't answer in 30 seconds. A refused call writes nothing.
 
 ## Read the agent's feedback
 

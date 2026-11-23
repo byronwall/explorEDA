@@ -21,11 +21,12 @@ import {
   writeEda,
   type ToolOptions,
 } from "./tools";
+import { addData } from "./addData";
 
 const PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 
 const INSTRUCTIONS = `explorEDA builds dashboards from .eda text in this project folder.
-Start with project for the folder's sources, queries, and files. Loop: call fields to see each query's fields, reference for the grammar (and reference with a chart type for its settings), then write_eda to save an analysis. write_eda returns every problem with its line and a fix; repeat until complete is true. check does the same without saving, and describe lists what each view built.
+Start with project for the folder's sources, queries, and files. A folder with no data starts with add_data. Loop: call fields to see each query's fields, reference for the grammar (and reference with a chart type for its settings), then write_eda to save an analysis. write_eda returns every problem with its line and a fix; repeat until complete is true. check does the same without saving, and describe lists what each view built.
 To change a file that exists, call read_eda first and send its version with write_eda, rename_eda, or delete_eda. A person may edit the same files in the app; a stale version is refused, so read again and merge.
 exploreda.eda is the project text: sources, relationships, and queries (reference topic=project).
 When a tool fails in a way you can't fix, gives a confusing result, or lacks something you need, call submit_feedback once with what happened and the change you propose, after you finish or give up on the request.`;
@@ -99,6 +100,33 @@ const TOOLS = [
       required: ["path", "text"],
     },
     annotations: { readOnlyHint: false, destructiveHint: true },
+  },
+  {
+    name: "add_data",
+    title: "Add data",
+    description:
+      "Starts a project from data, or adds more: copies a local CSV or JSON file in (from), writes rows you send (rows), or fetches a CSV or JSON address (url). Adds a source for the file to the project text and returns its fields. Refuses files over 100 MB, web pages, and paths that exist.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: text(
+          "Where the file goes in the folder, such as data/sales.csv."
+        ),
+        from: text("An absolute path to a CSV or JSON file to copy in."),
+        rows: {
+          description:
+            "CSV text with a header row, JSON text, or an array of row objects (for a .json path).",
+          anyOf: [
+            { type: "string" },
+            { type: "array", items: { type: "object" } },
+          ],
+        },
+        url: text("An http or https address of a CSV or JSON file."),
+        source: text("The source ID. Default: from the file's name."),
+      },
+      required: ["path"],
+    },
+    annotations: { readOnlyHint: false, openWorldHint: true },
   },
   {
     name: "project",
@@ -232,6 +260,24 @@ async function callTool(
   switch (name) {
     case "project":
       return project(files);
+    case "add_data": {
+      const result = await addData(
+        files,
+        {
+          path: need(args, "path"),
+          from: str(args, "from"),
+          rows:
+            typeof args.rows === "string" || Array.isArray(args.rows)
+              ? (args.rows as string | unknown[])
+              : undefined,
+          url: str(args, "url"),
+          source: str(args, "source"),
+        },
+        options
+      );
+      onWrite?.([result.saved, result.projectPath]);
+      return result;
+    }
     case "describe":
       return describe(files, { path: str(args, "path") });
     case "read_eda":
