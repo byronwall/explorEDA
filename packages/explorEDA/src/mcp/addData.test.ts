@@ -86,4 +86,18 @@ describe("add_data", () => {
       expect(files.snapshot()).toEqual({});
     }
   });
+
+  it("charts a data file already in the folder, and refuses a bad source ID first", async () => {
+    const files = memoryProjectFiles({ "sales.csv": CSV });
+    await expect(
+      addData(files, { path: "sales.csv", source: "Bad Name!" })
+    ).rejects.toThrow(/isn't an ID/);
+    expect(Object.keys(files.snapshot())).toEqual(["sales.csv"]);
+    const added = await addData(files, { path: "sales.csv" });
+    expect(added).toMatchObject({ source: "sales", rows: 2 });
+    expect(files.snapshot()["sales.csv"]).toBe(CSV);
+    await expect(addData(files, { path: "sales.csv" })).rejects.toThrow(
+      /already source sales/
+    );
+  });
 });

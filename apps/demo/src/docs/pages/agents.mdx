@@ -99,6 +99,7 @@ An agent can start from an empty folder. `add_data` takes one of three kinds of 
 
 - `from`: the full path of a CSV or JSON file on this computer. It copies the file into the folder.
 - `rows`: CSV text, JSON text, or an array of rows that the agent writes itself.
+- Nothing but `path`: for a data file already in the folder. It adds the source and leaves the file alone. `project` lists such files as `unsourced`.
 - `url`: the address of a CSV or JSON file. The project text records where it came from, as `# data/sales.csv fetched from <address> on <date>` above the source line.
 
 Each call writes the file where the agent names it, such as `data/sales.csv`, and adds a source for it to the project text, which it creates if needed. The result lists the new source's fields, ready for an analysis that starts with `eda query=sales`.

@@ -306,4 +306,18 @@ describe("MCP tools", () => {
     });
     expect(problems[0]?.fix).toMatch(/\["orders\.amount"\]/);
   });
+
+  it("reads quoted values and refuses to sum text", async () => {
+    const web = await summarize(shop(), {
+      query: "order-lines",
+      where: "orders.channel = 'Web'",
+    });
+    expect(web.rows).toBeGreaterThan(0);
+    await expect(
+      summarize(shop(), { query: "order-lines", measure: "orders.channel" })
+    ).rejects.toThrow(/has no numbers/);
+    await expect(
+      summarize(shop(), { query: "customer-orders" })
+    ).rejects.toThrow(/needs values for customer/);
+  });
 });
