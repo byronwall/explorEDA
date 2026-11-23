@@ -61,6 +61,7 @@ import {
 } from "./annotations";
 import type { ChartAnnotation } from "@/lib/annotations/types";
 import { listChildWords, lowerListChild } from "./lists";
+import { DSL_REFERENCE } from "./describe";
 import { DEFAULT_TIME_SERIES } from "@/components/charts/LineChart/definition";
 import { isCompositionDefinition } from "@/components/charts/Composition/validateComposition";
 import { boundaryAssetId, listBoundarySets } from "@/lib/boundaries/registry";
@@ -1182,11 +1183,27 @@ export function compileDocument(
     }
   } catch (error) {
     // The checks above mirror the engine's; this only guards a mismatch.
+    const message = error instanceof Error ? error.message : String(error);
+    const unknown = /Unknown field: (.+)$/.exec(message)?.[1]?.trim();
+    // Point at the calc that names the field, with the nearest real one.
+    const culprit = unknown
+      ? [...parsedCalcs.values()].find((item) =>
+          item.declaration.expression?.text.includes(unknown)
+        )?.declaration
+      : undefined;
+    const near = unknown ? closestName(unknown, sourceFields) : undefined;
     report(
       "error",
       "calculation-skipped",
-      { line: 1, column: 1, length: 0 },
-      `The calculations could not run: ${error instanceof Error ? error.message : String(error)}`
+      culprit?.expression?.span ??
+        culprit?.span ?? { line: 1, column: 1, length: 0 },
+      `The calculations could not run: ${message}`,
+      {
+        ...(culprit ? { subject: `calc ${culprit.name}` } : {}),
+        suggestion: unknown
+          ? `${near ? `Did you mean ${near}? ` : ""}Calc lines reach every view in the file, so each field they name must be in every view's query. Put a calc for one query's fields in a file of its own, or in a notebook block for that query.`
+          : undefined,
+      }
     );
     calculations.length = 0;
   }
@@ -2650,6 +2667,15 @@ export function compileDocument(
       }
     }
 
+    // spec.lower or spec.upper alone keeps the automatic bins.
+    const histogram = (chart as { histogram?: Record<string, unknown> })
+      .histogram;
+    if (histogram && !histogram.binning) {
+      chart = {
+        ...chart,
+        histogram: { ...histogram, binning: { mode: "auto" } },
+      } as ChartSettings;
+    }
     for (const [top, group] of pathGroups) {
       if (chartFits(chart)) {
         break;
@@ -2664,13 +2690,44 @@ export function compileDocument(
       } as ChartSettings;
       if (!chartFits(alone)) {
         chart = candidate;
-        const first = group.pairs[0]!;
+        // Leave each pair out in turn: one whose absence fits is the culprit.
+        const culprits =
+          group.pairs.length > 1
+            ? group.pairs.filter((_, skip) => {
+                let trial: ChartSettings | undefined = group.before;
+                group.pairs.forEach((pair, index) => {
+                  if (index === skip || !trial) return;
+                  const next = applyPath(trial, pair.key, pair, subject);
+                  trial = typeof next === "object" ? next : undefined;
+                });
+                return (
+                  trial !== undefined &&
+                  chartFits({
+                    ...group.before,
+                    [top]: (trial as unknown as Record<string, unknown>)[top],
+                  } as ChartSettings)
+                );
+              })
+            : group.pairs;
+        const named = culprits.length ? culprits : group.pairs;
+        const fallback = JSON.stringify(
+          (group.before as unknown as Record<string, unknown>)[top]
+        );
+        const words = settingWords(chart.type);
+        const helps = named.flatMap((pair) =>
+          words[pair.key] ? [`${pair.key}: ${words[pair.key]!.help}`] : []
+        );
         report(
           "warning",
           "setting-default",
-          first.span,
-          `${group.pairs.map((pair) => `${pair.key}=${pair.value.raw}`).join(" ")} doesn't fit ${top}, so ${subject} keeps the default ${top}.`,
-          { subject }
+          named[0]!.span,
+          `${named.map((pair) => `${pair.key}=${pair.value.raw}`).join(" ")} doesn't fit ${top}, so ${subject} keeps the default ${top}.`,
+          {
+            subject,
+            suggestion: helps.length
+              ? `${helps.join("; ")}.`
+              : `${fallback && fallback.length <= 120 ? `${top} is ${fallback} by default; give it a value of that kind` : "Check the value"}, or remove it. reference ${declaration.keyword} lists the settings.`,
+          }
         );
       }
     }
@@ -2734,9 +2791,30 @@ export function compileDocument(
       !internal.keepIncomplete &&
       !definition.validateSettings(chart as never)
     ) {
+      const values = (
+        chart as {
+          valueFields?: Array<{ field?: string; aggregation?: string }>;
+        }
+      ).valueFields;
+      // `value count` reads count as a field and names no aggregation.
+      const blankValue =
+        values &&
+        (!values.length ||
+          values.some((item) => !item.field?.trim() || !item.aggregation));
+      const usage = DSL_REFERENCE.split("\n")
+        .find((line) => line.startsWith(`  ${declaration.keyword} `))
+        ?.trim()
+        .split(/\s{2,}/)[0];
       return fail(
         declaration.span,
-        `${subject} is missing a required setting, so it was skipped.`
+        blankValue
+          ? `${subject} needs a value line that names a field, so it was skipped.`
+          : `${subject} is missing a required setting, so it was skipped.`,
+        blankValue
+          ? "Name the field a value measures, as value count(orders.orderId) or value sum(orders.amount)."
+          : usage
+            ? `Write it as ${usage}.`
+            : undefined
       );
     }
     usedIds.add(chart.id);
