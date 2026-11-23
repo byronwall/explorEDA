@@ -252,4 +252,12 @@ describe("MCP tools", () => {
     expect(calc).toMatchObject({ line: 2 });
     expect(calc?.fix).toMatch(/Did you mean orders.amount\?/);
   });
+
+  it("explains why a shared line fails when views chart two queries", async () => {
+    const { problems } = await check(shop(), {
+      path: "mix.eda",
+      text: "eda query=item-lines\ngroup @byCategory sum(items.revenue) by=product.category\nview Items {\n  row product.category group=byCategory\n}\nview Orders query=order-lines {\n  row orders.channel\n}\n",
+    });
+    expect(problems[0]?.fix).toMatch(/reach every view/);
+  });
 });
