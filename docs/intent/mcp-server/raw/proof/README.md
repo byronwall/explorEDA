@@ -36,6 +36,8 @@ The saved files are in [output/](output/). The app, opened after the runs, liste
 4. **"spec.upper=100 bins.mode=width … doesn't fit histogram"** gave no fix, though `reference bar` lists each setting. Other "doesn't fit" warnings (`direction=`, `share=`) don't list the accepted values.
 5. **"pivot is missing a required setting"** doesn't name the setting.
 
+"Complete" didn't mean readable. In the app, run 2's dashboard has two cards titled "Composition", a small category chart, and customer bars with no names. `check` can't see layout, so this supports chart images for agents ([headless chart rendering](../../../headless-chart-rendering/intent-brief.md)).
+
 The agent also wanted computed values (a group's rows or a metric) to write prose that cites numbers and to confirm a rate.
 
 The agent's own reports of these problems are in [output/feedback/](output/feedback/), written through `submit_feedback`.
