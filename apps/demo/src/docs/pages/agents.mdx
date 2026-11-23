@@ -41,15 +41,55 @@ That key changes on every run, so `exploreda mcp` is the easier choice.
 
 ## What the agent can do
 
-| Tool              | What it does                                                                                                                       |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `fields`          | Lists each query's fields as an analysis names them, such as `orders.amount`, with types and example values.                       |
-| `reference`       | Returns the dashboard grammar, the project and notebook grammar, or every setting of one chart, such as `hist`.                    |
-| `check`           | Builds an analysis's text against your data without saving it, and returns its views, chart counts, and each problem with its fix. |
-| `write_eda`       | Saves an analysis (`.eda`) or notebook (`.eda.md`), then returns what `check` returns.                                             |
-| `submit_feedback` | Reports a problem with these tools, with a proposed fix, as a file under `.exploreda/feedback/`.                                   |
+| Tool              | What it does                                                                                                                                              |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `project`         | Shows the folder at a glance: the project text's path, each source with its file and row count, the queries, every analysis and notebook, the data files. |
+| `fields`          | Lists each query's fields as an analysis names them, such as `orders.amount`, with types and example values.                                              |
+| `reference`       | Returns the dashboard grammar, the project and notebook grammar, or every setting of one chart, such as `hist`.                                           |
+| `check`           | Builds an analysis's text against your data without saving it, and returns its views, chart counts, and each problem with its fix.                        |
+| `read_eda`        | Returns a file's text and its version.                                                                                                                    |
+| `write_eda`       | Saves an analysis (`.eda`), a notebook (`.eda.md`), or the project text (`exploreda.eda`), then returns what `check` returns.                             |
+| `rename_eda`      | Moves an analysis or notebook to a free path.                                                                                                             |
+| `delete_eda`      | Deletes an analysis or notebook. It never deletes the project text.                                                                                       |
+| `format`          | Indents and tidies text the way the app saves it, without saving.                                                                                         |
+| `describe`        | Lists each view's query, row count, and charts, the charts that were skipped, and every problem.                                                          |
+| `submit_feedback` | Reports a problem with these tools, with a proposed fix, as a file under `.exploreda/feedback/`.                                                          |
 
 An agent works in a loop: it reads the fields and the grammar, writes an analysis, and fixes each problem the result lists until the analysis is complete. Everything it saves is ordinary [dashboard text](/docs/dashboard-text) that you can open, edit, and commit.
+
+Part of a real `check` result, from an agent whose second view named the wrong query's field:
+
+```json
+{
+  "path": "product-mix.eda",
+  "complete": false,
+  "views": [
+    { "name": "Large orders", "query": "order-lines", "charts": 1 },
+    { "name": "Product mix", "query": "item-lines", "charts": 3 }
+  ],
+  "charts": 4,
+  "problems": [
+    {
+      "path": "product-mix.eda",
+      "line": 4,
+      "column": 30,
+      "severity": "warning",
+      "message": "orders.channel is not a field, alias, or calculation, so group @largeShare (line 4) has no group field.",
+      "fix": "Did you mean order.channel?"
+    }
+  ]
+}
+```
+
+`write_eda` returns the same, with the path it saved and the file's new `version`.
+
+### You and the agent can edit at the same time
+
+The open app shows each file the agent saves, renames, or deletes within about a second.
+
+To change a file that already exists, the agent sends the `version` that `read_eda` gave. If you edited the file since then, the agent's change is refused and your edit stays on disk. The agent then reads the file again and merges its change. A new file needs no version.
+
+When the agent writes the project text in a folder that has none, it goes where the app would put it: `exploreda.eda`, or `.exploreda/project.eda` when the server runs with `--hidden`.
 
 ## Read the agent's feedback
 

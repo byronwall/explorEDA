@@ -7,18 +7,27 @@
 import type { ProjectFiles } from "@/lib/project/files";
 import {
   check,
+  deleteEda,
+  describe,
   FEEDBACK_KINDS,
   fields,
+  format,
+  project,
+  readEda,
   reference,
+  renameEda,
   submitFeedback,
   ToolError,
   writeEda,
+  type ToolOptions,
 } from "./tools";
 
 const PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 
 const INSTRUCTIONS = `explorEDA builds dashboards from .eda text in this project folder.
-Loop: call fields to see each query's fields, reference for the grammar (and reference with a chart type for its settings), then write_eda to save an analysis. write_eda returns every problem with its line and a fix; repeat until complete is true. check does the same without saving.
+Start with project for the folder's sources, queries, and files. Loop: call fields to see each query's fields, reference for the grammar (and reference with a chart type for its settings), then write_eda to save an analysis. write_eda returns every problem with its line and a fix; repeat until complete is true. check does the same without saving, and describe lists what each view built.
+To change a file that exists, call read_eda first and send its version with write_eda, rename_eda, or delete_eda. A person may edit the same files in the app; a stale version is refused, so read again and merge.
+exploreda.eda is the project text: sources, relationships, and queries (reference topic=project).
 When a tool fails in a way you can't fix, gives a confusing result, or lacks something you need, call submit_feedback once with what happened and the change you propose, after you finish or give up on the request.`;
 
 const text = (description: string) => ({ type: "string", description });
@@ -79,12 +88,95 @@ const TOOLS = [
     inputSchema: {
       type: "object",
       properties: {
-        path: text("A path inside the folder, such as returns.eda."),
+        path: text(
+          "A path inside the folder, such as returns.eda. exploreda.eda is the project text."
+        ),
         text: text("The whole file's text."),
+        version: text(
+          "The version read_eda gave. Required when the file exists; omit for a new file."
+        ),
       },
       required: ["path", "text"],
     },
     annotations: { readOnlyHint: false, destructiveHint: true },
+  },
+  {
+    name: "project",
+    title: "Show the project",
+    description:
+      "The folder at a glance: where its project text is, each source with its file and row count, the queries an analysis can chart, every analysis and notebook with chart and problem counts, and the data files.",
+    inputSchema: { type: "object", properties: {} },
+    annotations: { readOnlyHint: true },
+  },
+  {
+    name: "read_eda",
+    title: "Read a file",
+    description:
+      "Returns an analysis, notebook, or the project text (exploreda.eda), with the version that write_eda, rename_eda, and delete_eda need.",
+    inputSchema: {
+      type: "object",
+      properties: { path: text("Such as orders.eda or exploreda.eda.") },
+      required: ["path"],
+    },
+    annotations: { readOnlyHint: true },
+  },
+  {
+    name: "rename_eda",
+    title: "Rename an analysis",
+    description:
+      "Moves an analysis or notebook to a free path. Needs the version read_eda gave.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        from: text("The file's path now."),
+        to: text("The new path, with the same extension."),
+        version: text("The version read_eda gave."),
+      },
+      required: ["from", "to", "version"],
+    },
+    annotations: { readOnlyHint: false, destructiveHint: true },
+  },
+  {
+    name: "delete_eda",
+    title: "Delete an analysis",
+    description:
+      "Deletes an analysis or notebook, never the project text. Needs the version read_eda gave.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: text("The file's path."),
+        version: text("The version read_eda gave."),
+      },
+      required: ["path", "version"],
+    },
+    annotations: { readOnlyHint: false, destructiveHint: true },
+  },
+  {
+    name: "format",
+    title: "Format text",
+    description:
+      "Indents by brace depth and tidies spacing, as the app saves it. Send text, or a path to format that file's text. Saves nothing.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: text("A file to format, or where text would live."),
+        text: text("Text to format instead of the file's."),
+      },
+    },
+    annotations: { readOnlyHint: true },
+  },
+  {
+    name: "describe",
+    title: "Describe what built",
+    description:
+      "Every view of each analysis and notebook: its query, row count, and charts with types and titles, plus charts that were skipped and every problem. path limits it to one file.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        path: text("One analysis or notebook. Omit for the whole folder."),
+      },
+    },
+    annotations: { readOnlyHint: true },
   },
   {
     name: "submit_feedback",
@@ -134,23 +226,58 @@ async function callTool(
   files: ProjectFiles,
   name: string,
   args: Args,
+  options: ToolOptions,
   onWrite?: (paths: string[]) => void
 ): Promise<unknown> {
   switch (name) {
+    case "project":
+      return project(files);
+    case "describe":
+      return describe(files, { path: str(args, "path") });
+    case "read_eda":
+      return readEda(files, { path: need(args, "path") }, options);
+    case "format":
+      return format(files, {
+        path: str(args, "path"),
+        text: str(args, "text"),
+      });
+    case "rename_eda": {
+      const result = await renameEda(files, {
+        from: need(args, "from"),
+        to: need(args, "to"),
+        version: str(args, "version"),
+      });
+      onWrite?.([result.renamed, result.to]);
+      return result;
+    }
+    case "delete_eda": {
+      const result = await deleteEda(files, {
+        path: need(args, "path"),
+        version: str(args, "version"),
+      });
+      onWrite?.([result.deleted]);
+      return result;
+    }
     case "fields":
       return fields(files, { query: str(args, "query") });
     case "reference":
       return reference({ topic: str(args, "topic") });
     case "check":
-      return check(files, {
-        path: str(args, "path"),
-        text: need(args, "text"),
-      });
+      return check(
+        files,
+        { path: str(args, "path"), text: need(args, "text") },
+        options
+      );
     case "write_eda": {
-      const result = await writeEda(files, {
-        path: need(args, "path"),
-        text: need(args, "text"),
-      });
+      const result = await writeEda(
+        files,
+        {
+          path: need(args, "path"),
+          text: need(args, "text"),
+          version: str(args, "version"),
+        },
+        options
+      );
       onWrite?.([result.saved]);
       return result;
     }
@@ -182,6 +309,8 @@ export interface McpContext {
   version: string;
   /** Called with the paths a tool wrote, so the open app reloads them. */
   onWrite?: (paths: string[]) => void;
+  /** `--hidden`: a new project keeps its text in `.exploreda/`. */
+  hidden?: boolean;
 }
 
 /**
@@ -229,6 +358,7 @@ export async function handleMcpMessage(
           context.files,
           name,
           args,
+          { hidden: context.hidden },
           context.onWrite
         );
         return reply({

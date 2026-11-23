@@ -2,7 +2,17 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { memoryProjectFiles } from "@/lib/project/files";
-import { check, fields, reference, submitFeedback, writeEda } from "./tools";
+import {
+  check,
+  deleteEda,
+  describe as describeFiles,
+  fields,
+  readEda,
+  reference,
+  renameEda,
+  submitFeedback,
+  writeEda,
+} from "./tools";
 import { handleMcpMessage } from "./server";
 
 const SHOP = path.resolve(__dirname, "../../examples/shop");
@@ -142,5 +152,80 @@ describe("MCP tools", () => {
     expect(reply.id).toBe(7);
     expect(reply.result).toMatchObject({ isError: true });
     expect(reply.result.content[0]!.text).toBe("disk gone");
+  });
+
+  it("refuses a write over an edit made since the read, and keeps the edit", async () => {
+    const files = shop();
+    await expect(
+      writeEda(files, { path: "orders.eda", text: "eda query=order-lines\n" })
+    ).rejects.toThrow(/needs the version/);
+    const { version } = await readEda(files, { path: "orders.eda" });
+    files.editOutside(
+      "orders.eda",
+      "eda query=order-lines\nrow orders.channel\n"
+    );
+    await expect(
+      writeEda(files, {
+        path: "orders.eda",
+        text: "eda query=order-lines\n",
+        version,
+      })
+    ).rejects.toThrow(/changed since you read it/);
+    expect(files.snapshot()["orders.eda"]).toContain("row orders.channel");
+    const fresh = await readEda(files, { path: "orders.eda" });
+    const saved = await writeEda(files, {
+      path: "orders.eda",
+      text: `${fresh.text}hist orders.amount\n`,
+      version: fresh.version,
+    });
+    expect(saved).toMatchObject({ saved: "orders.eda", complete: true });
+  });
+
+  it("writes a hidden project's first text in .exploreda, then charts it", async () => {
+    const files = memoryProjectFiles({
+      "data/sales.csv": "id,region,revenue\nA,East,3\nB,West,5\n",
+    });
+    const project = await writeEda(
+      files,
+      {
+        path: "exploreda.eda",
+        text: "source @sales key=id path=data/sales.csv\n",
+      },
+      { hidden: true }
+    );
+    expect(project.saved).toBe(".exploreda/project.eda");
+    const analysis = await writeEda(files, {
+      path: "sales.eda",
+      text: "eda query=sales\nrow sales.region\n",
+    });
+    expect(analysis).toMatchObject({ complete: true, charts: 1 });
+    expect(await readEda(files, { path: "exploreda.eda" })).toMatchObject({
+      path: ".exploreda/project.eda",
+    });
+  });
+
+  it("renames and deletes with the read version, never the project text", async () => {
+    const files = shop();
+    const { version } = await readEda(files, { path: "orders.eda" });
+    await renameEda(files, {
+      from: "orders.eda",
+      to: "sales/orders.eda",
+      version,
+    });
+    expect(Object.keys(files.snapshot())).toContain("sales/orders.eda");
+    await expect(
+      deleteEda(files, { path: "exploreda.eda", version })
+    ).rejects.toThrow(/can't be deleted/);
+    await deleteEda(files, { path: "sales/orders.eda", version });
+    expect(files.snapshot()["sales/orders.eda"]).toBeUndefined();
+  });
+
+  it("describes each view's rows and charts", async () => {
+    const { analyses } = await describeFiles(shop(), { path: "orders.eda" });
+    expect(analyses[0]!.views[0]).toMatchObject({
+      query: "order-lines",
+      rows: 80,
+    });
+    expect(analyses[0]!.charts.length).toBeGreaterThan(0);
   });
 });

@@ -310,7 +310,69 @@ source @many db=app table=contract_many limit=5
     );
     expect(
       listed.result.tools.map((tool: { name: string }) => tool.name)
-    ).toEqual(["fields", "reference", "check", "write_eda", "submit_feedback"]);
+    ).toEqual([
+      "fields",
+      "reference",
+      "check",
+      "write_eda",
+      "project",
+      "read_eda",
+      "rename_eda",
+      "delete_eda",
+      "format",
+      "describe",
+      "submit_feedback",
+    ]);
+  });
+
+  it("tells every open page about an agent's write", async () => {
+    const heard = [0, 1].map(
+      () =>
+        new Promise<string>((resolve, reject) => {
+          const req = request(
+            {
+              host: "127.0.0.1",
+              port: server.port,
+              path: `/api/events?token=${token}`,
+              headers: { host: `127.0.0.1:${server.port}` },
+            },
+            (res) => {
+              let body = "";
+              res.on("data", (chunk) => {
+                body += chunk;
+                if (body.includes("event: change")) {
+                  req.destroy();
+                  resolve(body);
+                }
+              });
+            }
+          );
+          req.on("error", (error) => {
+            if (!req.destroyed) reject(error);
+          });
+          req.end();
+        })
+    );
+    // Let both streams open before the write.
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const saved = await get(
+      "/mcp",
+      { authorization: `Bearer ${token}`, "content-type": "application/json" },
+      "POST",
+      JSON.stringify({
+        jsonrpc: "2.0",
+        id: 9,
+        method: "tools/call",
+        params: {
+          name: "write_eda",
+          arguments: { path: "agent.eda", text: "dashboard Agent\n" },
+        },
+      })
+    );
+    expect(JSON.parse(saved.body).result.isError).toBeUndefined();
+    for (const body of await Promise.all(heard)) {
+      expect(body).toContain('"paths":["agent.eda"]');
+    }
   });
 
   it("knows which host names are this machine", () => {
