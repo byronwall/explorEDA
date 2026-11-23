@@ -3,9 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import {
-  chartSettingReference,
   compileViews,
-  compositionReference,
   describeDslSource,
   formatDsl,
   DSL_REFERENCE,
@@ -26,7 +24,7 @@ import {
   isNotebookPath,
 } from "@/lib/notebook";
 import { nodeProjectFiles } from "@/node/projectFiles";
-import { NOTEBOOK_REFERENCE, PROJECT_REFERENCE } from "./reference";
+import { reference, ToolError } from "@/mcp/tools";
 
 const USAGE = `Usage:
   exploreda-dsl check <dashboard.eda> --data <rows.csv|rows.json> [--json]
@@ -317,32 +315,16 @@ function main(args: string[]): number | Promise<number> {
       console.log(DSL_REFERENCE);
       return 0;
     }
-    if (type === "project") {
-      console.log(PROJECT_REFERENCE);
+    try {
+      console.log(reference({ topic: type }).text);
       return 0;
-    }
-    if (type === "notebook") {
-      console.log(NOTEBOOK_REFERENCE);
-      return 0;
-    }
-    registerAllCharts();
-    if (type === "composition") {
-      console.log(
-        `Composition parts and their settings:\n${compositionReference().join("\n")}`
-      );
-      return 0;
-    }
-    const lines = chartSettingReference(type);
-    if (!lines.length) {
+    } catch (error) {
+      if (!(error instanceof ToolError)) throw error;
       console.error(
         `${type} is not a chart type. Topics: project, notebook, composition, or a chart type.`
       );
       return 64;
     }
-    console.log(
-      `Settings for ${type}:\n${lines.map((line) => `  ${line}`).join("\n")}`
-    );
-    return 0;
   }
   const notebookPath =
     command === "check"

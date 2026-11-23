@@ -47,6 +47,15 @@ function projectFolder(): Plugin {
         token,
         version: "dev",
         secrets: memorySecretStore(),
+        loadMcp: () =>
+          server.ssrLoadModule(
+            path.resolve(
+              __dirname,
+              "../../packages/explorEDA/src/mcp/server.ts"
+            )
+          ) as Promise<
+            typeof import("../../packages/explorEDA/src/mcp/server")
+          >,
       });
       server.middlewares.use((req, res, next) => {
         void handle(req, res, next);

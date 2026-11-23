@@ -5,7 +5,13 @@
 //
 // Usage: node scripts/cli-smoke.mjs <folder with exploreda-*.tgz | tarball>
 import { spawn, spawnSync } from "node:child_process";
-import { mkdtempSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import {
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -106,6 +112,31 @@ try {
     fail("a request without the key was answered");
   const page = await (await api("/")).text();
   if (!page.includes('id="root"')) fail("the app page didn't load");
+
+  // An agent's first /mcp call loads the checker and builds an analysis.
+  const orders = await (
+    await api("/api/file?path=orders.eda", { "x-exploreda-token": token })
+  ).text();
+  const mcp = await fetch(new URL("/mcp", url.origin), {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "tools/call",
+      params: {
+        name: "check",
+        arguments: { path: "orders.eda", text: orders },
+      },
+    }),
+  });
+  const checked = (await mcp.json()).result?.structuredContent;
+  if (!checked?.complete || !checked.charts)
+    fail(`/mcp check answered ${JSON.stringify(checked)}`);
+  else console.log(`/mcp check built ${checked.charts} charts in orders.eda`);
 } finally {
   stop(server);
 }
@@ -132,6 +163,24 @@ try {
   } finally {
     stop(database);
   }
+}
+
+// The command starts without chart code; /mcp loads exploreda-tools.js.
+{
+  const cli = path.join(cwd, "node_modules/exploreda/dist/cli");
+  const loaded = new Set();
+  const visit = (file) => {
+    if (loaded.has(file)) return;
+    loaded.add(file);
+    const text = readFileSync(path.join(cli, file), "utf8");
+    for (const [, next] of text.matchAll(/(?:from|^import) "\.\/([^"]+)"/gm))
+      visit(next);
+  };
+  visit("exploreda.js");
+  const charts = (file) =>
+    readFileSync(path.join(cli, file), "utf8").includes("registerAllCharts");
+  const eager = [...loaded].filter(charts);
+  if (eager.length) fail(`exploreda loads chart code at start: ${eager}`);
 }
 
 const check = runSync("npx", [

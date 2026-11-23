@@ -55,6 +55,7 @@ beforeAll(async () => {
     appDir,
     port: 0,
     secrets,
+    loadMcp: () => import("../mcp/server"),
   });
 });
 
@@ -282,6 +283,34 @@ source @many db=app table=contract_many limit=5
     ]);
     const missing = await get("/api/connections/shop/tables/nope", auth);
     expect(missing.status).toBe(422);
+  });
+
+  it("answers MCP calls at /mcp with the run's key only", async () => {
+    const call = (body: object, headers: Record<string, string> = {}) =>
+      get(
+        "/mcp",
+        { "content-type": "application/json", ...headers },
+        "POST",
+        JSON.stringify({ jsonrpc: "2.0", ...body })
+      );
+    expect((await call({ id: 1, method: "tools/list" })).status).toBe(401);
+    const auth = { authorization: `Bearer ${token}` };
+    const init = JSON.parse(
+      (await call({ id: 1, method: "initialize", params: {} }, auth)).body
+    );
+    expect(init.result.serverInfo).toEqual({
+      name: "exploreda",
+      version: "test",
+    });
+    expect(
+      (await call({ method: "notifications/initialized" }, auth)).status
+    ).toBe(202);
+    const listed = JSON.parse(
+      (await call({ id: 2, method: "tools/list" }, auth)).body
+    );
+    expect(
+      listed.result.tools.map((tool: { name: string }) => tool.name)
+    ).toEqual(["fields", "reference", "check", "write_eda", "submit_feedback"]);
   });
 
   it("knows which host names are this machine", () => {
