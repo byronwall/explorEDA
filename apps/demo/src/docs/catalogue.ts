@@ -48,6 +48,7 @@ import {
   type LucideIcon,
   Merge,
   Grid2x2Check,
+  Bot,
 } from "lucide-react";
 import type { MDXContent } from "mdx/types";
 import type { DocsTarget } from "./targets";
@@ -140,7 +141,7 @@ export const catalogue: readonly DocsPage[] = [
     highlights: ["npx exploreda", "Project text", "Git"],
     covers: ["flow:project-folders"],
     examples: [],
-    related: ["load-data", "dashboard-text", "team-server"],
+    related: ["load-data", "dashboard-text", "agents", "team-server"],
   },
   {
     topic: "notebooks",
@@ -153,6 +154,18 @@ export const catalogue: readonly DocsPage[] = [
     covers: ["flow:notebooks"],
     examples: [],
     related: ["project-folders", "dashboard-text"],
+  },
+  {
+    topic: "agents",
+    title: "Agents",
+    group: "start",
+    icon: Bot,
+    lede: "Connect an AI agent to a project folder with one config line, and let it build analyses that check against your data.",
+    summary: "Connect an agent with exploreda mcp; it writes checked analyses.",
+    highlights: ["exploreda mcp", "Checked writes", "Feedback"],
+    covers: ["flow:agents"],
+    examples: [],
+    related: ["project-folders", "dashboard-text", "notebooks"],
   },
   {
     topic: "team-server",

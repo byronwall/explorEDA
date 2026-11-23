@@ -9,6 +9,7 @@ import {
   isAbsolutePath,
   normalizeProjectPath,
   ProjectFileError,
+  SERVER_FILE,
   SKIPPED_FOLDERS,
   type ProjectFiles,
 } from "./files";
@@ -95,6 +96,9 @@ export function directoryProjectFiles(
           continue;
         }
         const path = prefix ? `${prefix}/${name}` : name;
+        if (path === SERVER_FILE) {
+          continue;
+        }
         if (handle.kind === "directory") {
           await walk(handle, path);
         } else {

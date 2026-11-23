@@ -23,6 +23,7 @@ export const FLOWS = {
   "flow:notebooks": "Write a notebook of prose and charts",
   "flow:team-server": "Share projects with a team on exploreda server",
   "flow:database-sources": "Read tables and queries from a database",
+  "flow:agents": "Connect an agent to a project with exploreda mcp",
 } as const;
 
 export const SURFACES = {
