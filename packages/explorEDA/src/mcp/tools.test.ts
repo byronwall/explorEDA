@@ -11,6 +11,7 @@ import {
   reference,
   renameEda,
   submitFeedback,
+  summarize,
   writeEda,
 } from "./tools";
 import { handleMcpMessage } from "./server";
@@ -259,5 +260,50 @@ describe("MCP tools", () => {
       text: "eda query=item-lines\ngroup @byCategory sum(items.revenue) by=product.category\nview Items {\n  row product.category group=byCategory\n}\nview Orders query=order-lines {\n  row orders.channel\n}\n",
     });
     expect(problems[0]?.fix).toMatch(/reach every view/);
+  });
+
+  it("gives a query's real numbers, grouped and filtered", async () => {
+    const revenue = await summarize(shop(), {
+      query: "order-lines",
+      by: "orders.channel",
+      measure: "orders.amount",
+    });
+    expect(revenue.groups[0]).toEqual({
+      "orders.channel": "Web",
+      value: 6784.3,
+      rows: expect.any(Number),
+    });
+    const large = await summarize(shop(), {
+      query: "order-lines",
+      by: "orders.channel",
+      where: "orders.amount > 100",
+    });
+    expect(large.rows).toBeLessThan(80);
+    expect(large.measured).toBe("count");
+  });
+
+  it("notes charts in one view that share a title", async () => {
+    const result = await check(shop(), {
+      path: "x.eda",
+      text: "eda query=order-lines\nview A {\n  row orders.channel title=Orders\n  row customer.region title=Orders\n}\n",
+    });
+    expect(result.complete).toBe(true);
+    expect(result.notes?.[0]).toMatch(/2 charts in view A are titled "Orders"/);
+  });
+
+  it("puts a chart's own settings first in the brief reference", () => {
+    const full = reference({ topic: "row" }).text;
+    const brief = reference({ topic: "row", brief: true }).text;
+    expect(brief.split("\n")[1]).not.toMatch(/^ {2}x\.title=/);
+    expect(brief).toMatch(/Every chart also takes x\.title=/);
+    expect(brief.length).toBeLessThan(full.length);
+  });
+
+  it("says to bracket a dotted field in a calc", async () => {
+    const { problems } = await check(shop(), {
+      path: "x.eda",
+      text: "eda query=order-lines\ncalc big = orders.amount > 100\nrow orders.channel title=Channels\n",
+    });
+    expect(problems[0]?.fix).toMatch(/\["orders\.amount"\]/);
   });
 });

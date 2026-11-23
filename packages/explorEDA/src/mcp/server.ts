@@ -17,6 +17,7 @@ import {
   reference,
   renameEda,
   submitFeedback,
+  summarize,
   ToolError,
   writeEda,
   type ToolOptions,
@@ -25,11 +26,15 @@ import { addData } from "./addData";
 
 const PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 
-const INSTRUCTIONS = `explorEDA builds dashboards from .eda text in this project folder.
-Start with project for the folder's sources, queries, and files. A folder with no data starts with add_data. Loop: call fields to see each query's fields, reference for the grammar (and reference with a chart type for its settings), then write_eda to save an analysis. write_eda returns every problem with its line and a fix; repeat until complete is true. check does the same without saving, and describe lists what each view built.
-To change a file that exists, call read_eda first and send its version with write_eda, rename_eda, or delete_eda. A person may edit the same files in the app; a stale version is refused, so read again and merge.
-exploreda.eda is the project text: sources, relationships, and queries (reference topic=project).
-When a tool fails in a way you can't fix, gives a confusing result, or lacks something you need, call submit_feedback once with what happened and the change you propose, after you finish or give up on the request.`;
+const INSTRUCTIONS = `explorEDA builds dashboards from .eda text in this project folder. A person may have the app open on it; every save shows there.
+Steps: project (sources, queries, files; an empty folder starts with add_data), fields (each query's fields), reference (the grammar; reference topic=<chart word> for one chart's settings), then write_eda. Each save returns every problem with its line and a fix; repeat until complete is true. check does the same without saving. summarize gives a query's real numbers, grouped, to check a chart or to cite in prose.
+Rules that save rounds:
+- An analysis starts with eda query=<id>, and names fields as fields lists them, such as orders.amount.
+- Alias, calc, and group lines reach every view in the file, so give each file one query. Put a view on another query in its own file.
+- Write aliases (amount:num=orders.amount), calc, and group lines above the views, not inside a view body.
+- Give every chart a title= that says what it shows; check notes repeated titles.
+- To change a file that exists, call read_eda and send its version. A stale version is refused: read again and merge, because a person may have edited it.
+When a tool fails in a way you can't fix, gives a confusing result, or lacks something you need, call submit_feedback once, after you finish or give up.`;
 
 const text = (description: string) => ({ type: "string", description });
 
@@ -58,7 +63,7 @@ const TOOLS = [
       type: "object",
       properties: {
         topic: text(
-          "project, notebook, composition, or a chart type. Omit for dashboard text."
+          "project, notebook, composition, axes (settings every chart takes), or a chart word such as hist. Omit for dashboard text."
         ),
       },
     },
@@ -127,6 +132,38 @@ const TOOLS = [
       required: ["path"],
     },
     annotations: { readOnlyHint: false, openWorldHint: true },
+  },
+  {
+    name: "summarize",
+    title: "Summarize a query",
+    description:
+      "A query's real numbers: rows grouped by a field and measured (count, or sum, average, max, min of a field), largest first, with an optional where filter. Use it to check that a chart shows what you meant, or to cite figures in prose. It reads the query's own fields, not an analysis's calc lines.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        query: text("The query's ID, such as order-lines."),
+        by: text(
+          "A field to group by, such as orders.channel. Omit for one total."
+        ),
+        measure: text(
+          "A field to measure, such as orders.amount. Omit to count rows."
+        ),
+        aggregation: {
+          type: "string",
+          enum: ["count", "sum", "average", "max", "min"],
+          description: "Default: sum with a measure, count without.",
+        },
+        where: text(
+          'Keep rows where this holds, as "orders.amount > 100" or "orders.channel = Web".'
+        ),
+        limit: {
+          type: "number",
+          description: "Most groups to return. Default 20.",
+        },
+      },
+      required: ["query"],
+    },
+    annotations: { readOnlyHint: true },
   },
   {
     name: "project",
@@ -260,6 +297,15 @@ async function callTool(
   switch (name) {
     case "project":
       return project(files);
+    case "summarize":
+      return summarize(files, {
+        query: need(args, "query"),
+        by: str(args, "by"),
+        measure: str(args, "measure"),
+        aggregation: str(args, "aggregation"),
+        where: str(args, "where"),
+        limit: typeof args.limit === "number" ? args.limit : undefined,
+      });
     case "add_data": {
       const result = await addData(
         files,
@@ -307,7 +353,7 @@ async function callTool(
     case "fields":
       return fields(files, { query: str(args, "query") });
     case "reference":
-      return reference({ topic: str(args, "topic") });
+      return reference({ topic: str(args, "topic"), brief: true });
     case "check":
       return check(
         files,

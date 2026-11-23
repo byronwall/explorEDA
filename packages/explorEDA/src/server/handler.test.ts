@@ -316,6 +316,7 @@ source @many db=app table=contract_many limit=5
       "check",
       "write_eda",
       "add_data",
+      "summarize",
       "project",
       "read_eda",
       "rename_eda",

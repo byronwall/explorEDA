@@ -72,3 +72,17 @@ Both agents connected with one config line, `node <tarball>/dist/cli/exploreda.j
 - Run 3 found that `describe` named charts by internal type (`bar` for `hist`). It now uses the word the text starts the chart with.
 
 The run 4 files and feedback report are in [output-m5/](output-m5/).
+
+## Agent-loop pass (run 5)
+
+After the launch, a pass added `summarize` (a query's real numbers, grouped), notes for charts that share a title, a brief per-chart `reference` with a chart's own settings first, and server instructions that state the rules earlier agents learned by failing. [Run 5](run-5-transcript.md) repeated run 2's request through the packed command:
+
+| Hard product-mix task    | Run 2 | Run 4            | Run 5            |
+| ------------------------ | ----- | ---------------- | ---------------- |
+| Rounds that needed a fix | 6     | 5                | 2                |
+| Time                     | —     | 2 min 20 s       | 67 s             |
+| Cost                     | $1.14 | $1.21            | $0.87            |
+| Reference text read      | —     | 25.9k characters | 19.0k characters |
+| Prose cites real figures | no    | no               | yes              |
+
+The agent called `summarize` six times: to confirm each chart's numbers, to check that items add up to each order's amount, and to cite "$5,862 of the $12,645 … about 46%" in the notebook. Its feedback found one more misleading fix: a dotted field in a calc formula got "Did you mean items.itemId?". The fix now says to write `["items.revenue"]` or to alias it.

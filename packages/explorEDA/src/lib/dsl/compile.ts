@@ -967,6 +967,11 @@ export function compileDocument(
       skippedCalcs.add(name);
       for (const unknown of rewritten.unknown) {
         const near = closestName(unknown, knownNames());
+        // items.revenue in a formula reads as items, then .revenue.
+        const dotted = new RegExp(
+          `\\b${unknown.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\.([A-Za-z_]\\w*)`
+        ).exec(formula);
+        const field = dotted ? `${unknown}.${dotted[1]}` : undefined;
         report(
           "error",
           "calculation-skipped",
@@ -976,9 +981,12 @@ export function compileDocument(
             : `${subject} uses ${unknown}, which is not a field, alias, or calculation, so it was skipped.`,
           {
             subject,
-            suggestion: near
-              ? `Did you mean ${near}?`
-              : "Name a source field, an alias, or another calculation.",
+            suggestion:
+              field && sourceSet.has(field)
+                ? `A field with a dot goes in brackets in a formula: ["${field}"]. Or alias it first, as ${dotted![1]}:num=${field}, and use ${dotted![1]}.`
+                : near
+                  ? `Did you mean ${near}?`
+                  : "Name a source field, an alias, or another calculation.",
           }
         );
       }

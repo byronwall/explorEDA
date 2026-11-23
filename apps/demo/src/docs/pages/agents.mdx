@@ -41,20 +41,21 @@ That key changes on every run, so `exploreda mcp` is the easier choice.
 
 ## What the agent can do
 
-| Tool              | What it does                                                                                                                                              |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `project`         | Shows the folder at a glance: the project text's path, each source with its file and row count, the queries, every analysis and notebook, the data files. |
-| `fields`          | Lists each query's fields as an analysis names them, such as `orders.amount`, with types and example values.                                              |
-| `reference`       | Returns the dashboard grammar, the project and notebook grammar, or every setting of one chart, such as `hist`.                                           |
-| `check`           | Builds an analysis's text against your data without saving it, and returns its views, chart counts, and each problem with its fix.                        |
-| `add_data`        | Adds a data file from a local path, rows the agent sends, or a CSV or JSON address, and a source for it in the project text.                              |
-| `read_eda`        | Returns a file's text and its version.                                                                                                                    |
-| `write_eda`       | Saves an analysis (`.eda`), a notebook (`.eda.md`), or the project text (`exploreda.eda`), then returns what `check` returns.                             |
-| `rename_eda`      | Moves an analysis or notebook to a free path.                                                                                                             |
-| `delete_eda`      | Deletes an analysis or notebook. It never deletes the project text.                                                                                       |
-| `format`          | Indents and tidies text the way the app saves it, without saving.                                                                                         |
-| `describe`        | Lists each view's query, row count, and charts, the charts that were skipped, and every problem.                                                          |
-| `submit_feedback` | Reports a problem with these tools, with a proposed fix, as a file under `.exploreda/feedback/`.                                                          |
+| Tool              | What it does                                                                                                                                                                                                  |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `project`         | Shows the folder at a glance: the project text's path, each source with its file and row count, the queries, every analysis and notebook, the data files.                                                     |
+| `fields`          | Lists each query's fields as an analysis names them, such as `orders.amount`, with types and example values.                                                                                                  |
+| `reference`       | Returns the dashboard grammar, the project and notebook grammar, or every setting of one chart, such as `hist`.                                                                                               |
+| `check`           | Builds an analysis's text against your data without saving it, and returns its views, chart counts, and each problem with its fix.                                                                            |
+| `add_data`        | Adds a data file from a local path, rows the agent sends, or a CSV or JSON address, and a source for it in the project text.                                                                                  |
+| `summarize`       | Returns a query's real numbers: rows grouped by a field and counted or measured, largest first, with an optional filter such as `orders.amount > 100`. The agent uses it to check a chart or to cite figures. |
+| `read_eda`        | Returns a file's text and its version.                                                                                                                                                                        |
+| `write_eda`       | Saves an analysis (`.eda`), a notebook (`.eda.md`), or the project text (`exploreda.eda`), then returns what `check` returns.                                                                                 |
+| `rename_eda`      | Moves an analysis or notebook to a free path.                                                                                                                                                                 |
+| `delete_eda`      | Deletes an analysis or notebook. It never deletes the project text.                                                                                                                                           |
+| `format`          | Indents and tidies text the way the app saves it, without saving.                                                                                                                                             |
+| `describe`        | Lists each view's query, row count, and charts, the charts that were skipped, and every problem.                                                                                                              |
+| `submit_feedback` | Reports a problem with these tools, with a proposed fix, as a file under `.exploreda/feedback/`.                                                                                                              |
 
 An agent works in a loop: it reads the fields and the grammar, writes an analysis, and fixes each problem the result lists until the analysis is complete. Everything it saves is ordinary [dashboard text](/docs/dashboard-text) that you can open, edit, and commit.
 
@@ -82,7 +83,7 @@ Part of a real `check` result, from an agent whose second view named the wrong q
 }
 ```
 
-`write_eda` returns the same, with the path it saved and the file's new `version`.
+`write_eda` returns the same, with the path it saved and the file's new `version`. When something builds but would read poorly, such as two charts with the same title, the result also has `notes`.
 
 ### You and the agent can edit at the same time
 
