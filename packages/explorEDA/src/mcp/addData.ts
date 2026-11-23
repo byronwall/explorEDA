@@ -8,7 +8,6 @@ import { addSourceText, sourceIdForFile } from "@/lib/project/createFolder";
 import {
   isAbsolutePath,
   normalizeProjectPath,
-  ProjectFileError,
   type ProjectFiles,
 } from "@/lib/project/files";
 import {
@@ -273,7 +272,7 @@ export async function addData(
     await files.write(projectPath, projectText);
   } catch (error) {
     // Leave no data file without its source.
-    if (error instanceof ProjectFileError && error.path === projectPath) {
+    if ((error as { path?: string }).path === projectPath) {
       await files.remove(path).catch(() => undefined);
     }
     throw error;
