@@ -1,5 +1,28 @@
 # exploreda
 
+## 0.5.0
+
+### Minor Changes
+
+- f31a940: Agents can now read, rename, delete, and format analyses, write project text, and describe what each view built. A write over a file someone edited since the agent read it is refused, and the open app shows every agent change.
+- 119a650: Agents can start a project from data with add_data: copy a local CSV or JSON file in, write rows, or fetch a CSV or JSON address, with size, page, redirect, and time limits.
+- 241f277: Agents connect with one config line: `exploreda mcp [folder]` joins the exploreda running on the folder through .exploreda/server.json, or starts one.
+- bd2e7c1: Agents get a summarize tool for a query's real numbers, notes when charts in a view share a title, a shorter per-chart reference, and server instructions with the rules that save check rounds.
+- 6cc9a3d: `Chart` and `ChartSettings` accept one chart's Dashboard text as `config`, such as `"scatter x=Price y=Rating"`. A line that builds no chart shows the compiler's message.
+- 6b7b1eb: Draw one chart from rows and a config with `Chart` from `exploreda/chart`, without the workspace. Each chart is independent and shows hover readouts; clicks select nothing.
+- bb2cd65: Edit standalone charts at runtime: pass `onConfigChange` to `Chart` for a settings button, or place `ChartSettings` yourself. Both are controlled by `config`, and `fields` limits the fields they offer. `chart.css` rules now win over a host page's element rules, such as a page-wide `button` style.
+- c0382b8: `exploreda/chart` now loads each chart type's code the first time a chart of that type draws, so a page downloads only the types it shows. To register types up front instead, import `Chart` from `exploreda/chart-core` and call `registerCharts`. Every chart type has its own `exploreda/charts/<type>` import, and with `chart-core` an unregistered type shows the import to add.
+- 6ddac42: Import `exploreda/dist/chart.css` to style standalone charts without changing the host page: it has no global reset and keeps its theme variables on each chart. Box plots no longer fail in apps whose bundler loads `natsort` as CommonJS.
+- 790a93d: The exploreda command now answers MCP agents at /mcp with the run's key. An agent can list fields, read the grammar, check and save analyses, and report problems with the tools to .exploreda/feedback/.
+
+### Patch Changes
+
+- cac8503: Agent tools handle bad input better: add_data charts a data file already in the folder and refuses an invalid source ID before writing; summarize reads quoted values and says why a text field or a query with parameters can't be measured.
+- d5bed24: Clearer dashboard text problems: a setting that doesn't fit now says what it needs, a pivot value with no field says how to name one, and a calc that names another query's field points at its own line. spec.lower or spec.upper alone now works on a histogram.
+- 54ed024: `onConfigChange` no longer fires when a chart fills in its own defaults after mounting, such as a line chart's series colors. It fires only for a reader's edits.
+- fd82628: `onConfigChange` now reports the short config: the type, its main field, and only the settings that differ from the defaults. A config that cannot draw, such as a mistyped `type`, shows its error in that chart's place instead of failing the host page.
+- 3c1453a: Standalone charts follow a dark host page's palette. Their settings no longer show workspace-only filter controls and selection hints. In every settings panel, native selects match the other controls, and all tabs fit.
+
 ## 0.4.0
 
 ### Minor Changes
