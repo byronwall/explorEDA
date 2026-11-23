@@ -483,7 +483,12 @@ export function compileDocument(
           "setting-ignored",
           pair.span,
           `${pair.key} is not a view setting, so it was ignored.`,
-          { suggestion: 'Name the view, as in view "Overview".' }
+          {
+            // In a view's body, an alias line reads as a view setting.
+            suggestion: pair.key.includes(":")
+              ? `Write the alias above the views, outside any view body: ${pair.key}=${pair.value.raw}.`
+              : 'Name the view, as in view "Overview".',
+          }
         );
       }
     }

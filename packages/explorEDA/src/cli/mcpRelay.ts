@@ -115,6 +115,14 @@ export async function mcpCommand(args: string[], open: Open) {
     return opened;
   });
 
+  // An agent may end this process with a signal instead of closing stdin;
+  // stop the server it started either way, so its record goes too.
+  for (const signal of ["SIGINT", "SIGTERM"] as const) {
+    process.once(signal, () => {
+      void Promise.resolve(opened?.stop()).finally(() => process.exit(0));
+    });
+  }
+
   // One message per line, answered in order.
   let queue = Promise.resolve();
   const lines = createInterface({ input: process.stdin });

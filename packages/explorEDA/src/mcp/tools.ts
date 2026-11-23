@@ -408,7 +408,7 @@ export async function project(files: ProjectFiles): Promise<ProjectSummary> {
 
 export interface DescribedChart {
   name: string;
-  type: string;
+  word: string;
   line: number;
   title?: string;
 }
@@ -443,7 +443,8 @@ export async function describe(
   ): DescribedChart[] =>
     results.map((chart) => ({
       name: chart.subject,
-      type: chart.type,
+      // The word the text starts the chart with, as hist, not bar.
+      word: chart.subject.split(" ")[0]!,
       line: chart.line,
       ...(chart.id && titles.get(chart.id)
         ? { title: titles.get(chart.id) }
@@ -466,10 +467,7 @@ export async function describe(
           name: view.name,
           query: view.queryId,
           rows: rowsOf(view.queryId, view.bindings as Record<string, never>),
-          charts: view.settings.charts.map((chart) => ({
-            type: chart.type,
-            title: chart.title,
-          })),
+          charts: view.settings.charts.map((chart) => chart.title),
         })),
         charts: charted(analysis.result.charts, titles),
         skipped: charted(analysis.result.skippedCharts, titles),

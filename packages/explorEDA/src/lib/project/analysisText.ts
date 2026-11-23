@@ -165,7 +165,22 @@ export function readAnalysisText(
       oneRowPer: oneRowPer(index),
     })
   );
-  const diagnostics = [...problems, ...result.diagnostics];
+  // Aliases, calc, and group lines reach every view, so with views on
+  // two queries, a field one query lacks fails in the other's view. The
+  // usual fixes then point at the other query's names; say the real rule.
+  const queries = [...new Set(targets.map((target) => target.queryId))];
+  const scoped =
+    queries.length > 1
+      ? result.diagnostics.map((item) =>
+          /not a field|needs by=|could not run/.test(item.message)
+            ? {
+                ...item,
+                suggestion: `This file's views chart ${queries.join(" and ")}. Alias, calc, and group lines reach every view, so each must name fields that every one of those queries has. Put views on another query in a file of their own.`,
+              }
+            : item
+        )
+      : result.diagnostics;
+  const diagnostics = [...problems, ...scoped];
   return {
     name: result.name,
     views: result.views.map((view, index) => ({

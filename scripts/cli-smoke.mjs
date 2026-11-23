@@ -183,6 +183,106 @@ try {
   if (eager.length) fail(`exploreda loads chart code at start: ${eager}`);
 }
 
+// An agent's one config line: exploreda mcp over stdio. No server runs on
+// the sample now, so the relay starts one for itself.
+{
+  const relay = npx(["exploreda", "mcp", "--example", "--port", "0"]);
+  let stderr = "";
+  relay.stderr.on("data", (chunk) => (stderr += chunk));
+  const replies = new Map();
+  let pending = "";
+  relay.stdout.on("data", (chunk) => {
+    pending += chunk;
+    const lines = pending.split("\n");
+    pending = lines.pop();
+    for (const line of lines.filter(Boolean)) {
+      const reply = JSON.parse(line);
+      replies.set(reply.id, reply);
+    }
+  });
+  const send = (message) =>
+    relay.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", ...message })}\n`);
+  const reply = (id) =>
+    new Promise((resolve, reject) => {
+      const started = Date.now();
+      const poll = setInterval(() => {
+        if (replies.has(id)) {
+          clearInterval(poll);
+          resolve(replies.get(id));
+        } else if (Date.now() - started > 60_000) {
+          clearInterval(poll);
+          reject(new Error(`no reply ${id} after 60 s:\n${stderr}`));
+        }
+      }, 100);
+    });
+  try {
+    send({
+      id: 1,
+      method: "initialize",
+      params: {
+        protocolVersion: "2025-06-18",
+        capabilities: {},
+        clientInfo: { name: "cli-smoke", version: "1" },
+      },
+    });
+    const init = await reply(1);
+    if (init.result?.serverInfo?.name !== "exploreda")
+      fail(`exploreda mcp initialize answered ${JSON.stringify(init)}`);
+    send({ method: "notifications/initialized" });
+    send({
+      id: 2,
+      method: "tools/call",
+      params: {
+        name: "check",
+        arguments: {
+          path: "orders.eda",
+          text: readFileSync(
+            path.join(cwd, "exploreda-example", "orders.eda"),
+            "utf8"
+          ),
+        },
+      },
+    });
+    const checked = (await reply(2)).result?.structuredContent;
+    if (!checked?.complete || !checked.charts)
+      fail(`exploreda mcp check answered ${JSON.stringify(checked)}`);
+    else
+      console.log(
+        `exploreda mcp check built ${checked.charts} charts over stdio`
+      );
+    // A new file through the packed command: the call that once hung.
+    send({
+      id: 3,
+      method: "tools/call",
+      params: {
+        name: "write_eda",
+        arguments: {
+          path: "smoke-agent.eda",
+          text: "eda query=order-lines\nrow orders.channel\n",
+        },
+      },
+    });
+    const saved = await reply(3);
+    if (!saved.result?.structuredContent?.complete)
+      fail(`exploreda mcp write_eda answered ${JSON.stringify(saved)}`);
+    else console.log("exploreda mcp write_eda saved a new analysis over stdio");
+  } catch (error) {
+    fail(error.message);
+  } finally {
+    relay.stdin.end();
+    await new Promise((resolve) => {
+      const timer = setTimeout(() => {
+        stop(relay);
+        resolve();
+      }, 10_000);
+      relay.on("exit", () => {
+        clearTimeout(timer);
+        resolve();
+      });
+    });
+  }
+}
+
 const check = runSync("npx", [
   "--no-install",
   "exploreda-dsl",

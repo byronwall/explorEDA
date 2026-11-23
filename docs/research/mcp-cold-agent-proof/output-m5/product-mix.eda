@@ -1,0 +1,32 @@
+eda query=item-lines
+dashboard "Product mix"
+
+revenue:num=items.revenue label=Revenue
+category:cat=product.category label=Category
+buyer:cat=customer.name label=Customer
+month:date=order.orderedAt label=Ordered
+amount:num=order.amount label="Order amount"
+channel:cat=order.channel label=Channel
+calc orderPart = revenue / amount
+calc largePart = if amount > 100 then orderPart else 0
+group @byCategory sum(revenue) by=category
+group @byCustomer sum(revenue) by=buyer
+group @largeShare sum(largePart) by=channel denominatorField=orderPart
+
+view "Product mix" {
+  metric @total sum(revenue) title="Item revenue"
+  row @categories category group=byCategory title="Revenue by category"
+  line @monthly x=month time.interval=month time.aggregation=sum time.measureField=revenue time.splitField=category time.display=stacked-area {
+    title="Revenue per month by category"
+  }
+  row @customers buyer group=byCustomer topN=5 title="Top customers by revenue"
+  row @largeByChannel channel group=largeShare valueFormat=percent valueDecimals=0 {
+    title="Share of orders over $100 by channel"
+    note="Each item counts as its fraction of its order, so every order counts once."
+  }
+  layout {
+    2: total
+    5: categories:4 monthly:8
+    5: customers largeByChannel
+  }
+}

@@ -1,0 +1,4 @@
+project @orders
+
+# data/orders.csv fetched from https://raw.githubusercontent.com/byronwall/explorEDA/main/packages/explorEDA/examples/shop/data/orders.csv on 2026-11-23
+source @orders path=data/orders.csv

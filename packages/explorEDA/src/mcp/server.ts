@@ -197,7 +197,7 @@ const TOOLS = [
     name: "describe",
     title: "Describe what built",
     description:
-      "Every view of each analysis and notebook: its query, row count, and charts with types and titles, plus charts that were skipped and every problem. path limits it to one file.",
+      "Every view of each analysis and notebook: its query, row count, and chart titles; each chart with the word that starts it and its line; charts that were skipped; and every problem. path limits it to one file.",
     inputSchema: {
       type: "object",
       properties: {
