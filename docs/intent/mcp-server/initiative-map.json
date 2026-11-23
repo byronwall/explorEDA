@@ -5,10 +5,10 @@
     "slug": "mcp-server",
     "scale": "capability",
     "current_phase": "plan",
-    "last_updated": "2026-10-13",
+    "last_updated": "2026-11-22",
     "summary": "An exploreda MCP server lets an outside agent kick off a project from data or .eda files, build and revise views, and get DSL check, field, and reference feedback, with coverage growing toward everything a user can control.",
-    "status": "planned",
-    "next_action": "Start M1: shared tool module, checker bundle, /mcp route, then the cold-agent proof."
+    "status": "in-progress",
+    "next_action": "Start M2: server.json discovery and the exploreda mcp relay. Fix the checker messages the M1 proof found."
   },
   "artifacts": {
     "intent_brief": {
@@ -222,7 +222,7 @@
     "open_decisions": []
   },
   "implementation": {
-    "status": "planned",
+    "status": "in-progress",
     "repository_snapshot": {
       "root": "packages/explorEDA",
       "revision": "6896d6f0",
@@ -297,13 +297,17 @@
       {
         "id": "m1",
         "title": "A cold agent builds a dashboard through four tools",
-        "outcome": "check, fields, reference, write_eda served from /mcp on the running server; a cold agent reaches a built dashboard on the shop example.",
+        "outcome": "check, fields, reference, write_eda served from /mcp on the running server; a cold agent reaches a built dashboard on the shop example. Adds submit_feedback (TASK-0045).",
         "dependencies_introduced": ["MCP protocol"],
         "proof": "Vitest over memory files; exploreda-dsl output unchanged; recorded cold-agent transcript with round count.",
         "valid_intermediate_state": "exploreda works unchanged; /mcp needs a pasted key.",
         "rollback": "Remove the /mcp route and checker bundle entry.",
-        "status": "planned",
-        "evidence": []
+        "status": "done",
+        "evidence": [
+          "raw/proof/README.md",
+          "raw/proof/run-1-transcript.md",
+          "raw/proof/run-2-transcript.md"
+        ]
       },
       {
         "id": "m2",
@@ -358,8 +362,7 @@
       "Progress notifications, resources, prompts"
     ],
     "open_decisions": [
-      "SDK vs hand-written handler (M1)",
-      "Finer edit tools (M3, decided by M1 proof)"
+      "Finer edit tools (M3): M1 proof says whole-file writes are enough; fix checker messages first"
     ]
   },
   "history": [
@@ -378,6 +381,10 @@
     {
       "date": "2026-10-13",
       "event": "Implementation plan written: five milestones from a four-tool cold-agent proof to launch."
+    },
+    {
+      "date": "2026-11-22",
+      "event": "M1 built: tool module, exploreda-tools bundle, /mcp route, submit_feedback. Cold-agent proof: 0 and 6 rounds; whole-file writes kept; hand-written handler chosen."
     }
   ],
   "closure": null

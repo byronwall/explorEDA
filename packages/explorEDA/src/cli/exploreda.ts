@@ -3,7 +3,7 @@ import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { existsSync, promises as fs, statSync } from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { globalConfigStore } from "../node/globalConfig";
 import { nodeProjectFiles } from "../node/projectFiles";
 import { fileSecretStore } from "../node/secrets";
@@ -188,6 +188,9 @@ async function main(args: string[]) {
       hidden: parsed.hidden,
       config: globalConfigStore(),
       secrets: fileSecretStore(),
+      // A path, not a module name, so the bundler leaves it for runtime.
+      loadMcp: () =>
+        import(pathToFileURL(path.join(here, "exploreda-tools.js")).href),
       port: parsed.port,
     });
   } catch (error) {

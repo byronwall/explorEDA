@@ -31,7 +31,9 @@ exploreda MCP
 │   │   │   └── each problem with its line, message, and suggested fix
 │   │   ├── fields: names, types, and example values per source
 │   │   ├── reference: the grammar, or one chart type's settings
-│   │   └── describe: the built views, with chart counts, row counts, and problems
+│   │   ├── describe: the built views, with chart counts, row counts, and problems
+│   │   └── submit_feedback: the agent reports a confusing problem or a missing
+│   │       tool, with a proposed fix, as a file under .exploreda/feedback/
 │   ├── Editing tools: read, write, rename, and delete analyses; format text
 │   │   ├── every write returns the check result, so check-and-fix is one loop
 │   │   └── a write fails if the file changed since the agent read it

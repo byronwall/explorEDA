@@ -44,6 +44,11 @@ export interface HandlerOptions {
   config?: ConfigStore;
   /** Database passwords on this machine, outside every project. */
   secrets?: SecretStore;
+  /**
+   * Loads the agent tools for `/mcp`. They bundle every chart, so the
+   * command loads them on the first call. Without it, there is no `/mcp`.
+   */
+  loadMcp?: () => Promise<typeof import("../mcp/server")>;
 }
 
 type Next = () => void;
@@ -87,12 +92,62 @@ export function createRequestHandler(options: HandlerOptions) {
     version,
     layout: options.hidden ? "hidden" : "visible",
   };
+  let mcp: ReturnType<NonNullable<HandlerOptions["loadMcp"]>> | undefined;
+  const mcpRoute = async (req: IncomingMessage, res: ServerResponse) => {
+    const bearer = /^Bearer (.+)$/.exec(req.headers.authorization ?? "")?.[1];
+    const header = req.headers[TOKEN_HEADER];
+    if (
+      !sameToken(bearer ?? (Array.isArray(header) ? header[0] : header), token)
+    ) {
+      send(res, 401, {
+        error:
+          "Send this run's key as Authorization: Bearer <key>; it is the token= in the link the exploreda command printed.",
+      });
+      return;
+    }
+    if (req.method !== "POST") {
+      // No server-sent stream: every reply comes back on its POST.
+      send(res, 405, { error: "POST one JSON-RPC message." }, undefined, {
+        allow: "POST",
+      });
+      return;
+    }
+    let id: unknown = null;
+    try {
+      const message = JSON.parse(await readBody(req));
+      id = message?.id ?? null;
+      const { handleMcpMessage } = await (mcp ??= options.loadMcp!());
+      const reply = await handleMcpMessage(message, {
+        files,
+        version,
+        onWrite: broadcast,
+      });
+      if (reply) {
+        send(res, 200, reply);
+      } else {
+        res.writeHead(202).end();
+      }
+    } catch (error) {
+      send(res, error instanceof SyntaxError ? 400 : 500, {
+        jsonrpc: "2.0",
+        id,
+        error: {
+          code: error instanceof SyntaxError ? -32700 : -32603,
+          message: error instanceof Error ? error.message : String(error),
+        },
+      });
+    }
+  };
   return async (req: IncomingMessage, res: ServerResponse, next?: Next) => {
     const url = new URL(req.url ?? "/", "http://localhost");
     if (!isLocalHost(req.headers.host)) {
       send(res, 403, {
         error: "This server answers only to 127.0.0.1 and localhost.",
       });
+      return;
+    }
+    if (url.pathname === "/mcp" && options.loadMcp) {
+      await mcpRoute(req, res);
       return;
     }
     if (!url.pathname.startsWith("/api/")) {

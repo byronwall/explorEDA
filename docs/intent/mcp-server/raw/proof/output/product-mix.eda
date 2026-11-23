@@ -1,0 +1,33 @@
+eda query=item-lines
+
+view "Product mix" {
+  composition @catRevenue height=320 {
+    title "Revenue by category" at=24,16
+    unit Categories at=24,60 size=420x220 {
+      bar Revenue aggregation=sum measureField=items.revenue categoryField=product.category order=total
+    }
+  }
+  line @monthly x=order.orderedAt time.interval=month time.aggregation=sum time.measureField=items.revenue time.splitField=product.category time.display=stacked-area title="Monthly revenue by category"
+  composition @topCustomers height=420 {
+    title "Top customers by revenue" at=24,16
+    unit Customers at=24,60 size=760x320 {
+      bar Revenue aggregation=sum measureField=items.revenue categoryField=customer.name order=total
+    }
+  }
+  layout {
+    4: catRevenue:5 monthly:7
+    5: topCustomers
+  }
+}
+
+view "Large orders" query=order-lines {
+  bar @largeCount orders.channel where.orders.amount=100.. title="Orders over $100 by channel" y.title="Large orders"
+  bar @allCount orders.channel title="All orders by channel" y.title="Orders"
+  ecdf @amountEcdf orders.amount facet.enabled=true facet.rowVariable=orders.channel facet.columnCount=3 title="Cumulative share of orders by amount, per channel" subtitle="The share above the $100 line is the large-order share" {
+    rule x=100 "$100"
+  }
+  layout {
+    4: largeCount allCount
+    4: amountEcdf
+  }
+}

@@ -47,7 +47,13 @@ export default defineConfig([
   {
     // A self-contained checker for agents and scripts. It bundles the chart
     // definitions so every chart starts from the app's own defaults.
-    entry: { "exploreda-dsl": "src/cli/exploredaDsl.ts" },
+    // exploreda-tools is the same checker as MCP tools; the `exploreda`
+    // command imports it on an agent's first /mcp call, so the command
+    // itself starts without chart code.
+    entry: {
+      "exploreda-dsl": "src/cli/exploredaDsl.ts",
+      "exploreda-tools": "src/mcp/server.ts",
+    },
     outDir: "dist/cli",
     format: ["esm"],
     platform: "node",
