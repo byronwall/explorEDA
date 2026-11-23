@@ -16,6 +16,8 @@ import {
   type DslDiagnostic,
 } from "@/lib/dsl";
 import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
+import { COMMON_WORDS } from "@/lib/dsl/schema";
+import { AGGREGATIONS, isAggregation, reduceNumbers } from "@/lib/aggregates";
 import {
   isAbsolutePath,
   normalizeProjectPath,
@@ -50,6 +52,8 @@ export interface CheckResult {
   charts: number;
   /** This file's problems, then the project text's. */
   problems: ToolProblem[];
+  /** What builds but reads poorly to a person, such as repeated titles. */
+  notes?: string[];
 }
 
 /** A tool's refusal: the reason and what to send instead. */
@@ -143,7 +147,22 @@ function resultFor(read: ProjectFolder, path: string): CheckResult {
   const charts =
     analysis?.result.charts.length ?? notebook?.result.charts.length ?? 0;
   const built = analysis?.result.complete ?? notebook?.result.complete ?? true;
+  // A person reads titles; the same one twice says nothing.
+  const notes = (analysis?.result.views ?? []).flatMap((view) => {
+    const seen = new Map<string, number>();
+    for (const chart of view.settings.charts) {
+      const title = chart.title?.trim() || "(no title)";
+      seen.set(title, (seen.get(title) ?? 0) + 1);
+    }
+    return [...seen]
+      .filter(([, count]) => count > 1)
+      .map(
+        ([title, count]) =>
+          `${count} charts in view ${view.name} are titled ${JSON.stringify(title)}; give each a title= that says what it shows.`
+      );
+  });
   return {
+    ...(notes.length ? { notes } : {}),
     path,
     complete: built && !problems.some((item) => item.path === path),
     views,
@@ -561,6 +580,110 @@ export async function fields(
   };
 }
 
+const COMPARE = {
+  "=": (a: unknown, b: unknown) => String(a) === String(b),
+  "!=": (a: unknown, b: unknown) => String(a) !== String(b),
+  ">": (a: unknown, b: unknown) => Number(a) > Number(b),
+  ">=": (a: unknown, b: unknown) => Number(a) >= Number(b),
+  "<": (a: unknown, b: unknown) => Number(a) < Number(b),
+  "<=": (a: unknown, b: unknown) => Number(a) <= Number(b),
+} as const;
+
+export interface SummarizeInput {
+  query: string;
+  /** A field to group by; omit for one total. */
+  by?: string;
+  /** The field to measure; omit to count rows. */
+  measure?: string;
+  aggregation?: string;
+  /** Keep rows where this holds, as "orders.amount > 100". */
+  where?: string;
+  limit?: number;
+}
+
+/**
+ * A query's rows grouped and measured, largest first: the numbers a chart
+ * of them would show, for prose and for checking a chart's intent.
+ */
+export async function summarize(files: ProjectFiles, input: SummarizeInput) {
+  const read = await readProjectFolder(files);
+  if (!read.project.queries.some((item) => item.id === input.query)) {
+    throw new ToolError(
+      `No query is named ${input.query}.`,
+      `Use one of: ${read.project.queries.map((item) => item.id).join(", ")}.`
+    );
+  }
+  const aggregation = input.aggregation ?? (input.measure ? "sum" : "count");
+  if (
+    !isAggregation(aggregation) ||
+    (aggregation !== "count" && !input.measure)
+  ) {
+    throw new ToolError(
+      `aggregation ${aggregation} needs ${isAggregation(aggregation) ? "a measure field" : "to be one of " + AGGREGATIONS.join(", ")}.`,
+      'Send measure="orders.amount" with sum, average, max, or min; count needs none.'
+    );
+  }
+  let rows = evaluateAnalysisQuery(
+    read.project,
+    read.tables,
+    input.query
+  ).rows.map((row) => row.data);
+  const fieldsOf = Object.keys(rows[0] ?? {});
+  for (const field of [input.by, input.measure]) {
+    if (field && rows.length && !fieldsOf.includes(field)) {
+      throw new ToolError(
+        `${field} is not a field of ${input.query}.`,
+        `Fields: ${fieldsOf.join(", ")}.`
+      );
+    }
+  }
+  if (input.where) {
+    const match = /^\s*(\S+)\s*(!=|>=|<=|=|>|<)\s*(.+?)\s*$/.exec(input.where);
+    if (!match || !fieldsOf.includes(match[1]!)) {
+      throw new ToolError(
+        `where ${input.where} isn't field op value with a field of ${input.query}.`,
+        'Write it as "orders.amount > 100" or "orders.channel = Web".'
+      );
+    }
+    const [, field, op, raw] = match;
+    const value = raw!.replace(/^"(.*)"$/, "$1");
+    rows = rows.filter((row) =>
+      COMPARE[op as keyof typeof COMPARE](row[field!], value)
+    );
+  }
+  const groups = new Map<string, typeof rows>();
+  for (const row of rows) {
+    const key = input.by ? String(row[input.by] ?? "(missing)") : "all rows";
+    groups.set(key, [...(groups.get(key) ?? []), row]);
+  }
+  const measured = [...groups].map(([key, members]) => {
+    const numbers = input.measure
+      ? members
+          .map((row) => Number(row[input.measure!]))
+          .filter((number) => Number.isFinite(number))
+      : [];
+    const value =
+      aggregation === "count"
+        ? members.length
+        : reduceNumbers(aggregation, numbers);
+    return {
+      [input.by ?? "group"]: key,
+      value: value === undefined ? null : Math.round(value * 1000) / 1000,
+      rows: members.length,
+    };
+  });
+  measured.sort((a, b) => (b.value ?? -Infinity) - (a.value ?? -Infinity));
+  const limit = input.limit ?? 20;
+  return {
+    query: input.query,
+    measured: input.measure ? `${aggregation}(${input.measure})` : "count",
+    ...(input.where ? { where: input.where } : {}),
+    rows: rows.length,
+    groups: measured.slice(0, limit),
+    ...(measured.length > limit ? { more: measured.length - limit } : {}),
+  };
+}
+
 /** The words that start a chart, for `reference`. */
 function chartTypes() {
   return Object.keys(DSL_CHART_KEYWORDS);
@@ -570,7 +693,9 @@ function chartTypes() {
  * The grammar: with no topic, dashboard text; "project" and "notebook" for
  * those files; "composition" for its parts; or a chart type's settings.
  */
-export function reference(input: { topic?: string } = {}): { text: string } {
+export function reference(input: { topic?: string; brief?: boolean } = {}): {
+  text: string;
+} {
   const { topic } = input;
   if (!topic) {
     return {
@@ -582,6 +707,16 @@ export function reference(input: { topic?: string } = {}): { text: string } {
   }
   if (topic === "notebook") {
     return { text: NOTEBOOK_REFERENCE };
+  }
+  if (topic === "axes") {
+    return {
+      text: `Settings every chart takes:\n${Object.entries(COMMON_WORDS)
+        .map(
+          ([word, entry]) =>
+            `  ${word}=${entry.values?.join("|") ?? ""}  ${entry.help}`
+        )
+        .join("\n")}`,
+    };
   }
   registerAllCharts();
   if (topic === "composition") {
@@ -597,8 +732,18 @@ export function reference(input: { topic?: string } = {}): { text: string } {
       `Use project, notebook, composition, or a chart type: ${chartTypes().join(", ")}.`
     );
   }
+  // Brief: this chart's own settings first; the ones every chart takes
+  // (axes, color scale) as one line of names.
+  const common = Object.keys(COMMON_WORDS);
+  const shared = (line: string) =>
+    common.some((word) => line.startsWith(`${word}=`));
+  const shown = input.brief ? lines.filter((line) => !shared(line)) : lines;
   return {
-    text: `Settings for ${topic}:\n${lines.map((line) => `  ${line}`).join("\n")}`,
+    text: `Settings for ${topic}:\n${shown.map((line) => `  ${line}`).join("\n")}${
+      input.brief
+        ? `\n  Every chart also takes ${common.map((word) => `${word}=`).join(" ")} (reference topic=axes).`
+        : ""
+    }`,
   };
 }
 
