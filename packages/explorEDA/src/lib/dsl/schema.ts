@@ -69,7 +69,7 @@ export const TYPE_WORDS: Readonly<
     bins: { path: "binCount", help: "Number of bins for a numeric field" },
     "bins.mode": {
       path: "histogram.binning.mode",
-      help: "auto counts bins; width repeats a saved grid of equal bins",
+      help: "auto counts bins; width repeats a saved grid of equal bins and needs bins.width, bins.origin, bins.first, and bins.last",
       values: ["auto", "width"],
     },
     "bins.width": {

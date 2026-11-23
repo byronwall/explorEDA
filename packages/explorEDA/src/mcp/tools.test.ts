@@ -228,4 +228,28 @@ describe("MCP tools", () => {
     });
     expect(analyses[0]!.charts.length).toBeGreaterThan(0);
   });
+
+  it("gives a fix for each problem the cold agent couldn't fix", async () => {
+    const problems = async (body: string) =>
+      (
+        await check(shop(), {
+          path: "x.eda",
+          text: `eda query=order-lines\n${body}\n`,
+        })
+      ).problems;
+    expect(await problems("hist @h orders.amount spec.upper=100")).toEqual([]);
+    const [bins] = await problems(
+      "hist @h orders.amount bins.mode=width bins.width=100"
+    );
+    expect(bins?.fix).toMatch(/needs bins.width, bins.origin, bins.first/);
+    const [pivot] = await problems(
+      "pivot @p rows=orders.channel {\n  value count\n}"
+    );
+    expect(pivot?.fix).toMatch(/value count\(orders.orderId\)/);
+    const [calc] = await problems(
+      'calc big = ["order.amount"] > 100\nview A {\n  row orders.channel\n}'
+    );
+    expect(calc).toMatchObject({ line: 2 });
+    expect(calc?.fix).toMatch(/Did you mean orders.amount\?/);
+  });
 });
