@@ -24,6 +24,9 @@ import {
   type ToolOptions,
 } from "./tools";
 
+/** A source ID, as project text writes it after @. */
+const SOURCE_ID = /^[A-Za-z_][\w-]*$/;
+
 /** The largest file add_data takes, as the app's upload limit. */
 export const MAX_DATA_BYTES = 100 * 1024 * 1024;
 const MAX_REDIRECTS = 5;
@@ -161,8 +164,8 @@ function rowsOf(path: string, text: string, from: string) {
   }
   if (!rows.length) {
     throw new ToolError(
-      `${from} has no rows.`,
-      "Send a header row and at least one row."
+      `${from === "rows" ? "The rows you sent have" : `${from} has`} no data rows.`,
+      "Send a header row and at least one row below it."
     );
   }
   return rows;
@@ -180,10 +183,16 @@ export async function addData(
   const given = (["from", "rows", "url"] as const).filter(
     (key) => input[key] !== undefined
   );
-  if (given.length !== 1) {
+  if (given.length > 1) {
     throw new ToolError(
-      "Send exactly one of from, rows, or url.",
+      `Send one of from, rows, or url, not ${given.join(" and ")}.`,
       "from= copies a local file, rows= writes rows you send, url= fetches a file."
+    );
+  }
+  if (input.source !== undefined && !SOURCE_ID.test(input.source)) {
+    throw new ToolError(
+      `source ${JSON.stringify(input.source)} isn't an ID.`,
+      "Use letters, digits, - or _, starting with a letter, such as sales-2024."
     );
   }
   const path = isAbsolutePath(input.path)
@@ -196,16 +205,26 @@ export async function addData(
     );
   }
   const listed = await files.list();
-  if (listed.includes(path)) {
+  // A data file already in the folder only needs a source.
+  const adopt = listed.includes(path);
+  if (adopt && given.length) {
     throw new ToolError(
       `${path} already exists.`,
-      "Pick a new path; add_data never replaces a file."
+      `add_data never replaces a file. To chart the file already there, send only path="${path}".`
+    );
+  }
+  if (!adopt && !given.length) {
+    throw new ToolError(
+      `${path} isn't in the folder, and no data came with it.`,
+      "Send from=, rows=, or url=, or name a data file already in the folder (project lists them)."
     );
   }
 
   let text: string;
   let note: string | undefined;
-  if (input.from !== undefined) {
+  if (adopt) {
+    text = await files.read(path);
+  } else if (input.from !== undefined) {
     if (!isAbsolutePath(input.from)) {
       throw new ToolError(
         `${input.from} isn't an absolute path.`,
@@ -238,16 +257,28 @@ export async function addData(
     text = fetched.text;
     note = `# ${path} fetched from ${fetched.from} on ${(options.now ?? new Date()).toISOString().slice(0, 10)}`;
   }
-  const rows = rowsOf(path, text, input.from ?? input.url ?? "rows");
+  const rows = rowsOf(
+    path,
+    text,
+    adopt ? path : (input.from ?? input.url ?? "rows")
+  );
 
   // The source goes in the project text, where the app would put it.
   const { projectPath: existing } = projectLayout(listed);
   const projectPath =
     existing ?? (options.hidden ? HIDDEN_PROJECT_FILE : PROJECT_FILE);
   const current = existing ? await files.read(existing) : undefined;
-  const taken = current
-    ? compileProjectText(current).project.sources.map((source) => source.id)
-    : [];
+  const compiled = current ? compileProjectText(current) : undefined;
+  const taken = compiled?.project.sources.map((source) => source.id) ?? [];
+  const already = Object.entries(compiled?.paths ?? {}).find(
+    ([, file]) => file === path
+  )?.[0];
+  if (already) {
+    throw new ToolError(
+      `${path} is already source ${already}.`,
+      `Chart it in an analysis that starts with eda query=${already}.`
+    );
+  }
   const source = input.source ?? sourceIdForFile(path, taken);
   if (taken.includes(source)) {
     throw new ToolError(
@@ -268,11 +299,11 @@ export async function addData(
     : withSource;
 
   try {
-    await files.write(path, text);
+    if (!adopt) await files.write(path, text);
     await files.write(projectPath, projectText);
   } catch (error) {
     // Leave no data file without its source.
-    if ((error as { path?: string }).path === projectPath) {
+    if (!adopt && (error as { path?: string }).path === projectPath) {
       await files.remove(path).catch(() => undefined);
     }
     throw error;

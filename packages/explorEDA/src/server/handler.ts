@@ -134,7 +134,12 @@ export function createRequestHandler(options: HandlerOptions) {
         id,
         error: {
           code: error instanceof SyntaxError ? -32700 : -32603,
-          message: error instanceof Error ? error.message : String(error),
+          message:
+            error instanceof SyntaxError
+              ? `The request isn't JSON: ${error.message}`
+              : error instanceof Error
+                ? error.message
+                : String(error),
         },
       });
     }

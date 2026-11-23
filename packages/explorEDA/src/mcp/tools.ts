@@ -161,6 +161,9 @@ function resultFor(read: ProjectFolder, path: string): CheckResult {
           `${count} charts in view ${view.name} are titled ${JSON.stringify(title)}; give each a title= that says what it shows.`
       );
   });
+  if (analysis && !analysis.result.charts.length) {
+    notes.push("This file draws no charts yet.");
+  }
   return {
     ...(notes.length ? { notes } : {}),
     path,
@@ -188,6 +191,24 @@ async function target(files: ProjectFiles, path: string, hidden?: boolean) {
   return projectPath ?? (hidden ? HIDDEN_PROJECT_FILE : PROJECT_FILE);
 }
 
+/** Where to send an agent that names a query the project lacks. */
+function queryFix(queries: Array<{ id: string }>) {
+  return queries.length
+    ? `Use one of: ${queries.map((item) => item.id).join(", ")}.`
+    : "The project has no queries yet. Add data with add_data; each source becomes a query of its name.";
+}
+
+/** The parameters a query needs and wasn't given, from its evaluation. */
+function unboundParameters(diagnostics: Array<{ message: string }>) {
+  return [
+    ...new Set(
+      diagnostics.flatMap(
+        (item) => /^Parameter (\S+) is not bound/.exec(item.message)?.[1] ?? []
+      )
+    ),
+  ];
+}
+
 /** A short hash of a file's text; a write must send the one it read. */
 export function versionOf(text: string) {
   return createHash("sha1").update(text).digest("hex").slice(0, 12);
@@ -210,15 +231,25 @@ async function readIfThere(files: ProjectFiles, path: string) {
  * Refuses a change to an existing file unless `version` is the one its
  * text has now, so an edit made since the agent's read is never lost.
  */
-function guard(path: string, current: string, version: string | undefined) {
+function guard(
+  path: string,
+  current: string,
+  version: string | undefined,
+  action: "write" | "rename" | "delete" = "write"
+) {
   if (version === versionOf(current)) {
     return;
   }
+  const verb = { write: "Changing", rename: "Renaming", delete: "Deleting" }[
+    action
+  ];
   throw new ToolError(
     version
       ? `${path} changed since you read it; its version is now ${versionOf(current)}.`
-      : `${path} already exists, so a change needs the version read_eda gave.`,
-    `Call read_eda on ${path}, merge your change into its text, and send its version.`
+      : `${verb} ${path} needs the version read_eda gave, because it exists.`,
+    action === "write"
+      ? `Call read_eda on ${path}, merge your change into its text, and send its version.`
+      : `Call read_eda on ${path} and send its version.`
   );
 }
 
@@ -303,7 +334,7 @@ export async function renameEda(
   if (text === undefined) {
     throw new ToolError(`${from} doesn't exist.`);
   }
-  guard(from, text, input.version);
+  guard(from, text, input.version, "rename");
   if ((await readIfThere(files, to)) !== undefined) {
     throw new ToolError(
       `${to} already exists.`,
@@ -331,7 +362,7 @@ export async function deleteEda(
   if (text === undefined) {
     throw new ToolError(`${path} doesn't exist.`);
   }
-  guard(path, text, input.version);
+  guard(path, text, input.version, "delete");
   await files.remove(path);
   return { deleted: path };
 }
@@ -371,6 +402,9 @@ export interface ProjectSummary {
   notebooks: Array<{ path: string; charts: number; problems: number }>;
   /** Data files in the folder, used by a source or not. */
   dataFiles: string[];
+  /** Data files no source reads yet, and what to do about them. */
+  unsourced?: string[];
+  next?: string;
   problems: number;
 }
 
@@ -380,6 +414,8 @@ export async function project(files: ProjectFiles): Promise<ProjectSummary> {
   const read = await readProjectFolder(files);
   const count = (path: string) =>
     read.problems.filter((item) => item.path === path).length;
+  const sourced = new Set(Object.values(read.paths));
+  const unsourced = read.dataFiles.filter((file) => !sourced.has(file));
   return {
     layout: read.layout,
     ...(read.projectPath ? { projectPath: read.projectPath } : {}),
@@ -421,6 +457,12 @@ export async function project(files: ProjectFiles): Promise<ProjectSummary> {
       problems: count(notebook.path),
     })),
     dataFiles: read.dataFiles,
+    ...(unsourced.length
+      ? {
+          unsourced,
+          next: `${unsourced.length === 1 ? "This data file has" : "These data files have"} no source yet. Call add_data with only its path to chart it.`,
+        }
+      : {}),
     problems: read.problems.length,
   };
 }
@@ -548,7 +590,7 @@ export async function fields(
   if (input.query && !queries.length) {
     throw new ToolError(
       `No query is named ${input.query}.`,
-      `Use one of: ${project.queries.map((item) => item.id).join(", ")}.`
+      queryFix(project.queries)
     );
   }
   return {
@@ -561,10 +603,16 @@ export async function fields(
           query.id
         );
         const rows = evaluation.rows.map((row) => row.data);
+        const unbound = unboundParameters(evaluation.diagnostics);
         return {
           ...base,
           rows: rows.length,
           fields: describeDslSource(rows),
+          ...(unbound.length
+            ? {
+                note: `Needs values for ${unbound.join(", ")}, so it has no rows here. A view gives them, as view "One" query=${query.id} ${unbound.map((id) => `bind.${id}=…`).join(" ")}.`,
+              }
+            : {}),
         };
       } catch (error) {
         return {
@@ -610,7 +658,7 @@ export async function summarize(files: ProjectFiles, input: SummarizeInput) {
   if (!read.project.queries.some((item) => item.id === input.query)) {
     throw new ToolError(
       `No query is named ${input.query}.`,
-      `Use one of: ${read.project.queries.map((item) => item.id).join(", ")}.`
+      queryFix(read.project.queries)
     );
   }
   const aggregation = input.aggregation ?? (input.measure ? "sum" : "count");
@@ -623,11 +671,19 @@ export async function summarize(files: ProjectFiles, input: SummarizeInput) {
       'Send measure="orders.amount" with sum, average, max, or min; count needs none.'
     );
   }
-  let rows = evaluateAnalysisQuery(
+  const evaluation = evaluateAnalysisQuery(
     read.project,
     read.tables,
     input.query
-  ).rows.map((row) => row.data);
+  );
+  const unbound = unboundParameters(evaluation.diagnostics);
+  if (unbound.length) {
+    throw new ToolError(
+      `${input.query} needs values for ${unbound.join(", ")}, so it has no rows to summarize.`,
+      "Summarize the query it filters instead, with where= for the values you mean."
+    );
+  }
+  let rows = evaluation.rows.map((row) => row.data);
   const fieldsOf = Object.keys(rows[0] ?? {});
   for (const field of [input.by, input.measure]) {
     if (field && rows.length && !fieldsOf.includes(field)) {
@@ -646,9 +702,26 @@ export async function summarize(files: ProjectFiles, input: SummarizeInput) {
       );
     }
     const [, field, op, raw] = match;
-    const value = raw!.replace(/^"(.*)"$/, "$1");
+    // Agents quote text values either way.
+    const value = raw!.replace(/^(["'])(.*)\1$/, "$2");
     rows = rows.filter((row) =>
       COMPARE[op as keyof typeof COMPARE](row[field!], value)
+    );
+  }
+  if (
+    input.measure &&
+    aggregation !== "count" &&
+    rows.length &&
+    !rows.some(
+      (row) =>
+        Number.isFinite(Number(row[input.measure!])) &&
+        row[input.measure!] !== "" &&
+        row[input.measure!] != null
+    )
+  ) {
+    throw new ToolError(
+      `${input.measure} has no numbers, so ${aggregation} can't measure it.`,
+      `Group by it instead (by="${input.measure}"), or measure a number field.`
     );
   }
   const groups = new Map<string, typeof rows>();
@@ -673,7 +746,7 @@ export async function summarize(files: ProjectFiles, input: SummarizeInput) {
     };
   });
   measured.sort((a, b) => (b.value ?? -Infinity) - (a.value ?? -Infinity));
-  const limit = input.limit ?? 20;
+  const limit = Math.max(1, Math.round(input.limit ?? 20));
   return {
     query: input.query,
     measured: input.measure ? `${aggregation}(${input.measure})` : "count",
@@ -729,7 +802,7 @@ export function reference(input: { topic?: string; brief?: boolean } = {}): {
   if (!lines.length) {
     throw new ToolError(
       `${topic} is not a chart type or topic.`,
-      `Use project, notebook, composition, or a chart type: ${chartTypes().join(", ")}.`
+      `Use project, notebook, composition, axes, or a chart word: ${chartTypes().join(", ")}.`
     );
   }
   // Brief: this chart's own settings first; the ones every chart takes

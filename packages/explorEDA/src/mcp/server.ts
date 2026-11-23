@@ -27,7 +27,7 @@ import { addData } from "./addData";
 const PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 
 const INSTRUCTIONS = `explorEDA builds dashboards from .eda text in this project folder. A person may have the app open on it; every save shows there.
-Steps: project (sources, queries, files; an empty folder starts with add_data), fields (each query's fields), reference (the grammar; reference topic=<chart word> for one chart's settings), then write_eda. Each save returns every problem with its line and a fix; repeat until complete is true. check does the same without saving. summarize gives a query's real numbers, grouped, to check a chart or to cite in prose.
+Steps: project (sources, queries, files; an empty folder, or data files project lists as unsourced, start with add_data), fields (each query's fields), reference (the grammar; reference topic=<chart word> for one chart's settings), then write_eda. Each save returns every problem with its line and a fix; repeat until complete is true. check does the same without saving. summarize gives a query's real numbers, grouped, to check a chart or to cite in prose.
 Rules that save rounds:
 - An analysis starts with eda query=<id>, and names fields as fields lists them, such as orders.amount.
 - Alias, calc, and group lines reach every view in the file, so give each file one query. Put a view on another query in its own file.
@@ -110,7 +110,7 @@ const TOOLS = [
     name: "add_data",
     title: "Add data",
     description:
-      "Starts a project from data, or adds more: copies a local CSV or JSON file in (from), writes rows you send (rows), or fetches a CSV or JSON address (url). Adds a source for the file to the project text and returns its fields. Refuses files over 100 MB, web pages, and paths that exist.",
+      "Starts a project from data, or adds more: copies a local CSV or JSON file in (from), writes rows you send (rows), or fetches a CSV or JSON address (url). With only path, it adds a source for a data file already in the folder. Adds the source to the project text and returns its fields. Refuses files over 100 MB, web pages, and replacing a file.",
     inputSchema: {
       type: "object",
       properties: {
@@ -276,6 +276,16 @@ const TOOLS = [
 
 type Args = Record<string, unknown>;
 
+/** add_data's rows: text or an array, or a refusal that says so. */
+function rowsArg(rows: unknown) {
+  if (rows === undefined || typeof rows === "string" || Array.isArray(rows)) {
+    return rows as string | unknown[] | undefined;
+  }
+  throw new ToolError(
+    "rows must be CSV text, JSON text, or an array of row objects."
+  );
+}
+
 const str = (args: Args, key: string) =>
   typeof args[key] === "string" ? (args[key] as string) : undefined;
 
@@ -312,10 +322,7 @@ async function callTool(
         {
           path: need(args, "path"),
           from: str(args, "from"),
-          rows:
-            typeof args.rows === "string" || Array.isArray(args.rows)
-              ? (args.rows as string | unknown[])
-              : undefined,
+          rows: rowsArg(args.rows),
           url: str(args, "url"),
           source: str(args, "source"),
         },
