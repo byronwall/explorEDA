@@ -298,4 +298,12 @@ describe("MCP tools", () => {
     expect(brief).toMatch(/Every chart also takes x\.title=/);
     expect(brief.length).toBeLessThan(full.length);
   });
+
+  it("says to bracket a dotted field in a calc", async () => {
+    const { problems } = await check(shop(), {
+      path: "x.eda",
+      text: "eda query=order-lines\ncalc big = orders.amount > 100\nrow orders.channel title=Channels\n",
+    });
+    expect(problems[0]?.fix).toMatch(/\["orders\.amount"\]/);
+  });
 });
