@@ -26,7 +26,7 @@ Claude Code accepted the JSON-only responses (no server-sent stream) and listed 
 | [1](run-1-transcript.md) | Orders overview: revenue by channel and region, orders over time, order sizes                        | 3     | 0. The first `write_eda` came back complete.               | 8 charts, complete                                               |
 | [2](run-2-transcript.md) | Product mix across items and orders, a top-N list, a "large order" share per channel, and a notebook | 23    | 6 for the dashboard (5 checks, 1 save), 2 for the notebook | 6 charts + a 1-chart notebook, both complete; 3 feedback reports |
 
-The saved files are in [output/](output/). The app showed each file in its list as soon as it was saved. Screenshots are in the PR.
+The saved files are in [output/](output/). The app, opened after the runs, listed and built every saved file. Live reload of the open tab was not checked here; that is M3. Screenshots are in the PR.
 
 ## Problems whose fix did not help (run 2)
 
