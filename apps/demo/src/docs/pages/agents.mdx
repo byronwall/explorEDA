@@ -1,0 +1,56 @@
+## Connect an agent
+
+`exploreda mcp` is an [MCP](https://modelcontextprotocol.io) server for AI agents such as Claude Code, Cursor, or Codex. Add it to your agent once, with the project folder:
+
+```bash
+claude mcp add exploreda -- npx exploreda mcp /path/to/folder
+```
+
+For an agent that reads an `mcpServers` JSON block, such as Cursor or Claude Desktop:
+
+```json
+{
+  "mcpServers": {
+    "exploreda": {
+      "command": "npx",
+      "args": ["exploreda", "mcp", "/path/to/folder"]
+    }
+  }
+}
+```
+
+The agent then works on the same folder as the app:
+
+- If `exploreda` already runs on the folder, the agent joins it. Every analysis the agent saves shows up in your open tab.
+- If nothing runs, the agent's first call starts a server and prints its link in the agent's log. Open the link to watch the agent's work. That server stops when the agent does.
+- Restart `exploreda` as often as you like, on any port. The agent finds the new server on its next call.
+
+Leave out the folder to use the folder the agent starts in. Add `--example` to work on the sample shop project.
+
+### How the agent finds the server
+
+Each `exploreda` run writes `.exploreda/server.json` with its port and its key. Only your user account can read the file, `.exploreda/.gitignore` keeps it out of Git, and a clean stop removes it. The app's file list never shows it.
+
+You can also connect over HTTP without `exploreda mcp`. The server answers at `/mcp` on its own port, and the key is the `token=` in the link it prints:
+
+```bash
+claude mcp add --transport http exploreda http://127.0.0.1:3939/mcp --header "Authorization: Bearer <token>"
+```
+
+That key changes on every run, so `exploreda mcp` is the easier choice.
+
+## What the agent can do
+
+| Tool              | What it does                                                                                                                       |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `fields`          | Lists each query's fields as an analysis names them, such as `orders.amount`, with types and example values.                       |
+| `reference`       | Returns the dashboard grammar, the project and notebook grammar, or every setting of one chart, such as `hist`.                    |
+| `check`           | Builds an analysis's text against your data without saving it, and returns its views, chart counts, and each problem with its fix. |
+| `write_eda`       | Saves an analysis (`.eda`) or notebook (`.eda.md`), then returns what `check` returns.                                             |
+| `submit_feedback` | Reports a problem with these tools, with a proposed fix, as a file under `.exploreda/feedback/`.                                   |
+
+An agent works in a loop: it reads the fields and the grammar, writes an analysis, and fixes each problem the result lists until the analysis is complete. Everything it saves is ordinary [dashboard text](/docs/dashboard-text) that you can open, edit, and commit.
+
+## Read the agent's feedback
+
+When a tool confuses the agent or lacks something it needs, the agent saves a short report in `.exploreda/feedback/`: what it called, what came back, and the change it proposes. Read these files to see where the tools fall short for your data.

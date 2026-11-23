@@ -11,93 +11,21 @@ import { startServer } from "../server/server";
 import { readCommand, schemaCommand } from "./databaseCommands";
 import { EXAMPLES } from "./examples";
 import { serverCommand } from "./serverCommand";
+import { mcpCommand } from "./mcpRelay";
+import {
+  parseArgs,
+  projectFolderOf,
+  USAGE,
+  type OpenedProject,
+  type Options,
+} from "./projectArgs";
+import {
+  removeServerFile,
+  writeServerFile,
+  type ServerRecord,
+} from "../node/serverFile";
 
 declare const __EXPLOREDA_VERSION__: string;
-
-const USAGE = `Usage: exploreda [folder] [options]
-       exploreda read [folder] [source...]
-       exploreda schema [folder] [connection] [table...] [--match text]
-       exploreda schema <file.db|file.duckdb> [table...] [--match text]
-       exploreda server --data <folder> [options]
-
-Opens a folder as an explorEDA project in your browser. The folder's
-exploreda.eda describes its data; each other .eda file is an analysis.
-
-Commands:
-  read      read database sources into snapshots, as Refresh does in the
-            app; with no sources named, every database source
-  schema    list a connection's tables with row counts, or the columns and
-            database types of the tables named
-  server    run explorEDA for a team (exploreda server --help)
-
-Check project text with exploreda-dsl project <folder>; print its syntax
-with exploreda-dsl reference project.
-
-Options:
-  --port <n>     first port to try (default 3939; the next free one is used)
-  --no-open      print the link instead of opening the browser
-  --example [database|forecast]
-                 copy a sample project to ./exploreda-example and open it;
-                 "database" copies one that reads a SQLite file, and
-                 "forecast" one with a notebook
-  --hidden       keep a new project's text in .exploreda/ instead of
-                 exploreda.eda at the folder's top
-  -h, --help     show this help`;
-
-const DEFAULT_PORT = 3939;
-
-interface Options {
-  folder: string;
-  port: number;
-  open: boolean;
-  /** The sample project to copy and open, if any. */
-  example?: keyof typeof EXAMPLES;
-  hidden: boolean;
-}
-
-function parseArgs(args: string[]): Options | string {
-  const options: Options = {
-    folder: ".",
-    port: DEFAULT_PORT,
-    open: true,
-    hidden: false,
-  };
-  const positional: string[] = [];
-  for (let index = 0; index < args.length; index++) {
-    const arg = args[index]!;
-    if (arg === "-h" || arg === "--help") {
-      return USAGE;
-    }
-    if (arg === "--no-open") {
-      options.open = false;
-    } else if (arg === "--example") {
-      const name = args[index + 1];
-      if (name && name in EXAMPLES) {
-        options.example = name as keyof typeof EXAMPLES;
-        index += 1;
-      } else {
-        options.example = "shop";
-      }
-    } else if (arg === "--hidden") {
-      options.hidden = true;
-    } else if (arg === "--port") {
-      const port = Number(args[++index]);
-      if (!Number.isInteger(port) || port < 0 || port > 65535) {
-        return `--port needs a number from 0 to 65535.\n\n${USAGE}`;
-      }
-      options.port = port;
-    } else if (arg.startsWith("-")) {
-      return `Unknown option ${arg}.\n\n${USAGE}`;
-    } else {
-      positional.push(arg);
-    }
-  }
-  if (positional.length > 1) {
-    return `Give one folder.\n\n${USAGE}`;
-  }
-  options.folder = positional[0] ?? ".";
-  return options;
-}
 
 function openBrowser(url: string) {
   const [command, args] =
@@ -141,11 +69,48 @@ async function main(args: string[]) {
       version: __EXPLOREDA_VERSION__,
     });
   }
+  if (args[0] === "mcp") {
+    return mcpCommand(args.slice(1), (options) =>
+      openProject(options, here, (line) => console.error(line))
+    );
+  }
   const parsed = parseArgs(args);
   if (typeof parsed === "string") {
     console.log(parsed);
     return parsed === USAGE ? 0 : 64;
   }
+  const opened = await openProject(parsed, here, (line) => console.log(line));
+  if (typeof opened === "number") {
+    return opened;
+  }
+  console.log(`
+Only this machine can connect. Press Ctrl-C to stop.
+Connect an agent: exploreda mcp ${shellPath(path.relative(process.cwd(), opened.folder) || ".")}`);
+  if (parsed.open) {
+    openBrowser(opened.url);
+  }
+  const stop = () => {
+    void opened.stop().then(() => process.exit(0));
+  };
+  process.once("SIGINT", stop);
+  process.once("SIGTERM", stop);
+  return undefined;
+}
+
+/** A path quoted for a shell when it has spaces. */
+function shellPath(value: string) {
+  return /\s/.test(value) ? JSON.stringify(value) : value;
+}
+
+/**
+ * Copies the sample if asked, starts the server on the folder, and writes
+ * its record. Returns an exit code when it can't.
+ */
+async function openProject(
+  parsed: Options,
+  here: string,
+  log: (line: string) => void
+): Promise<OpenedProject | number> {
   const appDir = path.resolve(here, "../app");
   if (!existsSync(path.join(appDir, "index.html"))) {
     console.error(
@@ -153,22 +118,21 @@ async function main(args: string[]) {
     );
     return 70;
   }
-  let folder = path.resolve(parsed.folder);
+  const folder = projectFolderOf(parsed);
   if (parsed.example) {
     const example = EXAMPLES[parsed.example];
-    folder = path.resolve(example.to);
     if (existsSync(folder)) {
-      console.log(`Opening the sample project already at ${folder}`);
+      log(`Opening the sample project already at ${folder}`);
     } else {
       await copyFolder(path.resolve(here, "../examples", example.from), folder);
-      console.log(`Copied the sample project to ${folder}`);
+      log(`Copied the sample project to ${folder}`);
     }
     // A project skips subfolders that are projects, so the copy stays apart.
     if (
       existsSync(path.resolve("exploreda.eda")) ||
       existsSync(path.resolve(".exploreda"))
     ) {
-      console.log(
+      log(
         `It is a project of its own: ${path.resolve(".")} doesn't list its files.`
       );
     }
@@ -201,20 +165,25 @@ async function main(args: string[]) {
     );
     return 69;
   }
-  console.log(`explorEDA ${__EXPLOREDA_VERSION__}
-  Project  ${folder}
-  Open     ${started.url}
-
-Only this machine can connect. Press Ctrl-C to stop.`);
-  if (parsed.open) {
-    openBrowser(started.url);
-  }
-  const stop = () => {
-    void started.close().then(() => process.exit(0));
+  const record: ServerRecord = {
+    url: started.url,
+    port: started.port,
+    token,
+    pid: process.pid,
+    version: __EXPLOREDA_VERSION__,
   };
-  process.once("SIGINT", stop);
-  process.once("SIGTERM", stop);
-  return undefined;
+  await writeServerFile(folder, record);
+  log(`explorEDA ${__EXPLOREDA_VERSION__}
+  Project  ${folder}
+  Open     ${started.url}`);
+  return {
+    ...record,
+    folder,
+    stop: async () => {
+      await removeServerFile(folder);
+      await started.close();
+    },
+  };
 }
 
 void main(process.argv.slice(2)).then((code) => {

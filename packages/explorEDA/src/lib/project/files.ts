@@ -32,13 +32,23 @@ export class ProjectFileError extends Error {
 export const SKIPPED_FOLDERS = new Set([".git", "node_modules"]);
 
 /**
+ * The running `exploreda` server's address and key, for `exploreda mcp`.
+ * It belongs to the run, not the project, so no adapter lists it.
+ */
+export const SERVER_FILE = ".exploreda/server.json";
+
+/**
  * Leaves out the files of folders that are projects of their own, such as
  * a copied example: a subfolder with its own `exploreda.eda` or
  * `.exploreda/`.
  */
 export function withoutNestedProjects(paths: readonly string[]): string[] {
   const roots = paths.flatMap((path) => {
-    const match = /^(.+?)\/(?:exploreda\.eda$|\.exploreda\/)/.exec(path);
+    // A running server's records alone don't make a folder a project.
+    const match =
+      /^(.+?)\/(?:exploreda\.eda$|\.exploreda\/(?!server\.json$|\.gitignore$|feedback\/))/.exec(
+        path
+      );
     return match ? [`${match[1]}/`] : [];
   });
   return roots.length

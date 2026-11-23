@@ -10,6 +10,7 @@ import {
   isAbsolutePath,
   normalizeProjectPath,
   ProjectFileError,
+  SERVER_FILE,
   SKIPPED_FOLDERS,
   type ProjectFiles,
 } from "../lib/project/files";
@@ -76,6 +77,9 @@ export function nodeProjectFiles(folder: string): NodeProjectFiles {
             continue;
           }
           const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+          if (relative === SERVER_FILE) {
+            continue;
+          }
           if (entry.isDirectory()) {
             await walk(path.join(directory, entry.name), relative);
           } else if (entry.isFile()) {
@@ -154,6 +158,7 @@ export function nodeProjectFiles(folder: string): NodeProjectFiles {
           const parts = projectPath.split("/");
           if (
             parts.some((part) => SKIPPED_FOLDERS.has(part)) ||
+            projectPath === SERVER_FILE ||
             projectPath.endsWith(".tmp")
           ) {
             return;
