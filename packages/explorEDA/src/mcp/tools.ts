@@ -4,6 +4,7 @@
  * problem with these tools. Each takes the project's files and returns
  * plain JSON. The `/mcp` route and `exploreda-dsl` both call them.
  */
+import { createHash } from "node:crypto";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import {
   chartSettingReference,
@@ -11,6 +12,7 @@ import {
   describeDslSource,
   DSL_CHART_KEYWORDS,
   DSL_REFERENCE,
+  formatDsl,
   type DslDiagnostic,
 } from "@/lib/dsl";
 import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
@@ -20,8 +22,14 @@ import {
   ProjectFileError,
   type ProjectFiles,
 } from "@/lib/project/files";
-import { readProjectFolder, type ProjectFolder } from "@/lib/project/folder";
-import { isNotebookPath } from "@/lib/notebook";
+import {
+  HIDDEN_PROJECT_FILE,
+  PROJECT_FILE,
+  projectLayout,
+  readProjectFolder,
+  type ProjectFolder,
+} from "@/lib/project/folder";
+import { formatNotebook, isNotebookPath } from "@/lib/notebook";
 import { NOTEBOOK_REFERENCE, PROJECT_REFERENCE } from "@/cli/reference";
 
 /** A problem as an agent reads it: where, how bad, what, and the fix. */
@@ -144,31 +152,355 @@ function resultFor(read: ProjectFolder, path: string): CheckResult {
   };
 }
 
+/** The project text's paths: the app's, at the top or hidden. */
+const PROJECT_TEXTS = new Set([PROJECT_FILE, HIDDEN_PROJECT_FILE]);
+
+/**
+ * The file a path names. Either project text path names the project's
+ * text: the existing one, or for a first save, the place the server keeps
+ * a new project's text (`.exploreda/` with `--hidden`).
+ */
+async function target(files: ProjectFiles, path: string, hidden?: boolean) {
+  const normalized = analysisPath(path);
+  if (!PROJECT_TEXTS.has(normalized)) {
+    return normalized;
+  }
+  const { projectPath } = projectLayout(await files.list());
+  return projectPath ?? (hidden ? HIDDEN_PROJECT_FILE : PROJECT_FILE);
+}
+
+/** A short hash of a file's text; a write must send the one it read. */
+export function versionOf(text: string) {
+  return createHash("sha1").update(text).digest("hex").slice(0, 12);
+}
+
+/** The file's text, or undefined when there is none. */
+async function readIfThere(files: ProjectFiles, path: string) {
+  try {
+    return await files.read(path);
+  } catch (error) {
+    if (error instanceof ProjectFileError && error.code === "missing") {
+      return undefined;
+    }
+    throw error;
+  }
+}
+
+/**
+ * Refuses a change to an existing file unless `version` is the one its
+ * text has now, so an edit made since the agent's read is never lost.
+ */
+function guard(path: string, current: string, version: string | undefined) {
+  if (version === versionOf(current)) {
+    return;
+  }
+  throw new ToolError(
+    version
+      ? `${path} changed since you read it; its version is now ${versionOf(current)}.`
+      : `${path} already exists, so a change needs the version read_eda gave.`,
+    `Call read_eda on ${path}, merge your change into its text, and send its version.`
+  );
+}
+
+export interface ToolOptions {
+  /** `--hidden`: a new project keeps its text in `.exploreda/`. */
+  hidden?: boolean;
+}
+
 /**
  * Builds `text` as the file at `path` against the project's data, as the
  * app would, and writes nothing.
  */
 export async function check(
   files: ProjectFiles,
-  input: { path?: string; text: string }
+  input: { path?: string; text: string },
+  options: ToolOptions = {}
 ): Promise<CheckResult> {
   registerAllCharts();
-  const path = analysisPath(input.path ?? "check.eda");
+  const path = await target(files, input.path ?? "check.eda", options.hidden);
   return resultFor(
     await readProjectFolder(withText(files, path, input.text)),
     path
   );
 }
 
-/** Saves the analysis, then returns what `check` returns for it. */
+/** The file's text and its version, for `write_eda`. */
+export async function readEda(
+  files: ProjectFiles,
+  input: { path: string },
+  options: ToolOptions = {}
+): Promise<{ path: string; text: string; version: string }> {
+  const path = await target(files, input.path, options.hidden);
+  const text = await readIfThere(files, path);
+  if (text === undefined) {
+    throw new ToolError(
+      `${path} doesn't exist.`,
+      "Call project for the folder's analyses, or write_eda to create it."
+    );
+  }
+  return { path, text, version: versionOf(text) };
+}
+
+/**
+ * Saves the analysis, then returns what `check` returns for it. A new file
+ * needs no version; an existing one needs the version `read_eda` gave.
+ */
 export async function writeEda(
   files: ProjectFiles,
-  input: { path: string; text: string }
-): Promise<CheckResult & { saved: string }> {
-  const path = analysisPath(input.path);
-  const result = await check(files, { path, text: input.text });
+  input: { path: string; text: string; version?: string },
+  options: ToolOptions = {}
+): Promise<CheckResult & { saved: string; version: string }> {
+  const path = await target(files, input.path, options.hidden);
+  const current = await readIfThere(files, path);
+  if (current !== undefined) {
+    guard(path, current, input.version);
+  }
+  const result = await check(files, { path, text: input.text }, options);
   await files.write(path, input.text);
-  return { saved: path, ...result };
+  return { saved: path, version: versionOf(input.text), ...result };
+}
+
+/** Moves an analysis to a new path that is free. */
+export async function renameEda(
+  files: ProjectFiles,
+  input: { from: string; to: string; version?: string }
+): Promise<{ renamed: string; to: string; version: string }> {
+  const from = analysisPath(input.from);
+  const to = analysisPath(input.to);
+  if (PROJECT_TEXTS.has(from) || PROJECT_TEXTS.has(to)) {
+    throw new ToolError(
+      "The project text keeps its path.",
+      "Rename analyses and notebooks only."
+    );
+  }
+  if (isNotebookPath(from) !== isNotebookPath(to)) {
+    throw new ToolError(
+      `${from} and ${to} are different kinds of file.`,
+      "Keep .eda for an analysis and .eda.md for a notebook."
+    );
+  }
+  const text = await readIfThere(files, from);
+  if (text === undefined) {
+    throw new ToolError(`${from} doesn't exist.`);
+  }
+  guard(from, text, input.version);
+  if ((await readIfThere(files, to)) !== undefined) {
+    throw new ToolError(
+      `${to} already exists.`,
+      "Pick a free path, or delete that file first."
+    );
+  }
+  await files.write(to, text);
+  await files.remove(from);
+  return { renamed: from, to, version: versionOf(text) };
+}
+
+/** Deletes an analysis or notebook; never the project text. */
+export async function deleteEda(
+  files: ProjectFiles,
+  input: { path: string; version?: string }
+): Promise<{ deleted: string }> {
+  const path = analysisPath(input.path);
+  if (PROJECT_TEXTS.has(path)) {
+    throw new ToolError(
+      "The project text can't be deleted here.",
+      "Delete analyses and notebooks only."
+    );
+  }
+  const text = await readIfThere(files, path);
+  if (text === undefined) {
+    throw new ToolError(`${path} doesn't exist.`);
+  }
+  guard(path, text, input.version);
+  await files.remove(path);
+  return { deleted: path };
+}
+
+/** Indents and tidies text as `exploreda-dsl fmt` does; saves nothing. */
+export async function format(
+  files: ProjectFiles,
+  input: { path?: string; text?: string }
+): Promise<{ text: string }> {
+  const path = input.path ? analysisPath(input.path) : undefined;
+  const text =
+    input.text ?? (path ? (await readEda(files, { path })).text : undefined);
+  if (text === undefined) {
+    throw new ToolError("Send text, or the path of a file to format.");
+  }
+  return {
+    text: path && isNotebookPath(path) ? formatNotebook(text) : formatDsl(text),
+  };
+}
+
+export interface ProjectSummary {
+  layout: ProjectFolder["layout"];
+  projectPath?: string;
+  sources: Array<{
+    id: string;
+    from: string;
+    rows: number;
+    notes?: string[];
+  }>;
+  queries: Array<{ id: string; name: string }>;
+  analyses: Array<{
+    path: string;
+    views: number;
+    charts: number;
+    problems: number;
+  }>;
+  notebooks: Array<{ path: string; charts: number; problems: number }>;
+  /** Data files in the folder, used by a source or not. */
+  dataFiles: string[];
+  problems: number;
+}
+
+/** The folder at a glance: its project text, sources, queries, and files. */
+export async function project(files: ProjectFiles): Promise<ProjectSummary> {
+  registerAllCharts();
+  const read = await readProjectFolder(files);
+  const count = (path: string) =>
+    read.problems.filter((item) => item.path === path).length;
+  return {
+    layout: read.layout,
+    ...(read.projectPath ? { projectPath: read.projectPath } : {}),
+    sources: read.project.sources.map((source) => {
+      const notes = [
+        ...(read.missingSources.includes(source.id)
+          ? [read.databases[source.id] ? "not read" : "missing"]
+          : []),
+        ...(read.staleSources.includes(source.id)
+          ? ["changed since read"]
+          : []),
+        ...(read.outsideSources.includes(source.id)
+          ? ["outside the folder"]
+          : []),
+      ];
+      const database = read.databases[source.id];
+      return {
+        id: source.id,
+        from: database
+          ? `${database.connection}: ${database.table ?? "sql"}`
+          : (read.paths[source.id] ?? ""),
+        rows: read.tables[source.id]?.length ?? 0,
+        ...(notes.length ? { notes } : {}),
+      };
+    }),
+    queries: read.project.queries.map((query) => ({
+      id: query.id,
+      name: query.name,
+    })),
+    analyses: read.analyses.map((analysis) => ({
+      path: analysis.path,
+      views: analysis.result.views.length,
+      charts: analysis.result.charts.length,
+      problems: count(analysis.path),
+    })),
+    notebooks: read.notebooks.map((notebook) => ({
+      path: notebook.path,
+      charts: notebook.result.charts.length,
+      problems: count(notebook.path),
+    })),
+    dataFiles: read.dataFiles,
+    problems: read.problems.length,
+  };
+}
+
+export interface DescribedChart {
+  name: string;
+  type: string;
+  line: number;
+  title?: string;
+}
+
+/**
+ * Every view's charts and row count, and every problem, for one file or
+ * the whole folder. It reports what built; it doesn't draw.
+ */
+export async function describe(
+  files: ProjectFiles,
+  input: { path?: string } = {}
+) {
+  registerAllCharts();
+  const read = await readProjectFolder(files);
+  const only = input.path ? analysisPath(input.path) : undefined;
+  const rowsOf = (queryId: string, bindings?: Record<string, never>) => {
+    try {
+      return evaluateAnalysisQuery(read.project, read.tables, queryId, bindings)
+        .rows.length;
+    } catch {
+      return 0;
+    }
+  };
+  const charted = (
+    results: Array<{
+      line: number;
+      subject: string;
+      type: string;
+      id?: string;
+    }>,
+    titles: Map<string, string>
+  ): DescribedChart[] =>
+    results.map((chart) => ({
+      name: chart.subject,
+      type: chart.type,
+      line: chart.line,
+      ...(chart.id && titles.get(chart.id)
+        ? { title: titles.get(chart.id) }
+        : {}),
+    }));
+  const problemsOf = (path: string) =>
+    read.problems.filter((item) => item.path === path).map(toProblem);
+  const analyses = read.analyses
+    .filter((analysis) => !only || analysis.path === only)
+    .map((analysis) => {
+      const titles = new Map(
+        analysis.result.views.flatMap((view) =>
+          view.settings.charts.map((chart) => [chart.id, chart.title] as const)
+        )
+      );
+      return {
+        path: analysis.path,
+        complete: analysis.result.complete && !problemsOf(analysis.path).length,
+        views: analysis.result.views.map((view) => ({
+          name: view.name,
+          query: view.queryId,
+          rows: rowsOf(view.queryId, view.bindings as Record<string, never>),
+          charts: view.settings.charts.map((chart) => ({
+            type: chart.type,
+            title: chart.title,
+          })),
+        })),
+        charts: charted(analysis.result.charts, titles),
+        skipped: charted(analysis.result.skippedCharts, titles),
+        problems: problemsOf(analysis.path),
+      };
+    });
+  const notebooks = read.notebooks
+    .filter((notebook) => !only || notebook.path === only)
+    .map((notebook) => ({
+      path: notebook.path,
+      complete: notebook.result.complete && !problemsOf(notebook.path).length,
+      query: notebook.result.queryId,
+      rows: notebook.result.rows.length,
+      blocks: notebook.result.blocks.length,
+      charts: charted(notebook.result.charts, new Map()),
+      problems: problemsOf(notebook.path),
+    }));
+  if (only && !analyses.length && !notebooks.length) {
+    throw new ToolError(
+      `${only} isn't an analysis or notebook in this folder.`,
+      "Call project for the folder's files."
+    );
+  }
+  return {
+    analyses,
+    notebooks,
+    ...(only
+      ? {}
+      : {
+          projectProblems: read.projectPath ? problemsOf(read.projectPath) : [],
+        }),
+  };
 }
 
 export interface FieldsResult {

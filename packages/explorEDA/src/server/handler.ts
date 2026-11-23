@@ -121,6 +121,7 @@ export function createRequestHandler(options: HandlerOptions) {
         files,
         version,
         onWrite: broadcast,
+        hidden: options.hidden,
       });
       if (reply) {
         send(res, 200, reply);

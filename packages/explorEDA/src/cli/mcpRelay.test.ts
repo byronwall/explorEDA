@@ -49,11 +49,15 @@ describe("exploreda mcp relay", () => {
       ".exploreda/.gitignore",
     ]);
     const relay = createRelay(folder, async () => undefined);
-    expect(JSON.parse((await relay(list))!).result.tools.length).toBe(5);
+    expect(
+      JSON.parse((await relay(list))!).result.tools.length
+    ).toBeGreaterThan(5);
 
     await servers.shift()!.close();
     await writeServerFile(folder, await serve(folder, "second-key-012345678"));
-    expect(JSON.parse((await relay(list))!).result.tools.length).toBe(5);
+    expect(
+      JSON.parse((await relay(list))!).result.tools.length
+    ).toBeGreaterThan(5);
     expect((await readServerFile(folder))?.token).toBe("second-key-012345678");
   });
 
