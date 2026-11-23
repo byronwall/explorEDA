@@ -25,6 +25,9 @@ Add it to an agent once, for example:
 
   claude mcp add exploreda -- npx exploreda mcp /path/to/folder`;
 
+/** The longest one call may take before the relay gives up on it. */
+const CALL_TIMEOUT_MS = 120_000;
+
 type Open = (options: Options) => Promise<OpenedProject | number>;
 
 /**
@@ -53,6 +56,8 @@ export function createRelay(
         accept: "application/json, text/event-stream",
       },
       body,
+      // A call that hangs comes back as an error instead of a silent wait.
+      signal: AbortSignal.timeout(CALL_TIMEOUT_MS),
     });
   return async (body: string): Promise<string | undefined> => {
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -63,7 +68,12 @@ export function createRelay(
       let response: Response;
       try {
         response = await post(record, body);
-      } catch {
+      } catch (error) {
+        if ((error as Error).name === "TimeoutError") {
+          throw new Error(
+            `exploreda didn't answer within ${CALL_TIMEOUT_MS / 1000} s, so the call was stopped.`
+          );
+        }
         record = undefined;
         continue;
       }
