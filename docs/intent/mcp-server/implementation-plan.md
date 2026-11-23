@@ -41,6 +41,8 @@ tool functions over memoryProjectFiles (M1)
 
 ## Milestone 1: A cold agent builds a dashboard through four tools
 
+**Status: done (2026-11-22).** The proof is in [raw/proof/](raw/proof/README.md). Whole-file writes are enough; the agent's extra rounds came from checker messages, so better fixes come before finer edit tools.
+
 This answers the shape's main question with the least code. It excludes discovery, conflict guards, rename and delete, and data upload. The shop example already has data.
 
 - **Change — shared tool module `src/mcp/tools.ts`**
@@ -48,12 +50,16 @@ This answers the shape's main question with the least code. It excludes discover
   - `check` builds the text against the project's data through `readProjectFolder`, with the given text swapped in for that path, and writes nothing.
   - `writeEda` saves and then returns the same result as `check`.
   - `exploredaDsl.ts` is refactored to print from these functions. Its existing output and exit codes are unchanged, and its tests still pass.
+  - As built: `reference` is shared. The CLI's `check`, `fields`, and `project` read a `--data` file or a folder from disk, so they keep their own code; their output matched 0.4.0 byte for byte.
+- **Change — `submit_feedback` tool (TASK-0045):** the calling agent reports a tool problem (`kind` bug, confusing, or missing; `summary`; `tool`; `happened`; `proposedFix`). Each report is one Markdown file under `.exploreda/feedback/`, where Byron reads it in a local project. The server `instructions` ask the agent to report once, after it finishes or gives up. This feeds the proof's list of problems that lacked a usable fix. The shape follows `feedback_submit` in byronwall/visual-notes#356.
 - **Change — the checker bundle:** a fourth tsup entry, `dist/cli/exploreda-tools.js`, that bundles the chart definitions and exports the tool module. The `exploreda` bin dynamic-imports it on the first `/mcp` call. A test asserts that the `exploreda` bundle contains no chart code.
+  - As built: the check is in `scripts/cli-smoke.mjs`, on the packed tarball. A plain dynamic import with code splitting was tried first; esbuild then moved code shared with the tools into an eager chunk, which nearly doubled what the command loads at start.
 - **Change — `/mcp` route in `src/server/handler.ts`:** Streamable HTTP on the same port, behind the same `Host` and token checks. It answers `initialize`, `tools/list`, and `tools/call` with JSON responses.
 - **Spike — SDK or a small hand-written handler**
   - Decision required: bundle `@modelcontextprotocol/sdk`, or write the four JSON-RPC methods directly.
   - Evidence to gather: the bundled size added to the `exploreda` bin, and whether Claude Code and one other client accept a JSON-only (non-SSE) response. Check the current Streamable HTTP spec and the SDK's Node transport against `node:http`.
   - Fallback: the hand-written handler. The server already avoids runtime dependencies.
+  - Decided: hand-written (`src/mcp/server.ts`, about 250 lines with the tool schemas). Claude Code accepted JSON-only responses. No second client was tried yet; M2 or M5 should add one.
 - **Change — the cold-agent run:** connect Claude Code with `claude mcp add --transport http` and the printed key. Ask it for a returns dashboard on the shop orders. Record the transcript, the number of check-fix rounds, and every problem whose `fix` did not help, in `raw/proof/`.
 - **Docs and example:** none public yet. The proof notes are the record.
 
