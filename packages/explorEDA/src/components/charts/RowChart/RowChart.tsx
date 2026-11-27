@@ -257,21 +257,21 @@ export function RowChart({
   const floorRows = Math.max(2, Math.floor(available / TOP_N_ROW_FLOOR));
   // Facets share one order, so their rows hold while filtering.
   const follows = !settings.keepOrder && !facetIds;
+  // The selection as it stood when the rows other charts leave last changed.
+  const [held, setHeld] = useState({ liveIds, selected: filterValues });
+  if (
+    held.liveIds !== liveIds &&
+    (held.liveIds.length !== liveIds.length ||
+      held.liveIds.some((id, index) => id !== liveIds[index]))
+  )
+    setHeld({ liveIds, selected: filterValues });
   // Top N keeps the same row count at every usable size; unset shows every
   // category. Both compress rows to the floor before the rest fold.
   const maxRows = settings.topN
     ? Math.min(settings.topN + 1, floorRows)
     : floorRows;
   const plan = useMemo((): RowSummaryPlan => {
-    const follow = follows
-      ? {
-          selected:
-            settings.filters.find(
-              (f): f is ValueFilter =>
-                f.type === "value" && f.field === settings.field
-            )?.values ?? [],
-        }
-      : undefined;
+    const follow = follows ? { selected: held.selected } : undefined;
     if (liveSummary && allSummary)
       return planRowSummary(liveSummary, allSummary, maxRows, follow);
     // Context bars count the rows the chart's own filter keeps, so a chart
@@ -290,9 +290,8 @@ export function RowChart({
     allSummary,
     maxRows,
     settings.localFilters,
-    settings.filters,
-    settings.field,
     follows,
+    held,
     allIds,
   ]);
   const labelOf = useMemo(() => {
@@ -534,7 +533,45 @@ export function RowChart({
 
   // A chart set to fit the filtered rows draws no all-rows context, which
   // would set the axis again.
-  const context = !facetIds && settings.scaleTo !== "filtered";
+  const fitted = settings.scaleTo === "filtered";
+  const context = !facetIds && !fitted;
+  // Other filters change which rows show, so the axis also covers the rows
+  // drawn without them, and one value keeps one length.
+  const homeValues = useMemo(() => {
+    if (!follows || fitted) return [];
+    const home: RowSummaryPlan = allSummary
+      ? planRowSummary(allSummary, allSummary, maxRows)
+      : planRowCategories(
+          column,
+          allIds,
+          maxRows,
+          settings.localFilters?.length ? allIds : undefined
+        );
+    const total = (items: typeof home.categories) =>
+      items.reduce((sum, item) => sum + (item.total ?? 0), 0);
+    const values = [
+      ...home.visible.map((item) => item.total),
+      home.otherSummary
+        ? home.otherSummary.total
+        : home.other.length
+          ? total(home.other)
+          : undefined,
+    ];
+    if (!share) return values;
+    const whole = total(home.categories);
+    return values.map((value) =>
+      value === undefined || whole === 0 ? undefined : value / whole
+    );
+  }, [
+    follows,
+    fitted,
+    allSummary,
+    column,
+    allIds,
+    maxRows,
+    settings.localFilters,
+    share,
+  ]);
 
   // Create scales with synchronized limits if in a facet
   // Labels of bars left of zero sit past the bar's end, so the plot keeps
@@ -546,11 +583,11 @@ export function RowChart({
       .map((d) => typography.measure(formatMeasure(d.count), 11) + 10)
   );
   const xScale = useMemo(() => {
-    const values = displayCounts.flatMap((d) =>
-      [settings.scaleTo === "filtered" ? undefined : d.total, d.count].filter(
-        (value): value is number =>
-          value !== undefined && Number.isFinite(value)
-      )
+    const values = [
+      ...homeValues,
+      ...displayCounts.flatMap((d) => [fitted ? undefined : d.total, d.count]),
+    ].filter(
+      (value): value is number => value !== undefined && Number.isFinite(value)
     );
     // Signed measures extend left of zero; zero always stays on the axis.
     let minValue = Math.min(0, ...values);
@@ -575,7 +612,8 @@ export function RowChart({
     displayCounts,
     innerWidth,
     settings.xAxis,
-    settings.scaleTo,
+    homeValues,
+    fitted,
     summarized,
     negativeLabelRoom,
   ]);
@@ -748,7 +786,10 @@ export function RowChart({
             const item = displayCounts.find(
               (row) => !row.other && categoryText(row.value) === value
             );
-            const at = item && (item.count ?? item.total);
+            const at =
+              item &&
+              (item.count ??
+                (settings.scaleTo === "filtered" ? undefined : item.total));
             return item && at !== undefined
               ? {
                   x: xScale(at),
@@ -764,7 +805,11 @@ export function RowChart({
           formatters
             ? (value) =>
                 typeof value === "number" ? formatters.tick(value) : value
-            : undefined
+            : // A fitted axis of tiny sums would round every tick to 0.
+              tiny(Math.max(...xScale.domain().map(Math.abs)))
+              ? (value) =>
+                  typeof value === "number" ? significant(value) : value
+              : undefined
         }
         yTickFormatter={(value) =>
           yLabelsByKey.get(String(value)) ?? String(value)

@@ -1,10 +1,5 @@
 import { SMALL_SAMPLE, isAdditiveSpec } from "@/lib/aggregates";
-import {
-  categoryIncludes,
-  categoryKey,
-  categoryLabel,
-  categoryValue,
-} from "@/lib/categories";
+import { categoryKey, categoryLabel, categoryValue } from "@/lib/categories";
 import {
   poolAggregateRows,
   type AggregateResult,
@@ -42,7 +37,11 @@ export interface RowPlan {
  * all-rows order.
  */
 export interface FollowFilters {
-  /** This chart's selected values: each keeps its row, even with no rows. */
+  /**
+   * This chart's selected values when other filters last changed: each keeps
+   * its row, even with no rows. Holding them since then means a click on this
+   * chart never moves a row.
+   */
   selected: datum[];
 }
 
@@ -55,7 +54,7 @@ export interface RowSummaryPlan extends RowPlan {
  * Largest first; categories without a value follow every valued one. A rate
  * or average over fewer than SMALL_SAMPLE rows follows every larger group,
  * so Top N shows groups with enough rows to trust and tiny ones fold away.
- * When following filters, a selected category stays out of Other.
+ * When following filters, a selected category stays out of Other if it can.
  */
 function rank(
   categories: RowCategory[],
@@ -64,8 +63,9 @@ function rank(
   /** A category's filtered value. */
   filtered: (item: RowCategory) => number | undefined
 ): RowPlan {
-  const selected = (item: RowCategory) =>
-    follow !== undefined && categoryIncludes(follow.selected, item.value);
+  // A set, since a click on Other can select thousands of values.
+  const chosen = new Set(follow?.selected.map((value) => value ?? null));
+  const selected = (item: RowCategory) => chosen.has(item.value ?? null);
   const matches = (item: RowCategory) =>
     !follow || item.sourceIds.length > 0 || selected(item);
   const band = (item: RowCategory) => {
@@ -88,10 +88,12 @@ function rank(
   if (sorted.length <= maxRows)
     return { categories: sorted, visible: sorted, other: [], empty };
   const slots = maxRows - 1;
-  // Selected rows take their slots first, unless they alone would fill them,
-  // as after a click on Other.
-  const pinned = sorted.filter(selected);
-  const keep = new Set(pinned.length < slots ? pinned : []);
+  // Selected rows take their slots first, unless they outnumber them, or all
+  // of Other is selected, as after a click on it: that selection stays there.
+  const pinned = sorted.slice(slots).every(selected)
+    ? []
+    : sorted.filter(selected);
+  const keep = new Set(pinned.length <= slots ? pinned : []);
   for (const item of sorted) {
     if (keep.size >= slots) break;
     keep.add(item);

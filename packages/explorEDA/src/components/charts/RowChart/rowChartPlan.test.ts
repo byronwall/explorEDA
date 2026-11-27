@@ -141,7 +141,11 @@ describe("planRowSummary", () => {
     const plan = planRowSummary(all, all, 3, { selected: ["West"] });
     expect(plan.visible.map((item) => item.label)).toEqual(["East", "West"]);
     expect(plan.other.map((item) => item.label)).toEqual(["North", "South"]);
-    // A selection too large for the rows, as from Other, takes none first.
+    // One selection fills the one slot.
+    expect(
+      planRowSummary(all, all, 2, { selected: ["West"] }).visible[0]?.label
+    ).toBe("West");
+    // All of Other selected, as by a click on it, stays in Other.
     const many = planRowSummary(all, all, 3, {
       selected: ["South", "West"],
     });

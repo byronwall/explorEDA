@@ -155,8 +155,13 @@ it("ranks a grouped summary by its filtered value while other charts filter", ()
     "North, Revenue by region: 40",
     "South, Revenue by region: 12",
   ]);
+  const axis = () =>
+    document.querySelector('[data-axis-edit="x"]')!.getAttribute("data-domain");
+  const before = axis();
   fireEvent.click(screen.getByRole("button", { name: "Web only" }));
-  // East has no web orders, so it leaves the chart.
+  // East has no web orders, so it leaves the chart. Its length still sets the
+  // axis, so the others keep theirs.
+  expect(axis()).toBe(before);
   expect(bars()).toEqual([
     "South, Revenue by region: 12",
     "North, Revenue by region: 10",
