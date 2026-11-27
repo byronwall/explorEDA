@@ -197,6 +197,11 @@
   margin-top: 1rem;
 }
 
+/* The rail sits beside the block, so it takes no space above the charts. */
+.eda-notebook-block > .eda-notebook-segment-tools + * {
+  margin-top: 0;
+}
+
 /* Each chart brings its own card; the block only stacks them. */
 .eda-notebook-output {
   min-width: 0;
@@ -251,66 +256,97 @@
   color: var(--muted-foreground);
 }
 
-/* Each segment's text opens beside it, on hover or keyboard focus. */
+/*
+ * Each segment's edit button sits in the gutter to its left. The gutter is
+ * part of the segment, so the pointer stays on it all the way from the text to
+ * the button: the button shows on hover and can't vanish on the way there.
+ */
 .eda-notebook-segment {
   position: relative;
 }
 
 .eda-notebook-segment-tools {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  right: 100%;
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 0.25rem;
+  align-items: flex-start;
+  width: 2.5rem;
+  padding-right: 0.5rem;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .eda-notebook-segment-tools {
-    position: absolute;
-    z-index: 2;
-    top: -0.25rem;
-    right: 0;
-    margin: 0;
-    opacity: 0;
-    /* Hidden tools mustn't take the clicks meant for what's under them. */
-    pointer-events: none;
-    transition: opacity 120ms ease;
-  }
-
-  .eda-notebook-segment:hover > .eda-notebook-segment-tools,
-  .eda-notebook-segment:focus-within > .eda-notebook-segment-tools,
-  .eda-notebook-segment[data-open] > .eda-notebook-segment-tools {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  /*
-   * A chart keeps its own buttons at its top right, so a block's tools get a
-   * row of their own above it rather than covering them.
-   */
-  .eda-notebook-block > .eda-notebook-segment-tools,
-  .eda-notebook-segment[data-open] > .eda-notebook-segment-tools {
-    position: static;
-    justify-content: flex-end;
-    margin-bottom: 0.25rem;
+/* A narrow notebook makes room for the gutter; a wide one already has it. */
+@container eda-notebook (max-width: 1000px) {
+  /* A margin, not padding: charts take their width from the column's. */
+  .eda-notebook[data-editable] .eda-notebook-column {
+    margin-left: 2.5rem;
   }
 }
 
-/* With room beside the column, the tools sit there instead, for every segment. */
-@container eda-notebook (min-width: 1120px) {
-  @media (hover: hover) and (pointer: fine) {
-    .eda-notebook-segment:not([data-open]) > .eda-notebook-segment-tools {
-      position: absolute;
-      top: 0;
-      right: auto;
-      left: 100%;
-      margin: 0;
-      /* Padding, not a gap, so the pointer can cross to the button. */
-      padding-left: 0.75rem;
-    }
-  }
+/* While the pointer is on the gutter, a line marks what the button edits. */
+.eda-notebook-segment-tools::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0.125rem;
+  width: 2px;
+  border-radius: 1px;
 }
 
+.eda-notebook-segment-tools:hover::after,
+.eda-notebook-segment-tools:focus-within::after,
+.eda-notebook-segment[data-open] > .eda-notebook-segment-tools::after {
+  background: var(--primary);
+}
+
+/* The button follows the page down a tall segment. */
 .eda-notebook-segment-tools button {
-  background: var(--background);
+  position: sticky;
+  top: 0.5rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--muted-foreground);
+}
+
+.eda-notebook-segment-tools button:hover,
+.eda-notebook-segment-tools button:focus-visible,
+.eda-notebook-segment[data-open] > .eda-notebook-segment-tools button {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+/*
+ * With a pointer that can hover, the button shows only on hover or keyboard
+ * focus. It fades out after a short wait, so a pointer that overshoots
+ * doesn't lose it.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .eda-notebook-segment-tools button {
+    opacity: 0;
+    transition: opacity 120ms ease 250ms;
+  }
+
+  .eda-notebook-segment:hover > .eda-notebook-segment-tools button,
+  .eda-notebook-segment:focus-within > .eda-notebook-segment-tools button,
+  .eda-notebook-segment[data-open] > .eda-notebook-segment-tools button {
+    opacity: 1;
+    transition-delay: 0s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eda-notebook-segment-tools button {
+    transition: none;
+  }
+}
+
+/* Centered on the single line that names a block's definitions. */
+.eda-notebook-segment-tools:has(+ .eda-notebook-defines) button {
+  margin-top: -0.3rem;
 }
 
 /* The editor grows with its text; the colored copy sits under the input. */
@@ -322,6 +358,8 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.8rem;
   line-height: 1.25rem;
+  /* Level with the edit button when opening scrolls to it. */
+  scroll-margin-top: 0.5rem;
 }
 
 .eda-notebook-source:focus-within {
