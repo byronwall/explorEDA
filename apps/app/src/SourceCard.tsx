@@ -1,3 +1,4 @@
+import { usedByText } from "./explore";
 import {
   QuerySummary,
   type AnalysisProject,
@@ -15,7 +16,9 @@ export function SourceCard({
   project,
   tables,
   sourceId,
+  usedBy,
 }: {
+  usedBy?: string[];
   project: AnalysisProject;
   tables: Record<string, readonly AnalysisSourceRow[]>;
   sourceId: string;
@@ -29,7 +32,8 @@ export function SourceCard({
         height={SUMMARY_HEIGHT}
       />
       <span className="app-source-card-foot">
-        Choose it to explore every row
+        {usedByText(usedBy).replace(/^./, (first) => first.toUpperCase())}.
+        Choose it to explore every row.
       </span>
     </div>
   );

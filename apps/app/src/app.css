@@ -1542,6 +1542,12 @@ button.app-row-main {
   width: 0;
 }
 
+/* A short table's card is only as tall as its fields. */
+.app-source-card .eda-summary-view {
+  height: auto !important;
+  max-height: 320px;
+}
+
 .app-source-card-foot {
   color: var(--muted-foreground);
 }

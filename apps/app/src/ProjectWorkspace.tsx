@@ -7,6 +7,7 @@ import {
   PROJECT_FILE,
   projectFileText,
   proposeLinks,
+  sourceUsage,
   type AnalysisProject,
   type ForeignKey,
   type AnalysisView,
@@ -27,6 +28,7 @@ import {
   exploreView,
   ownQuery,
   savedName,
+  usedByText,
   type ExploreDraft,
 } from "./explore";
 
@@ -305,6 +307,27 @@ export function ProjectWorkspace({
     [views, folder.notebooks]
   );
 
+  // Each source's analyses and notebooks, by the files' names, as the
+  // Schema diagram traces them.
+  const usedBy = useMemo(() => {
+    const fileName = (path: string) =>
+      names.get(path) ??
+      folder.notebooks.find((item) => item.path === path)?.result.settings
+        .metadata.name ??
+      path;
+    const usage = sourceUsage(project, folder.tables, allViews);
+    return Object.fromEntries(
+      [...usage].map(([sourceId, viewIds]) => [
+        sourceId,
+        [
+          ...new Set(
+            viewIds.map((id) => fileName(id.slice(0, id.lastIndexOf("#"))))
+          ),
+        ],
+      ])
+    );
+  }, [project, folder, allViews, names]);
+
   const updateView = (id: string, change: Partial<AnalysisView>) => {
     const path = id.slice(0, id.lastIndexOf("#"));
     dirty.current.add(path);
@@ -434,6 +457,7 @@ export function ProjectWorkspace({
       <span className="app-muted">
         {plural(folder.tables[source.id]?.length ?? 0, "row")}
         {folder.paths[source.id] ? ` · ${folder.paths[source.id]}` : ""}
+        {` · ${usedByText(usedBy[source.id])}`}
       </span>
     </div>
   );
@@ -486,6 +510,7 @@ export function ProjectWorkspace({
         initialConnection={initialPanel?.addDatabase || undefined}
         problems={visibleProblems(folder, project)}
         suggestedLinks={proposals.length}
+        usedBy={usedBy}
         onOpenSchema={
           project.sources.length > 1 && view && !notebook
             ? () =>

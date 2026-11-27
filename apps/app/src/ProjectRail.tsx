@@ -82,6 +82,7 @@ export function ProjectRail({
   problems,
   suggestedLinks,
   onOpenSchema,
+  usedBy,
 }: {
   folder: ProjectFolder;
   project: AnalysisProject;
@@ -105,6 +106,8 @@ export function ProjectRail({
   suggestedLinks: number;
   /** Opens the schema diagram; missing where the view has none. */
   onOpenSchema?: () => void;
+  /** The analyses and notebooks that read each source, by source ID. */
+  usedBy: Record<string, string[]>;
 }) {
   const narrow = useNarrow();
   const [shown, setShown] = useState(false);
@@ -143,6 +146,7 @@ export function ProjectRail({
         project={project}
         tables={folder.tables}
         sourceId={sourceId}
+        usedBy={usedBy[sourceId]}
       />
     );
   };
