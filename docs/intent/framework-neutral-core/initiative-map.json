@@ -1,0 +1,182 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Run explorEDA without React at its core",
+    "slug": "framework-neutral-core",
+    "scale": "capability",
+    "current_phase": "intent",
+    "last_updated": "2026-11-11",
+    "summary": "Feasibility read: half the library is already framework-free; a staged path leads to a React-free core with React as one renderer. A second full UI is a rewrite of about 83k lines.",
+    "status": "planned",
+    "next_action": "Byron answers the motivation questions. Then prove stage 2: split ChartDefinition into data and a React view binding, and gate core entries against React imports."
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-11-11"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "not-requested",
+      "updated_at": null
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "request-2026-11-11",
+      "type": "direct-user-input",
+      "location": "Claude Code session, 2026-11-11",
+      "anchor": "Create an initiative on what it takes to remove React as the core of the internals; scope feasibility",
+      "authority": "Explicit human request"
+    },
+    {
+      "id": "code-scan-2026-11-11",
+      "type": "repository-evidence",
+      "location": "packages/explorEDA/src at 8d98d47f",
+      "anchor": "Line counts by folder and extension, React import counts, hook counts, ChartDefinition type",
+      "authority": "Measured"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "feasibility",
+        "type": "question",
+        "statement": "Find out whether React can be removed from the core of the library, and how large that is.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "proof",
+        "source_anchors": [
+          { "source_id": "request-2026-11-11", "anchor": "whole request" }
+        ],
+        "confidence": "high",
+        "notes": "Answered in the brief: neutral core is a clear staged path; second full UI is very large."
+      },
+      {
+        "id": "half-neutral",
+        "type": "finding",
+        "statement": "About 74k of 163k non-test lines are TypeScript with no React import, including lib/, server, CLI, chart plans, and the vanilla Zustand data layer store.",
+        "commitment": "observed",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          { "source_id": "code-scan-2026-11-11", "anchor": "line counts" }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "chart-contract-seam",
+        "type": "finding",
+        "statement": "ChartDefinition holds React component, settingsPanel, and icon, so core and charts/* entries import React. About 7 call sites read those fields.",
+        "commitment": "observed",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "code-scan-2026-11-11",
+            "anchor": "types/ChartTypes.ts, charts/registry.ts"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      },
+      {
+        "id": "keep-react",
+        "type": "boundary",
+        "statement": "Keep the existing library and demo in React; this initiative does not convert them.",
+        "commitment": "explicit",
+        "importance": "core",
+        "status": "active",
+        "time_horizon": "now",
+        "source_anchors": [
+          {
+            "source_id": "code-scan-2026-11-11",
+            "anchor": "AGENTS.md project rule"
+          }
+        ],
+        "confidence": "high",
+        "notes": ""
+      }
+    ],
+    "themes": [
+      "Framework-free engine",
+      "React as one renderer",
+      "Embed before rewrite"
+    ],
+    "conflicts": [],
+    "human_questions": [
+      "What drives this: a non-React host, new UI in SolidJS, headless rendering, or cleaner architecture?",
+      "Is an embed wrapper with React inside enough, or must the bundle have no React?",
+      "If no React, which framework first, and are charts alone in scope or the app chrome too?"
+    ]
+  },
+  "brainstorm": {
+    "status": "not-requested",
+    "requested_count": 0,
+    "options": [],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": "Staged: embed wrapper, split chart contract, free the store, one neutral chart family, then decide on a second UI.",
+    "success_moves": [],
+    "first_proof": "Split ChartDefinition so core and charts/* entries build without React, gated by a check.",
+    "rabbit_holes": [
+      "Rewriting chart interaction (brush, hover, drag) outside React hooks",
+      "Replacing Radix, tiptap, dnd-kit, and react-grid-layout in a second framework",
+      "Keeping two chart renderers in sync"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-11-11",
+      "action": "Created feasibility brief from a code scan.",
+      "reason": "Byron asked what it takes to remove React from the internals.",
+      "evidence": "No code changed."
+    }
+  ],
+  "closure": null,
+  "intake": {
+    "kind": "user-addition",
+    "audience": "Host developers in other frameworks; library maintainers.",
+    "priority": "Feasibility only; no scheduling.",
+    "related_initiatives": [
+      "headless-chart-rendering",
+      "renderer-independent-replay"
+    ]
+  }
+}
