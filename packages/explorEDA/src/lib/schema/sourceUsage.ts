@@ -2,80 +2,44 @@ import type {
   AnalysisProject,
   AnalysisSourceRow,
 } from "@/types/AnalysisProject";
-import {
-  projectSchemaGraph,
-  type SchemaEndpoint,
-  type SchemaGraph,
-  type SchemaViewInput,
-} from "./schemaGraph";
+import { projectSchemaGraph, type SchemaGraph } from "./schemaGraph";
 
 /**
- * The views that read each source, by source ID: the Schema diagram's own
- * lines, followed back from each field a view reads, through query steps and
- * calculations, to the table fields they come from. A Summary Table reads
- * every field of its query, so its view reads every source the query does.
+ * The views that read each source, by source ID. A view reads every source
+ * its query does: the one it starts from, and each it looks up, expands, or
+ * appends, as the Schema diagram's lineage lines into the query show. Any of
+ * them can change the view's rows, so the view depends on all of them.
  */
 export function sourceUsage(
   project: AnalysisProject,
   tables: Record<string, readonly AnalysisSourceRow[]>,
-  views: SchemaViewInput[]
+  views: Array<{ id: string; queryId: string }>
 ): Map<string, string[]> {
-  const summaries = new Map(
-    views
-      .filter((view) =>
-        view.settings?.charts.some((chart) => chart.type === "summary")
-      )
-      .map((view) => [view.id, view.queryId])
-  );
-  return usageFromGraph(projectSchemaGraph(project, tables, views), summaries);
-}
-
-const key = (end: SchemaEndpoint) => `${end.nodeId}\u0000${end.rowId}`;
-
-/**
- * @param summaries Views that read every field of a query, by view ID.
- */
-export function usageFromGraph(
-  graph: SchemaGraph,
-  summaries: ReadonlyMap<string, string> = new Map()
-): Map<string, string[]> {
-  // Where each row's value comes from. Relationships join tables but feed no
-  // field, so a view reading orders doesn't read customers through them.
-  const feeds = new Map<string, SchemaEndpoint[]>();
-  // The rows of each card that something feeds, to start a walk from.
-  const fed = new Map<string, SchemaEndpoint[]>();
-  for (const edge of graph.edges) {
-    if (edge.kind === "relationship") continue;
-    const to = key(edge.to);
-    if (!feeds.has(to)) {
-      feeds.set(to, []);
-      fed.set(edge.to.nodeId, [...(fed.get(edge.to.nodeId) ?? []), edge.to]);
-    }
-    feeds.get(to)!.push(edge.from);
-  }
-  const nodes = new Map(graph.nodes.map((node) => [node.id, node]));
+  const reads = querySources(projectSchemaGraph(project, tables));
   const usage = new Map<string, string[]>();
-  for (const view of graph.nodes) {
-    if (view.kind !== "view" || !view.viewId) continue;
-    const queryId = summaries.get(view.viewId);
-    const queue = [
-      ...(fed.get(view.id) ?? []),
-      ...(queryId ? (fed.get(`query:${queryId}`) ?? []) : []),
-    ];
-    const seen = new Set(queue.map(key));
-    while (queue.length) {
-      for (const from of feeds.get(key(queue.pop()!)) ?? []) {
-        if (seen.has(key(from))) continue;
-        seen.add(key(from));
-        queue.push(from);
-        const node = nodes.get(from.nodeId);
-        if (node?.kind === "table" && node.sourceId) {
-          const list = usage.get(node.sourceId) ?? [];
-          if (!list.includes(view.viewId)) list.push(view.viewId);
-          usage.set(node.sourceId, list);
-        }
-      }
+  for (const view of views) {
+    for (const sourceId of reads.get(view.queryId) ?? []) {
+      const list = usage.get(sourceId) ?? [];
+      if (!list.includes(view.id)) list.push(view.id);
+      usage.set(sourceId, list);
     }
   }
   return usage;
+}
+
+/** The sources each query reads, by query ID. */
+export function querySources(graph: SchemaGraph): Map<string, Set<string>> {
+  const nodes = new Map(graph.nodes.map((node) => [node.id, node]));
+  const reads = new Map<string, Set<string>>();
+  for (const edge of graph.edges) {
+    if (edge.kind !== "lineage") continue;
+    const query = nodes.get(edge.to.nodeId);
+    const table = nodes.get(edge.from.nodeId);
+    if (query?.kind !== "query" || !query.queryId) continue;
+    if (table?.kind !== "table" || !table.sourceId) continue;
+    const set = reads.get(query.queryId) ?? new Set<string>();
+    set.add(table.sourceId);
+    reads.set(query.queryId, set);
+  }
+  return reads;
 }

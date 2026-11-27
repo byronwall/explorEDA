@@ -22,6 +22,7 @@ async function shopFiles() {
 
 async function usageOf(files: Record<string, string>) {
   const folder = await readProjectFolder(memoryProjectFiles(files));
+  expect(folder.problems).toEqual([]);
   const views = folder.analyses.flatMap((analysis) =>
     analysis.result.views.map((view, index) => ({
       id: `${analysis.path}#${index}`,
@@ -33,38 +34,40 @@ async function usageOf(files: Record<string, string>) {
   return sourceUsage(folder.project, folder.tables, views);
 }
 
-it("lists the views that read each source through their queries' lookups", async () => {
+it("lists the views that read each source their queries read", async () => {
   const usage = await usageOf(await shopFiles());
-  // Overview charts orders and their customers' regions; "Aster in spring"
-  // filters by a customer but charts only order fields.
-  expect(usage.get("orders")).toEqual(["orders.eda#0", "orders.eda#1"]);
-  expect(usage.get("customers")).toEqual(["orders.eda#0"]);
-  // Products reads items and their products, not the orders they link to.
+  // Overview's query reads orders and looks up their customers; "Aster in
+  // spring" reads orders alone. Products' query reads items and looks up
+  // their orders, products, and the orders' customers.
+  expect(usage.get("orders")).toEqual([
+    "orders.eda#0",
+    "orders.eda#1",
+    "products.eda#0",
+  ]);
+  expect(usage.get("customers")).toEqual(["orders.eda#0", "products.eda#0"]);
   expect(usage.get("items")).toEqual(["products.eda#0"]);
   expect(usage.get("products")).toEqual(["products.eda#0"]);
 });
 
-it("follows a calculation to its own inputs, not its query's other lookups", async () => {
+it("counts a view that names no field, such as a row count", async () => {
   const files = await shopFiles();
-  files["exploreda.eda"] = files["exploreda.eda"]!.replace(
-    "  lookup product via=item-product\n",
-    '  lookup product via=item-product\n  calc doubled "Doubled" = ["items.quantity"] * 2\n'
-  );
-  files["doubled.eda"] =
-    'eda query=item-lines\ndashboard "Doubled"\nhist doubled title=Doubled\n';
+  files["count.eda"] =
+    'eda query=order-lines\ndashboard "Count"\nmetric @count count title=Orders\n';
   const usage = await usageOf(files);
-  expect(usage.get("items")).toContain("doubled.eda#0");
-  for (const other of ["orders", "products", "customers"]) {
-    expect(usage.get(other) ?? []).not.toContain("doubled.eda#0");
-  }
+  expect(usage.get("orders")).toContain("count.eda#0");
+  expect(usage.get("customers")).toContain("count.eda#0");
+  expect(usage.get("items") ?? []).not.toContain("count.eda#0");
 });
 
-it("counts a Summary Table as reading every source of its query", async () => {
+it("counts a source appended to another", async () => {
   const files = await shopFiles();
-  files["fields.eda"] =
-    'eda query=order-lines\ndashboard "Fields"\nsummary @fields title=Fields\n';
+  files["data/more-orders.csv"] =
+    "orderId,customerId,channel,orderedAt,amount\nO900,C01,Mail,2025-03-01,99\n";
+  files["exploreda.eda"] +=
+    '\nsource @more-orders path=data/more-orders.csv\n\nquery @all-orders "All orders" glyph=◇ {\n  source orders\n  append more-orders field=origin\n}\n';
+  files["all.eda"] =
+    'eda query=all-orders\ndashboard "All"\nrow orders.channel title=Channel\n';
   const usage = await usageOf(files);
-  expect(usage.get("orders")).toContain("fields.eda#0");
-  expect(usage.get("customers")).toContain("fields.eda#0");
-  expect(usage.get("items") ?? []).not.toContain("fields.eda#0");
+  expect(usage.get("orders")).toContain("all.eda#0");
+  expect(usage.get("more-orders")).toContain("all.eda#0");
 });
