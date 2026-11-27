@@ -271,7 +271,12 @@ export function RowChart({
     ? Math.min(settings.topN + 1, floorRows)
     : floorRows;
   const plan = useMemo((): RowSummaryPlan => {
-    const follow = follows ? { selected: held.selected } : undefined;
+    const current = new Set(filterValues.map((value) => value ?? null));
+    const follow = follows
+      ? {
+          selected: held.selected.filter((value) => current.has(value ?? null)),
+        }
+      : undefined;
     if (liveSummary && allSummary)
       return planRowSummary(liveSummary, allSummary, maxRows, follow);
     // Context bars count the rows the chart's own filter keeps, so a chart
@@ -292,8 +297,28 @@ export function RowChart({
     settings.localFilters,
     follows,
     held,
+    settings.filters,
     allIds,
   ]);
+  // The rows as drawn without other filters. Following filters swaps the
+  // rows, and these hold the axis, the share total, and Other's label room.
+  const home = useMemo(() => {
+    if (!follows) return;
+    const rows: RowSummaryPlan = allSummary
+      ? planRowSummary(allSummary, allSummary, maxRows)
+      : planRowCategories(
+          column,
+          allIds,
+          maxRows,
+          settings.localFilters?.length ? allIds : undefined
+        );
+    const totals = rows.visible.map((item) => item.total);
+    // A summary pools Other, so an ID shared by two members counts once.
+    if (rows.otherSummary) totals.push(rows.otherSummary.total);
+    else if (rows.other.length)
+      totals.push(rows.other.reduce((sum, item) => sum + (item.total ?? 0), 0));
+    return { totals, otherCount: rows.other.length };
+  }, [follows, allSummary, column, allIds, maxRows, settings.localFilters]);
   const labelOf = useMemo(() => {
     const formatted = hasFieldDisplayFormat(fieldSettings[settings.field]);
     return (value: datum) =>
@@ -346,11 +371,10 @@ export function RowChart({
     const sum = (key: "count" | "total") =>
       counted.reduce((total, item) => total + (item[key] ?? 0), 0);
     const live = sum("count");
-    // Categories left out for having no matching rows still hold their part.
-    const all = plan.empty.reduce(
-      (total, item) => total + (item.total ?? 0),
-      sum("total")
-    );
+    // Rows left out by other filters still hold their part of the whole.
+    const all = home
+      ? home.totals.reduce<number>((total, value) => total + (value ?? 0), 0)
+      : sum("total");
     return counted.map((item) => ({
       ...item,
       count:
@@ -358,7 +382,7 @@ export function RowChart({
       total:
         item.total === undefined || all === 0 ? undefined : item.total / all,
     }));
-  }, [counted, share, plan]);
+  }, [counted, share, home]);
   const source = useMemo((): TraceSource => {
     const currentRevision = `${revision.split(":")[0]}:${settings.field}:${settings.aggregateId ?? ""}:${chartHeight}:${plan.other.length}:${plan.categories.map((item) => item.sourceIds.join(",")).join(";")}`;
     return {
@@ -487,7 +511,11 @@ export function RowChart({
   );
   const requestedLabelMargin = Math.max(
     baseMargin.left,
-    ...[...yLabels, ...(follows ? longestLabels : [])].map(
+    ...[
+      ...yLabels,
+      ...(follows ? longestLabels : []),
+      ...(home?.otherCount ? [`+${home.otherCount} more`] : []),
+    ].map(
       (label) =>
         Math.max(
           label.length * tickSize * 0.7,
@@ -535,44 +563,6 @@ export function RowChart({
   // would set the axis again.
   const fitted = settings.scaleTo === "filtered";
   const context = !facetIds && !fitted;
-  // Other filters change which rows show, so the axis also covers the rows
-  // drawn without them, and one value keeps one length.
-  const homeValues = useMemo(() => {
-    if (!follows || fitted) return [];
-    const home: RowSummaryPlan = allSummary
-      ? planRowSummary(allSummary, allSummary, maxRows)
-      : planRowCategories(
-          column,
-          allIds,
-          maxRows,
-          settings.localFilters?.length ? allIds : undefined
-        );
-    const total = (items: typeof home.categories) =>
-      items.reduce((sum, item) => sum + (item.total ?? 0), 0);
-    const values = [
-      ...home.visible.map((item) => item.total),
-      home.otherSummary
-        ? home.otherSummary.total
-        : home.other.length
-          ? total(home.other)
-          : undefined,
-    ];
-    if (!share) return values;
-    const whole = total(home.categories);
-    return values.map((value) =>
-      value === undefined || whole === 0 ? undefined : value / whole
-    );
-  }, [
-    follows,
-    fitted,
-    allSummary,
-    column,
-    allIds,
-    maxRows,
-    settings.localFilters,
-    share,
-  ]);
-
   // Create scales with synchronized limits if in a facet
   // Labels of bars left of zero sit past the bar's end, so the plot keeps
   // room for the widest one, as the right margin does for positive labels.
@@ -583,8 +573,19 @@ export function RowChart({
       .map((d) => typography.measure(formatMeasure(d.count), 11) + 10)
   );
   const xScale = useMemo(() => {
+    // The axis also covers the rows drawn without other filters, so one value
+    // keeps one length.
+    const whole = share
+      ? home?.totals.reduce<number>((total, value) => total + (value ?? 0), 0)
+      : 1;
+    const held =
+      fitted || !home || !whole
+        ? []
+        : home.totals.map((value) =>
+            value === undefined ? undefined : value / whole
+          );
     const values = [
-      ...homeValues,
+      ...held,
       ...displayCounts.flatMap((d) => [fitted ? undefined : d.total, d.count]),
     ].filter(
       (value): value is number => value !== undefined && Number.isFinite(value)
@@ -612,7 +613,8 @@ export function RowChart({
     displayCounts,
     innerWidth,
     settings.xAxis,
-    homeValues,
+    home,
+    share,
     fitted,
     summarized,
     negativeLabelRoom,
@@ -802,13 +804,15 @@ export function RowChart({
         settings={chartSettings}
         onClearPlot={() => updateChart(settings.id, { filters: [] })}
         xTickFormatter={
-          formatters
+          // A fitted axis of tiny values would round every tick to 0.
+          tiny(Math.max(...xScale.domain().map(Math.abs))) &&
+          valueFormat !== "percent" &&
+          settings.valueDecimals === undefined
             ? (value) =>
-                typeof value === "number" ? formatters.tick(value) : value
-            : // A fitted axis of tiny sums would round every tick to 0.
-              tiny(Math.max(...xScale.domain().map(Math.abs)))
+                typeof value === "number" ? significant(value) : value
+            : formatters
               ? (value) =>
-                  typeof value === "number" ? significant(value) : value
+                  typeof value === "number" ? formatters.tick(value) : value
               : undefined
         }
         yTickFormatter={(value) =>

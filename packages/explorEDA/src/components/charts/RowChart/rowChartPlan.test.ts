@@ -145,11 +145,12 @@ describe("planRowSummary", () => {
     expect(
       planRowSummary(all, all, 2, { selected: ["West"] }).visible[0]?.label
     ).toBe("West");
-    // All of Other selected, as by a click on it, stays in Other.
-    const many = planRowSummary(all, all, 3, {
-      selected: ["South", "West"],
-    });
-    expect(many.visible.map((item) => item.label)).toEqual(["East", "North"]);
+    // As many selections as slots all fit, wherever they rank.
+    const two = planRowSummary(all, all, 3, { selected: ["South", "West"] });
+    expect(two.visible.map((item) => item.label)).toEqual(["South", "West"]);
+    // More than fit, as after a click on Other, take no slot first.
+    const many = planRowSummary(all, all, 2, { selected: ["South", "West"] });
+    expect(many.visible.map((item) => item.label)).toEqual(["East"]);
   });
 
   it("leaves an average with no filtered rows unavailable", () => {

@@ -38,9 +38,9 @@ export interface RowPlan {
  */
 export interface FollowFilters {
   /**
-   * This chart's selected values when other filters last changed: each keeps
-   * its row, even with no rows. Holding them since then means a click on this
-   * chart never moves a row.
+   * The values this chart had selected when other filters last changed, and
+   * still has: each keeps its row, even with no rows. A value selected since
+   * then moves no row.
    */
   selected: datum[];
 }
@@ -88,11 +88,8 @@ function rank(
   if (sorted.length <= maxRows)
     return { categories: sorted, visible: sorted, other: [], empty };
   const slots = maxRows - 1;
-  // Selected rows take their slots first, unless they outnumber them, or all
-  // of Other is selected, as after a click on it: that selection stays there.
-  const pinned = sorted.slice(slots).every(selected)
-    ? []
-    : sorted.filter(selected);
+  // Selected rows take their slots first, unless they outnumber them.
+  const pinned = sorted.filter(selected);
   const keep = new Set(pinned.length <= slots ? pinned : []);
   for (const item of sorted) {
     if (keep.size >= slots) break;
