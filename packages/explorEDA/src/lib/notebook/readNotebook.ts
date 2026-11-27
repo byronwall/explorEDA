@@ -40,6 +40,8 @@ export interface NotebookReadResult extends NotebookCompileResult {
   rows: Rows;
   /** Rows of each other query a block names, by query ID. */
   queryRows: Record<string, Rows>;
+  /** The charts each other query's blocks compile to, by query ID. */
+  querySettings: Record<string, NotebookCompileResult["settings"]>;
 }
 
 export function readNotebookText(
@@ -129,5 +131,8 @@ export function readNotebookText(
     queryId,
     rows,
     queryRows,
+    querySettings: Object.fromEntries(
+      groups.map((group, index) => [group, others[index]!.settings])
+    ),
   };
 }

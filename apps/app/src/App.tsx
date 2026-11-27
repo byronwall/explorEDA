@@ -1,3 +1,4 @@
+import type { ExploreDraft } from "./explore";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   isDatabaseFile,
@@ -148,6 +149,8 @@ export function App({
   };
   /** Drafted links the user dismissed, kept across reloads. */
   const dismissedLinks = useRef(new Set<string>());
+  // An explored source's unsaved edits, kept while the folder reloads.
+  const exploreMemory = useRef<ExploreDraft | undefined>(undefined);
   /** Each connection's foreign keys, asked for once. */
   const foreignKeys = useRef(new Map<string, Promise<ForeignKey[]>>());
   // Each notebook's last working block text, kept across reloads.
@@ -415,13 +418,14 @@ export function App({
         () => createAnalysis(files, folder, { name, queryId }),
         (path) => `Created ${path}.`
       )(),
-    openView: (view, name, project) =>
+    openView: (view, name, project, context) =>
       act(
         () =>
           openView(files, folder, {
             view,
             name,
             project,
+            context,
             layout: info.layout,
           }),
         (path) => `Created ${path}.`
@@ -592,6 +596,7 @@ export function App({
         initialPanel={loaded.panel}
         dismissedLinks={dismissedLinks.current}
         onDismissLink={(id) => dismissedLinks.current.add(id)}
+        exploreMemory={exploreMemory}
         notebookMemory={(path) => {
           let memory = notebookMemory.current.get(path);
           if (!memory) {

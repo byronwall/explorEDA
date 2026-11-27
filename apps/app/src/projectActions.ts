@@ -22,8 +22,13 @@ import {
   type ProjectFolder,
 } from "exploreda";
 
-const takenPaths = (folder: ProjectFolder) =>
-  folder.analyses.map((analysis) => analysis.path);
+// The project's own text is never a new analysis's path, even before it
+// exists: an analysis named after the project would replace it.
+const takenPaths = (folder: ProjectFolder) => [
+  ...folder.analyses.map((analysis) => analysis.path),
+  PROJECT_FILE,
+  ...(folder.projectPath ? [folder.projectPath] : []),
+];
 
 /** The project text's path, and its text when it exists yet. */
 async function projectText(
@@ -204,11 +209,15 @@ export async function openView(
     view,
     name,
     project,
+    context,
     layout,
   }: {
     view: AnalysisView;
     name: string;
+    /** A new project to write first, such as one with the view's new query. */
     project?: AnalysisProject;
+    /** The project to write the view against, leaving the project text be. */
+    context?: AnalysisProject;
     layout: "visible" | "hidden";
   }
 ) {
@@ -224,7 +233,7 @@ export async function openView(
           folder,
           path,
           [{ ...view, name, settings: view.settings }],
-          project ?? folder.project,
+          project ?? context ?? folder.project,
           name
         )
       : newAnalysisText(view.queryId, path, name, { starter: true })

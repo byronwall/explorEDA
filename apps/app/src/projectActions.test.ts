@@ -17,6 +17,22 @@ import {
 const SALES = "order_id,region,revenue\nA1,West,10\nA2,East,20\n";
 
 describe("project actions", () => {
+  it("never names a new analysis after the project's own text", async () => {
+    const files = memoryProjectFiles({
+      "data/sales.csv": SALES,
+      "exploreda.eda": "project @shop\n\nsource @sales path=data/sales.csv\n",
+    });
+    const folder = await readProjectFolder(files);
+    const path = await createAnalysis(files, folder, {
+      name: "Exploreda",
+      queryId: "sales",
+    });
+    expect(path).not.toBe("exploreda.eda");
+    expect(files.snapshot()["exploreda.eda"]).toBe(
+      "project @shop\n\nsource @sales path=data/sales.csv\n"
+    );
+  });
+
   it("charts a data file in a folder with no project yet", async () => {
     const files = memoryProjectFiles({ "data/sales.csv": SALES });
     const path = await chartDataFile(files, await readProjectFolder(files), {
