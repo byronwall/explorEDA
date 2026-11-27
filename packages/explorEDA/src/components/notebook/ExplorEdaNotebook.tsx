@@ -10,6 +10,7 @@ import {
   type MutableRefObject,
   type ReactNode,
 } from "react";
+import { flushSync } from "react-dom";
 import { Check, CircleAlert, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import type { DeclaredFieldType } from "@/lib/declaredFieldTypes";
@@ -938,6 +939,36 @@ function NotebookColumn({
       else next.add(key);
       return next;
     });
+  // Opening moves into the text; closing returns to the button. A block with
+  // only definitions swaps its element as it opens, so look it up afterwards.
+  const toggleAndFocus = (key: string) => {
+    const open = !editing.has(key);
+    flushSync(() => toggle(key));
+    const tools = ref.current?.querySelector(`[data-edit="${key}"]`);
+    if (!open) {
+      tools?.querySelector("button")?.focus({ preventScroll: true });
+      return;
+    }
+    const input = tools?.parentElement?.querySelector("textarea");
+    input?.focus({ preventScroll: true });
+    // The button follows the page down a tall block; its text opens at the top.
+    const editor = input?.parentElement;
+    if (editor && editor.getBoundingClientRect().top < 0) {
+      editor.scrollIntoView({ block: "start" });
+    }
+  };
+  const onEditorEscape = (event: KeyboardEvent) => {
+    if (event.key !== "Escape" || event.defaultPrevented) return;
+    const target = event.target as HTMLElement;
+    if (!target.closest(".eda-notebook-source, [data-edit]")) return;
+    const key = target
+      .closest(".eda-notebook-segment")
+      ?.querySelector<HTMLElement>(":scope > [data-edit]")?.dataset.edit;
+    if (key && editing.has(key)) {
+      event.preventDefault();
+      toggleAndFocus(key);
+    }
+  };
   // Charts color their palettes for the surface they sit on.
   useEffect(() => {
     const update = () =>
@@ -975,9 +1006,10 @@ function NotebookColumn({
         const open = editing.has(key);
         const edit = onSegmentChange && (
           <EditToggle
+            id={key}
             open={open}
             kind={segment.kind}
-            onToggle={() => toggle(key)}
+            onToggle={() => toggleAndFocus(key)}
           />
         );
         const editor = open && onSegmentChange && (
@@ -1019,9 +1051,11 @@ function NotebookColumn({
       className="eda-workspace eda-notebook bg-background text-foreground"
       data-eda-theme={themeId}
       data-sheets={book || undefined}
+      data-editable={onSegmentChange ? true : undefined}
     >
       <article
         ref={ref}
+        onKeyDown={onSegmentChange && onEditorEscape}
         className="eda-notebook-column"
         data-layout={
           layout === "sections" && !onSegmentChange ? "sections" : undefined
@@ -1058,28 +1092,34 @@ function NotebookColumn({
   );
 }
 
-/** Opens or closes a segment's text, beside it. */
+/**
+ * Opens or closes a segment's text, from the gutter to its left. The button
+ * doesn't move when the text opens.
+ */
 function EditToggle({
+  id,
   open,
   kind,
   onToggle,
 }: {
+  id: string;
   open: boolean;
   kind: NotebookSegment["kind"];
   onToggle: () => void;
 }) {
+  const name = kind === "prose" ? "Edit text" : "Edit block";
   return (
-    <div className="eda-notebook-segment-tools">
+    <div className="eda-notebook-segment-tools" data-edit={id}>
       <Button
         variant="ghost"
-        size="sm"
-        aria-pressed={open}
+        size="icon"
+        aria-label={open ? "Done" : name}
         tooltip={
           open
-            ? "Close the text editor; changes are already saved"
+            ? "Done: close the editor (Esc). Changes are already saved"
             : kind === "prose"
-              ? "Edit this text as Markdown"
-              : "Edit this block's dashboard text; charts update as you type"
+              ? "Edit text as Markdown"
+              : "Edit block: its dashboard text; charts update as you type"
         }
         onClick={onToggle}
       >
@@ -1088,7 +1128,6 @@ function EditToggle({
         ) : (
           <Pencil className="h-4 w-4" aria-hidden="true" />
         )}
-        {open ? "Done" : kind === "prose" ? "Edit text" : "Edit block"}
       </Button>
     </div>
   );

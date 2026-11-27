@@ -206,6 +206,26 @@ describe("ExplorEdaNotebook", () => {
     }
   });
 
+  it("moves into the text on edit and back to the button on Escape", () => {
+    render(
+      <ExplorEdaNotebook text={TEXT} data={rows} onTextChange={vi.fn()} />
+    );
+    // The first block only defines names, so opening it swaps its element.
+    for (const block of ["Block 1", "Block 2"]) {
+      const index = Number(block.slice(-1)) - 1;
+      fireEvent.click(
+        screen.getAllByRole("button", { name: "Edit block" })[index]!
+      );
+      const editor = screen.getByRole("textbox", { name: `${block} text` });
+      expect(editor).toHaveFocus();
+      fireEvent.keyDown(editor, { key: "Escape" });
+      expect(screen.queryByRole("textbox")).toBeNull();
+      expect(
+        screen.getAllByRole("button", { name: "Edit block" })[index]
+      ).toHaveFocus();
+    }
+  });
+
   it("shows no edit controls without onTextChange", () => {
     render(<ExplorEdaNotebook text={TEXT} data={rows} />);
     expect(screen.queryByRole("button", { name: /Edit/ })).toBeNull();
