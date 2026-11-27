@@ -3,9 +3,12 @@
  * Refresh, Read all, the panel shown while an analysis waits for its data,
  * and the password form a connection asks for when it needs one.
  */
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, type ReactNode } from "react";
 import { readAgo, type ProjectFolder } from "exploreda";
+import * as Popover from "@radix-ui/react-popover";
+import { Database, RefreshCw, X } from "lucide-react";
 import { RefreshError } from "./httpFiles";
+import { IconButton, RailRow } from "./RailParts";
 import { ReadWatchContext, useRunningReads } from "./readProgress";
 
 /** A list of names in words: "a", "a and b", "a, b, and c". */
@@ -60,16 +63,19 @@ export function useRead(
       setState((current) => (current.status === "reading" ? current : initial));
     }
   }, [initial]);
+  /** Resolves to false when the read failed. */
   const run = async () => {
     if (!read) {
-      return;
+      return true;
     }
     setState({ status: "reading" });
     try {
       await read();
       setState({ status: "idle" });
+      return true;
     } catch (error) {
       setState(readFailure(error));
+      return false;
     }
   };
   return { state, run };
@@ -78,25 +84,41 @@ export function useRead(
 const count = (value: number) => value.toLocaleString("en-US");
 
 /** Asks the server to stop a read; the read then reports it stopped. */
-function CancelRead({ sourceId }: { sourceId: string }) {
+function CancelRead({
+  sourceId,
+  text,
+}: {
+  sourceId: string;
+  /** Spells the action out, where there is room for words. */
+  text?: boolean;
+}) {
   const watch = useContext(ReadWatchContext);
   const [asked, setAsked] = useState(false);
   if (!watch) {
     return null;
   }
-  return (
+  const stop = () => {
+    setAsked(true);
+    watch.cancel(sourceId).catch(() => setAsked(false));
+  };
+  return text ? (
     <button
       type="button"
       className="app-button app-button-sm app-button-ghost"
       aria-label={`Stop reading ${sourceId}`}
       disabled={asked}
-      onClick={() => {
-        setAsked(true);
-        watch.cancel(sourceId).catch(() => setAsked(false));
-      }}
+      onClick={stop}
     >
       {asked ? "Stopping…" : "Cancel"}
     </button>
+  ) : (
+    <IconButton
+      label={`Stop reading ${sourceId}`}
+      disabled={asked}
+      onClick={stop}
+    >
+      <X />
+    </IconButton>
   );
 }
 
@@ -116,7 +138,7 @@ export function RunningReads({ sourceIds }: { sourceIds?: string[] }) {
           <span>
             Reading {sourceId}…{rows ? ` ${count(rows)} rows` : ""}
           </span>
-          <CancelRead sourceId={sourceId} />
+          <CancelRead sourceId={sourceId} text />
         </li>
       ))}
     </ul>
@@ -131,7 +153,7 @@ export function ReadProblem({
 }: {
   state: ReadState;
   onSaveSecret?: (connectionId: string, secret: string) => Promise<void>;
-  onRetry: () => Promise<void>;
+  onRetry: () => Promise<unknown>;
 }) {
   if (state.status !== "failed") {
     return null;
@@ -259,7 +281,7 @@ export function RefreshAll({
   return (
     <button
       type="button"
-      className="app-button app-button-sm app-button-ghost"
+      className="app-button app-button-sm app-button-ghost app-refresh-all"
       aria-label={`Read all ${sourceIds.length} database sources again`}
       disabled={reading}
       onClick={() => void run()}
@@ -345,7 +367,7 @@ function useReadAgo(readAt: string | undefined) {
   return readAt ? shortAgo(readAgo(readAt, now)) : undefined;
 }
 
-/** A database source: its rows, when they were read, and Refresh. */
+/** A database source: its rows, or why it has none, on one rail row. */
 export function DatabaseSourceItem({
   name,
   sourceId,
@@ -377,6 +399,7 @@ export function DatabaseSourceItem({
     lastError
   );
   const [removing, setRemoving] = useState(false);
+  const [open, setOpen] = useState(false);
   const ago = useReadAgo(snapshot?.readAt);
   // The page's own count of a running read outlives this view, so a read
   // still shows after the workspace redraws mid-read.
@@ -384,90 +407,195 @@ export function DatabaseSourceItem({
   const watched = Boolean(useContext(ReadWatchContext));
   const reading = state.status === "reading" || running !== undefined;
   const failed = !reading && state.status === "failed" ? state : undefined;
-  const meta = reading ? (
-    `Reading from ${connection}…${running ? ` ${count(running)} rows` : ""}`
-  ) : snapshot ? (
-    `${rows.toLocaleString()} rows · ${connection} · ${ago}`
-  ) : (
-    <>
-      {failed?.code === "cancelled" ? (
-        <span className="app-status app-status-warning">Stopped</span>
-      ) : failed ? (
-        <span className="app-status app-status-error">Couldn't read</span>
-      ) : (
-        <span className="app-status app-status-warning">Not read yet</span>
-      )}
-      {` · ${connection}`}
-    </>
-  );
+  const stopped = failed?.code === "cancelled";
+  const label = stopped ? "Stopped" : "Failed";
   const canPick = Boolean(onPickColumns) && failed?.code === "too-large";
-  const canRemove = Boolean(onRemove) && !snapshot && Boolean(failed);
+  const canRemove = Boolean(onRemove) && !snapshot;
+  // A read started here shows why it failed without another click.
+  const read = async () => {
+    setOpen(false);
+    if (!(await run())) setOpen(true);
+  };
+
+  let meta: ReactNode;
+  if (reading) {
+    meta = (
+      <span className="app-row-state" role="status">
+        {running ? `${count(running)} rows…` : "Reading…"}
+      </span>
+    );
+  } else if (failed) {
+    meta = (
+      <Popover.Trigger asChild>
+        <button
+          type="button"
+          className="app-row-button app-row-state"
+          aria-label={`${label}: show why ${sourceId} wasn't read`}
+        >
+          {label}
+        </button>
+      </Popover.Trigger>
+    );
+  } else if (snapshot) {
+    meta = `${count(rows)} ${rows === 1 ? "row" : "rows"}`;
+  } else if (onRefresh) {
+    meta = (
+      <button
+        type="button"
+        className="app-row-button"
+        aria-label={`Read ${sourceId} from ${connection}`}
+        onClick={() => void read()}
+      >
+        Read
+      </button>
+    );
+  } else {
+    meta = <span className="app-row-state">Not read</span>;
+  }
+
+  let action: ReactNode;
+  if (reading) {
+    action = watched && <CancelRead sourceId={sourceId} />;
+  } else if (snapshot && !failed && onRefresh) {
+    action = (
+      <IconButton
+        className="app-row-reveal"
+        label={`Read ${sourceId} again from ${connection}`}
+        onClick={() => void read()}
+      >
+        <RefreshCw />
+      </IconButton>
+    );
+  }
+
   return (
-    <li className="app-source" aria-busy={reading || undefined}>
-      <span className="app-source-name">{name}</span>
-      <span className="app-source-meta">{meta}</span>
-      {reading && watched ? (
-        <CancelRead sourceId={sourceId} />
-      ) : (
-        onRefresh && (
-          <button
-            type="button"
-            className="app-button app-button-sm app-button-ghost"
-            aria-label={`Read ${sourceId} again from ${connection}`}
-            disabled={reading}
-            onClick={() => void run()}
+    <li>
+      <Popover.Root
+        open={open && Boolean(failed)}
+        onOpenChange={(next) => {
+          setOpen(next);
+          setRemoving(false);
+        }}
+      >
+        <Popover.Anchor>
+          <RailRow
+            icon={<Database />}
+            name={name}
+            busy={reading}
+            tone={
+              failed && !stopped
+                ? "error"
+                : !snapshot && !reading
+                  ? "warning"
+                  : undefined
+            }
+            details={
+              <>
+                <span>
+                  {snapshot
+                    ? `${connection} · read ${ago}`
+                    : `${connection} · not read yet`}
+                </span>
+                {failed && <span>{failed.message}</span>}
+              </>
+            }
+            meta={meta}
+            action={action}
+          />
+        </Popover.Anchor>
+        <Popover.Portal>
+          <Popover.Content
+            className="app-popover"
+            aria-label={`Reading ${sourceId}`}
+            side="bottom"
+            align="start"
+            sideOffset={4}
+            collisionPadding={8}
+            // Focus moving on its own, as after a read, keeps it open.
+            onFocusOutside={(event) => event.preventDefault()}
+            // A password being typed stays until Escape or Close.
+            onPointerDownOutside={(event) => {
+              if (failed?.needsSecret) event.preventDefault();
+            }}
+            onKeyDown={(event) => {
+              if (event.key !== "Escape") event.stopPropagation();
+            }}
           >
-            {snapshot ? "Refresh" : "Read"}
-          </button>
-        )
-      )}
-      {!reading && (
-        <ReadProblem state={state} onSaveSecret={onSaveSecret} onRetry={run} />
-      )}
-      {(canPick || canRemove) && (
-        <div className="app-item-actions app-source-actions">
-          {canPick && !removing && (
-            <button
-              type="button"
-              className="app-button app-button-sm app-button-ghost"
-              aria-label={`Pick columns and rows of ${sourceId} to read`}
-              onClick={onPickColumns}
-            >
-              Pick columns
-            </button>
-          )}
-          {!canRemove ? null : removing ? (
-            <>
-              <span className="app-muted">
-                Remove {sourceId} from the project?
-              </span>
-              <button
-                type="button"
-                className="app-button app-button-sm app-button-danger"
-                onClick={() => void onRemove?.(sourceId)}
-              >
-                Remove
-              </button>
-              <button
-                type="button"
-                className="app-button app-button-sm app-button-ghost"
-                onClick={() => setRemoving(false)}
-              >
-                Keep
-              </button>
-            </>
-          ) : (
-            <button
-              type="button"
-              className="app-button app-button-sm app-button-ghost"
-              aria-label={`Remove ${sourceId} from the project`}
-              onClick={() => setRemoving(true)}
-            >
-              Remove
-            </button>
-          )}
-        </div>
-      )}
+            <ReadProblem
+              state={state}
+              onSaveSecret={onSaveSecret}
+              onRetry={read}
+            />
+            <div className="app-popover-actions">
+              {removing ? (
+                <>
+                  <span className="app-muted">
+                    Remove {sourceId} from the project?
+                  </span>
+                  <button
+                    type="button"
+                    className="app-button app-button-sm app-button-danger"
+                    onClick={() => void onRemove?.(sourceId)}
+                  >
+                    Remove
+                  </button>
+                  <button
+                    type="button"
+                    className="app-button app-button-sm app-button-ghost"
+                    onClick={() => setRemoving(false)}
+                  >
+                    Keep
+                  </button>
+                </>
+              ) : (
+                <>
+                  {onRefresh && !failed?.needsSecret && (
+                    <button
+                      type="button"
+                      className="app-button app-button-sm"
+                      aria-label={`Read ${sourceId} again from ${connection}`}
+                      onClick={() => void read()}
+                    >
+                      Read again
+                    </button>
+                  )}
+                  {canPick && (
+                    <button
+                      type="button"
+                      className="app-button app-button-sm"
+                      aria-label={`Pick columns and rows of ${sourceId} to read`}
+                      onClick={() => {
+                        setOpen(false);
+                        onPickColumns!();
+                      }}
+                    >
+                      Pick columns
+                    </button>
+                  )}
+                  {canRemove && (
+                    <button
+                      type="button"
+                      className="app-button app-button-sm app-button-ghost"
+                      aria-label={`Remove ${sourceId} from the project`}
+                      onClick={() => setRemoving(true)}
+                    >
+                      Remove
+                    </button>
+                  )}
+                  <Popover.Close asChild>
+                    <button
+                      type="button"
+                      className="app-button app-button-sm app-button-ghost app-popover-close"
+                    >
+                      Close
+                    </button>
+                  </Popover.Close>
+                </>
+              )}
+            </div>
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
     </li>
   );
 }

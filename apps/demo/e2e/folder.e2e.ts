@@ -68,7 +68,12 @@ test("opens a project folder and saves an edit back to it", async ({
   await page.goto("/folder");
   await page.getByRole("button", { name: "Choose a folder" }).click();
   const rail = page.getByRole("complementary", { name: "Project" });
-  await expect(rail.getByRole("button", { name: /Orders/ })).toBeVisible();
+  // The Orders analysis; a source and a menu button also carry the name.
+  await expect(
+    rail
+      .getByRole("navigation", { name: /^Analyses/ })
+      .getByRole("button", { name: "Orders", exact: true })
+  ).toBeVisible();
   await expect(page.locator(".react-grid-item")).toHaveCount(7);
 
   const chart = page.locator('.react-grid-item:has-text("Orders by region")');
