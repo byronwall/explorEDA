@@ -8,7 +8,7 @@
     "last_updated": "2026-11-27",
     "summary": "Make a Data row in the project app rail open an explorer for that source.",
     "status": "planned",
-    "next_action": "Byron answers question round 1"
+    "next_action": "Byron answers question round 2"
   },
   "artifacts": {
     "intent_brief": {
@@ -67,6 +67,20 @@
       "location": "~/Projects/planning/tasks/TASK-0091/explorEDA/data/runs.csv",
       "anchor": "9,091 rows, 13 columns",
       "authority": "repo"
+    },
+    {
+      "id": "Q1",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "1",
+      "authority": "user"
+    },
+    {
+      "id": "W5",
+      "type": "doc",
+      "location": "docs/intent/schema-diagram-focus (branch of W5 session, commit 7e94fa9e)",
+      "anchor": "relationship view and dashboard coverage view",
+      "authority": "inferred"
     }
   ],
   "intent": {
@@ -101,12 +115,49 @@
       },
       {
         "id": "C4",
-        "statement": "What the explorer shows first (profile, rows, cross-filter, cross-table drill) is undecided.",
-        "kind": "open",
+        "statement": "Progressive disclosure: hover shows field summary (columns, types, distributions); click opens an explorer of field summary plus rows.",
+        "kind": "decision",
         "sources": [
           "S1"
         ],
+        "confidence": "high"
+      },
+      {
+        "id": "C5",
+        "statement": "Columns and data types are the first thing to answer; then a feel for values and quick views.",
+        "kind": "goal",
+        "sources": [
+          "Q1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "C6",
+        "statement": "Seeing how sources relate and which sources existing dashboards cover is wanted, but is a separate action from the source hover/click (overlaps W5 schema).",
+        "kind": "goal",
+        "sources": [
+          "Q1"
+        ],
+        "confidence": "medium"
+      },
+      {
+        "id": "C7",
+        "statement": "What leaving the explorer produces (save as analysis, per-source dashboard, read-only) is unsettled.",
+        "kind": "open",
+        "sources": [
+          "Q1"
+        ],
         "confidence": "low"
+      },
+      {
+        "id": "C8",
+        "statement": "W5 owns the relationship and coverage views. Any per-source used-by marker in W4 reads the usage edges in packages/explorEDA/src/lib/schema/schemaGraph.ts, not a second copy.",
+        "kind": "constraint",
+        "sources": [
+          "W5",
+          "Q1"
+        ],
+        "confidence": "high"
       }
     ],
     "themes": [],
@@ -170,5 +221,12 @@
       "event": "Intent recovered from TASK-0092 recording; three approaches compared; question round 1 prepared."
     }
   ],
-  "closure": null
+  "closure": null,
+  "question_rounds": [
+    {
+      "round": 1,
+      "date": "2026-11-27",
+      "answers": "Most important: columns and data types, and a feel for the values. Hover a source shows the existing field Summary. Click switches the main view to a drill-in explorer: field summary, then actual rows fast; from there save or do something else. Persistence undecided (maybe scratch, maybe read-only, maybe per-source dashboard). Multi-source matters: dashboards are built on relationships; wants a flow from seeing how sources relate to building a dashboard on a slice. Wants to see which sources existing dashboards cover. Relationship/ERD view is a different action from the source hover/click."
+    }
+  ]
 }
