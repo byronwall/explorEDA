@@ -73,7 +73,7 @@ it("inspects typed Other members and saves exact category selections across resi
   expect(validateSavedData(saved)).toBe(true);
 });
 
-it("ranks a grouped summary and holds its order while other charts filter", () => {
+it("ranks a grouped summary by its filtered value while other charts filter", () => {
   const ranking = {
     ...rowChartDefinition.createDefaultSettings(
       { x: 0, y: 0, w: 6, h: 4 },
@@ -156,10 +156,10 @@ it("ranks a grouped summary and holds its order while other charts filter", () =
     "South, Revenue by region: 12",
   ]);
   fireEvent.click(screen.getByRole("button", { name: "Web only" }));
+  // East has no web orders, so it leaves the chart.
   expect(bars()).toEqual([
-    "East, Revenue by region: 0",
-    "North, Revenue by region: 10",
     "South, Revenue by region: 12",
+    "North, Revenue by region: 10",
   ]);
   const saved = JSON.parse(
     screen.getByLabelText("Saved settings").textContent!
@@ -168,7 +168,7 @@ it("ranks a grouped summary and holds its order while other charts filter", () =
   expect(validateSavedData(saved)).toBe(true);
 });
 
-it("labels an average with no filtered rows instead of drawing zero", () => {
+it("holds the order and labels an average with no rows when asked", () => {
   const ranking = {
     ...rowChartDefinition.createDefaultSettings(
       { x: 0, y: 0, w: 6, h: 4 },
@@ -176,6 +176,7 @@ it("labels an average with no filtered rows instead of drawing zero", () => {
     ),
     id: "ranking",
     aggregateId: "revenue-by-region",
+    keepOrder: true,
   };
   const channel = {
     ...rowChartDefinition.createDefaultSettings(

@@ -541,6 +541,8 @@ function isChart(value: unknown): boolean {
         isFiniteNumber(value.maxRowHeight) &&
         (value.aggregateId === undefined ||
           typeof value.aggregateId === "string") &&
+        (value.keepOrder === undefined ||
+          typeof value.keepOrder === "boolean") &&
         (value.topN === undefined ||
           (Number.isInteger(value.topN) && (value.topN as number) > 0)) &&
         isValueDisplay(value)

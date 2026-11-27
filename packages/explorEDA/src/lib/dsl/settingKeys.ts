@@ -47,6 +47,7 @@ export const CHART_SETTING_KEYS: Record<ChartType, readonly string[]> = {
     "facet",
     "field",
     "filters",
+    "keepOrder",
     "layout",
     "localFilters",
     "scaleTo",

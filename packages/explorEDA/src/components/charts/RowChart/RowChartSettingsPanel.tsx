@@ -276,6 +276,22 @@ export function RowChartSettingsPanel({
           </span>
         </ActionTooltip>
 
+        <Label htmlFor="row-keep-order">Hold order</Label>
+        <ActionTooltip content="While other charts filter, keep every category in its all-rows order. Off, rows rank by the filtered value and categories with no matching rows are left out. Facets always hold.">
+          <span className="inline-flex w-fit">
+            <Switch
+              id="row-keep-order"
+              checked={Boolean(settings.keepOrder)}
+              onCheckedChange={(checked) =>
+                onSettingsChange({
+                  ...settings,
+                  keepOrder: checked || undefined,
+                })
+              }
+            />
+          </span>
+        </ActionTooltip>
+
         <Label htmlFor="minRowHeight">Min Row Height</Label>
         <NumericInputEnter
           id="minRowHeight"

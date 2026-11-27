@@ -93,8 +93,8 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
         <p className="text-muted-foreground">
           {summary
             ? trace.other
-              ? "Values follow other filters. Other's value comes from all of its members' rows together, not from their values. Order uses every row."
-              : "Values follow other filters. Order and the all-row mark use every row."
+              ? "Values follow other filters. Other's value comes from all of its members' rows together, not from their values."
+              : "Values follow other filters. The all-row mark uses every row."
             : "Counts follow other filters."}{" "}
           Selection stores category values and stays the same when the chart is
           resized.

@@ -92,8 +92,8 @@ export function RowChart({
   const fieldSettings = useDataLayer((s) => s.fieldSettings);
   const [hovered, setHovered] = useState<string | null>(null);
 
-  // A grouped summary ranks its value instead of the row count. Its order and
-  // context come from every row; the bars show rows that pass other filters.
+  // A grouped summary ranks its value instead of the row count. Its context
+  // comes from every row; the bars show rows that pass other filters.
   const allIds = useGetAllIds(settings);
   const aggregates = useDataLayer((s) => s.aggregates);
   const nonce = useDataLayer((s) => s.nonce);
@@ -157,12 +157,18 @@ export function RowChart({
     (spec?.aggregation === "average" &&
       measureField &&
       !hasFieldDisplayFormat(fieldSettings[measureField]));
+  // A short label rounds under 0.005 to "0", which reads as no value. The
+  // lower bound leaves the float noise of a sum that cancels as zero.
+  const tiny = (value: number) =>
+    Math.abs(value) >= 1e-9 &&
+    Math.abs(value) < 0.005 &&
+    (!measureField || !hasFieldDisplayFormat(fieldSettings[measureField]));
   const formatMeasure = (value: number | undefined) =>
     value === undefined
       ? "—"
       : formatters
         ? formatters.label(value)
-        : precise
+        : precise || tiny(value)
           ? significant(value)
           : measureField
             ? formatValue(
@@ -249,41 +255,58 @@ export function RowChart({
     chartHeight - baseMargin.top - Math.max(baseMargin.bottom, 42);
   // Top N rows may compress below the minimum height, but not below this.
   const floorRows = Math.max(2, Math.floor(available / TOP_N_ROW_FLOOR));
+  // Facets share one order, so their rows hold while filtering.
+  const follows = !settings.keepOrder && !facetIds;
+  // Top N keeps the same row count at every usable size; unset shows every
+  // category. Both compress rows to the floor before the rest fold.
+  const maxRows = settings.topN
+    ? Math.min(settings.topN + 1, floorRows)
+    : floorRows;
   const plan = useMemo((): RowSummaryPlan => {
-    // Top N keeps the same members at every usable size; unset shows every
-    // category. Both compress rows to the floor before the rest fold.
-    const maxRows = settings.topN
-      ? Math.min(settings.topN + 1, floorRows)
-      : floorRows;
+    const follow = follows
+      ? {
+          selected:
+            settings.filters.find(
+              (f): f is ValueFilter =>
+                f.type === "value" && f.field === settings.field
+            )?.values ?? [],
+        }
+      : undefined;
     if (liveSummary && allSummary)
-      return planRowSummary(liveSummary, allSummary, maxRows);
+      return planRowSummary(liveSummary, allSummary, maxRows, follow);
     // Context bars count the rows the chart's own filter keeps, so a chart
     // limited to 2023 is not measured against every year.
     return planRowCategories(
       column,
       liveIds,
       maxRows,
-      settings.localFilters?.length ? allIds : undefined
+      settings.localFilters?.length ? allIds : undefined,
+      follow
     );
   }, [
     column,
     liveIds,
     liveSummary,
     allSummary,
-    floorRows,
-    settings.topN,
+    maxRows,
     settings.localFilters,
+    settings.filters,
+    settings.field,
+    follows,
     allIds,
   ]);
+  const labelOf = useMemo(() => {
+    const formatted = hasFieldDisplayFormat(fieldSettings[settings.field]);
+    return (value: datum) =>
+      value != null && formatted
+        ? formatFieldValue(settings.field, value)
+        : categoryLabel(value);
+  }, [fieldSettings, settings.field, formatFieldValue]);
   const counted = useMemo(
     () => [
       ...plan.visible.map((item) => ({
         ...item,
-        label:
-          item.value != null &&
-          hasFieldDisplayFormat(fieldSettings[settings.field])
-            ? formatFieldValue(settings.field, item.value)
-            : categoryLabel(item.value),
+        label: labelOf(item.value),
         count: summarized ? item.current : item.sourceIds.length,
         rows: item.sourceIds.length,
         n: item.live?.sampleSize,
@@ -316,7 +339,7 @@ export function RowChart({
           ]
         : []),
     ],
-    [plan, summarized, fieldSettings, settings.field, formatFieldValue]
+    [plan, summarized, labelOf]
   );
   // A share divides each value by the sum over every category, Other too.
   const displayCounts = useMemo(() => {
@@ -324,7 +347,11 @@ export function RowChart({
     const sum = (key: "count" | "total") =>
       counted.reduce((total, item) => total + (item[key] ?? 0), 0);
     const live = sum("count");
-    const all = sum("total");
+    // Categories left out for having no matching rows still hold their part.
+    const all = plan.empty.reduce(
+      (total, item) => total + (item.total ?? 0),
+      sum("total")
+    );
     return counted.map((item) => ({
       ...item,
       count:
@@ -332,7 +359,7 @@ export function RowChart({
       total:
         item.total === undefined || all === 0 ? undefined : item.total / all,
     }));
-  }, [counted, share]);
+  }, [counted, share, plan]);
   const source = useMemo((): TraceSource => {
     const currentRevision = `${revision.split(":")[0]}:${settings.field}:${settings.aggregateId ?? ""}:${chartHeight}:${plan.other.length}:${plan.categories.map((item) => item.sourceIds.join(",")).join(";")}`;
     return {
@@ -449,9 +476,19 @@ export function RowChart({
         : getChartAxisLabel(axisFields.x, settings.xAxisLabel, getFieldLabel);
   const tickSize = settings.yAxis.tickFontSize ?? typography.tickSize;
   // Category names claim their measured width, never less than the estimate.
+  // Following filters swaps which categories show, so the room covers every
+  // category's name and the plot holds its place.
+  const longestLabels = useMemo(
+    () =>
+      [...plan.categories, ...plan.empty]
+        .map((item) => labelOf(item.value))
+        .sort((a, b) => b.length - a.length)
+        .slice(0, 12),
+    [plan, labelOf]
+  );
   const requestedLabelMargin = Math.max(
     baseMargin.left,
-    ...yLabels.map(
+    ...[...yLabels, ...(follows ? longestLabels : [])].map(
       (label) =>
         Math.max(
           label.length * tickSize * 0.7,
@@ -474,12 +511,17 @@ export function RowChart({
     right: Math.max(baseMargin.right, 48),
     bottom: Math.max(baseMargin.bottom, (xAxisLabel ? 42 : 26) + typeGrowth),
   };
+  // Rows left out by other filters keep their room, so bar height and the
+  // X axis hold still while filtering.
+  const slots = Math.max(
+    displayCounts.length,
+    Math.min(plan.categories.length + plan.empty.length, maxRows)
+  );
   // Few categories keep their bar height, so the X axis rises to sit under
   // the last bar instead of leaving a gap above it.
   const bandHeight = Math.min(
     chartHeight - margin.top - margin.bottom,
-    displayCounts.length *
-      Math.max(settings.minRowHeight, settings.maxRowHeight)
+    slots * Math.max(settings.minRowHeight, settings.maxRowHeight)
   );
   const axisRise = Math.max(
     0,
@@ -489,6 +531,10 @@ export function RowChart({
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = chartHeight - margin.top - margin.bottom;
   const chartSettings = { ...settings, margin };
+
+  // A chart set to fit the filtered rows draws no all-rows context, which
+  // would set the axis again.
+  const context = !facetIds && settings.scaleTo !== "filtered";
 
   // Create scales with synchronized limits if in a facet
   // Labels of bars left of zero sit past the bar's end, so the plot keeps
@@ -501,7 +547,7 @@ export function RowChart({
   );
   const xScale = useMemo(() => {
     const values = displayCounts.flatMap((d) =>
-      [d.total, d.count].filter(
+      [settings.scaleTo === "filtered" ? undefined : d.total, d.count].filter(
         (value): value is number =>
           value !== undefined && Number.isFinite(value)
       )
@@ -529,6 +575,7 @@ export function RowChart({
     displayCounts,
     innerWidth,
     settings.xAxis,
+    settings.scaleTo,
     summarized,
     negativeLabelRoom,
   ]);
@@ -536,9 +583,13 @@ export function RowChart({
   const yScale = useMemo(() => {
     return scaleBand()
       .domain(displayCounts.map((d) => d.key))
-      .range([0, innerHeight])
+      .range([
+        0,
+        // A band scale with this padding spans its rows plus 0.3 of one.
+        (innerHeight * (displayCounts.length + 0.3)) / (slots + 0.3),
+      ])
       .padding(0.3);
-  }, [displayCounts, innerHeight]);
+  }, [displayCounts, innerHeight, slots]);
 
   if (summaryMismatch || displayCounts.length === 0) {
     return (
@@ -598,7 +649,8 @@ export function RowChart({
   // Show all sits in the chart, on the Other categories row, after its value.
   const otherRow = displayCounts.find((item) => item.key === "__other");
   const showAllPlace = (item: NonNullable<typeof otherRow>) => {
-    const end = xScale(Math.max(item.count ?? 0, item.total ?? 0, 0));
+    const total = context ? (item.total ?? 0) : 0;
+    const end = xScale(Math.max(item.count ?? 0, total, 0));
     const label = valueText(item.count, item.rows).length * 6.5;
     const top = margin.top + yScale(item.key)! + yScale.bandwidth() / 2;
     const left = margin.left + end + 5 + label + 8;
@@ -725,7 +777,7 @@ export function RowChart({
               const left = (count ?? 0) < 0;
               // Past the tick when it sits beyond the bar's end.
               const tick =
-                !facetIds &&
+                context &&
                 total !== undefined &&
                 total !== (count ?? 0) &&
                 contextAsTick(count, total);
@@ -751,7 +803,7 @@ export function RowChart({
         }
       >
         <g className="select-none">
-          {!facetIds &&
+          {context &&
             displayCounts.map((item) =>
               item.total !== undefined &&
               item.total !== (item.count ?? 0) &&
@@ -873,7 +925,7 @@ export function RowChart({
             }
           )}
         </g>
-        {!facetIds && (
+        {context && (
           <g pointerEvents="none" aria-hidden="true">
             {displayCounts.map((item) =>
               item.total !== undefined &&

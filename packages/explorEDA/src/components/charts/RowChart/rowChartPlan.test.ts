@@ -120,6 +120,34 @@ describe("planRowSummary", () => {
     ]);
   });
 
+  it("ranks by the filtered value and leaves out empty categories", () => {
+    // Only South and West rows pass; East is selected in this chart.
+    const plan = planRowSummary(
+      summarize("sum", [2, 3, 5]),
+      summarize("sum"),
+      10,
+      { selected: ["East"] }
+    );
+    expect(plan.visible.map((item) => [item.label, item.current])).toEqual([
+      ["South", 12],
+      ["West", 2],
+      ["East", 0],
+    ]);
+    expect(plan.empty.map((item) => item.label)).toEqual(["North"]);
+  });
+
+  it("keeps a selected category out of Other", () => {
+    const all = summarize("sum");
+    const plan = planRowSummary(all, all, 3, { selected: ["West"] });
+    expect(plan.visible.map((item) => item.label)).toEqual(["East", "West"]);
+    expect(plan.other.map((item) => item.label)).toEqual(["North", "South"]);
+    // A selection too large for the rows, as from Other, takes none first.
+    const many = planRowSummary(all, all, 3, {
+      selected: ["South", "West"],
+    });
+    expect(many.visible.map((item) => item.label)).toEqual(["East", "North"]);
+  });
+
   it("leaves an average with no filtered rows unavailable", () => {
     const plan = planRowSummary(
       summarize("average", [0]),
