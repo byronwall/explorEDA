@@ -4,11 +4,11 @@
     "title": "Explore a data source from the project rail",
     "slug": "data-source-explorer",
     "scale": "feature",
-    "current_phase": "intent",
+    "current_phase": "plan",
     "last_updated": "2026-11-27",
     "summary": "Make a Data row in the project app rail open an explorer for that source.",
     "status": "planned",
-    "next_action": "Byron reacts to mockups A-D"
+    "next_action": "Byron approves the plan; implementation starts after PR #695 merges"
   },
   "artifacts": {
     "intent_brief": {
@@ -23,13 +23,13 @@
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "draft",
+      "updated_at": "2026-11-27"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "draft",
+      "updated_at": "2026-11-27"
     }
   },
   "sources": [
@@ -87,6 +87,13 @@
       "type": "question-round",
       "location": "conversation",
       "anchor": "2",
+      "authority": "user"
+    },
+    {
+      "id": "Q3",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "3 (mockup feedback)",
       "authority": "user"
     }
   ],
@@ -161,6 +168,13 @@
         "kind": "decision",
         "sources": ["Q2"],
         "confidence": "medium"
+      },
+      {
+        "id": "C11",
+        "statement": "Mockup A is the chosen shape. The rail is never the exploration surface; a full all-fields view is a dedicated view (W5).",
+        "kind": "decision",
+        "sources": ["Q3"],
+        "confidence": "high"
       }
     ],
     "themes": [],
@@ -193,17 +207,27 @@
     "selected_option": null
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
+    "status": "draft",
+    "appetite": "About three PRs",
     "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
+    "recommended_shape": "Mockup A: hover card with the Fields summary; click opens an unsaved view of the source query with Fields docked beside rows; value click filters; Save as analysis via openView.",
+    "success_moves": [
+      "Reuse the source query and openView; no new engine",
+      "Docked layout is a prop on ExplorEdaProject, not a fork of FieldList",
+      "Spike profile cost before building the hover card",
+      "Build on W1 PR #695 after merge",
+      "Read used-by from W5 schemaGraph usage edges"
+    ],
+    "first_proof": {
+      "question": "Can an unsaved view with a docked Fields list filter rows and save as an analysis without a new engine?",
+      "artifact": "M1 on a copy of the TASK-0091 CI project: Runs, click failure, Save",
+      "decision_rule": "If the saved analysis reopens with the same 847 rows, keep the docked layout; if docking needs a large FieldList refactor, use the floating panel opened by default."
+    },
     "rabbit_holes": [],
     "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "draft",
     "repository_snapshot": {
       "root": null,
       "revision": null,
@@ -212,10 +236,46 @@
       "test_commands": [],
       "deployment_surfaces": []
     },
-    "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
+    "dependencies": [
+      {
+        "name": "W1 PR #695 rail rework",
+        "seam": "RailParts.tsx Data rows and source hover",
+        "first_proof_role": "absent: wait for merge",
+        "proof_strategy": "rebase onto main after merge"
+      },
+      {
+        "name": "W5 schemaGraph usage edges",
+        "seam": "packages/explorEDA/src/lib/schema/schemaGraph.ts",
+        "first_proof_role": "absent until M3",
+        "proof_strategy": "compare with Schema diagram on all CI sources"
+      }
+    ],
+    "fast_local_loop": {
+      "command": "EXPLOREDA_FOLDER=<copy of TASK-0091 project> pnpm --filter app dev"
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "Click a source to explore it",
+        "status": "planned"
+      },
+      {
+        "id": "m2",
+        "title": "Field summary on hover",
+        "status": "planned"
+      },
+      {
+        "id": "m3",
+        "title": "Which analyses use a source",
+        "status": "planned"
+      }
+    ],
+    "cut_line": [
+      "Cross-table drill",
+      "Relationship and coverage views (W5)",
+      "Suggested charts, compact card, rail tree",
+      "Saved per-source explorer files"
+    ],
     "open_decisions": []
   },
   "history": [
@@ -239,6 +299,11 @@
       "round": 2,
       "date": "2026-11-27",
       "answers": "Hover card about a third of the viewport (~400x400): full summary width, rows scroll; no charts. Clicking a value: pick a sensible default, Byron will give feedback. Save writes an .eda file. Explorer is a dashboard against just that one source; multi-source scope belongs to the schema view. Next: 3-4 strongly different HTML mockups built on the live app, shown as images."
+    },
+    {
+      "round": 3,
+      "date": "2026-11-27",
+      "answers": "Chose mockup A: full Fields card on hover; click shows summary beside rows; value click filters and re-describes (like an unsaved analysis). B guesses three charts, worse than all fields. C compact card and rows-only rejected. D rail tree rejected: layout shift, and a narrow rail is the wrong place to explore; a full schema/field view needs its own dedicated view."
     }
   ]
 }
