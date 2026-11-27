@@ -4,32 +4,32 @@
     "title": "Schema diagram that shows what the analyses use",
     "slug": "schema-diagram-focus",
     "scale": "feature",
-    "current_phase": "intent",
+    "current_phase": "plan",
     "last_updated": "2026-11-27",
     "summary": "Make the Schema diagram readable on real projects by emphasizing the tables, fields, and queries that views use, while keeping all data reachable.",
     "status": "planned",
-    "next_action": "Byron answers round 2 by voice"
+    "next_action": "Byron approves or corrects the shape and plan; then build M1 on the CI project"
   },
   "artifacts": {
     "intent_brief": {
       "path": "intent-brief.md",
-      "status": "draft",
+      "status": "current",
       "updated_at": "2026-11-27"
     },
     "brainstorm": {
       "path": "brainstorm.md",
-      "status": "draft",
+      "status": "current",
       "updated_at": "2026-11-27"
     },
     "shape_brief": {
       "path": "shape-brief.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "current",
+      "updated_at": "2026-11-27"
     },
     "implementation_plan": {
       "path": "implementation-plan.md",
-      "status": "not-created",
-      "updated_at": null
+      "status": "draft",
+      "updated_at": "2026-11-27"
     }
   },
   "sources": [
@@ -196,6 +196,34 @@
         "kind": "goal",
         "sources": ["qa-round-1b"],
         "confidence": "medium"
+      },
+      {
+        "id": "C15",
+        "statement": "Provenance stays in the hover card and is low effort; below the cut for this initiative.",
+        "kind": "boundary",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C16",
+        "statement": "Relationships for file sources (agent declarations first, data-based suggestions second) are wanted but are a separate initiative from the diagram.",
+        "kind": "boundary",
+        "sources": ["qa-round-2"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C17",
+        "statement": "Condense to start: used tables show all fields, unused tables collapse; scroll is acceptable once the used part overflows one screen.",
+        "kind": "decision",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C18",
+        "statement": "Per-analysis view and coverage grid: the agent picks the simplest mechanism; Byron judges by feel.",
+        "kind": "decision",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
       }
     ],
     "themes": [],
@@ -214,43 +242,100 @@
     "options": [
       {
         "id": "O1",
-        "name": "Usage-weighted layout"
+        "name": "Usage-weighted layout",
+        "premise": "one picture, emphasis by use"
       },
       {
         "id": "O2",
-        "name": "Lineage from the views back"
+        "name": "Lineage from the views back",
+        "premise": "views are the anchor, trace back"
       },
       {
         "id": "O3",
-        "name": "Two modes: Used and All"
+        "name": "Two modes: Used and All",
+        "premise": "two pictures with a switch"
       }
     ],
-    "selected_option": null
+    "selected_option": "O1"
   },
   "shape": {
-    "status": "not-started",
-    "appetite": null,
-    "problem": null,
-    "recommended_shape": null,
-    "success_moves": [],
-    "first_proof": null,
-    "rabbit_holes": [],
+    "status": "current",
+    "appetite": "One stack of three or four PRs in lib/schema, SchemaDiagram.tsx, and the rail; no data model or project text change.",
+    "problem": "The diagram draws every table, field, and pass-through query at equal weight and fits at 60%, so nothing reads without zooming and zooming loses structure.",
+    "recommended_shape": "Usage-weighted condensed drawing (Option 1) as a draw-only transform, fitted at 100% with vertical overflow, plus coverage light-up per analysis and a coverage grid tab.",
+    "success_moves": [
+      "Condense as a draw-only step after projectSchemaGraph, like compactViews, so sourceUsage, tracing, and editing read one full graph",
+      "Usage lines already start at table fields, so dropping pass-through query cards loses no usage line",
+      "Prove the one-screen bar first on the real CI project before coverage work",
+      "Reuse traceField walk to compute used fields instead of a second definition",
+      "Keep relationships for file sources as a separate initiative"
+    ],
+    "first_proof": {
+      "question": "Does the condensed CI project read at scale 1 without horizontal overflow at 1512 and 1280 px?",
+      "artifact": "app-shot screenshots plus an --eval of viewport scrollWidth and transform scale",
+      "decision_rule": "Fits at 1280 px: continue to M2. Otherwise tighten column gap and move the unused list to a bottom strip before M2."
+    },
+    "rabbit_holes": [
+      "Provenance and derived-from lines",
+      "Separate per-analysis drawing",
+      "CSV link suggestions inside this initiative"
+    ],
     "open_decisions": []
   },
   "implementation": {
-    "status": "not-started",
+    "status": "planned",
     "repository_snapshot": {
       "root": "packages/explorEDA",
-      "revision": "62c5adfa",
+      "revision": "0c56a873",
       "worktree_status": null,
-      "subsystems": [],
-      "test_commands": [],
+      "subsystems": [
+        "packages/explorEDA/src/lib/schema",
+        "packages/explorEDA/src/components/schema/SchemaDiagram.tsx",
+        "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+        "apps/app/src/ProjectRail.tsx"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/lib/schema src/components/schema",
+        "node scripts/app-shot.mjs"
+      ],
       "deployment_surfaces": []
     },
     "dependencies": [],
-    "fast_local_loop": null,
-    "milestones": [],
-    "cut_line": [],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/lib/schema src/components/schema"
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "One readable screen on the CI project",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "Light up an analysis",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "Coverage grid and rail entry",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "Docs and retirement",
+        "status": "planned",
+        "evidence": []
+      }
+    ],
+    "cut_line": [
+      "Provenance beyond file path",
+      "Derived-from lines",
+      "Separate per-analysis drawing",
+      "Relationships for file sources (separate initiative)"
+    ],
     "open_decisions": []
   },
   "history": [
@@ -269,6 +354,14 @@
     {
       "date": "2026-11-27",
       "change": "Recorded round 1b answers: relate + coverage first, provenance, whole-project start, one readable screen."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Recorded round 2 answers; intent is shape-ready."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Wrote shape brief and implementation plan (4 milestones). Open PRs checked: none touch schema files or ProjectRail."
     }
   ],
   "closure": null,
@@ -351,7 +444,13 @@
             "question": "Per-analysis view and coverage grid: where do they live?"
           }
         ],
-        "answers": null
+        "answers": [
+          "Provenance can live in the hover card; unsure how much effort it deserves.",
+          "Both, but agents declaring relationships is more useful; automatic suggestions from data are good too.",
+          "Yes: used tables show all fields, unused tables collapse; avoid excess space and condense to start.",
+          "When the used part does not fit, scrolling is OK.",
+          "Find a simple way to make the per-analysis view and grid work; he will see how it feels."
+        ]
       }
     ]
   }
