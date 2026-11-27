@@ -1,5 +1,18 @@
 # exploreda
 
+## 0.6.0
+
+### Minor Changes
+
+- dc8baea: Add QuerySummary, a query's field summary without a workspace, and sourceUsage, which lists the views that read each source as the Schema diagram traces them. In the project app, pointing at a source under Data shows its fields and which analyses use it.
+- 88ffde0: In the project app, choose a source under Data to explore it: the summary of every field beside every row, with filters from the summary. Save as analysis keeps it as an .eda file.
+- e81e29f: Row charts now rank rows by the filtered value while other charts filter, and leave out categories with no matching rows. Turn on Hold order (keepOrder) to keep every category in its all-rows order. Row charts also gain the Scale to filtered rows option, and values under 0.005 show their digits instead of 0.
+
+### Patch Changes
+
+- a514b2d: A notebook's edit buttons now show in the gutter to the left of each text and block. They stay visible while the pointer travels to them, follow the page down tall blocks, move focus into the editor, and close it with Escape.
+- fb6a436: The project app's sidebar shows one line per item, renames and deletes analyses from a row menu, opens Add database, New analysis, and read errors in popovers without moving rows, keeps appearance in a project menu, stays on screen while the page scrolls, and folds into a bar on narrow screens.
+
 ## 0.5.0
 
 ### Minor Changes
