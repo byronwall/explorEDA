@@ -52,12 +52,6 @@ function useNarrow() {
   return narrow;
 }
 
-/**
- * Sources up to this size show their field summary on hover. It is worked
- * out on each hover: about 60 ms for 21,813 rows, so this many takes ~150 ms.
- */
-const CARD_ROW_LIMIT = 50_000;
-
 const plural = (count: number, word: string) =>
   `${count.toLocaleString()} ${word}${count === 1 ? "" : "s"}`;
 
@@ -141,7 +135,7 @@ export function ProjectRail({
   // Pointing at a source shows its fields; a narrow rail has no room beside.
   const card = (sourceId: string) => {
     const rows = folder.tables[sourceId]?.length ?? 0;
-    return narrow || !rows || rows > CARD_ROW_LIMIT ? undefined : (
+    return narrow || !rows ? undefined : (
       <SourceCard
         project={project}
         tables={folder.tables}

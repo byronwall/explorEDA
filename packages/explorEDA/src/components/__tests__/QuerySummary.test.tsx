@@ -96,3 +96,39 @@ it("describes a query's fields as a view of that query does", async () => {
   await waitFor(() => expect(fieldLines(view.container)).toHaveLength(3));
   expect(fieldLines(view.container)).toEqual(summary);
 });
+
+it("applies a view's field settings and stops at a row limit", async () => {
+  const folder = await readProjectFolder(
+    memoryProjectFiles({ "exploreda.eda": PROJECT, "data/items.csv": ITEMS })
+  );
+  const { project, tables } = folder;
+  const named = render(
+    <QuerySummary
+      project={project}
+      tables={tables}
+      queryId="items"
+      fieldSettings={{ "items.qty": { label: "Units sold" } }}
+      height={400}
+    />
+  );
+  expect(
+    fieldLines(named.container).some((line) =>
+      line.startsWith("Units sold: Number")
+    )
+  ).toBe(true);
+  named.unmount();
+
+  const capped = render(
+    <QuerySummary
+      project={project}
+      tables={tables}
+      queryId="items"
+      maxRows={2}
+      height={400}
+    />
+  );
+  expect(capped.container.textContent).toContain(
+    "3 rows: too many to summarize here."
+  );
+  expect(capped.container.querySelector(".eda-summary-table")).toBeNull();
+});

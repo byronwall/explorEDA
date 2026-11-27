@@ -7,6 +7,7 @@ import {
   PROJECT_FILE,
   projectFileText,
   proposeLinks,
+  readNotebookText,
   sourceUsage,
   type AnalysisProject,
   type ForeignKey,
@@ -290,21 +291,32 @@ export function ProjectWorkspace({
   const allViews = useMemo(
     () => [
       ...[...views.values()].flat(),
-      ...folder.notebooks.flatMap((item) =>
-        [item.result.queryId, ...Object.keys(item.result.queryRows)].map(
+      ...folder.notebooks.flatMap((item) => {
+        // A notebook edited here reads as its text is now, not as loaded.
+        const text = notebookTexts.get(item.path) ?? item.text;
+        const result =
+          text === item.text
+            ? item.result
+            : readNotebookText(text, {
+                project,
+                tables: folder.tables,
+                defaultQueryId: item.result.queryId,
+                name: item.result.settings.metadata.name,
+              });
+        return [result.queryId, ...Object.keys(result.queryRows)].map(
           (queryId, index) => ({
             id: viewId(item.path, index),
-            name: item.result.settings.metadata.name || item.path,
+            name: result.settings.metadata.name || item.path,
             queryId,
             // Each query's blocks compile apart, to their own charts.
             settings: index
-              ? (item.result.querySettings[queryId] ?? item.result.settings)
-              : item.result.settings,
+              ? (result.querySettings[queryId] ?? result.settings)
+              : result.settings,
           })
-        )
-      ),
+        );
+      }),
     ],
-    [views, folder.notebooks]
+    [views, folder.notebooks, folder.tables, notebookTexts, project]
   );
 
   // Each source's analyses and notebooks, by the files' names, as the

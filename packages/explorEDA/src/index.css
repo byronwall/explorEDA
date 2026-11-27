@@ -3680,6 +3680,19 @@ html {
 .eda-summary-view {
   container-type: inline-size;
 }
+/* QuerySummary is read-only: its bars and missing counts show values, and
+   filter nothing. */
+.eda-query-summary [data-filterable] {
+  cursor: default;
+}
+.eda-query-summary .eda-summary-missing-filter {
+  pointer-events: none;
+}
+.eda-query-summary-note {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
 .eda-summary-table {
   width: 100%;
   table-layout: fixed;

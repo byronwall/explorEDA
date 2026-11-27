@@ -32,7 +32,7 @@ import {
   unresolvedAnalysisRowKeys,
 } from "./project/analysisRowKeys";
 import { incompatibleSettingsFields } from "./project/settingsCompatibility";
-import { queryInput } from "./project/queryInput";
+import { queryInput, withDeclared } from "./project/queryInput";
 import { lookupField, relatedTables } from "./project/relatedFields";
 import { followRelationship } from "./project/stepEditing";
 import { projectSchemaGraph } from "@/lib/schema/schemaGraph";
@@ -249,14 +249,10 @@ export const ExplorEdaProject = forwardRef<
       return undefined;
     }
     const decoded = decodeAnalysisRowKeys(settings, idsByKey);
-    // Saved settings for a field add to its declared name and type.
-    const fieldSettings: NonNullable<SavedDataStructure["fieldSettings"]> = {
-      ...declared,
+    return {
+      ...decoded,
+      fieldSettings: withDeclared(declared, decoded.fieldSettings),
     };
-    for (const [id, saved] of Object.entries(decoded.fieldSettings ?? {})) {
-      fieldSettings[id] = { ...declared[id], ...saved };
-    }
-    return { ...decoded, fieldSettings };
   }, [settings, idsByKey, declared]);
 
   useImperativeHandle(

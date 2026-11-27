@@ -1,4 +1,5 @@
 import type { DatumObject } from "@/providers/DataLayerProvider";
+import type { SavedDataStructure } from "@/types/SavedDataStructure";
 import type { AnalysisEvaluation } from "@/types/AnalysisProject";
 
 const FIELD_TYPES = {
@@ -37,4 +38,18 @@ export function queryInput(evaluation: AnalysisEvaluation) {
     ])
   );
   return { data, fieldNames, fieldTypes, declared };
+}
+
+type FieldSettings = NonNullable<SavedDataStructure["fieldSettings"]>;
+
+/** Saved settings for a field add to its declared name and type. */
+export function withDeclared(
+  declared: Record<string, Record<string, unknown>>,
+  saved: FieldSettings = {}
+): FieldSettings {
+  const fieldSettings: FieldSettings = { ...declared };
+  for (const [id, own] of Object.entries(saved)) {
+    fieldSettings[id] = { ...declared[id], ...own };
+  }
+  return fieldSettings;
 }
