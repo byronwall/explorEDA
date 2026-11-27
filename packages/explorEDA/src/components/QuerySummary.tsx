@@ -6,6 +6,7 @@ import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
 import { DataLayerProvider } from "@/providers/DataLayerProvider";
 import type {
   AnalysisProject,
+  AnalysisScalar,
   AnalysisSourceRow,
 } from "@/types/AnalysisProject";
 import { queryInput } from "./project/queryInput";
@@ -15,6 +16,8 @@ export interface QuerySummaryProps {
   tables: Record<string, readonly AnalysisSourceRow[]>;
   /** The query to summarize, such as a source's own query. */
   queryId: string;
+  /** Parameter inputs, as the view of a parameterized query binds them. */
+  bindings?: Record<string, AnalysisScalar>;
   /** Height in pixels; the fields scroll inside it. */
   height: number;
 }
@@ -28,11 +31,14 @@ export function QuerySummary({
   project,
   tables,
   queryId,
+  bindings,
   height,
 }: QuerySummaryProps) {
   const summary = useMemo(() => {
     try {
-      const input = queryInput(evaluateAnalysisQuery(project, tables, queryId));
+      const input = queryInput(
+        evaluateAnalysisQuery(project, tables, queryId, bindings)
+      );
       const savedData = {
         ...toSavedData({ type: "summary" }, "summary"),
         fieldSettings: input.declared,
@@ -41,7 +47,7 @@ export function QuerySummary({
     } catch {
       return undefined;
     }
-  }, [project, tables, queryId]);
+  }, [project, tables, queryId, bindings]);
 
   if (!summary) return null;
   return (
