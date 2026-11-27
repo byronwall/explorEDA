@@ -8,7 +8,7 @@
     "last_updated": "2026-11-27",
     "summary": "Make the Schema diagram readable on real projects by emphasizing the tables, fields, and queries that views use, while keeping all data reachable.",
     "status": "planned",
-    "next_action": "Byron answers round 1 questions in questions.md"
+    "next_action": "Byron answers round 1b by voice"
   },
   "artifacts": {
     "intent_brief": {
@@ -74,6 +74,20 @@
       "location": "shared notes w4-data-explorer.md (W4 round 1 answers)",
       "anchor": "relationship view as a separate action; coverage of sources by dashboards",
       "authority": "user"
+    },
+    {
+      "id": "S6",
+      "type": "repo",
+      "location": "PRs #695, #698, #699 on main 0c56a873",
+      "anchor": "Tables and links rail row, SourceCard hover, sourceUsage.ts, proposeLinks database-only",
+      "authority": "repo"
+    },
+    {
+      "id": "qa-round-1b",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "1b",
+      "authority": "user"
     }
   ],
   "intent": {
@@ -82,64 +96,49 @@
         "id": "C1",
         "statement": "The diagram must emphasize the data the analyses actually use.",
         "kind": "goal",
-        "sources": [
-          "S1"
-        ],
+        "sources": ["S1"],
         "confidence": "medium"
       },
       {
         "id": "C2",
         "statement": "All data stays reachable from the diagram; unused data is quiet, not removed.",
         "kind": "constraint",
-        "sources": [
-          "S2"
-        ],
+        "sources": ["S2"],
         "confidence": "medium"
       },
       {
         "id": "C3",
         "statement": "A project with no relationships and many pass-through queries must read cleanly.",
         "kind": "goal",
-        "sources": [
-          "S1",
-          "S4"
-        ],
+        "sources": ["S1", "S4"],
         "confidence": "high"
       },
       {
         "id": "C4",
         "statement": "Tracing, editing, and Add source keep working.",
         "kind": "constraint",
-        "sources": [
-          "S3"
-        ],
+        "sources": ["S3"],
         "confidence": "high"
       },
       {
         "id": "C5",
         "statement": "Row browsing belongs to the data explorer (W4), not this initiative.",
         "kind": "boundary",
-        "sources": [
-          "S1"
-        ],
+        "sources": ["S1"],
         "confidence": "medium"
       },
       {
         "id": "C6",
         "statement": "Byron wants to see how data sources relate, then build a dashboard on a slice; he sees this as a separate action from hovering or clicking a source in the Data rail.",
         "kind": "goal",
-        "sources": [
-          "S5"
-        ],
+        "sources": ["S5"],
         "confidence": "medium"
       },
       {
         "id": "C7",
         "statement": "Byron wants to see which data sources the existing dashboards cover. W4 leaves this view to W5 and will link to it.",
         "kind": "goal",
-        "sources": [
-          "S5"
-        ],
+        "sources": ["S5"],
         "confidence": "medium"
       }
     ],
@@ -148,10 +147,7 @@
       {
         "id": "X1",
         "statement": "Byron says the CI dashboards are built on relationships, but the project declares 0 relationships; runs, jobs, and steps share run_id and job_id without a declared link.",
-        "sources": [
-          "S4",
-          "S5"
-        ]
+        "sources": ["S4", "S5"]
       }
     ],
     "human_questions": []
@@ -209,6 +205,10 @@
     {
       "date": "2026-11-27",
       "change": "Added W4 round 1 answers relayed by the data explorer session: relationship view and dashboard coverage belong to W5."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Took stock of W1-W4 (exploreda 0.6.0). Superseded unanswered round 1 with round 1b."
     }
   ],
   "closure": null,
@@ -233,6 +233,32 @@
           },
           {
             "question": "Which outcome would make this not a mess?"
+          }
+        ],
+        "answers": null
+      },
+      {
+        "round": 2,
+        "theme": "goals and stakes after W1-W4 shipped (round 1b; round 1 superseded unanswered)",
+        "source": "qa-round-1b",
+        "questions": [
+          {
+            "question": "What is the diagram main job now?"
+          },
+          {
+            "question": "What does built on relationships mean, and should file sources get suggested links?"
+          },
+          {
+            "question": "What does dashboard coverage look like?"
+          },
+          {
+            "question": "How should unused tables, unused fields, and one-step queries appear?"
+          },
+          {
+            "question": "Where should the diagram open?"
+          },
+          {
+            "question": "What is the bar for not a mess?"
           }
         ],
         "answers": null

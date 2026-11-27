@@ -53,7 +53,12 @@ Open the diagram. The few tables and fields that feed a chart are prominent, wit
 
 ## Current reality that matters
 
-- In the CI project, the five views read 16 of 139 fields, from 4 of 14 tables, through 4 of 14 queries. The other 10 tables have no reader.
+- Shipped in `exploreda@0.6.0` (PRs #695, #698, #699): hover a Data row for a card with every field's type, distinct count, and values, plus "Used by …". Click a Data row to open a full explorer. The rail entry that opens this diagram is now **Tables and links**, with the line "Relate N tables to chart their fields together". So the diagram no longer has to answer "what is in this table" or "who uses it" by itself.
+- `sourceUsage` (#699) reads the diagram's lineage edges. A change that hides pass-through queries must keep those edges in the graph.
+- Link proposals (`proposeLinks`) run only for database tables. The CSV-based CI project gets no suggestions, though Runs, Jobs, and Steps share `run_id` and `job_id`.
+- The diagram opens focused on the current view's source, with its inspector over the cards.
+- The project has grown: 15 tables, 146 fields, 15 one-step queries, 7 views. The views read 5 of the 15 tables.
+- In the round 1 count, the five views read 16 of 139 fields, from 4 of 14 tables, through 4 of 14 queries.
 - Byron says the CI dashboards are built on relationships, but the project declares none. Runs, Jobs, and Steps share `run_id` and `job_id` with no declared link, so the diagram cannot draw them.
 - All 14 queries are one-step reads of one table. The project file writes them as `query @x { source x }`.
 - The graph already has `usage`, `lineage`, and `calculation` edges, and `traceField` walks them. Used fields are known; nothing changes size or position from that.
