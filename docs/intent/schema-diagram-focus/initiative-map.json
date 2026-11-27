@@ -1,0 +1,204 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Schema diagram that shows what the analyses use",
+    "slug": "schema-diagram-focus",
+    "scale": "feature",
+    "current_phase": "intent",
+    "last_updated": "2026-11-27",
+    "summary": "Make the Schema diagram readable on real projects by emphasizing the tables, fields, and queries that views use, while keeping all data reachable.",
+    "status": "planned",
+    "next_action": "Byron answers round 1 questions in questions.md"
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "draft",
+      "updated_at": "2026-11-27"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "draft",
+      "updated_at": "2026-11-27"
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "type": "transcript",
+      "location": "~/Projects/planning/tasks/TASK-0092/recorder-2026-11-27/ledger.md",
+      "anchor": "B06 1:56-2:14, mark 008",
+      "authority": "user"
+    },
+    {
+      "id": "S2",
+      "type": "transcript",
+      "location": "/Users/byronwall/Movies/ContextRecorder/2026-11-27_11-01-28/recording.mp4",
+      "anchor": "2:19 at least it has all the data there",
+      "authority": "user"
+    },
+    {
+      "id": "S3",
+      "type": "repo",
+      "location": "packages/explorEDA/src/lib/schema/schemaGraph.ts, schemaLayout.ts, schemaCompact.ts; components/schema/SchemaDiagram.tsx",
+      "anchor": "projectSchemaGraph, layoutSchemaGraph, compactViews",
+      "authority": "repo"
+    },
+    {
+      "id": "S4",
+      "type": "repo",
+      "location": "~/Projects/planning/tasks/TASK-0091/explorEDA",
+      "anchor": "views read 16 of 139 fields, 4 of 14 tables; 14 one-step queries",
+      "authority": "repo"
+    },
+    {
+      "id": "qa-round-1",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "1",
+      "authority": "user"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "C1",
+        "statement": "The diagram must emphasize the data the analyses actually use.",
+        "kind": "goal",
+        "sources": [
+          "S1"
+        ],
+        "confidence": "medium"
+      },
+      {
+        "id": "C2",
+        "statement": "All data stays reachable from the diagram; unused data is quiet, not removed.",
+        "kind": "constraint",
+        "sources": [
+          "S2"
+        ],
+        "confidence": "medium"
+      },
+      {
+        "id": "C3",
+        "statement": "A project with no relationships and many pass-through queries must read cleanly.",
+        "kind": "goal",
+        "sources": [
+          "S1",
+          "S4"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "C4",
+        "statement": "Tracing, editing, and Add source keep working.",
+        "kind": "constraint",
+        "sources": [
+          "S3"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "C5",
+        "statement": "Row browsing belongs to the data explorer (W4), not this initiative.",
+        "kind": "boundary",
+        "sources": [
+          "S1"
+        ],
+        "confidence": "medium"
+      }
+    ],
+    "themes": [],
+    "conflicts": [],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "draft",
+    "requested_count": 3,
+    "options": [
+      {
+        "id": "O1",
+        "name": "Usage-weighted layout"
+      },
+      {
+        "id": "O2",
+        "name": "Lineage from the views back"
+      },
+      {
+        "id": "O3",
+        "name": "Two modes: Used and All"
+      }
+    ],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": "packages/explorEDA",
+      "revision": "62c5adfa",
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-11-27",
+      "change": "Created intent brief, three approaches, and round 1 questions from the TASK-0092 walkthrough."
+    }
+  ],
+  "closure": null,
+  "question_rounds": {
+    "rounds": [
+      {
+        "round": 1,
+        "theme": "goals and stakes",
+        "source": "qa-round-1",
+        "questions": [
+          {
+            "question": "What do you open the Schema diagram for, most often?"
+          },
+          {
+            "question": "How should unused tables appear by default?"
+          },
+          {
+            "question": "How should unused fields inside a used table appear?"
+          },
+          {
+            "question": "What should a one-step Read query draw?"
+          },
+          {
+            "question": "Which outcome would make this not a mess?"
+          }
+        ],
+        "answers": null
+      }
+    ]
+  }
+}
