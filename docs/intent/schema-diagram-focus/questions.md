@@ -26,4 +26,6 @@ Evidence: on the CI project, the five views read 16 of 139 fields from 4 of 14 t
    - b. Everything fits on one screen at a readable size, used or not.
    - c. Something else (describe what the good version looks like).
 
-Answers: _waiting for Byron_
+6. **Added after W4's answers: relationships.** You told W4 that the CI dashboards are built on relationships, but the project declares none. Runs, Jobs, and Steps share `run_id` and `job_id`. Do you mean relationships that should be declared and drawn, or tables that were joined before export? Should the diagram suggest likely links from shared key names?
+
+Answers: _waiting for Byron, asked as plain text so he can answer by voice_

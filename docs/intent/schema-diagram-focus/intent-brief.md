@@ -41,7 +41,8 @@ Open the diagram. The few tables and fields that feed a chart are prominent, wit
 ## What seems settled
 
 - Usage is the main signal for emphasis. It is Byron's only concrete lead.
-- This is a cleanup of the existing diagram, not a new screen. Browsing rows of a table is the data explorer's job (W4), not this one.
+- Browsing rows of a table is the data explorer's job (W4), not this one.
+- From Byron's W4 answers: he wants to see how sources relate, then build a dashboard on a slice. He also wants to see which sources the existing dashboards cover. Both are a separate action from the Data rail, and W4 leaves them to this initiative.
 
 ## Possibilities, not decisions
 
@@ -53,6 +54,7 @@ Open the diagram. The few tables and fields that feed a chart are prominent, wit
 ## Current reality that matters
 
 - In the CI project, the five views read 16 of 139 fields, from 4 of 14 tables, through 4 of 14 queries. The other 10 tables have no reader.
+- Byron says the CI dashboards are built on relationships, but the project declares none. Runs, Jobs, and Steps share `run_id` and `job_id` with no declared link, so the diagram cannot draw them.
 - All 14 queries are one-step reads of one table. The project file writes them as `query @x { source x }`.
 - The graph already has `usage`, `lineage`, and `calculation` edges, and `traceField` walks them. Used fields are known; nothing changes size or position from that.
 - `compactViews` already folds non-current views to one row per chart. A matching fold for tables and queries does not exist.

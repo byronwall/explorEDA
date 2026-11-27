@@ -67,6 +67,13 @@
       "location": "conversation",
       "anchor": "1",
       "authority": "user"
+    },
+    {
+      "id": "S5",
+      "type": "qa",
+      "location": "shared notes w4-data-explorer.md (W4 round 1 answers)",
+      "anchor": "relationship view as a separate action; coverage of sources by dashboards",
+      "authority": "user"
     }
   ],
   "intent": {
@@ -116,10 +123,37 @@
           "S1"
         ],
         "confidence": "medium"
+      },
+      {
+        "id": "C6",
+        "statement": "Byron wants to see how data sources relate, then build a dashboard on a slice; he sees this as a separate action from hovering or clicking a source in the Data rail.",
+        "kind": "goal",
+        "sources": [
+          "S5"
+        ],
+        "confidence": "medium"
+      },
+      {
+        "id": "C7",
+        "statement": "Byron wants to see which data sources the existing dashboards cover. W4 leaves this view to W5 and will link to it.",
+        "kind": "goal",
+        "sources": [
+          "S5"
+        ],
+        "confidence": "medium"
       }
     ],
     "themes": [],
-    "conflicts": [],
+    "conflicts": [
+      {
+        "id": "X1",
+        "statement": "Byron says the CI dashboards are built on relationships, but the project declares 0 relationships; runs, jobs, and steps share run_id and job_id without a declared link.",
+        "sources": [
+          "S4",
+          "S5"
+        ]
+      }
+    ],
     "human_questions": []
   },
   "brainstorm": {
@@ -171,6 +205,10 @@
     {
       "date": "2026-11-27",
       "change": "Created intent brief, three approaches, and round 1 questions from the TASK-0092 walkthrough."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Added W4 round 1 answers relayed by the data explorer session: relationship view and dashboard coverage belong to W5."
     }
   ],
   "closure": null,
