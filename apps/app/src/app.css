@@ -1,203 +1,13 @@
 /* The project shell: rail, tabs, forms. Every class starts with app-. */
 .app {
   display: grid;
-  grid-template-columns: 264px minmax(0, 1fr);
+  grid-template-columns: 280px minmax(0, 1fr);
   min-height: 100%;
-}
-
-/*
- * The rail keeps one text edge: headings, rows, and meta lines all start
- * 8px inside the rail's padding, and panels and the notice span the full
- * width. Actions are small and quiet; the content outweighs them.
- */
-.app-rail {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 14px 12px;
-  border-right: 1px solid var(--border);
-  background: var(--card);
-  min-width: 0;
-}
-
-.app-rail h1 {
-  margin: 0;
-  padding: 0 8px;
-  font-size: 15px;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-
-.app-rail h2 {
-  margin: 0;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-}
-
-.app-rail-head > .app-muted {
-  padding: 0 8px;
 }
 
 .app-muted {
   color: var(--muted-foreground);
   font-size: 12px;
-}
-
-.app-path {
-  margin: 2px 0 0;
-  overflow-wrap: anywhere;
-}
-
-.app-rail-head .app-path {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.app-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.app-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1px;
-  width: 100%;
-  padding: 6px 8px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.app-item:hover {
-  background: var(--accent);
-}
-
-.app-item[aria-current="page"] {
-  background: var(--accent);
-}
-
-.app-item[aria-current="page"] > span:first-child {
-  font-weight: 600;
-}
-
-/* The way into the schema diagram, under the tables it relates. */
-.app-links {
-  margin-top: 4px;
-}
-
-.app-suggested {
-  color: var(--primary);
-  font-weight: 500;
-}
-
-/* Rename and Delete, under the analysis they act on. */
-.app-item-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 4px 6px;
-}
-
-.app-item-actions input {
-  flex: 1 1 100%;
-  min-width: 0;
-  height: 28px;
-  padding: 0 8px;
-  border: 1px solid var(--input);
-  border-radius: 6px;
-  background: var(--background);
-  color: var(--foreground);
-  font: inherit;
-  font-size: 13px;
-}
-
-.app-item-actions .app-muted {
-  flex-basis: 100%;
-  padding: 0 4px;
-}
-
-.app-item:focus-visible,
-.app-tab:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 1px;
-}
-
-/* A source: its name, one meta line, and at most one quiet action. */
-.app-source {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  column-gap: 8px;
-  row-gap: 1px;
-  padding: 6px 4px 6px 8px;
-  border-radius: 6px;
-}
-
-.app-source-name {
-  grid-column: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-weight: 500;
-}
-
-.app-source-meta {
-  grid-column: 1;
-  min-width: 0;
-  color: var(--muted-foreground);
-  font-size: 12px;
-  overflow-wrap: anywhere;
-}
-
-.app-source > .app-button {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-}
-
-.app-source[aria-busy] .app-source-meta {
-  color: var(--foreground);
-}
-
-/* A state word in a meta line, marked by a dot in its color. */
-.app-status {
-  white-space: nowrap;
-}
-
-.app-status::before {
-  content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  margin-right: 5px;
-  border-radius: 999px;
-  background: currentColor;
-  vertical-align: 1px;
-}
-
-.app-status-warning {
-  color: var(--foreground);
-}
-
-.app-status-warning::before {
-  background: var(--warning);
-}
-
-.app-status-error {
-  color: var(--destructive);
 }
 
 .app-badge {
@@ -217,33 +27,7 @@
   color: var(--muted-foreground);
 }
 
-.app-section-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 2px;
-  margin-left: auto;
-}
-
-.app-read-problem {
-  grid-column: 1 / -1;
-  padding-right: 4px;
-}
-
-.app-added {
-  margin: 0;
-  font-size: 12px;
-}
-
-.app-source-actions {
-  grid-column: 1 / -1;
-  padding: 2px 0 0;
-}
-
-.app-source .app-secret-form {
-  margin: 6px 0 0;
-}
-
+.app-added,
 .app-secret-note {
   margin: 0;
   font-size: 12px;
@@ -253,33 +37,12 @@
   margin-top: 8px;
 }
 
-.app-refresh-error {
-  padding: 0 8px 4px;
-}
-
 .app-source-error {
   overflow-wrap: anywhere;
   margin: 4px 0 0;
   color: var(--destructive);
   font-size: 12px;
   line-height: 1.45;
-}
-
-.app-problems summary {
-  padding: 0 8px;
-  cursor: pointer;
-  color: var(--warning);
-  font-weight: 500;
-}
-
-.app-problems ul {
-  margin: 6px 0 0;
-  padding-left: 16px;
-  font-size: 12px;
-}
-
-.app-problems li + li {
-  margin-top: 4px;
 }
 
 .app-main {
@@ -330,87 +93,15 @@
   font-weight: 600;
 }
 
-/* Below 960 px the project list sits above the workspace. */
+/* Below 960 px the project rail is a bar above the workspace. */
 @media (max-width: 959px) {
   .app {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .app-rail {
-    border-right: 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .app-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .app-item {
-    width: auto;
-  }
-
-  .app-sources {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 2px 16px;
-  }
-
   .app-main {
     padding: 8px;
   }
-}
-
-/* On a phone the list keeps only names; the workspace needs the height. */
-@media (max-width: 639px) {
-  .app-rail {
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .app-path,
-  .app-rail-head .app-path,
-  .app-item .app-muted {
-    display: none;
-  }
-
-  /* Suggested links still need review on a phone. */
-  .app-links:has(.app-suggested) .app-muted {
-    display: inline;
-  }
-}
-
-.app-save {
-  margin: 6px 0 0;
-}
-
-.app-save-failed {
-  color: var(--destructive);
-  font-size: 12px;
-}
-
-.app-notice {
-  margin: 6px 0 0;
-  padding: 6px 8px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 12px;
-}
-
-.app-section-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px 8px;
-  min-height: 28px;
-  margin-bottom: 2px;
-  padding-left: 8px;
-}
-
-.app-section-head h2 {
-  margin: 0;
 }
 
 .app-button {
@@ -430,7 +121,7 @@
   background: var(--accent);
 }
 
-/* Small actions inside the rail's lists and headers. */
+/* Small actions in the rail's headers and popovers. */
 .app-button-sm {
   height: 26px;
   padding: 0 8px;
@@ -485,7 +176,7 @@
   margin: 0 0 8px;
 }
 
-/* A form or tool opened inline in the rail, set into the page color. */
+/* A form set into the page color, inside a panel or popover. */
 .app-panel {
   display: grid;
   gap: 10px;
@@ -555,35 +246,11 @@
   background: var(--card);
 }
 
-.app-theme {
-  display: inline-flex;
-  margin-top: auto;
-  margin-left: 4px;
-  padding: 2px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  align-self: flex-start;
-}
-
-.app-segment {
-  height: 24px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--muted-foreground);
-  font: inherit;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.app-segment[aria-checked="true"] {
-  background: var(--accent);
-  color: var(--foreground);
-}
-
 /* Adding a database source: a connection, then a table or a query. */
+.app-add-database,
 .app-add-database .app-database-form {
+  display: grid;
+  gap: 10px;
   margin: 0;
 }
 
@@ -642,6 +309,23 @@
 
 .app-database-form > .app-source-error {
   margin: 0;
+}
+
+.app-segment {
+  height: 24px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.app-segment[aria-checked="true"] {
+  background: var(--accent);
+  color: var(--foreground);
 }
 
 .app-segmented {
@@ -965,7 +649,7 @@
 }
 
 .app-rail > .team-bar {
-  padding-bottom: 12px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -1426,6 +1110,652 @@
   flex-basis: 100%;
 }
 
-.app-source .app-fetched .app-button {
-  margin-left: 0;
+/*
+ * The project rail. It stays on screen while the workspace scrolls, and its
+ * lists scroll inside it. Each row is one line of one height; actions and
+ * messages open over the page, so nothing in the rail moves under the
+ * pointer.
+ */
+.app-rail {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  height: 100vh;
+  height: 100dvh;
+  min-width: 0;
+  border-right: 1px solid var(--border);
+  background: var(--card);
+}
+
+.app-rail-head {
+  padding: 8px 8px 6px;
+}
+
+.app-rail-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.app-rail h1 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding-left: 8px;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-rail-toggle,
+.app-rail-backdrop {
+  display: none;
+}
+
+.app-save {
+  margin: 0;
+  padding: 0 8px;
+}
+
+.app-save-failed {
+  color: var(--destructive);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.app-rail-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  padding: 6px 8px 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.app-section-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding-left: 8px;
+}
+
+.app-rail h2 {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.app-section-count {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.app-section-actions .app-button-sm {
+  padding: 0 6px;
+}
+
+/* "Read all" becomes "Refresh all" in the same width. */
+.app-section-actions .app-refresh-all {
+  min-width: 80px;
+  text-align: right;
+}
+
+.app-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.app-empty {
+  margin: 0;
+  padding: 2px 8px;
+}
+
+.app-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 24px;
+  align-items: center;
+  height: 28px;
+  padding-right: 2px;
+  border-radius: 6px;
+}
+
+.app-row-meta:empty {
+  padding: 0;
+}
+
+.app-row-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  height: 100%;
+  padding: 0 4px 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+button.app-row-main {
+  cursor: pointer;
+}
+
+.app-row-icon {
+  display: flex;
+  flex: none;
+  color: var(--muted-foreground);
+}
+
+.app-row-icon svg,
+.app-icon-button svg,
+.app-menu-item svg,
+.app-problems svg,
+.app-rail-toggle svg {
+  width: 14px;
+  height: 14px;
+}
+
+.app-row[data-tone="warning"] .app-row-icon {
+  color: var(--warning);
+}
+
+.app-row[data-tone="error"] .app-row-icon,
+.app-row[data-tone="error"] .app-row-state {
+  color: var(--destructive);
+}
+
+.app-row-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-row-meta {
+  padding-right: 4px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* A text action's words end where the counts do. */
+.app-row-meta > .app-row-button {
+  margin-right: -6px;
+}
+
+.app-row-action {
+  display: flex;
+  justify-content: center;
+}
+
+.app-row-button {
+  height: 24px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--primary);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.app-icon-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+
+.app-icon-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* A row's action waits for the pointer, the keyboard, or selection. */
+.app-row-reveal {
+  opacity: 0;
+}
+
+.app-row:hover .app-row-reveal,
+.app-row:focus-within .app-row-reveal,
+.app-row[data-current] .app-row-reveal,
+.app-row-reveal[data-state="open"] {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .app-row-reveal {
+    opacity: 1;
+  }
+}
+
+@media (hover: hover) {
+  /* Only a row that opens something looks pressable. */
+  .app-row:has(> button.app-row-main):hover {
+    background: var(--accent);
+  }
+
+  .app-row-button:hover,
+  .app-icon-button:not(:disabled):hover,
+  .app-rail-toggle:hover {
+    background: color-mix(in srgb, var(--foreground) 8%, transparent);
+    color: var(--foreground);
+  }
+
+  .app-problems:hover {
+    background: var(--accent);
+  }
+}
+
+.app-row-button:active,
+.app-icon-button:not(:disabled):active {
+  background: color-mix(in srgb, var(--foreground) 14%, transparent);
+  transform: scale(0.97);
+}
+
+/* Doubled so selection keeps its tint under the pointer. */
+.app-row.app-row[data-current] {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.app-row[data-current] .app-row-icon {
+  color: var(--primary);
+}
+
+.app-row-main:focus-visible,
+.app-problems:focus-visible,
+.app-rail-toggle:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.app-row-button:focus-visible,
+.app-icon-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -1px;
+}
+
+/* Renaming edits the row in place, at the row's height. */
+.app-row-rename {
+  display: flex;
+  gap: 2px;
+}
+
+.app-row-rename input {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 7px 0 29px;
+  border: 1px solid var(--input);
+  border-radius: 6px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+}
+
+.app-row-rename input:focus-visible {
+  border-color: var(--ring);
+  outline: 2px solid var(--ring);
+  outline-offset: -1px;
+}
+
+.app-links {
+  margin-top: 4px;
+}
+
+.app-suggested {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.app-problems {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--warning);
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.app-problem-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  list-style: none;
+  overflow-wrap: anywhere;
+}
+
+/* Layers over the page: tooltips, menus, popovers, and toasts. */
+.app-tip,
+.app-menu,
+.app-popover {
+  z-index: 60;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--popover, var(--card));
+  color: var(--popover-foreground, var(--foreground));
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.14);
+}
+
+.app-tip {
+  display: grid;
+  gap: 2px;
+  max-width: 320px;
+  padding: 6px 10px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.app-tip > span {
+  color: var(--muted-foreground);
+}
+
+.app-menu {
+  min-width: 168px;
+  max-width: 320px;
+  padding: 4px;
+  font-size: 13px;
+}
+
+.app-menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.app-menu-item[data-highlighted] {
+  background: var(--accent);
+  outline: none;
+}
+
+.app-menu-danger {
+  color: var(--destructive);
+}
+
+.app-menu-radio {
+  padding-left: 30px;
+}
+
+.app-menu-check {
+  position: absolute;
+  left: 8px;
+  display: flex;
+}
+
+.app-menu-label,
+.app-menu-path {
+  padding: 4px 8px 2px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.app-menu-path {
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+.app-menu-separator {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--border);
+}
+
+.app-popover {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  width: min(360px, calc(100vw - 16px));
+  max-height: var(--radix-popover-content-available-height);
+  padding: 12px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+.app-popover:focus {
+  outline: none;
+}
+
+.app-popover-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -4px -4px 0 0;
+}
+
+.app-popover-head h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.app-popover .app-form,
+.app-popover .app-add-data {
+  margin: 0;
+}
+
+.app-popover .app-add-data {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.app-popover .app-read-problem > .app-source-error:first-child {
+  margin: 0;
+}
+
+.app-popover .app-secret-form {
+  margin: 8px 0 0;
+}
+
+.app-popover-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.app-popover-actions > .app-muted {
+  flex-basis: 100%;
+}
+
+.app-popover-close {
+  margin-left: auto;
+}
+
+.app-confirm {
+  width: min(260px, calc(100vw - 16px));
+}
+
+.app-confirm p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.app-confirm-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.app-toasts {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  z-index: 55;
+  display: grid;
+  gap: 8px;
+  width: min(340px, calc(100vw - 24px));
+}
+
+.app-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--popover, var(--card));
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.14);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.app-notice > span {
+  flex: 1;
+}
+
+.app-notice-error {
+  color: var(--destructive);
+}
+
+/* Below 960 px the lists fold into a bar and open over the workspace. */
+@media (max-width: 959px) {
+  .app {
+    grid-template-rows: auto 1fr;
+  }
+
+  .app-rail {
+    position: relative;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Open, the lists cover the workspace's own sticky toolbar. */
+  .app-rail[data-open] {
+    z-index: 55;
+  }
+
+  .app-rail-head {
+    padding: 6px 8px;
+  }
+
+  .app-rail-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid var(--input);
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .app-rail-toggle svg {
+    flex: none;
+  }
+
+  .app-rail-current {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .app-rail h1 {
+    color: var(--muted-foreground);
+    font-size: 13px;
+    font-weight: 500;
+    text-align: right;
+  }
+
+  .app-save {
+    display: none;
+  }
+
+  .app-save-failed {
+    display: block;
+  }
+
+  .app-rail-body {
+    display: none;
+  }
+
+  .app-rail[data-open] .app-rail-body {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    box-sizing: border-box;
+    width: min(360px, 100%);
+    max-height: min(640px, calc(100dvh - 56px));
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    border-radius: 0 0 8px 0;
+    background: var(--card);
+    box-shadow: 0 16px 32px rgb(0 0 0 / 0.18);
+  }
+
+  .app-rail-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: block;
+  }
+
+  .app-rail-head {
+    position: relative;
+    z-index: 2;
+    background: var(--card);
+  }
+
+  .app-toasts {
+    bottom: 48px;
+  }
 }

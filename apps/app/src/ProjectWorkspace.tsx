@@ -16,21 +16,13 @@ import {
   type SavedDataStructure,
 } from "exploreda";
 import { createAnalysisWorker } from "exploreda/analysis";
-import { AddData, fetchedLabel } from "./AddData";
+import { AddData } from "./AddData";
 import type { FetchedRecord, ServerInfo, ThemePreference } from "./httpFiles";
 import type { FolderSaver, SaveState } from "./saver";
-import {
-  AddDatabase,
-  type AddDatabaseActions,
-  type PickTarget,
-} from "./AddDatabase";
-import { unreadSources, visibleProblems, waitingFor } from "./databaseSources";
-import {
-  DatabaseSourceItem,
-  RefreshAll,
-  type ReadFailure,
-  WaitingForData,
-} from "./DatabaseSourceViews";
+import type { AddDatabaseActions } from "./AddDatabase";
+import { visibleProblems, waitingFor } from "./databaseSources";
+import { type ReadFailure, WaitingForData } from "./DatabaseSourceViews";
+import { ProjectRail } from "./ProjectRail";
 
 /** A view's ID: its analysis file and its place in that file. */
 const viewId = (path: string, index: number) => `${path}#${index}`;
@@ -142,14 +134,9 @@ export function ProjectWorkspace({
 }) {
   const [project, setProject] = useState<AnalysisProject>(folder.project);
   const [views, setViews] = useState(() => folderViews(folder));
-  const [creating, setCreating] = useState(false);
-  const [adding, setAdding] = useState(false);
-  const [refreshAllError, setRefreshAllError] = useState<string>();
   const [addingDatabase, setAddingDatabase] = useState(
     initialPanel?.addDatabase !== undefined
   );
-  // A too-large source the add-database panel is picking columns for.
-  const [pick, setPick] = useState<PickTarget>();
   const [selected, setSelectedState] = useState<Selection>(() =>
     initialSelection?.path &&
     [...folder.analyses, ...folder.notebooks].some(
@@ -337,8 +324,6 @@ export function ProjectWorkspace({
     onDismissLink?.(id);
   };
   const canAddDatabase = !readOnly && Boolean(actions.database);
-  const unread = unreadSources(folder);
-  const problems = visibleProblems(folder, project);
   const waiting = view ? waitingFor(folder, project, view.queryId) : [];
 
   const usedFiles = new Set(Object.values(folder.paths));
@@ -363,308 +348,36 @@ export function ProjectWorkspace({
 
   return (
     <div className="app">
-      <aside className="app-rail" aria-label="Project">
-        {team}
-        <header className="app-rail-head">
-          <h1>{info.name}</h1>
-          {info.root && <p className="app-muted app-path">{info.root}</p>}
-          {readOnly ? (
-            <p className="app-save app-muted">
-              Viewing · your changes aren't saved
-            </p>
-          ) : (
-            <SaveStatus state={saveState} onDisk={!team} />
-          )}
-          {notice && (
-            <p className="app-notice" role="status">
-              {notice}
-            </p>
-          )}
-        </header>
-
-        <nav aria-labelledby="analyses-heading">
-          <div className="app-section-head">
-            <h2 id="analyses-heading">Analyses</h2>
-            {!readOnly && project.queries.length > 0 && (
-              <button
-                type="button"
-                className="app-button app-button-sm app-button-ghost"
-                aria-expanded={creating}
-                onClick={() => setCreating((open) => !open)}
-              >
-                New analysis
-              </button>
-            )}
-          </div>
-          {creating && (
-            <NewAnalysisForm
-              queries={project.queries.map((query) => ({
-                id: query.id,
-                name: query.name,
-              }))}
-              onCancel={() => setCreating(false)}
-              onCreate={(name, queryId) =>
-                void actions.createAnalysis(name, queryId)
-              }
-            />
-          )}
-          {folder.analyses.length ? (
-            <ul className="app-list">
-              {folder.analyses.map((analysis) => (
-                <li key={analysis.path}>
-                  <button
-                    type="button"
-                    className="app-item"
-                    aria-current={
-                      analysis.path === selected.path ? "page" : undefined
-                    }
-                    onClick={() =>
-                      setSelected({ path: analysis.path, index: 0 })
-                    }
-                  >
-                    <span>{analysis.result.name}</span>
-                    <span className="app-muted">{analysis.path}</span>
-                  </button>
-                  {!readOnly && analysis.path === selected.path && (
-                    <AnalysisActions
-                      path={analysis.path}
-                      name={analysis.result.name}
-                      actions={actions}
-                    />
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="app-muted">No analyses yet.</p>
-          )}
-        </nav>
-
-        {folder.notebooks.length > 0 && (
-          <nav aria-labelledby="notebooks-heading">
-            <div className="app-section-head">
-              <h2 id="notebooks-heading">Notebooks</h2>
-            </div>
-            <ul className="app-list">
-              {folder.notebooks.map((item) => (
-                <li key={item.path}>
-                  <button
-                    type="button"
-                    className="app-item"
-                    aria-current={
-                      item.path === selected.path ? "page" : undefined
-                    }
-                    onClick={() => setSelected({ path: item.path, index: 0 })}
-                  >
-                    <span>{item.result.settings.metadata.name}</span>
-                    <span className="app-muted">{item.path}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
-
-        <section aria-labelledby="data-heading">
-          <div className="app-section-head">
-            <h2 id="data-heading">Data</h2>
-            <div className="app-section-actions">
-              {databaseIds.length > 1 &&
-                !readOnly &&
-                actions.refreshSources && (
-                  <RefreshAll
-                    sourceIds={databaseIds}
-                    unread={unread.length}
-                    onRefresh={actions.refreshSources}
-                    onError={setRefreshAllError}
-                  />
-                )}
-              {canAddDatabase && (
-                <button
-                  type="button"
-                  className="app-button app-button-sm app-button-ghost"
-                  aria-expanded={addingDatabase}
-                  aria-label="Add a table or query from a database"
-                  onClick={() => {
-                    setPick(undefined);
-                    setAddingDatabase((open) => !open);
-                  }}
-                >
-                  Add database
-                </button>
-              )}
-              {addData && (
-                <button
-                  type="button"
-                  className="app-button app-button-sm app-button-ghost"
-                  aria-expanded={adding}
-                  onClick={() => setAdding((open) => !open)}
-                >
-                  Add data
-                </button>
-              )}
-            </div>
-          </div>
-          {addData && adding && addData(() => setAdding(false))}
-          {canAddDatabase && addingDatabase && (
-            <AddDatabase
-              key={pick?.sourceId}
-              connections={folder.connections}
-              sourceIds={project.sources.map((source) => source.id)}
-              initialConnection={initialPanel?.addDatabase || undefined}
-              pick={pick}
-              actions={{ ...actions.database!, saveSecret: actions.saveSecret }}
-              onClose={() => {
-                setPick(undefined);
-                setAddingDatabase(false);
-              }}
-            />
-          )}
-          {refreshAllError && (
-            <p className="app-source-error app-refresh-error" role="alert">
-              {refreshAllError}
-            </p>
-          )}
-          <ul className="app-list app-sources">
-            {project.sources.map((source) => {
-              const database = folder.databases[source.id];
-              if (database) {
-                return (
-                  <DatabaseSourceItem
-                    key={source.id}
-                    name={source.name}
-                    sourceId={source.id}
-                    connection={database.connection}
-                    rows={folder.tables[source.id]?.length ?? 0}
-                    snapshot={folder.snapshots[source.id]}
-                    lastError={readErrors[source.id]}
-                    onRemove={readOnly ? undefined : actions.removeSource}
-                    onPickColumns={
-                      canAddDatabase && database.table !== undefined
-                        ? () => {
-                            setPick({
-                              sourceId: source.id,
-                              connection: database.connection,
-                              table: database.table!,
-                              ...(database.limit
-                                ? { limit: database.limit }
-                                : {}),
-                            });
-                            setAddingDatabase(true);
-                          }
-                        : undefined
-                    }
-                    onRefresh={
-                      readOnly || !actions.refreshSources
-                        ? undefined
-                        : (id) => actions.refreshSources!([id])
-                    }
-                    onSaveSecret={readOnly ? undefined : actions.saveSecret}
-                  />
-                );
-              }
-              const missing = folder.missingSources.includes(source.id);
-              const outside = folder.outsideSources.includes(source.id);
-              const path = folder.paths[source.id];
-              return (
-                <li key={source.id} className="app-source">
-                  <span className="app-source-name">{source.name}</span>
-                  <span className="app-source-meta">
-                    {missing ? (
-                      <span className="app-status app-status-error">
-                        File missing
-                      </span>
-                    ) : (
-                      `${(folder.tables[source.id]?.length ?? 0).toLocaleString()} rows`
-                    )}
-                    {outside ? " · outside the folder" : ""}
-                    {path && fetched[path]
-                      ? ` · ${fetchedLabel(fetched[path]!)}`
-                      : ""}
-                  </span>
-                  <Refetch
-                    path={path}
-                    fetched={fetched}
-                    onRefetch={readOnly ? undefined : actions.refetch}
-                  />
-                </li>
-              );
-            })}
-            {looseFiles.map((path) => (
-              <li key={path} className="app-source">
-                <span className="app-source-name">{path}</span>
-                <span className="app-source-meta">
-                  {fetched[path]
-                    ? `Not charted yet · ${fetchedLabel(fetched[path]!)}`
-                    : "Not charted yet"}
-                </span>
-                {!readOnly && (
-                  <button
-                    type="button"
-                    className="app-button app-button-sm app-button-ghost"
-                    aria-label={`Chart ${path}`}
-                    onClick={() => void actions.chartFile(path)}
-                  >
-                    Chart
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
-          {project.sources.length > 1 && view && !notebook && (
-            <button
-              type="button"
-              className="app-item app-links"
-              onClick={() =>
+      <ProjectRail
+        folder={folder}
+        project={project}
+        info={info}
+        team={team}
+        readOnly={readOnly}
+        saveState={saveState}
+        notice={notice}
+        readErrors={readErrors}
+        fetched={fetched}
+        actions={actions}
+        theme={theme}
+        onThemeChange={onThemeChange}
+        selected={selected}
+        onSelect={setSelected}
+        addingDatabase={addingDatabase}
+        onAddingDatabase={setAddingDatabase}
+        initialConnection={initialPanel?.addDatabase || undefined}
+        problems={visibleProblems(folder, project)}
+        suggestedLinks={proposals.length}
+        onOpenSchema={
+          project.sources.length > 1 && view && !notebook
+            ? () =>
                 // With links to review, the whole diagram shows first.
                 workspace.current?.openSchema?.(
                   proposals.length ? undefined : viewSource(project, view)
                 )
-              }
-            >
-              <span>Tables and links</span>
-              <span className="app-muted">
-                {project.relationships.length
-                  ? `${project.relationships.length} link${project.relationships.length === 1 ? "" : "s"} between ${project.sources.length} tables`
-                  : proposals.length
-                    ? `${project.sources.length} tables`
-                    : `Relate ${project.sources.length} tables to chart their fields together`}
-                {proposals.length > 0 && (
-                  <span className="app-suggested">
-                    {" · "}
-                    {proposals.length} suggested link
-                    {proposals.length === 1 ? "" : "s"} to review
-                  </span>
-                )}
-              </span>
-            </button>
-          )}
-        </section>
-
-        {problems.length > 0 && (
-          <details className="app-problems">
-            <summary>
-              {problems.length} problem
-              {problems.length === 1 ? "" : "s"}
-            </summary>
-            <ul>
-              {problems.map((problem, index) => (
-                <li key={index}>
-                  <span className="app-muted">
-                    {problem.path}:{problem.line}
-                  </span>{" "}
-                  {problem.message}
-                  {problem.suggestion && (
-                    <span className="app-muted"> {problem.suggestion}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </details>
-        )}
-
-        <ThemeChoice theme={theme} onChange={onThemeChange} />
-      </aside>
+            : undefined
+        }
+      />
 
       <main className="app-main">
         {notebook ? (
@@ -742,210 +455,6 @@ function viewSource(project: AnalysisProject, view: AnalysisView) {
   const query = project.queries.find((item) => item.id === view.queryId);
   const first = query?.steps.find((step) => step.kind === "source");
   return first?.kind === "source" ? first.sourceId : undefined;
-}
-
-function SaveStatus({
-  state,
-  onDisk,
-}: {
-  state: SaveState;
-  /** A folder the person can see; a team server keeps files out of sight. */
-  onDisk: boolean;
-}) {
-  if (state.status === "failed") {
-    return (
-      <p className="app-save app-save-failed" role="alert">
-        Couldn't save {state.path}: {state.message}
-      </p>
-    );
-  }
-  return (
-    <p className="app-save app-muted" aria-live="polite">
-      {state.status === "saving"
-        ? "Saving…"
-        : onDisk
-          ? "Saved to the folder"
-          : "Saved"}
-    </p>
-  );
-}
-
-function NewAnalysisForm({
-  queries,
-  onCreate,
-  onCancel,
-}: {
-  queries: Array<{ id: string; name: string }>;
-  onCreate: (name: string, queryId: string) => void;
-  onCancel: () => void;
-}) {
-  const [name, setName] = useState("");
-  const [queryId, setQueryId] = useState(queries[0]?.id ?? "");
-  return (
-    <form
-      className="app-form app-panel"
-      onSubmit={(event) => {
-        event.preventDefault();
-        if (name.trim() && queryId) {
-          onCreate(name.trim(), queryId);
-        }
-      }}
-    >
-      <label className="app-field">
-        <span>Name</span>
-        <input
-          autoFocus
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          placeholder="Revenue by region"
-        />
-      </label>
-      <label className="app-field">
-        <span>Charts</span>
-        <select
-          value={queryId}
-          onChange={(event) => setQueryId(event.target.value)}
-        >
-          {queries.map((query) => (
-            <option key={query.id} value={query.id}>
-              {query.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <div className="app-form-actions">
-        <button type="submit" className="app-button app-button-primary">
-          Create
-        </button>
-        <button
-          type="button"
-          className="app-button app-button-ghost"
-          onClick={onCancel}
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
-  );
-}
-
-function AnalysisActions({
-  path,
-  name,
-  actions,
-}: {
-  path: string;
-  name: string;
-  actions: ProjectActions;
-}) {
-  const [mode, setMode] = useState<"idle" | "rename" | "delete">("idle");
-  const [draft, setDraft] = useState(name);
-  if (mode === "rename") {
-    return (
-      <form
-        className="app-item-actions"
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (draft.trim() && draft.trim() !== name) {
-            void actions.renameAnalysis(path, draft.trim());
-          } else {
-            setMode("idle");
-          }
-        }}
-      >
-        <input
-          autoFocus
-          aria-label={`New name for ${name}`}
-          value={draft}
-          onFocus={(event) => event.currentTarget.select()}
-          // Select-all and Enter belong to the box, not the workspace keys.
-          onKeyDown={(event) => {
-            event.stopPropagation();
-            if (event.key === "Escape") setMode("idle");
-          }}
-          onChange={(event) => setDraft(event.target.value)}
-        />
-        <button
-          type="submit"
-          className="app-button app-button-sm app-button-primary"
-        >
-          Save
-        </button>
-        <button
-          type="button"
-          className="app-button app-button-sm app-button-ghost"
-          onClick={() => setMode("idle")}
-        >
-          Cancel
-        </button>
-      </form>
-    );
-  }
-  if (mode === "delete") {
-    return (
-      <div className="app-item-actions" role="group" aria-label="Delete">
-        <span className="app-muted">Delete {path}?</span>
-        <button
-          type="button"
-          className="app-button app-button-sm app-button-danger"
-          onClick={() => void actions.deleteAnalysis(path)}
-        >
-          Delete
-        </button>
-        <button
-          type="button"
-          className="app-button app-button-sm app-button-ghost"
-          onClick={() => setMode("idle")}
-        >
-          Keep
-        </button>
-      </div>
-    );
-  }
-  return (
-    <div className="app-item-actions">
-      <button
-        type="button"
-        className="app-button app-button-sm app-button-ghost"
-        onClick={() => setMode("rename")}
-      >
-        Rename
-      </button>
-      <button
-        type="button"
-        className="app-button app-button-sm app-button-ghost"
-        onClick={() => setMode("delete")}
-      >
-        Delete
-      </button>
-    </div>
-  );
-}
-
-/** Downloads a fetched file again from the address it came from. */
-function Refetch({
-  path,
-  fetched,
-  onRefetch,
-}: {
-  path: string | undefined;
-  fetched: Record<string, FetchedRecord>;
-  onRefetch?: (path: string) => Promise<void>;
-}) {
-  const record = path ? fetched[path] : undefined;
-  if (!path || !record || !onRefetch) {
-    return null;
-  }
-  return (
-    <button
-      type="button"
-      className="app-button app-button-sm app-button-ghost"
-      aria-label={`Refetch ${path} from ${record.url}`}
-      onClick={() => void onRefetch(path)}
-    >
-      Refetch
-    </button>
-  );
 }
 
 function FirstRun({
@@ -1027,37 +536,6 @@ function FirstRun({
           </li>
         ))}
       </ul>
-    </div>
-  );
-}
-
-const THEMES: Array<{ id: ThemePreference; label: string }> = [
-  { id: "system", label: "System" },
-  { id: "light", label: "Light" },
-  { id: "dark", label: "Dark" },
-];
-
-function ThemeChoice({
-  theme,
-  onChange,
-}: {
-  theme: ThemePreference;
-  onChange: (theme: ThemePreference) => void;
-}) {
-  return (
-    <div className="app-theme" role="radiogroup" aria-label="Theme">
-      {THEMES.map((item) => (
-        <button
-          key={item.id}
-          type="button"
-          role="radio"
-          aria-checked={theme === item.id}
-          className="app-segment"
-          onClick={() => onChange(item.id)}
-        >
-          {item.label}
-        </button>
-      ))}
     </div>
   );
 }
