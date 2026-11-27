@@ -17,11 +17,17 @@ import { X } from "lucide-react";
 function Tip({
   content,
   wide,
+  label,
   children,
 }: {
   content: ReactNode;
   /** A card the pointer can move into, such as a source's field summary. */
   wide?: boolean;
+  /**
+   * What a screen reader announces instead of the content. Without it the
+   * tooltip keeps a hidden copy of its content, which would draw a card twice.
+   */
+  label?: string;
   children: ReactElement;
 }) {
   return (
@@ -30,6 +36,7 @@ function Tip({
       <Tooltip.Portal>
         <Tooltip.Content
           className={wide ? "app-tip app-tip-card" : "app-tip"}
+          aria-label={label}
           side="right"
           sideOffset={8}
           collisionPadding={8}
@@ -100,6 +107,7 @@ export function RailRow({
   return (
     <Tip
       wide={Boolean(card)}
+      label={card ? `${name}: field summary` : undefined}
       content={
         <>
           <strong>{name}</strong>
