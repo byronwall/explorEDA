@@ -8,7 +8,7 @@
     "last_updated": "2026-11-27",
     "summary": "Make a Data row in the project app rail open an explorer for that source.",
     "status": "planned",
-    "next_action": "Byron answers question round 2"
+    "next_action": "Byron reacts to mockups A-D"
   },
   "artifacts": {
     "intent_brief": {
@@ -81,6 +81,13 @@
       "location": "docs/intent/schema-diagram-focus (branch of W5 session, commit 7e94fa9e)",
       "anchor": "relationship view and dashboard coverage view",
       "authority": "inferred"
+    },
+    {
+      "id": "Q2",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "2",
+      "authority": "user"
     }
   ],
   "intent": {
@@ -89,75 +96,71 @@
         "id": "C1",
         "statement": "A click on a Data row opens an explorer of that source.",
         "kind": "goal",
-        "sources": [
-          "S1"
-        ],
+        "sources": ["S1"],
         "confidence": "high"
       },
       {
         "id": "C2",
         "statement": "Opening a source writes no file and does not query a database.",
         "kind": "constraint",
-        "sources": [
-          "S3",
-          "S4"
-        ],
+        "sources": ["S3", "S4"],
         "confidence": "medium"
       },
       {
         "id": "C3",
         "statement": "Explorer reuses workspace profiles, Summary and Rows; no second engine.",
         "kind": "constraint",
-        "sources": [
-          "S4"
-        ],
+        "sources": ["S4"],
         "confidence": "medium"
       },
       {
         "id": "C4",
         "statement": "Progressive disclosure: hover shows field summary (columns, types, distributions); click opens an explorer of field summary plus rows.",
         "kind": "decision",
-        "sources": [
-          "S1"
-        ],
+        "sources": ["S1"],
         "confidence": "high"
       },
       {
         "id": "C5",
         "statement": "Columns and data types are the first thing to answer; then a feel for values and quick views.",
         "kind": "goal",
-        "sources": [
-          "Q1"
-        ],
+        "sources": ["Q1"],
         "confidence": "high"
       },
       {
         "id": "C6",
         "statement": "Seeing how sources relate and which sources existing dashboards cover is wanted, but is a separate action from the source hover/click (overlaps W5 schema).",
         "kind": "goal",
-        "sources": [
-          "Q1"
-        ],
+        "sources": ["Q1"],
         "confidence": "medium"
       },
       {
         "id": "C7",
-        "statement": "What leaving the explorer produces (save as analysis, per-source dashboard, read-only) is unsettled.",
-        "kind": "open",
-        "sources": [
-          "Q1"
-        ],
-        "confidence": "low"
+        "statement": "Save from the explorer writes an .eda analysis file.",
+        "kind": "decision",
+        "sources": ["Q1"],
+        "confidence": "high"
       },
       {
         "id": "C8",
         "statement": "W5 owns the relationship and coverage views. Any per-source used-by marker in W4 reads the usage edges in packages/explorEDA/src/lib/schema/schemaGraph.ts, not a second copy.",
         "kind": "constraint",
-        "sources": [
-          "W5",
-          "Q1"
-        ],
+        "sources": ["W5", "Q1"],
         "confidence": "high"
+      },
+      {
+        "id": "C9",
+        "statement": "Hover card is about a third of the viewport, shows the full-width field summary with scrolling rows, and draws no charts.",
+        "kind": "decision",
+        "sources": ["Q2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C10",
+        "statement": "The explorer is a dashboard against one source only. Value-click behavior is an agent default, to be corrected by feedback.",
+        "kind": "decision",
+        "sources": ["Q2"],
+        "confidence": "medium"
       }
     ],
     "themes": [],
@@ -219,6 +222,10 @@
     {
       "date": "2026-11-27",
       "event": "Intent recovered from TASK-0092 recording; three approaches compared; question round 1 prepared."
+    },
+    {
+      "date": "2026-11-27",
+      "event": "Round 2 recorded. Four mockup variants rendered on the live app with real Runs data (tmp/explorer-mockups, not committed): A hover card + summary-and-rows page, B scratch dashboard, C compact hover + rows-first, D rail column tree + column focus. Default value click filters rows and re-describes columns."
     }
   ],
   "closure": null,
@@ -227,6 +234,11 @@
       "round": 1,
       "date": "2026-11-27",
       "answers": "Most important: columns and data types, and a feel for the values. Hover a source shows the existing field Summary. Click switches the main view to a drill-in explorer: field summary, then actual rows fast; from there save or do something else. Persistence undecided (maybe scratch, maybe read-only, maybe per-source dashboard). Multi-source matters: dashboards are built on relationships; wants a flow from seeing how sources relate to building a dashboard on a slice. Wants to see which sources existing dashboards cover. Relationship/ERD view is a different action from the source hover/click."
+    },
+    {
+      "round": 2,
+      "date": "2026-11-27",
+      "answers": "Hover card about a third of the viewport (~400x400): full summary width, rows scroll; no charts. Clicking a value: pick a sensible default, Byron will give feedback. Save writes an .eda file. Explorer is a dashboard against just that one source; multi-source scope belongs to the schema view. Next: 3-4 strongly different HTML mockups built on the live app, shown as images."
     }
   ]
 }
