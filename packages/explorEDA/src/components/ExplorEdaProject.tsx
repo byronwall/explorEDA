@@ -8,7 +8,6 @@ import {
   type ReactNode,
 } from "react";
 import { Database, GitBranch } from "lucide-react";
-import type { DatumObject } from "@/providers/DataLayerProvider";
 import {
   ExplorEda,
   type ExplorEdaHandle,
@@ -33,6 +32,7 @@ import {
   unresolvedAnalysisRowKeys,
 } from "./project/analysisRowKeys";
 import { incompatibleSettingsFields } from "./project/settingsCompatibility";
+import { queryInput, withDeclared } from "./project/queryInput";
 import { lookupField, relatedTables } from "./project/relatedFields";
 import { followRelationship } from "./project/stepEditing";
 import { projectSchemaGraph } from "@/lib/schema/schemaGraph";
@@ -103,13 +103,6 @@ export interface ExplorEdaProjectProps {
   toolbarEnd?: ReactNode;
 }
 
-const FIELD_TYPES = {
-  number: "numeric",
-  string: "categorical",
-  boolean: "boolean",
-  date: "datetime",
-} as const;
-
 /**
  * A chart workspace over one query of a multi-table project. Each view picks
  * a query; its result rows are what the charts see. Schema and Query panels
@@ -169,12 +162,8 @@ export const ExplorEdaProject = forwardRef<
   );
   useEffect(() => setFocusRowKeys(undefined), [evaluation]);
 
-  const data = useMemo<DatumObject[]>(
-    () => evaluation.rows.map((row, __ID) => ({ ...row.data, __ID })),
-    [evaluation]
-  );
-  const fieldNames = useMemo(
-    () => evaluation.fields.map((field) => field.id),
+  const { data, fieldNames, fieldTypes, declared } = useMemo(
+    () => queryInput(evaluation),
     [evaluation]
   );
   const idsByKey = useMemo(
@@ -236,30 +225,6 @@ export const ExplorEdaProject = forwardRef<
     [settings, fieldNames]
   );
   const settingsCompatible = incompatibleFields.length === 0;
-  // Declared types hold even before any settings are saved.
-  const fieldTypes = useMemo(
-    () =>
-      Object.fromEntries(
-        evaluation.fields.map((field) => [field.id, field.type ?? "unknown"])
-      ),
-    [evaluation.fields]
-  );
-  // Declared field names and types fill in what saved settings leave out.
-  const declared = useMemo(
-    () =>
-      Object.fromEntries(
-        evaluation.fields.map((field) => [
-          field.id,
-          {
-            label: field.name,
-            ...(field.type && field.type !== "unknown"
-              ? { type: FIELD_TYPES[field.type] }
-              : {}),
-          } as Record<string, unknown>,
-        ])
-      ),
-    [evaluation.fields]
-  );
   /** Settings to report: only what differs from the declared fields. */
   const reported = (next: SavedDataStructure) => {
     const encoded = encodeAnalysisRowKeys(next, keysById);
@@ -284,14 +249,10 @@ export const ExplorEdaProject = forwardRef<
       return undefined;
     }
     const decoded = decodeAnalysisRowKeys(settings, idsByKey);
-    // Saved settings for a field add to its declared name and type.
-    const fieldSettings: NonNullable<SavedDataStructure["fieldSettings"]> = {
-      ...declared,
+    return {
+      ...decoded,
+      fieldSettings: withDeclared(declared, decoded.fieldSettings),
     };
-    for (const [id, saved] of Object.entries(decoded.fieldSettings ?? {})) {
-      fieldSettings[id] = { ...declared[id], ...saved };
-    }
-    return { ...decoded, fieldSettings };
   }, [settings, idsByKey, declared]);
 
   useImperativeHandle(

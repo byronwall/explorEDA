@@ -34,6 +34,7 @@ import {
 import type { FetchedRecord, ServerInfo, ThemePreference } from "./httpFiles";
 import type { ProjectActions, Selection } from "./ProjectWorkspace";
 import { FormPopover, IconButton, RailRow } from "./RailParts";
+import { SourceCard } from "./SourceCard";
 import type { SaveState } from "./saver";
 
 const NARROW = "(max-width: 959px)";
@@ -75,6 +76,7 @@ export function ProjectRail({
   problems,
   suggestedLinks,
   onOpenSchema,
+  usedBy,
 }: {
   folder: ProjectFolder;
   project: AnalysisProject;
@@ -98,6 +100,8 @@ export function ProjectRail({
   suggestedLinks: number;
   /** Opens the schema diagram; missing where the view has none. */
   onOpenSchema?: () => void;
+  /** The analyses and notebooks that read each source, by source ID. */
+  usedBy: Record<string, string[]>;
 }) {
   const narrow = useNarrow();
   const [shown, setShown] = useState(false);
@@ -128,6 +132,18 @@ export function ProjectRail({
       .settings.metadata.name ??
     project.sources.find((item) => item.id === selected.source)?.name;
   const explore = (sourceId: string) => choose({ source: sourceId, index: 0 });
+  // Pointing at a source shows its fields; a narrow rail has no room beside.
+  const card = (sourceId: string) => {
+    const rows = folder.tables[sourceId]?.length ?? 0;
+    return narrow || !rows ? undefined : (
+      <SourceCard
+        project={project}
+        tables={folder.tables}
+        sourceId={sourceId}
+        usedBy={usedBy[sourceId]}
+      />
+    );
+  };
 
   return (
     <Tooltip.Provider delayDuration={450} skipDelayDuration={150}>
@@ -336,6 +352,7 @@ export function ProjectRail({
                       snapshot={folder.snapshots[source.id]}
                       current={source.id === selected.source}
                       onOpen={() => explore(source.id)}
+                      card={card(source.id)}
                       lastError={readErrors[source.id]}
                       onRemove={readOnly ? undefined : actions.removeSource}
                       onPickColumns={
@@ -375,6 +392,7 @@ export function ProjectRail({
                       tone={missing ? "error" : undefined}
                       current={source.id === selected.source}
                       onClick={missing ? undefined : () => explore(source.id)}
+                      card={missing ? undefined : card(source.id)}
                       details={
                         <>
                           {path && <span>{path}</span>}

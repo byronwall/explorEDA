@@ -1515,6 +1515,43 @@ button.app-row-main {
   color: var(--muted-foreground);
 }
 
+/* A source's field summary: wide enough for every column of it. */
+.app-tip-card {
+  width: min(500px, calc(100vw - 16px));
+  max-width: none;
+}
+
+.app-source-card {
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.app-source-card .eda-query-summary {
+  border-top: 1px solid var(--border);
+  padding-top: 4px;
+}
+
+/* The card is for reading; charts and exports start from the explorer. */
+.app-source-card .eda-table-toolbar-compact,
+.app-source-card .eda-summary-actions {
+  display: none;
+}
+
+.app-source-card col.eda-summary-col-actions {
+  width: 0;
+}
+
+/* A short table's card is only as tall as its fields. */
+.app-source-card .eda-summary-view {
+  height: auto !important;
+  max-height: 320px;
+}
+
+.app-source-card-foot {
+  color: var(--muted-foreground);
+}
+
 .app-menu {
   min-width: 168px;
   max-width: 320px;

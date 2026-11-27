@@ -1094,5 +1094,24 @@
       "Try a second MCP client, such as Cursor, against exploreda mcp",
       "Finer edit tools (add_chart, set_setting) only if later runs stall on syntax"
     ]
+  },
+  {
+    "title": "Explore a data source from the project rail",
+    "slug": "data-source-explorer",
+    "outcome": "completed",
+    "retired_at": "2026-11-27",
+    "summary": "From TASK-0092 W4 (Byron's walkthrough of the TASK-0091 CI project). Three question rounds and four mockups chose mockup A: hover a source for its field summary, click for the summary beside every row, filter from the summary, save as an analysis. Built as a stack on #695 (rail rework): M1 the explorer, M2 the hover card (QuerySummary, queryInput shared with ExplorEdaProject), M3 which analyses read each source (sourceUsage over the Schema diagram's lines).",
+    "reason": "Every milestone built and verified in the browser on a copy of the CI project and the sample shop project.",
+    "documentation": [
+      "apps/demo/src/docs/pages/project-folders.mdx",
+      "packages/explorEDA/README.md",
+      "docs/application-feature-inventory.md"
+    ],
+    "revision": "claude/source-explorer (stack on #695)",
+    "follow_ups": [
+      "A dedicated all-tables and all-fields view, and relationship-first exploration, belong to the schema diagram work (TASK-0092 W5)",
+      "Follow a key column into the related table from the explorer, once real projects declare relationships",
+      "A summary written to text repeats its filter as both select= and filters="
+    ]
   }
 ]

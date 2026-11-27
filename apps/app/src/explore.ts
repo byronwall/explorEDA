@@ -38,6 +38,13 @@ layout {
 `;
 }
 
+/** Which analyses read a source, in a few words. */
+export function usedByText(names: string[] = []) {
+  if (!names.length) return "not in an analysis yet";
+  if (names.length <= 2) return `used by ${names.join(" and ")}`;
+  return `used by ${names[0]} and ${names.length - 1} more`;
+}
+
 /** A name no analysis has yet: the source's name, then "Orders 2" and on. */
 export function savedName(base: string, taken: Iterable<string>) {
   const used = new Set(taken);

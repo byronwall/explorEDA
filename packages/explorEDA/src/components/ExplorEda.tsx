@@ -331,6 +331,8 @@ export type {
 } from "@/components/charts/Map/mapEngine";
 export type * from "@/types/AnalysisProject";
 export { ExplorEdaProject } from "./ExplorEdaProject";
+export { QuerySummary, type QuerySummaryProps } from "./QuerySummary";
+export { sourceUsage } from "@/lib/schema/sourceUsage";
 export type {
   ExplorEdaProjectChange,
   ExplorEdaProjectHandle,

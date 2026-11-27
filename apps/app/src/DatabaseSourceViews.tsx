@@ -381,6 +381,7 @@ export function DatabaseSourceItem({
   onSaveSecret,
   current,
   onOpen,
+  card,
 }: {
   name: string;
   sourceId: string;
@@ -388,6 +389,8 @@ export function DatabaseSourceItem({
   current?: boolean;
   /** Opens the source in the explorer. */
   onOpen?: () => void;
+  /** The source's field summary, shown with its details. */
+  card?: ReactNode;
   connection: string;
   rows: number;
   snapshot?: ProjectFolder["snapshots"][string];
@@ -490,6 +493,7 @@ export function DatabaseSourceItem({
             busy={reading}
             current={current}
             onClick={onOpen}
+            card={card}
             tone={
               failed && !stopped
                 ? "error"

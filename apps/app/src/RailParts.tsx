@@ -3,9 +3,13 @@
  * icon button, and the popover its forms open in.
  */
 import {
+  cloneElement,
   forwardRef,
+  useEffect,
   useRef,
+  useState,
   type ButtonHTMLAttributes,
+  type FocusEvent,
   type ReactElement,
   type ReactNode,
 } from "react";
@@ -35,6 +39,78 @@ function Tip({
         </Tooltip.Content>
       </Tooltip.Portal>
     </Tooltip.Root>
+  );
+}
+
+/** As long as a tooltip waits, so a card and a tip open alike. */
+const OPEN_DELAY = 450;
+/** Time to move the pointer from the row into its card. */
+const CLOSE_DELAY = 150;
+
+/**
+ * A card beside a row, opened by resting the pointer on it or by keyboard
+ * focus, that the pointer can move into. Unlike a tooltip, tooltips inside
+ * it, such as a field's details, leave it open.
+ */
+function HoverCard({
+  content,
+  label,
+  children,
+}: {
+  content: ReactNode;
+  /** What a screen reader announces for the card. */
+  label: string;
+  children: ReactElement<{
+    onPointerEnter?: () => void;
+    onPointerLeave?: () => void;
+    onPointerDown?: () => void;
+    onFocus?: (event: FocusEvent) => void;
+    onBlur?: () => void;
+  }>;
+}) {
+  const [open, setOpen] = useState(false);
+  const timer = useRef<number | undefined>(undefined);
+  const later = (next: boolean, delay: number) => {
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setOpen(next), delay);
+  };
+  const stay = () => window.clearTimeout(timer.current);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
+  return (
+    <Popover.Root open={open} onOpenChange={setOpen} modal={false}>
+      <Popover.Anchor asChild>
+        {cloneElement(children, {
+          onPointerEnter: () => later(true, OPEN_DELAY),
+          onPointerLeave: () => later(false, CLOSE_DELAY),
+          // Choosing the row opens what the card previews.
+          onPointerDown: () => later(false, 0),
+          // Keyboard focus only: a click focuses the row it just chose.
+          onFocus: (event: FocusEvent) => {
+            if ((event.target as Element).matches?.(":focus-visible")) {
+              later(true, OPEN_DELAY);
+            }
+          },
+          onBlur: () => later(false, CLOSE_DELAY),
+        })}
+      </Popover.Anchor>
+      <Popover.Portal>
+        <Popover.Content
+          className="app-tip app-tip-card"
+          aria-label={label}
+          side="right"
+          align="start"
+          sideOffset={8}
+          collisionPadding={8}
+          // Focus stays on the row; the card is for reading.
+          onOpenAutoFocus={(event) => event.preventDefault()}
+          onCloseAutoFocus={(event) => event.preventDefault()}
+          onPointerEnter={stay}
+          onPointerLeave={() => later(false, CLOSE_DELAY)}
+        >
+          {content}
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }
 
@@ -68,11 +144,14 @@ export function RailRow({
   current,
   busy,
   onClick,
+  card,
 }: {
   icon: ReactNode;
   name: string;
   /** Shown in the row's tooltip, under the full name. */
   details?: ReactNode;
+  /** A larger tooltip body under the details, such as a field summary. */
+  card?: ReactNode;
   meta?: ReactNode;
   action?: ReactNode;
   /** Colors the icon: the row's state. */
@@ -90,40 +169,45 @@ export function RailRow({
       <span className="app-row-name">{name}</span>
     </>
   );
-  // The tooltip hangs off the whole row, so it never covers the action.
-  return (
-    <Tip
-      content={
-        <>
-          <strong>{name}</strong>
-          {details}
-        </>
-      }
+  const tip = (
+    <>
+      <strong>{name}</strong>
+      {details}
+      {card}
+    </>
+  );
+  const row = (
+    <div
+      className="app-row"
+      data-tone={tone}
+      data-current={current || undefined}
+      aria-busy={busy || undefined}
     >
-      <div
-        className="app-row"
-        data-tone={tone}
-        data-current={current || undefined}
-        aria-busy={busy || undefined}
-      >
-        {onClick ? (
-          <button
-            type="button"
-            className="app-row-main"
-            aria-current={current ? "page" : undefined}
-            onClick={onClick}
-          >
-            {content}
-          </button>
-        ) : (
-          <span className="app-row-main" tabIndex={0}>
-            {content}
-          </span>
-        )}
-        <span className="app-row-meta">{meta}</span>
-        <span className="app-row-action">{action}</span>
-      </div>
-    </Tip>
+      {onClick ? (
+        <button
+          type="button"
+          className="app-row-main"
+          aria-current={current ? "page" : undefined}
+          onClick={onClick}
+        >
+          {content}
+        </button>
+      ) : (
+        <span className="app-row-main" tabIndex={0}>
+          {content}
+        </span>
+      )}
+      <span className="app-row-meta">{meta}</span>
+      <span className="app-row-action">{action}</span>
+    </div>
+  );
+  // The tip hangs off the whole row, so it never covers the action.
+  return card ? (
+    <HoverCard content={tip} label={`${name}: field summary`}>
+      {row}
+    </HoverCard>
+  ) : (
+    <Tip content={tip}>{row}</Tip>
   );
 }
 
