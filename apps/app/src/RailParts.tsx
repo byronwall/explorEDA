@@ -16,9 +16,12 @@ import { X } from "lucide-react";
 /** Details beside a control, opened by hover or keyboard focus. */
 function Tip({
   content,
+  wide,
   children,
 }: {
   content: ReactNode;
+  /** A card the pointer can move into, such as a source's field summary. */
+  wide?: boolean;
   children: ReactElement;
 }) {
   return (
@@ -26,7 +29,7 @@ function Tip({
       <Tooltip.Trigger asChild>{children}</Tooltip.Trigger>
       <Tooltip.Portal>
         <Tooltip.Content
-          className="app-tip"
+          className={wide ? "app-tip app-tip-card" : "app-tip"}
           side="right"
           sideOffset={8}
           collisionPadding={8}
@@ -68,11 +71,14 @@ export function RailRow({
   current,
   busy,
   onClick,
+  card,
 }: {
   icon: ReactNode;
   name: string;
   /** Shown in the row's tooltip, under the full name. */
   details?: ReactNode;
+  /** A larger tooltip body under the details, such as a field summary. */
+  card?: ReactNode;
   meta?: ReactNode;
   action?: ReactNode;
   /** Colors the icon: the row's state. */
@@ -93,10 +99,12 @@ export function RailRow({
   // The tooltip hangs off the whole row, so it never covers the action.
   return (
     <Tip
+      wide={Boolean(card)}
       content={
         <>
           <strong>{name}</strong>
           {details}
+          {card}
         </>
       }
     >

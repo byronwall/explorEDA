@@ -34,6 +34,7 @@ import {
 import type { FetchedRecord, ServerInfo, ThemePreference } from "./httpFiles";
 import type { ProjectActions, Selection } from "./ProjectWorkspace";
 import { FormPopover, IconButton, RailRow } from "./RailParts";
+import { SourceCard } from "./SourceCard";
 import type { SaveState } from "./saver";
 
 const NARROW = "(max-width: 959px)";
@@ -50,6 +51,12 @@ function useNarrow() {
   }, []);
   return narrow;
 }
+
+/**
+ * Sources up to this size show their field summary on hover. It is worked
+ * out on each hover: about 60 ms for 21,813 rows, so this many takes ~150 ms.
+ */
+const CARD_ROW_LIMIT = 50_000;
 
 const plural = (count: number, word: string) =>
   `${count.toLocaleString()} ${word}${count === 1 ? "" : "s"}`;
@@ -128,6 +135,17 @@ export function ProjectRail({
       .settings.metadata.name ??
     project.sources.find((item) => item.id === selected.source)?.name;
   const explore = (sourceId: string) => choose({ source: sourceId, index: 0 });
+  // Pointing at a source shows its fields; a narrow rail has no room beside.
+  const card = (sourceId: string) => {
+    const rows = folder.tables[sourceId]?.length ?? 0;
+    return narrow || !rows || rows > CARD_ROW_LIMIT ? undefined : (
+      <SourceCard
+        project={project}
+        tables={folder.tables}
+        sourceId={sourceId}
+      />
+    );
+  };
 
   return (
     <Tooltip.Provider delayDuration={450} skipDelayDuration={150}>
@@ -336,6 +354,7 @@ export function ProjectRail({
                       snapshot={folder.snapshots[source.id]}
                       current={source.id === selected.source}
                       onOpen={() => explore(source.id)}
+                      card={card(source.id)}
                       lastError={readErrors[source.id]}
                       onRemove={readOnly ? undefined : actions.removeSource}
                       onPickColumns={
@@ -375,6 +394,7 @@ export function ProjectRail({
                       tone={missing ? "error" : undefined}
                       current={source.id === selected.source}
                       onClick={missing ? undefined : () => explore(source.id)}
+                      card={missing ? undefined : card(source.id)}
                       details={
                         <>
                           {path && <span>{path}</span>}

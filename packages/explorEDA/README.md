@@ -610,6 +610,15 @@ inputs, and lists every step with its row counts down to the rows and their
 source records. From a chart trace, "Show these rows in the query flow" opens
 the rows behind a mark. Pass `onOpenView` to let these panels open new views.
 
+`QuerySummary` shows one query's field summary without a workspace: each
+field's type, distinct and missing counts, and spread, in a box of the height
+you give. It reads the same rows and declared types as a view of that query,
+so a preview, such as a card on hover, agrees with the view it opens.
+
+```tsx
+<QuerySummary project={project} tables={tables} queryId="orders" height={320} />
+```
+
 ### The schema diagram
 
 The **Schema diagram** button opens the whole model in a wide drawer: tables
