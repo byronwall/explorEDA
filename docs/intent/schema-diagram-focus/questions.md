@@ -44,4 +44,17 @@ Asked as plain text so Byron can answer by voice. Questions and explanations are
 5. Where the diagram opens: the whole project, the current analysis's slice, or one source.
 6. The bar for "not a mess".
 
+Answers (summary; full text in initiative-map.json):
+
+1. Relating tables and the coverage map matter most. Also: where the data came from. The full model matters less.
+2. He assumed the relationships were modeled. Agents should declare them.
+3. Coverage in the diagram matters more; a quick grid is also wanted.
+4. Unused tables are worse than unused fields. Expand a table on demand.
+5. Open the whole project. Maybe a per-analysis schema button.
+6. One screen readable at normal zoom, no panning, structure kept.
+
+## Round 2: behavior and limits (2026-11-27)
+
+Asked as plain text. Topics: what "where it came from" shows; relationships for file sources and agents; field folding (understanding check); what gives when the used part does not fit one screen; the per-analysis view and the coverage grid.
+
 Answers: _waiting for Byron_

@@ -16,9 +16,10 @@ So the goal is a diagram that answers "what does this project actually depend on
 
 ## What matters most
 
-- The data the analyses use stands out at first look.
-- Unused data stays reachable. It is quiet, not gone.
-- A project with no relationships and many one-step queries still reads cleanly.
+- One screen of readable content: labels read at normal zoom with no pan, and the whole structure stays in view (Byron's done bar).
+- Two jobs first: how the sources relate, and what the dashboards cover. Where each source came from is the third. Editing the full model comes later.
+- Unused tables collapse and expand on demand. Unused fields matter less.
+- The Schema button opens the whole project. A per-analysis entry may open that analysis's own view.
 
 ## The experience you appear to want
 
@@ -40,7 +41,9 @@ Open the diagram. The few tables and fields that feed a chart are prominent, wit
 
 ## What seems settled
 
-- Usage is the main signal for emphasis. It is Byron's only concrete lead.
+- Usage is the main signal for emphasis.
+- Coverage shows in the diagram first: each table marked with its readers, and one analysis's path lit up on choice. A sources × analyses grid is a second, smaller view.
+- Byron assumed the CI relationships were modeled. Agents that build a workspace should declare them. The CI project came from an agent script (TASK-0091 `dashboard.py`) that wrote one source and one pass-through query per CSV and no relationships.
 - Browsing rows of a table is the data explorer's job (W4), not this one.
 - From Byron's W4 answers: he wants to see how sources relate, then build a dashboard on a slice. He also wants to see which sources the existing dashboards cover. Both are a separate action from the Data rail, and W4 leaves them to this initiative.
 

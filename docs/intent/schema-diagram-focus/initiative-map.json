@@ -8,7 +8,7 @@
     "last_updated": "2026-11-27",
     "summary": "Make the Schema diagram readable on real projects by emphasizing the tables, fields, and queries that views use, while keeping all data reachable.",
     "status": "planned",
-    "next_action": "Byron answers round 1b by voice"
+    "next_action": "Byron answers round 2 by voice"
   },
   "artifacts": {
     "intent_brief": {
@@ -88,6 +88,13 @@
       "location": "conversation",
       "anchor": "1b",
       "authority": "user"
+    },
+    {
+      "id": "qa-round-2",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "2",
+      "authority": "user"
     }
   ],
   "intent": {
@@ -140,14 +147,63 @@
         "kind": "goal",
         "sources": ["S5"],
         "confidence": "medium"
+      },
+      {
+        "id": "C8",
+        "statement": "The diagram first serves two jobs: how tables relate, and what the dashboards cover. The full model is secondary.",
+        "kind": "decision",
+        "sources": ["qa-round-1b"],
+        "confidence": "high"
+      },
+      {
+        "id": "C9",
+        "statement": "Show where each source came from.",
+        "kind": "goal",
+        "sources": ["qa-round-1b"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C10",
+        "statement": "Coverage: mark each table with its readers and light up one analysis path in the diagram; a sources x analyses grid is secondary.",
+        "kind": "decision",
+        "sources": ["qa-round-1b"],
+        "confidence": "high"
+      },
+      {
+        "id": "C11",
+        "statement": "Unused tables collapse with progressive disclosure; unused fields matter less.",
+        "kind": "decision",
+        "sources": ["qa-round-1b"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C12",
+        "statement": "The Schema button opens the whole project fitted; a per-analysis entry may open that analysis view.",
+        "kind": "decision",
+        "sources": ["qa-round-1b"],
+        "confidence": "high"
+      },
+      {
+        "id": "C13",
+        "statement": "Done bar: one screen of content readable at normal zoom, with no pan or zoom needed to see structure and read labels.",
+        "kind": "constraint",
+        "sources": ["qa-round-1b"],
+        "confidence": "high"
+      },
+      {
+        "id": "C14",
+        "statement": "Agents that build a workspace should declare relationships.",
+        "kind": "goal",
+        "sources": ["qa-round-1b"],
+        "confidence": "medium"
       }
     ],
     "themes": [],
     "conflicts": [
       {
         "id": "X1",
-        "statement": "Byron says the CI dashboards are built on relationships, but the project declares 0 relationships; runs, jobs, and steps share run_id and job_id without a declared link.",
-        "sources": ["S4", "S5"]
+        "statement": "Resolved: the CI project was written by an agent script (TASK-0091 dashboard.py) that declared one source and one pass-through query per CSV and no relationships. Byron assumed they were modeled.",
+        "sources": ["S4", "qa-round-1b"]
       }
     ],
     "human_questions": []
@@ -209,6 +265,10 @@
     {
       "date": "2026-11-27",
       "change": "Took stock of W1-W4 (exploreda 0.6.0). Superseded unanswered round 1 with round 1b."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Recorded round 1b answers: relate + coverage first, provenance, whole-project start, one readable screen."
     }
   ],
   "closure": null,
@@ -259,6 +319,36 @@
           },
           {
             "question": "What is the bar for not a mess?"
+          }
+        ],
+        "answers": [
+          "Most important jobs: relating tables (see how sources connect, then build a dashboard on a slice) and a coverage map. Also important: where the data came from. Full model is less important for the first schema viewer.",
+          "He assumed the relationships were modeled and is surprised they were not; agents should include relationships when they build the workspace.",
+          "Both coverage views are good: in-diagram marking with one analysis lit up is more important; a quick sources x analyses grid is also wanted.",
+          "Unused tables are worse than unused fields; use progressive disclosure to expand an unused table.",
+          "Open on the whole project. Maybe a schema button next to each dashboard and analysis shows its dedicated view; the single Schema button shows the whole workspace.",
+          "The bar: readable at normal zoom without panning, a screen of readable content. Today you must zoom in to read, and then lose the overall structure."
+        ]
+      },
+      {
+        "round": 3,
+        "theme": "behavior and limits (round 2)",
+        "source": "qa-round-2",
+        "questions": [
+          {
+            "question": "What should where-it-came-from show?"
+          },
+          {
+            "question": "Relationships for file sources: diagram suggestions, agent declarations, or both, and in this initiative?"
+          },
+          {
+            "question": "Check: used tables show all fields; only unused tables collapse?"
+          },
+          {
+            "question": "When the used part does not fit one readable screen, what gives?"
+          },
+          {
+            "question": "Per-analysis view and coverage grid: where do they live?"
           }
         ],
         "answers": null
