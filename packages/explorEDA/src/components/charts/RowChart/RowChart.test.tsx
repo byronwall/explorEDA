@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeAll, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { registerAllCharts } from "@/charts/registerAllCharts";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { stringifySavedData, validateSavedData } from "@/utils/saveDataUtils";
 import { ChartTraceScope } from "../trace/ChartTraceScope";
 import { ChartTracePanel } from "../trace/ChartTracePanel";
 import { rowChartDefinition } from "./definition";
+import type { RowChartSettings } from "@/types/ChartTypes";
 import { RowChart } from "./RowChart";
 
 beforeAll(registerAllCharts);
@@ -391,4 +392,111 @@ it("shows every category without Top N, and folds a Top N tail into +N more", ()
   expect(
     screen.getByRole("button", { name: "Show all 12 categories" })
   ).toBeInTheDocument();
+});
+
+describe("a row chart that follows other filters", () => {
+  // All rows: A 30, B 3, C 2. Under "few", A has 1 and B and C keep theirs.
+  const rows = [
+    ...Array.from({ length: 30 }, (_, index) => ({
+      Name: "A",
+      Set: index ? "most" : "few",
+    })),
+    ...["B", "B", "B", "C", "C"].map((Name) => ({ Name, Set: "few" })),
+  ];
+  function setup(extra: Partial<RowChartSettings>) {
+    const chart = (id: string, field: string) => ({
+      ...rowChartDefinition.createDefaultSettings(
+        { x: 0, y: 0, w: 6, h: 4 },
+        field
+      ),
+      id,
+    });
+    function Workspace() {
+      const settings = useDataLayer((state) => state.charts[0]);
+      const update = useDataLayer((state) => state.updateChart);
+      return (
+        <>
+          <button
+            onClick={() =>
+              update("sets", {
+                filters: [{ type: "value", field: "Set", values: ["few"] }],
+              })
+            }
+          >
+            Few only
+          </button>
+          {settings?.type === "row" && (
+            <RowChart settings={settings} width={600} height={300} />
+          )}
+        </>
+      );
+    }
+    render(
+      <DataLayerProvider
+        data={rows}
+        savedData={{
+          charts: [
+            { ...chart("names", "Name"), ...extra },
+            chart("sets", "Set"),
+          ],
+          calculations: [],
+          colorScales: [],
+          gridSettings: {
+            columnCount: 12,
+            rowHeight: 76,
+            containerPadding: 0,
+            showBackgroundMarkers: false,
+          },
+          metadata: { name: "test", version: 1, createdAt: "", modifiedAt: "" },
+        }}
+      >
+        <Workspace />
+      </DataLayerProvider>
+    );
+    return {
+      bar: (name: string) =>
+        screen.getByRole("button", { name: new RegExp(`^${name}: `) }),
+      names: () =>
+        screen
+          .getAllByRole("button", { name: / rows$/ })
+          .map((item) => item.getAttribute("aria-label")),
+      axis: () =>
+        document
+          .querySelector('[data-axis-edit="x"]')!
+          .getAttribute("data-domain"),
+      filter: () =>
+        fireEvent.click(screen.getByRole("button", { name: "Few only" })),
+    };
+  }
+
+  it("keeps its rows and axis through clicks on a cleared selection", () => {
+    const view = setup({
+      topN: 1,
+      filters: [{ type: "value", field: "Name", values: ["A"] }],
+    });
+    const axis = view.axis();
+    view.filter();
+    // The selected A holds the one named row, so Other's context passes 30.
+    expect(view.names()).toEqual(["A: 1 rows", "Other categories: 5 rows"]);
+    expect(view.axis()).toBe(axis);
+    fireEvent.click(view.bar("A"));
+    const cleared = ["B: 3 rows", "Other categories: 3 rows"];
+    expect(view.names()).toEqual(cleared);
+    for (const pressed of ["true", "false"]) {
+      fireEvent.click(view.bar("Other categories"));
+      expect(view.names()).toEqual(cleared);
+      expect(view.bar("Other categories")).toHaveAttribute(
+        "aria-pressed",
+        pressed
+      );
+    }
+    expect(view.axis()).toBe(axis);
+  });
+
+  it("fits a share axis to the largest share", () => {
+    const view = setup({ share: true, scaleTo: "filtered" });
+    view.filter();
+    // B is half of the six rows left.
+    expect(view.axis()).toBe("0,0.5");
+  });
 });

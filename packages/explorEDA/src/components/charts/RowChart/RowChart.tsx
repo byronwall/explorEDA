@@ -265,18 +265,21 @@ export function RowChart({
       held.liveIds.some((id, index) => id !== liveIds[index]))
   )
     setHeld({ liveIds, selected: filterValues });
+  else if (held.selected.length) {
+    // A cleared value is forgotten, so selecting it again moves no row.
+    const current = new Set(filterValues.map((value) => value ?? null));
+    const selected = held.selected.filter((value) =>
+      current.has(value ?? null)
+    );
+    if (selected.length < held.selected.length) setHeld({ ...held, selected });
+  }
   // Top N keeps the same row count at every usable size; unset shows every
   // category. Both compress rows to the floor before the rest fold.
   const maxRows = settings.topN
     ? Math.min(settings.topN + 1, floorRows)
     : floorRows;
   const plan = useMemo((): RowSummaryPlan => {
-    const current = new Set(filterValues.map((value) => value ?? null));
-    const follow = follows
-      ? {
-          selected: held.selected.filter((value) => current.has(value ?? null)),
-        }
-      : undefined;
+    const follow = follows ? { selected: held.selected } : undefined;
     if (liveSummary && allSummary)
       return planRowSummary(liveSummary, allSummary, maxRows, follow);
     // Context bars count the rows the chart's own filter keeps, so a chart
@@ -297,7 +300,6 @@ export function RowChart({
     settings.localFilters,
     follows,
     held,
-    settings.filters,
     allIds,
   ]);
   // The rows as drawn without other filters. Following filters swaps the
@@ -586,14 +588,23 @@ export function RowChart({
           );
     const values = [
       ...held,
-      ...displayCounts.flatMap((d) => [fitted ? undefined : d.total, d.count]),
+      ...displayCounts.flatMap((d) => [
+        // A regrouped Other's all-rows bar may run past the axis, which holds.
+        fitted || (home && d.other) ? undefined : d.total,
+        d.count,
+      ]),
     ].filter(
       (value): value is number => value !== undefined && Number.isFinite(value)
     );
     // Signed measures extend left of zero; zero always stays on the axis.
     let minValue = Math.min(0, ...values);
     let maxValue = Math.max(
-      summarized ? (minValue < 0 ? 0 : Number.MIN_VALUE) : 1,
+      // Whole counts span at least one row; a fitted share fits its bars.
+      summarized || (share && fitted)
+        ? minValue < 0
+          ? 0
+          : Number.MIN_VALUE
+        : 1,
       ...values
     );
     // Every value zero still needs an axis with ticks.
