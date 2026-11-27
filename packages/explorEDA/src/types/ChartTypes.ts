@@ -152,6 +152,11 @@ export interface RowChartSettings
   aggregateId?: string;
   /** Show this many categories and gather the rest in Other; unset fits the height. */
   topN?: number;
+  /**
+   * Keep every category in its all-rows order while other charts filter.
+   * Unset ranks rows by the filtered value and leaves out empty categories.
+   */
+  keepOrder?: boolean;
 }
 
 export type ChartSettings =

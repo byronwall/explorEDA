@@ -52,6 +52,8 @@ export const CHART_SETTINGS: Readonly<
     aggregateId:
       "Grouped summary to rank instead of counting rows: a count, sum, average, or rate (one sum divided by another). Its group field must match `field`.",
     topN: "Number of categories to show, with the rest gathered in a +N more row. Leave unset to show every category.",
+    keepOrder:
+      "Keeps every category in its all-rows order while other charts filter. Unset ranks rows by the filtered value and leaves out categories with no matching rows. Facets always keep the order.",
     share:
       "Shows each bar as its share of the total of all bars, so they add to 100%. Counts and sums only.",
     valueFormat:

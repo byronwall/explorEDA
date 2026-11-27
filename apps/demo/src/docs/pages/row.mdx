@@ -15,14 +15,18 @@
     summary that bar charts read too.
   </Part>
   <Part at="filtered">
-    While other charts filter, the filtered value draws over a faint all-rows
-    bar (a tick for averages, maxima, and minima), and rows keep their all-rows
-    order.
+    While other charts filter, rows rank by the filtered value, drawn over a
+    faint all-rows bar (a tick for averages, maxima, and minima). Categories
+    with no matching rows leave the chart, and a category you selected here
+    stays. Turn on **Hold order** to keep every category in its all-rows order
+    instead. When the all-rows bars dwarf the filtered values, set **Scale to**
+    filtered rows to fit the axis to the filtered values and hide the all-rows
+    bars.
   </Part>
   <Part at="zero">Negative values draw left of the zero line.</Part>
   <Part at="other">
-    Set **Top N** to keep the same categories, and the same members in **+N
-    more**, at every size. **Show all** clears it.
+    Set **Top N** to show the same categories, and gather the same members in
+    **+N more**, at every size. **Show all** clears it.
   </Part>
   <Part>
     Every category shows. Rows shrink to 12 pixels to fit, then the rest fold

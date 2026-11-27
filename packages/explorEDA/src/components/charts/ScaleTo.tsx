@@ -10,6 +10,7 @@ const SCALE_TO_TYPES = new Set<ChartSettings["type"]>([
   "calendar",
   "pivot",
   "bar",
+  "row",
   "waterfall",
   "scatter-matrix",
   "sankey",
