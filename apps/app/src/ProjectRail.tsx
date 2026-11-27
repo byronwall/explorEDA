@@ -125,7 +125,9 @@ export function ProjectRail({
   const current =
     folder.analyses.find((item) => item.path === selected.path)?.result.name ??
     folder.notebooks.find((item) => item.path === selected.path)?.result
-      .settings.metadata.name;
+      .settings.metadata.name ??
+    project.sources.find((item) => item.id === selected.source)?.name;
+  const explore = (sourceId: string) => choose({ source: sourceId, index: 0 });
 
   return (
     <Tooltip.Provider delayDuration={450} skipDelayDuration={150}>
@@ -332,6 +334,8 @@ export function ProjectRail({
                       connection={database.connection}
                       rows={folder.tables[source.id]?.length ?? 0}
                       snapshot={folder.snapshots[source.id]}
+                      current={source.id === selected.source}
+                      onOpen={() => explore(source.id)}
                       lastError={readErrors[source.id]}
                       onRemove={readOnly ? undefined : actions.removeSource}
                       onPickColumns={
@@ -369,6 +373,8 @@ export function ProjectRail({
                       icon={<Table2 />}
                       name={source.name}
                       tone={missing ? "error" : undefined}
+                      current={source.id === selected.source}
+                      onClick={missing ? undefined : () => explore(source.id)}
                       details={
                         <>
                           {path && <span>{path}</span>}

@@ -23,6 +23,12 @@ import type { AddDatabaseActions } from "./AddDatabase";
 import { visibleProblems, waitingFor } from "./databaseSources";
 import { type ReadFailure, WaitingForData } from "./DatabaseSourceViews";
 import { ProjectRail } from "./ProjectRail";
+import {
+  exploreView,
+  ownQuery,
+  savedName,
+  type ExploreDraft,
+} from "./explore";
 
 /** A view's ID: its analysis file and its place in that file. */
 const viewId = (path: string, index: number) => `${path}#${index}`;
@@ -57,7 +63,9 @@ export interface ProjectActions {
   openView(
     view: AnalysisView,
     name: string,
-    project?: AnalysisProject
+    project?: AnalysisProject,
+    /** The project to write the view against, without writing its text. */
+    context?: AnalysisProject
   ): Promise<void>;
   renameAnalysis(path: string, name: string): Promise<void>;
   deleteAnalysis(path: string): Promise<void>;
@@ -86,6 +94,8 @@ export interface OpenPanel {
 export interface Selection {
   path?: string;
   index: number;
+  /** A source explored on its own, in an unsaved view. */
+  source?: string;
 }
 
 export function ProjectWorkspace({
@@ -101,6 +111,7 @@ export function ProjectWorkspace({
   notebookMemory,
   dismissedLinks,
   onDismissLink,
+  exploreMemory,
   actions,
   theme,
   onThemeChange,
@@ -131,6 +142,8 @@ export function ProjectWorkspace({
   /** Drafted links the user dismissed, kept by the host across reloads. */
   dismissedLinks?: ReadonlySet<string>;
   onDismissLink?: (id: string) => void;
+  /** The explored source's unsaved edits, kept by the host across reloads. */
+  exploreMemory?: { current?: ExploreDraft };
 }) {
   const [project, setProject] = useState<AnalysisProject>(folder.project);
   const [views, setViews] = useState(() => folderViews(folder));
@@ -138,11 +151,15 @@ export function ProjectWorkspace({
     initialPanel?.addDatabase !== undefined
   );
   const [selected, setSelectedState] = useState<Selection>(() =>
-    initialSelection?.path &&
-    [...folder.analyses, ...folder.notebooks].some(
-      (item) => item.path === initialSelection.path
-    )
-      ? initialSelection
+    (initialSelection?.path &&
+      [...folder.analyses, ...folder.notebooks].some(
+        (item) => item.path === initialSelection.path
+      )) ||
+    (initialSelection?.source &&
+      folder.project.sources.some(
+        (item) => item.id === initialSelection.source
+      ))
+      ? initialSelection!
       : {
           path: folder.analyses[0]?.path ?? folder.notebooks[0]?.path,
           index: 0,
@@ -153,7 +170,41 @@ export function ProjectWorkspace({
   const [notebookTexts, setNotebookTexts] = useState(
     () => new Map(folder.notebooks.map((item) => [item.path, item.text]))
   );
+  // The explored source's charts, filters, and inputs, until it is saved or
+  // left. The host keeps them while the folder reloads under it.
+  const [draft, setDraftState] = useState<ExploreDraft | undefined>(() => {
+    const kept = exploreMemory?.current;
+    // A draft made for a query that has since changed on disk starts over.
+    return kept &&
+      kept.source === selected.source &&
+      kept.query === ownQuery(folder.project, kept.source)
+      ? kept
+      : undefined;
+  });
+  useEffect(() => {
+    // A draft the reload set aside stays set aside, even if its query
+    // comes back as it was.
+    if (exploreMemory && exploreMemory.current !== draft) {
+      exploreMemory.current = draft;
+    }
+    // The explored source is gone after a reload: the fallback is selected
+    // now, and the source's draft goes with it.
+    if (
+      initialSelection?.source &&
+      selected.source !== initialSelection.source
+    ) {
+      if (exploreMemory) exploreMemory.current = undefined;
+      onSelect(selected);
+    }
+    // Once, for the selection this workspace opened on.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const setDraft = (next: ExploreDraft | undefined) => {
+    setDraftState(next);
+    if (exploreMemory) exploreMemory.current = next;
+  };
   const setSelected = (next: Selection) => {
+    if (next.source !== selected.source) setDraft(undefined);
     setSelectedState(next);
     onSelect(next);
   };
@@ -216,7 +267,23 @@ export function ProjectWorkspace({
 
   const analysisViews =
     selected.path && !notebook ? (views.get(selected.path) ?? []) : [];
-  const view = analysisViews[selected.index] ?? analysisViews[0];
+  const explored = useMemo(
+    () =>
+      selected.source
+        ? exploreView(project, folder.tables, selected.source)
+        : undefined,
+    [selected.source, project, folder.tables]
+  );
+  const exploring = Boolean(selected.source && explored);
+  const view = explored
+    ? {
+        ...explored,
+        ...draft?.view,
+        id: explored.id,
+        name: explored.name,
+        queryId: explored.queryId,
+      }
+    : (analysisViews[selected.index] ?? analysisViews[0]);
   // Notebooks read queries too, so checks before removing one count them.
   const allViews = useMemo(
     () => [
@@ -227,7 +294,10 @@ export function ProjectWorkspace({
             id: viewId(item.path, index),
             name: item.result.settings.metadata.name || item.path,
             queryId,
-            settings: item.result.settings,
+            // Each query's blocks compile apart, to their own charts.
+            settings: index
+              ? (item.result.querySettings[queryId] ?? item.result.settings)
+              : item.result.settings,
           })
         )
       ),
@@ -260,11 +330,29 @@ export function ProjectWorkspace({
     for (const path of new Set(Object.values(folder.localSources))) {
       dirty.current.add(path);
     }
+    if (exploring && selected.source) {
+      // The explorer stays on the source's own query. When that query's
+      // steps change, its charts start again from the new fields.
+      const query = ownQuery(next, selected.source);
+      const { id: _id, name: _name, queryId: _queryId, ...kept } = changed;
+      setDraft(
+        query === ownQuery(project, selected.source)
+          ? { source: selected.source, query, view: kept }
+          : undefined
+      );
+    } else {
+      updateView(changed.id, changed);
+    }
     setProject(next);
-    updateView(changed.id, changed);
   };
   const onStateChange = (settings: SavedDataStructure) => {
-    if (view) {
+    if (exploring && selected.source) {
+      setDraft({
+        source: selected.source,
+        query: ownQuery(project, selected.source),
+        view: { ...draft?.view, settings },
+      });
+    } else if (view) {
       updateView(view.id, { settings });
     }
   };
@@ -328,6 +416,36 @@ export function ProjectWorkspace({
 
   const usedFiles = new Set(Object.values(folder.paths));
   const looseFiles = folder.dataFiles.filter((path) => !usedFiles.has(path));
+
+  const source = explored
+    ? project.sources.find((item) => item.id === explored.queryId)
+    : undefined;
+  const saveExplored = () => {
+    if (!view || !source) return;
+    const settings = workspace.current?.getSettings() ?? view.settings;
+    const name = savedName(source.name, names.values());
+    // Written against the project as it is now; the project's own text
+    // saves through the saver, as any edit does.
+    void actions.openView({ ...view, settings }, name, undefined, project);
+  };
+  const exploreHead = source && (
+    <div className="app-explore-head">
+      <h2>{source.name}</h2>
+      <span className="app-muted">
+        {plural(folder.tables[source.id]?.length ?? 0, "row")}
+        {folder.paths[source.id] ? ` · ${folder.paths[source.id]}` : ""}
+      </span>
+    </div>
+  );
+  const exploreActions = source && !readOnly && (
+    <button
+      type="button"
+      className="app-button app-button-sm app-button-primary"
+      onClick={saveExplored}
+    >
+      Save as analysis
+    </button>
+  );
 
   const tabs = (
     <div className="app-tabs" role="tablist" aria-label="Views">
@@ -401,7 +519,9 @@ export function ProjectWorkspace({
           />
         ) : view && waiting.length ? (
           <WaitingForData
-            analysis={names.get(selected.path ?? "") ?? view.name}
+            analysis={
+              source?.name ?? names.get(selected.path ?? "") ?? view.name
+            }
             sourceIds={waiting}
             connections={[
               ...new Set(waiting.map((id) => folder.databases[id]!.connection)),
@@ -432,7 +552,8 @@ export function ProjectWorkspace({
             linkProposals={proposals}
             onDismissLinkProposal={dismissLink}
             createWorker={createAnalysisWorker}
-            toolbarStart={tabs}
+            toolbarStart={exploreHead || tabs}
+            toolbarEnd={exploreActions || undefined}
           />
         ) : (
           <FirstRun
@@ -449,6 +570,9 @@ export function ProjectWorkspace({
     </div>
   );
 }
+
+const plural = (count: number, word: string) =>
+  `${count.toLocaleString()} ${word}${count === 1 ? "" : "s"}`;
 
 /** The table a view's query reads first. */
 function viewSource(project: AnalysisProject, view: AnalysisView) {

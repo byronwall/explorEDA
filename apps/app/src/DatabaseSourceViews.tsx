@@ -379,9 +379,15 @@ export function DatabaseSourceItem({
   onRemove,
   onPickColumns,
   onSaveSecret,
+  current,
+  onOpen,
 }: {
   name: string;
   sourceId: string;
+  /** Whether this source is open in the explorer. */
+  current?: boolean;
+  /** Opens the source in the explorer. */
+  onOpen?: () => void;
   connection: string;
   rows: number;
   snapshot?: ProjectFolder["snapshots"][string];
@@ -482,6 +488,8 @@ export function DatabaseSourceItem({
             icon={<Database />}
             name={name}
             busy={reading}
+            current={current}
+            onClick={onOpen}
             tone={
               failed && !stopped
                 ? "error"
