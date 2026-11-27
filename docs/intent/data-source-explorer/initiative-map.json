@@ -1,0 +1,174 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Explore a data source from the project rail",
+    "slug": "data-source-explorer",
+    "scale": "feature",
+    "current_phase": "intent",
+    "last_updated": "2026-11-27",
+    "summary": "Make a Data row in the project app rail open an explorer for that source.",
+    "status": "planned",
+    "next_action": "Byron answers question round 1"
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "draft",
+      "updated_at": "2026-11-27"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "draft",
+      "updated_at": "2026-11-27"
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "not-created",
+      "updated_at": null
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "not-created",
+      "updated_at": null
+    }
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "type": "transcript",
+      "location": "~/Projects/planning/tasks/TASK-0092/recorder-2026-11-27/ledger.md",
+      "anchor": "B04 1:05, B05 1:28",
+      "authority": "user"
+    },
+    {
+      "id": "S2",
+      "type": "doc",
+      "location": "~/Projects/planning/tasks/TASK-0092/TASK-0092.md",
+      "anchor": "Feedback item 8, W4",
+      "authority": "user"
+    },
+    {
+      "id": "S3",
+      "type": "repo",
+      "location": "apps/app/src/ProjectWorkspace.tsx",
+      "anchor": "Data section, project.sources list",
+      "authority": "repo"
+    },
+    {
+      "id": "S4",
+      "type": "repo",
+      "location": "docs/application-feature-inventory.md",
+      "anchor": "Input data and field profiles; unsaved start shows Summary and source table",
+      "authority": "repo"
+    },
+    {
+      "id": "S5",
+      "type": "repo",
+      "location": "~/Projects/planning/tasks/TASK-0091/explorEDA/data/runs.csv",
+      "anchor": "9,091 rows, 13 columns",
+      "authority": "repo"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "C1",
+        "statement": "A click on a Data row opens an explorer of that source.",
+        "kind": "goal",
+        "sources": [
+          "S1"
+        ],
+        "confidence": "high"
+      },
+      {
+        "id": "C2",
+        "statement": "Opening a source writes no file and does not query a database.",
+        "kind": "constraint",
+        "sources": [
+          "S3",
+          "S4"
+        ],
+        "confidence": "medium"
+      },
+      {
+        "id": "C3",
+        "statement": "Explorer reuses workspace profiles, Summary and Rows; no second engine.",
+        "kind": "constraint",
+        "sources": [
+          "S4"
+        ],
+        "confidence": "medium"
+      },
+      {
+        "id": "C4",
+        "statement": "What the explorer shows first (profile, rows, cross-filter, cross-table drill) is undecided.",
+        "kind": "open",
+        "sources": [
+          "S1"
+        ],
+        "confidence": "low"
+      }
+    ],
+    "themes": [],
+    "conflicts": [],
+    "human_questions": [
+      "What should a click on Runs answer first?",
+      "Scratch or saved?",
+      "Follow keys across tables?",
+      "Where does it open?",
+      "Show which analyses use the source?"
+    ]
+  },
+  "brainstorm": {
+    "status": "draft",
+    "requested_count": 3,
+    "options": [
+      {
+        "id": "A",
+        "name": "Source profile page"
+      },
+      {
+        "id": "B",
+        "name": "Scratch workspace"
+      },
+      {
+        "id": "C",
+        "name": "Linked drill-down across tables"
+      }
+    ],
+    "selected_option": null
+  },
+  "shape": {
+    "status": "not-started",
+    "appetite": null,
+    "problem": null,
+    "recommended_shape": null,
+    "success_moves": [],
+    "first_proof": null,
+    "rabbit_holes": [],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "not-started",
+    "repository_snapshot": {
+      "root": null,
+      "revision": null,
+      "worktree_status": null,
+      "subsystems": [],
+      "test_commands": [],
+      "deployment_surfaces": []
+    },
+    "dependencies": [],
+    "fast_local_loop": null,
+    "milestones": [],
+    "cut_line": [],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-11-27",
+      "event": "Intent recovered from TASK-0092 recording; three approaches compared; question round 1 prepared."
+    }
+  ],
+  "closure": null
+}
