@@ -7,6 +7,9 @@ import {
   type SchemaNode,
 } from "./schemaGraph";
 
+/** Lines up to this many get the router's full pass; more route quickly. */
+const FULL_ROUTE_LIMIT = 15;
+
 /** Fixed sizes, so lines can find a row without measuring the page. */
 export const SCHEMA_SIZES = {
   cardWidth: 248,
@@ -102,7 +105,7 @@ function layeredLayout(
   graph: SchemaGraph,
   viewport?: { width: number; height: number }
 ): SchemaLayout {
-  const { cardWidth, columnGap, cardGap, margin } = SCHEMA_SIZES;
+  const { columnGap, cardGap, margin } = SCHEMA_SIZES;
   // A table no view reads sits with the list of such tables, last.
   const tables = graph.nodes.filter(
     (node) => node.kind === "table" && !node.unused
@@ -135,6 +138,15 @@ function layeredLayout(
   const columns = viewport
     ? spread(graph, layers, viewport)
     : layers.map((layer) => layer ?? []);
+  // One column in a narrow viewport: cards narrow so they, and a lane for
+  // lines beside them, still fit at full size.
+  const cardWidth =
+    viewport && columns.length === 1
+      ? Math.max(
+          160,
+          Math.min(SCHEMA_SIZES.cardWidth, viewport.width - margin * 2 - 48)
+        )
+      : SCHEMA_SIZES.cardWidth;
 
   const boxes: Record<string, SchemaBox> = {};
   const nodesById = new Map(graph.nodes.map((node) => [node.id, node]));
@@ -316,16 +328,32 @@ export function routeSchemaEdges(
   }
   const blocked: SchemaEdge[] = [];
   if (!routed.length) return { paths, blocked };
+  // Walls just outside the drawing keep every line inside it, so a narrow
+  // drawer never clips one; a line with no room left is blocked instead.
+  const far = 100_000;
+  const walls = [
+    { id: "wall:left", x: -far, y: -far, width: far, height: far * 3 },
+    { id: "wall:right", x: layout.width, y: -far, width: far, height: far * 3 },
+    { id: "wall:top", x: -far, y: -far, width: far * 3, height: far },
+  ];
   const out = route({
-    nodes: Object.entries(layout.boxes).map(([id, box]) => ({
-      id,
-      x: box.x,
-      y: box.y,
-      width: box.width,
-      height: box.height,
-    })),
+    nodes: [
+      ...Object.entries(layout.boxes).map(([id, box]) => ({
+        id,
+        x: box.x,
+        y: box.y,
+        width: box.width,
+        height: box.height,
+      })),
+      ...walls,
+    ],
     edges: routed.map((item) => item.input),
-    routing: { avoidNodes: "strict", quality: "full" },
+    // A full pass costs about 0.5 s at 30 lines, so larger drawings route
+    // quickly; both modes keep lines clear of cards.
+    routing: {
+      avoidNodes: "strict",
+      quality: routed.length <= FULL_ROUTE_LIMIT ? "full" : "quick",
+    },
   }).edges;
   for (const { edge } of routed) {
     const line = out[edge.id];

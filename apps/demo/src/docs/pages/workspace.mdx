@@ -12,7 +12,7 @@ Click a category, then open **Rows** and **Fields** from the toolbar. Each panel
 - **Add chart** opens a dialog to pick a chart type and its fields, with a live preview. **Add to grid** then lets you choose where it goes; canceling adds nothing.
 - **Fields** (<kbd>F</kbd>) lists every field with search, quick stats, and chart actions. <kbd>Shift</kbd>+<kbd>F</kbd> shows every field's distribution in a full view. See <DocsLink topic="fields">Fields</DocsLink>.
 - **Rows** (<kbd>R</kbd>) peeks at the rows that pass every chart filter.
-- **Schema diagram** shows every table, field, and relationship as a diagram, with each field's calculations and the views that read it.
+- **Schema diagram** shows the project at full size: the tables views read, with the fields they use in bold, one line from each table to each view that reads it, and the unused tables folded into one list. Lines never cross a card. Select a view to light up what it reads. **Layers** shows or hides lines, relationships, and the unused list, and **Coverage** shows which views read each table.
 - **Calculations**, **Theme**, **Colors**, **Grid**, and **Chart spec** open workspace settings: calculated fields, chart type and surfaces, color scales, grid columns and spacing, and what each chart saves.
 - **Workspace actions** holds save, open, copy data, and keyboard shortcuts (<kbd>?</kbd>).
 - A host app can add its own panels beside Fields and Rows, such as the demo's **Dashboard text** and **History**. One panel is open at a time.

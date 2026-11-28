@@ -25,6 +25,12 @@ import {
   Unlink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { typeIcons, typeLabels } from "@/components/FieldMetadata";
 import type {
   SchemaEdge,
@@ -101,6 +107,11 @@ const rowCenter = (
   if (!box || offset === undefined) return undefined;
   return { box, y: box.y + offset };
 };
+
+/** A line into a view's field rows: drawn only for the selection. */
+const intoViewDetail = (edge: SchemaEdge) =>
+  edge.kind === "usage" ||
+  (edge.kind === "calculation" && edge.to.nodeId.startsWith("view:"));
 
 /** Whether a selection still names something in the graph. */
 function selectionExists(graph: SchemaGraph, selection: SchemaSelection) {
@@ -228,8 +239,18 @@ export function SchemaDiagram({
   const toggleTable = useCallback((nodeId: string) => {
     setOpenTables((current) => {
       const next = new Set(current);
-      if (next.has(nodeId)) next.delete(nodeId);
-      else next.add(nodeId);
+      if (next.has(nodeId)) {
+        next.delete(nodeId);
+        // Folding a selected table drops the selection, which would open it
+        // again.
+        setSelection((selected) =>
+          selected &&
+          (selected.kind === "table" || selected.kind === "field") &&
+          selected.nodeId === nodeId
+            ? undefined
+            : selected
+        );
+      } else next.add(nodeId);
       return next;
     });
   }, []);
@@ -334,6 +355,29 @@ export function SchemaDiagram({
       ? { kind: "table", nodeId: focusNodeId }
       : undefined
   );
+  // Each focus request, such as "Show what it reads" for another view while
+  // the diagram is open, selects that card and brings it into view.
+  const handledFocus = useRef<string>(undefined);
+  const [scrollTo, setScrollTo] = useState<string>();
+  useEffect(() => {
+    if (!focusNodeId || handledFocus.current === focusNodeId) return;
+    if (!fullGraph.nodes.some((node) => node.id === focusNodeId)) return;
+    handledFocus.current = focusNodeId;
+    setOpenTables((current) => new Set([...current, focusNodeId]));
+    setSelection({ kind: "table", nodeId: focusNodeId });
+    setScrollTo(focusNodeId);
+  }, [focusNodeId, fullGraph]);
+  useEffect(() => {
+    const box = scrollTo ? layout.boxes[scrollTo] : undefined;
+    if (!box || !height) return;
+    setScrollTo(undefined);
+    setView((current) => {
+      const top = current.y + box.y * current.scale;
+      if (top >= 0 && top + SCHEMA_SIZES.header * 2 <= height) return current;
+      return { ...current, y: SCHEMA_SIZES.margin - box.y * current.scale };
+    });
+  }, [scrollTo, layout, height]);
+
   // A table added while the diagram is open is selected, ready to relate.
   const knownTables = useRef(
     new Set(
@@ -355,10 +399,23 @@ export function SchemaDiagram({
     }
   }, [fullGraph]);
   // An edit can remove what was selected, such as a removed relationship.
+  // Suggested links belong to the relationships layer.
   const suggestions = useMemo(
-    () => editing?.project?.suggestions ?? [],
-    [editing?.project?.suggestions]
+    () => (layers.relationships ? (editing?.project?.suggestions ?? []) : []),
+    [editing?.project?.suggestions, layers.relationships]
   );
+  // Choosing a relationship, as from a field's details, shows that layer
+  // for now without changing the viewer's saved choice.
+  useEffect(() => {
+    if (
+      !layers.relationships &&
+      (selection?.kind === "relationship" ||
+        selection?.kind === "suggestion" ||
+        selection?.kind === "proposal")
+    ) {
+      setLayers((current) => ({ ...current, relationships: true }));
+    }
+  }, [selection, layers.relationships]);
   useEffect(() => {
     if (
       selection &&
@@ -488,14 +545,29 @@ export function SchemaDiagram({
       const view = nodesById.get(selection.nodeId)!;
       const reads = new Set([view.id, `query:${view.queryId}`]);
       reads.forEach((id) => nodesById.has(id) && lit.add(id));
-      for (const edge of graph.edges) {
-        if (!reads.has(edge.to.nodeId)) continue;
-        if (edge.kind === "usage") {
-          rows.add(key(edge.from));
-          lit.add(edge.from.nodeId);
-        } else {
+      // The tables a view reads light up even with their lines hidden.
+      for (const edge of condensed.edges) {
+        if (edge.kind === "reads" && edge.to.nodeId === view.id) {
           edges.add(edge.id);
           lit.add(edge.from.nodeId);
+        }
+      }
+      for (const edge of graph.edges) {
+        if (!reads.has(edge.to.nodeId)) continue;
+        if (edge.kind === "reads") continue;
+        if (edge.kind !== "usage") continue;
+        // Each field the view reads, and everything upstream of it: query
+        // steps, calculations, and the table fields they read.
+        rows.add(key(edge.from));
+        lit.add(edge.from.nodeId);
+        const trace = traceField(graph, edge.from);
+        for (const end of trace.upstream) {
+          rows.add(key(end));
+          lit.add(end.nodeId);
+        }
+        for (const id of trace.edges) {
+          const line = graph.edges.find((item) => item.id === id);
+          if (line && line.kind !== "usage") edges.add(id);
         }
       }
     } else if (selection?.kind === "table") {
@@ -523,7 +595,7 @@ export function SchemaDiagram({
           ? lit
           : undefined;
     return { rows, edges, key, nodes };
-  }, [graph, nodesById, selection, suggestions]);
+  }, [graph, condensed, nodesById, selection, suggestions]);
 
   // Every drawn line is routed in one pass, so none runs through a card. A
   // view's field lines show only for the selection, so they route apart.
@@ -536,8 +608,10 @@ export function SchemaDiagram({
         to: suggestionEnds(suggestion)[1]!,
       })
     );
+    // Lines into a view other than the one per table show only for the
+    // selection, so the default drawing keeps one line per table and view.
     return routeSchemaEdges(graph, layout, [
-      ...graph.edges.filter((edge) => edge.kind !== "usage"),
+      ...graph.edges.filter((edge) => !intoViewDetail(edge)),
       ...suggested,
     ]);
   }, [graph, layout, suggestions]);
@@ -547,7 +621,7 @@ export function SchemaDiagram({
         graph,
         layout,
         graph.edges.filter(
-          (edge) => edge.kind === "usage" && emphasis.edges.has(edge.id)
+          (edge) => intoViewDetail(edge) && emphasis.edges.has(edge.id)
         )
       ),
     [graph, layout, emphasis]
@@ -753,6 +827,10 @@ export function SchemaDiagram({
         if (rowIndex >= 0) toggleTable(node.rows[rowIndex]!.id);
         return;
       }
+      if (rowIndex >= 0 && node.rows[rowIndex]!.kind === "more") {
+        toggleTable(node.id);
+        return;
+      }
       setSelection(
         rowIndex >= 0
           ? { kind: "field", nodeId: node.id, rowId: node.rows[rowIndex]!.id }
@@ -803,9 +881,10 @@ export function SchemaDiagram({
                 ? selection.nodeId
                 : undefined
             }
-            onLight={(viewId) =>
-              setSelection({ kind: "table", nodeId: viewId })
-            }
+            onLight={(viewId) => {
+              setSelection({ kind: "table", nodeId: viewId });
+              setScrollTo(viewId);
+            }}
           />
         </>
       )}
@@ -819,7 +898,7 @@ export function SchemaDiagram({
           onClick={onAddSource}
         >
           <Plus aria-hidden="true" />
-          Add source
+          <span className="eda-schema-button-label">Add source</span>
         </Button>
       )}
       <Button
@@ -961,6 +1040,20 @@ export function SchemaDiagram({
             toggleTable(listed.dataset.schemaRow!);
             return;
           }
+          // A table's reader, when it has one, lights that view up.
+          const reader = (event.target as Element).closest<HTMLElement>(
+            "[data-readers]"
+          );
+          const readerNode = reader
+            ? nodesById.get(
+                reader.closest<HTMLElement>("[data-schema-node]")!.dataset
+                  .schemaNode!
+              )
+            : undefined;
+          if (readerNode?.readerIds?.length === 1) {
+            setSelection({ kind: "table", nodeId: readerNode.readerIds[0]! });
+            return;
+          }
           // A short card's "more fields" row opens the whole table.
           const more = (event.target as Element).closest<HTMLElement>(
             '[data-kind="more"]'
@@ -980,103 +1073,109 @@ export function SchemaDiagram({
           setGhost(undefined);
         }}
       >
-        <div
-          className="eda-schema-world"
-          style={{
-            width: layout.width,
-            height: layout.height,
-            transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
-          }}
-        >
-          <svg
-            className="eda-schema-edges"
-            width={layout.width}
-            height={layout.height}
-            aria-hidden="true"
+        <TooltipProvider>
+          <div
+            className="eda-schema-world"
+            style={{
+              width: layout.width,
+              height: layout.height,
+              transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
+            }}
           >
-            {paths.map((path) => (
-              <SchemaEdgeLine
-                key={path.edge.id}
-                path={path}
-                selected={
-                  selection?.kind === "relationship" &&
-                  selection.edgeId === path.edge.id
-                }
-                emphasized={emphasis.edges.has(path.edge.id)}
-                dimmed={Boolean(selection) && !emphasis.edges.has(path.edge.id)}
-              />
-            ))}
-            {suggestionPaths.map(({ suggestion, path }) => (
-              <SuggestedLine
-                key={suggestion.id}
-                suggestion={suggestion}
-                path={path}
-                selected={
-                  selection?.kind === "suggestion" &&
-                  selection.id === suggestion.id
-                }
-                dimmed={
-                  Boolean(selection) &&
-                  !(
+            <svg
+              className="eda-schema-edges"
+              width={layout.width}
+              height={layout.height}
+              aria-hidden="true"
+            >
+              {paths.map((path) => (
+                <SchemaEdgeLine
+                  key={path.edge.id}
+                  path={path}
+                  selected={
+                    selection?.kind === "relationship" &&
+                    selection.edgeId === path.edge.id
+                  }
+                  emphasized={emphasis.edges.has(path.edge.id)}
+                  dimmed={
+                    Boolean(selection) && !emphasis.edges.has(path.edge.id)
+                  }
+                />
+              ))}
+              {suggestionPaths.map(({ suggestion, path }) => (
+                <SuggestedLine
+                  key={suggestion.id}
+                  suggestion={suggestion}
+                  path={path}
+                  selected={
                     selection?.kind === "suggestion" &&
                     selection.id === suggestion.id
-                  )
-                }
-              />
-            ))}
-            {ghost && ghostStart && (
-              <path
-                className="eda-schema-edge"
-                data-kind="ghost"
-                d={`M ${ghostStart.box.x + ghostStart.box.width} ${ghostStart.y} L ${ghost.x} ${ghost.y}`}
-              />
-            )}
-            {selection?.kind === "proposal" && (
-              <ProposalLine
-                graph={graph}
-                layout={layout}
-                selection={selection}
-              />
-            )}
-          </svg>
-          {graph.nodes.map((node) => {
-            const box = layout.boxes[node.id];
-            if (!box) return null;
-            return (
-              <SchemaCard
-                key={node.id}
-                node={node}
-                style={{
-                  left: box.x,
-                  top: box.y,
-                  width: box.width,
-                  height: box.height,
-                }}
-                linkedRows={linkedRows(graph.edges, node.id)}
-                selected={
-                  selection?.kind === "table" && selection.nodeId === node.id
-                }
-                dimmed={Boolean(emphasis.nodes && !emphasis.nodes.has(node.id))}
-                selectedRow={
-                  selection?.kind === "field" && selection.nodeId === node.id
-                    ? selection.rowId
-                    : undefined
-                }
-                isEmphasized={(rowId) =>
-                  emphasis.rows.has(emphasis.key({ nodeId: node.id, rowId }))
-                }
-                dropTarget={
-                  ghost?.target?.nodeId === node.id
-                    ? ghost.target.rowId
-                    : undefined
-                }
-                relatable={canRelate && Boolean(node.sourceId)}
-                hiddenLines={hiddenLines.get(node.id) ?? 0}
-                onKeyDown={(event) => onCardKeyDown(event, node)}
-              />
-            );
-          })}
-        </div>
+                  }
+                  dimmed={
+                    Boolean(selection) &&
+                    !(
+                      selection?.kind === "suggestion" &&
+                      selection.id === suggestion.id
+                    )
+                  }
+                />
+              ))}
+              {ghost && ghostStart && (
+                <path
+                  className="eda-schema-edge"
+                  data-kind="ghost"
+                  d={`M ${ghostStart.box.x + ghostStart.box.width} ${ghostStart.y} L ${ghost.x} ${ghost.y}`}
+                />
+              )}
+              {selection?.kind === "proposal" && (
+                <ProposalLine
+                  graph={graph}
+                  layout={layout}
+                  selection={selection}
+                />
+              )}
+            </svg>
+            {graph.nodes.map((node) => {
+              const box = layout.boxes[node.id];
+              if (!box) return null;
+              return (
+                <SchemaCard
+                  key={node.id}
+                  node={node}
+                  style={{
+                    left: box.x,
+                    top: box.y,
+                    width: box.width,
+                    height: box.height,
+                  }}
+                  linkedRows={linkedRows(graph.edges, node.id)}
+                  selected={
+                    selection?.kind === "table" && selection.nodeId === node.id
+                  }
+                  dimmed={Boolean(
+                    emphasis.nodes && !emphasis.nodes.has(node.id)
+                  )}
+                  selectedRow={
+                    selection?.kind === "field" && selection.nodeId === node.id
+                      ? selection.rowId
+                      : undefined
+                  }
+                  isEmphasized={(rowId) =>
+                    emphasis.rows.has(emphasis.key({ nodeId: node.id, rowId }))
+                  }
+                  dropTarget={
+                    ghost?.target?.nodeId === node.id
+                      ? ghost.target.rowId
+                      : undefined
+                  }
+                  relatable={canRelate && Boolean(node.sourceId)}
+                  hiddenLines={hiddenLines.get(node.id) ?? 0}
+                  onKeyDown={(event) => onCardKeyDown(event, node)}
+                />
+              );
+            })}
+          </div>
+        </TooltipProvider>
         {selection && inspectorStyle && (
           <SchemaInspector
             graph={detailGraph}
@@ -1154,24 +1253,43 @@ function SchemaCard({
         )}
         <h3>{node.title}</h3>
         {hiddenLines > 0 && (
-          <Unlink
-            className="eda-schema-hidden-lines"
-            role="img"
-            aria-label={
-              hiddenLines === 1
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Unlink
+                className="eda-schema-hidden-lines"
+                role="img"
+                aria-label={
+                  hiddenLines === 1
+                    ? "1 line is not drawn: it would cross another card"
+                    : `${hiddenLines} lines are not drawn: they would cross other cards`
+                }
+              />
+            </TooltipTrigger>
+            <TooltipContent>
+              {hiddenLines === 1
                 ? "1 line is not drawn: it would cross another card"
-                : `${hiddenLines} lines are not drawn: they would cross other cards`
-            }
-          />
+                : `${hiddenLines} lines are not drawn: they would cross other cards`}
+            </TooltipContent>
+          </Tooltip>
         )}
-        {node.detail && (
-          <span
-            className="eda-schema-detail"
-            data-readers={node.readers?.length ? "" : undefined}
-          >
-            {node.detail}
-          </span>
-        )}
+        {node.detail &&
+          (node.readers?.length ? (
+            // Who reads the table: the full names on hover; with one reader,
+            // a click lights that view.
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="eda-schema-detail" data-readers="">
+                  {node.detail}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                Read by {node.readers.join(", ")}
+                {node.readers.length === 1 ? " · click to light it up" : ""}
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <span className="eda-schema-detail">{node.detail}</span>
+          ))}
       </header>
       <ul
         className="eda-schema-rows"

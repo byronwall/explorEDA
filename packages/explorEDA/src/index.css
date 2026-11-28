@@ -3032,6 +3032,19 @@ html {
 }
 .eda-schema-detail[data-readers] {
   color: var(--warning);
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .eda-schema-detail[data-readers]:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+/* A lit view's lines stand out from the rest. */
+.eda-schema-edge[data-kind="reads"][data-emphasized] {
+  stroke: var(--warning);
+  stroke-width: 2.25;
+  opacity: 1;
 }
 .eda-schema-row[data-kind="more"] {
   cursor: pointer;
@@ -3455,9 +3468,19 @@ html {
   font-size: 12px;
 }
 .eda-schema-facts {
+  display: block;
+  overflow: hidden;
   color: var(--muted-foreground);
   font-size: 12px;
   white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* A narrow drawer keeps its header to one line: text buttons show their
+   icon, and the facts truncate. */
+@media (max-width: 960px) {
+  .eda-schema-button-label {
+    display: none;
+  }
 }
 .eda-schema-controls {
   display: flex;

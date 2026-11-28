@@ -250,3 +250,55 @@ describe("condenseProject edge cases", () => {
     expect(into("view:other")).toBe(true);
   });
 });
+
+describe("append provenance", () => {
+  it("marks an appended field used when a view reads it through a calculation", () => {
+    const appended = {
+      ...project,
+      queries: [
+        {
+          id: "doubled",
+          name: "Doubled",
+          glyph: "◆",
+          frameLabel: "Doubled",
+          steps: [
+            { id: "s", kind: "source" as const, sourceId: "orders" },
+            {
+              id: "a",
+              kind: "append" as const,
+              inputStepId: "s",
+              sourceId: "items",
+              field: "source",
+              match: { amount: "revenue" },
+            },
+            {
+              id: "c",
+              kind: "calculate" as const,
+              inputStepId: "a",
+              fieldId: "double",
+              label: "Double",
+              expression: '["orders.amount"] * 2',
+            },
+          ],
+          outputStepId: "c",
+        },
+      ],
+    };
+    const chart = {
+      charts: [
+        { id: "c", type: "bar", title: "C", field: "double", filters: [] },
+      ],
+      calculations: [],
+    } as unknown as SavedDataStructure;
+    const drawn = condenseProject(
+      projectSchemaGraph(appended, sources, [
+        { id: "v", name: "V", queryId: "doubled", settings: chart },
+      ]),
+      new Set()
+    );
+    const items = drawn.nodes.find((node) => node.id === "table:items")!;
+    expect(items.rows.find((row) => row.id === "field:revenue")!.used).toBe(
+      true
+    );
+  });
+});

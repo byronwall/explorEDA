@@ -621,12 +621,32 @@ so a preview, such as a card on hover, agrees with the view it opens.
 
 ### The schema diagram
 
-The **Schema diagram** button opens the whole model in a wide drawer: tables
-with their fields and keys, the relationships between them, each query's
-steps and calculated fields, and each view's charts. The layout reads left to
-right and top to bottom and is shaped to fit the drawer. Select a field to
-trace where it comes from and every calculation and view that reads it; a
-chart in this workspace can be shown from there.
+The **Schema diagram** button opens the whole project in a wide drawer, at
+full size and readable without zooming. It shows what the views use:
+
+- Tables that views read come first, with every field. The fields a view
+  reads, directly or through a calculation, lookup, or append, are bold.
+  Each table names its readers and draws one line to each view that reads
+  it.
+- Tables no view reads fold into one **Not used by any view** list. Choose a
+  row to open that table as a card.
+- A query whose only step reads one table draws no card. Its table's details
+  have a button that shows it.
+- Lines are routed so none crosses a card. Each end sits on its own field
+  row.
+- Select a view to light up what it reads: its tables, fields, and query
+  steps. The rest fades.
+- **Layers** shows or hides the lines to views, the relationships, and the
+  unused list. With relationships on, an unused table that a relationship
+  touches shows as a short card with its key and linked fields.
+- **Coverage** opens a grid of tables by views. Choose a view there to light
+  it up.
+
+The columns fit the drawer's width; a taller drawing scrolls down. Select a
+field to trace where it comes from and every calculation and view that reads
+it; a chart in this workspace can be shown from there. The handle's
+`openSchema({ sourceId })` opens the diagram with a table selected, and
+`openSchema({ viewId })` opens it with a view lit.
 
 The diagram is also an editor. Drag one field onto another table's field to
 relate them, with match counts before you apply. Rename fields, change types

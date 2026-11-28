@@ -343,9 +343,53 @@ function queryLineage(
       to: { nodeId, rowId },
     });
   };
+  // A table appended on the way to the output fills the base table's fields,
+  // by the evaluator's matching rule; a field read later reads both.
+  const onOutput = new Set<string>();
+  for (
+    let step = stepsById.get(query.outputStepId);
+    step && !onOutput.has(step.id);
+    step = step.kind === "source" ? undefined : stepsById.get(step.inputStepId)
+  ) {
+    onOutput.add(step.id);
+  }
+  const filledBy = new Map<string, SchemaEndpoint[]>();
+  const base = query.steps.find((step) => step.kind === "source");
+  const allFields = evaluation?.fields ?? [];
+  for (const step of query.steps) {
+    if (step.kind !== "append" || !onOutput.has(step.id)) continue;
+    if (base?.kind !== "source") continue;
+    const appended = project.sources.find((item) => item.id === step.sourceId);
+    if (!appended) continue;
+    const baseFields = allFields.flatMap((field) =>
+      "sourceId" in field.origin && field.origin.sourceId === base.sourceId
+        ? [field.origin.fieldId]
+        : []
+    );
+    const matched = appendFieldMatch(
+      baseFields,
+      appended.fields.map((field) => field.id),
+      step.match
+    );
+    for (const [fieldId, fill] of Object.entries(matched)) {
+      const key = `${base.sourceId}\u0000${fieldId}`;
+      filledBy.set(key, [
+        ...(filledBy.get(key) ?? []),
+        { nodeId: tableNodeId(step.sourceId), rowId: fieldRowId(fill) },
+      ]);
+    }
+  }
+  const fillsOf = (field: AnalysisField) =>
+    "sourceId" in field.origin
+      ? (filledBy.get(
+          `${field.origin.sourceId}\u0000${field.origin.fieldId}`
+        ) ?? [])
+      : [];
   const inputEdge = (stepId: string, fieldId: string, rowId: string) => {
     const field = inputFields(stepId).find((item) => item.id === fieldId);
     link("calculation", field && originOf(field), rowId);
+    if (field)
+      for (const fill of fillsOf(field)) link("calculation", fill, rowId);
     return Boolean(field);
   };
 
@@ -376,9 +420,14 @@ function queryLineage(
           label: stepTitle(step, project),
           detail: step.as,
         });
+        // The fields this step adds, not input fields that share its prefix.
+        const before = new Set(inputFields(step.id).map((field) => field.id));
         const added = stages
           .get(step.id)
-          ?.fields.find((field) => field.id.startsWith(`${step.as}.`));
+          ?.fields.find(
+            (field) =>
+              field.id.startsWith(`${step.as}.`) && !before.has(field.id)
+          );
         if (added && "sourceId" in added.origin) {
           link(
             "lineage",
@@ -459,35 +508,10 @@ function queryLineage(
     labels.set(field.id, queryFieldName(project, evaluation!.fields, field.id));
   }
 
-  // An appended table fills the base table's fields, by the rule the
-  // evaluator uses, so a view that reads one reads the other too.
   const fills = new Map<string, SchemaEndpoint[]>();
-  const fields = evaluation?.fields ?? [];
-  const base = query.steps.find((step) => step.kind === "source");
-  for (const step of query.steps) {
-    if (step.kind !== "append" || base?.kind !== "source") continue;
-    const appended = project.sources.find((item) => item.id === step.sourceId);
-    if (!appended) continue;
-    const baseFields = fields.flatMap((field) =>
-      "sourceId" in field.origin && field.origin.sourceId === base.sourceId
-        ? [field.origin.fieldId]
-        : []
-    );
-    const matched = appendFieldMatch(
-      baseFields,
-      appended.fields.map((field) => field.id),
-      step.match
-    );
-    for (const field of fields) {
-      if (!("sourceId" in field.origin)) continue;
-      if (field.origin.sourceId !== base.sourceId) continue;
-      const fieldId = matched[field.origin.fieldId];
-      if (fieldId === undefined) continue;
-      fills.set(field.id, [
-        ...(fills.get(field.id) ?? []),
-        { nodeId: tableNodeId(step.sourceId), rowId: fieldRowId(fieldId) },
-      ]);
-    }
+  for (const field of evaluation?.fields ?? []) {
+    const extra = fillsOf(field);
+    if (extra.length) fills.set(field.id, extra);
   }
 
   return {
@@ -652,6 +676,8 @@ function usageNode({
       });
       for (const field of new Set(calculation.dependencies)) {
         link("calculation", sourceOf(field), rowId);
+        if (!calculations.has(field))
+          for (const fill of fills(field)) link("calculation", fill, rowId);
       }
     }
   }
