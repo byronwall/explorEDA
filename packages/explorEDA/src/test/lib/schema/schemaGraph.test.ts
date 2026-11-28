@@ -192,12 +192,10 @@ describe("layoutSchemaGraph", () => {
     const graph = projectSchemaGraph(project, tables, [
       { id: "v", name: "View", queryId: "orders-by-customer" },
     ]);
-    for (const width of [1512, 1280, 783, 390]) {
+    for (const width of [1512, 1280, 783, 390, 300]) {
       const layout = layoutSchemaGraph(graph, { width, height: 800 });
       for (const box of Object.values(layout.boxes)) {
-        expect(box.x + box.width).toBeLessThanOrEqual(
-          Math.max(width, 248 + 64)
-        );
+        expect(box.x + box.width).toBeLessThanOrEqual(width);
       }
     }
   });

@@ -71,9 +71,10 @@ export function SchemaLayersMenu({
           size="sm"
           className="eda-schema-text-button"
           tooltip="Show or hide lines, relationships, and unused tables"
+          aria-label="Layers"
         >
           <Layers aria-hidden="true" />
-          Layers
+          <span className="eda-schema-button-label">Layers</span>
           <span className="eda-schema-layer-count">{shown}</span>
         </Button>
       </PopoverTrigger>
@@ -135,9 +136,10 @@ export function SchemaCoverage({
           size="sm"
           className="eda-schema-text-button"
           tooltip="Which views read each table"
+          aria-label="Coverage"
         >
           <Grid3x3 aria-hidden="true" />
-          Coverage
+          <span className="eda-schema-button-label">Coverage</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="eda-schema-coverage">

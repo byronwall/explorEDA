@@ -102,7 +102,7 @@ function layeredLayout(
   graph: SchemaGraph,
   viewport?: { width: number; height: number }
 ): SchemaLayout {
-  const { cardWidth, columnGap, cardGap, margin } = SCHEMA_SIZES;
+  const { columnGap, cardGap, margin } = SCHEMA_SIZES;
   // A table no view reads sits with the list of such tables, last.
   const tables = graph.nodes.filter(
     (node) => node.kind === "table" && !node.unused
@@ -135,6 +135,15 @@ function layeredLayout(
   const columns = viewport
     ? spread(graph, layers, viewport)
     : layers.map((layer) => layer ?? []);
+  // One column in a narrow viewport: cards narrow so they, and a lane for
+  // lines beside them, still fit at full size.
+  const cardWidth =
+    viewport && columns.length === 1
+      ? Math.max(
+          160,
+          Math.min(SCHEMA_SIZES.cardWidth, viewport.width - margin * 2 - 48)
+        )
+      : SCHEMA_SIZES.cardWidth;
 
   const boxes: Record<string, SchemaBox> = {};
   const nodesById = new Map(graph.nodes.map((node) => [node.id, node]));
