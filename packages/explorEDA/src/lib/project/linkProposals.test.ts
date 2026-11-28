@@ -263,6 +263,45 @@ describe("proposeLinks", () => {
     ).toEqual(["jobs.ci.run_id -> runs.ci.run_id 5/5"]);
   });
 
+  it("skips a key two files fit equally, and names with -es plurals", () => {
+    const people = range(5).map((i) => ({ customer_id: i + 1 }));
+    expect(
+      fileLinks({
+        crm_customers: people,
+        billing_customers: people,
+        orders: range(5).map((i) => ({
+          order_id: `o${i}`,
+          customer_id: i + 1,
+        })),
+        invoices: range(5).map((i) => ({ invoice_id: `i${i}` })),
+        payments: range(5).map((i) => ({ pay_id: i, invoice_id: `i${i}` })),
+      })
+    ).toEqual(["payments.invoice_id -> invoices.invoice_id 5/5"]);
+  });
+
+  it("brings back a direct link when its parent link is dismissed", () => {
+    const tables = {
+      runs: range(4).map((i) => ({ run_id: `r${i}` })),
+      jobs: range(4).map((i) => ({ job_id: `j${i}`, run_id: `r${i}` })),
+      steps: range(4).map((i) => ({
+        step_id: `s${i}`,
+        job_id: `j${i}`,
+        run_id: `r${i}`,
+      })),
+    };
+    const { project } = setup(tables);
+    const ids = (dismissed?: Set<string>) =>
+      proposeLinks({ project, tables, dismissed }).map((link) => link.id);
+    expect(ids()).toEqual([
+      "rel-jobs-run_id-runs-run_id",
+      "rel-steps-job_id-jobs-job_id",
+    ]);
+    expect(ids(new Set(["rel-jobs-run_id-runs-run_id"]))).toEqual([
+      "rel-steps-job_id-jobs-job_id",
+      "rel-steps-run_id-runs-run_id",
+    ]);
+  });
+
   it("counts a value that names two rows as unmatched", () => {
     const runs = range(100).map((i) => ({ run_id: `r${i}` }));
     runs.push({ run_id: "r0" });

@@ -55,11 +55,13 @@ function withoutPrefix(name: string) {
 const stem = (name: string) =>
   name.replace(KEY_SUFFIX, "").replace(/_$/, "").toLowerCase();
 
+/** `categories` → category, `boxes` → box, `invoices` → invoice. */
 const singular = (name: string) =>
   name
     .toLowerCase()
     .replace(/ies$/, "y")
-    .replace(/(s|es)$/, "");
+    .replace(/(s|x|z|ch|sh)es$/, "$1")
+    .replace(/([^s])s$/, "$1");
 
 /**
  * Whether a key field names a table: `run_id` and `runs`, `ss_item_sk`
@@ -115,6 +117,7 @@ export function proposeLinks({
   tables,
   databases = {},
   foreignKeys = {},
+  dismissed,
 }: {
   project: AnalysisProject;
   /** Rows by source ID. Only sources with rows get links. */
@@ -126,6 +129,11 @@ export function proposeLinks({
   databases?: Record<string, { connection: string; table?: string }>;
   /** Declared foreign keys, by connection. */
   foreignKeys?: Record<string, ForeignKey[]>;
+  /**
+   * Proposal IDs the user dismissed. They are left out before shortcuts
+   * are pruned, so a dismissed link hides no other.
+   */
+  dismissed?: ReadonlySet<string>;
 }): LinkProposal[] {
   const columns = new Map<string, Column>();
   const column = (sourceId: string, fieldId: string): Column => {
@@ -245,6 +253,10 @@ export function proposeLinks({
       if (!SOURCE_ID.test(fromId)) continue;
       for (const field of sources.get(fromId)!.fields) {
         if (!FIELD_ID.test(field.id)) continue;
+        // A file's key that names the file itself (customers.customer_id)
+        // is its own; another file with the same values isn't its owner.
+        if (files && namesTable(field.id, fromId)) continue;
+        let tied = false;
         let best:
           | {
               to: LinkProposal["to"];
@@ -277,18 +289,17 @@ export function proposeLinks({
             const bestShare = best
               ? best.counts.matched / best.counts.total
               : -1;
-            // On a tie, the larger table, the likelier to hold every row.
-            if (
-              share > bestShare ||
-              (share === bestShare &&
-                column(toId, target.id).count >
-                  column(best!.to.sourceId, best!.to.fieldId).count)
-            ) {
+            if (share > bestShare) {
               best = { to, counts };
+              tied = false;
+            } else if (share === bestShare) {
+              tied = true;
             }
           }
         }
-        if (best) {
+        // Two files that both fit, such as crm_customers and
+        // billing_customers, leave the owner of the key unknown.
+        if (best && !(files && tied)) {
           add(
             { sourceId: fromId, fieldId: field.id },
             best.to,
@@ -299,7 +310,11 @@ export function proposeLinks({
       }
     }
   }
-  return withoutShortcuts(project.relationships, proposals, tables);
+  return withoutShortcuts(
+    project.relationships,
+    proposals.filter((item) => !dismissed?.has(item.id)),
+    tables
+  );
 }
 
 /**
@@ -331,6 +346,7 @@ function withoutShortcuts(
     for (const row of tables[step.to.sourceId] ?? []) {
       const key = row[step.to.fieldId];
       if (middle.has(key)) twice.add(key);
+      if (key == null || key === "") continue;
       middle.set(key, row[field]);
     }
     // Every row the direct link reads must reach the same value through
@@ -341,7 +357,14 @@ function withoutShortcuts(
       const value = row[field];
       if (value == null || value === "") continue;
       const key = row[step.from.fieldId];
-      if (!middle.has(key) || twice.has(key) || middle.get(key) !== value)
+      // A lookup matches no row on an empty key.
+      if (
+        key == null ||
+        key === "" ||
+        !middle.has(key) ||
+        twice.has(key) ||
+        middle.get(key) !== value
+      )
         return false;
       checked += 1;
     }

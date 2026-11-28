@@ -440,7 +440,8 @@ export function ProjectWorkspace({
             tables: folder.tables,
             databases: folder.databases,
             foreignKeys: keys,
-          }).filter((item) => !dismissed.has(item.id)),
+            dismissed,
+          }),
     [readOnly, project, folder, keys, dismissed]
   );
   const dismissLink = (id: string) => {
