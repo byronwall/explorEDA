@@ -4,6 +4,7 @@ import {
   categoryKey,
   categoryLabel,
 } from "@/lib/categories";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { type FieldProfile, missingRowCount } from "@/lib/fieldProfiles";
@@ -101,10 +102,9 @@ function OneOfList({
             key={categoryKey(value)}
             className="flex items-center gap-2 text-sm"
           >
-            <input
-              type="checkbox"
+            <Checkbox
               checked={categoryIncludes(chosen, value)}
-              onChange={(event) => onToggle(value, event.currentTarget.checked)}
+              onCheckedChange={(next) => onToggle(value, next === true)}
             />
             <span className="min-w-0 flex-1 truncate">
               {categoryLabel(value)}
@@ -410,15 +410,12 @@ export function ColumnFilter({
                 key={categoryKey(value)}
                 className="flex items-center gap-2 text-sm"
               >
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={
                     filter?.type === "value" &&
                     categoryIncludes(filter.values, value)
                   }
-                  onChange={(event) =>
-                    updateValues(value, event.currentTarget.checked)
-                  }
+                  onCheckedChange={(next) => updateValues(value, next === true)}
                 />
                 {label}
               </label>
@@ -426,15 +423,12 @@ export function ColumnFilter({
           })}
           {missingRows > 0 && (
             <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={
                   filter?.type === "value" &&
                   filter.values.some((item) => item == null)
                 }
-                onChange={(event) =>
-                  updateValues(null, event.currentTarget.checked)
-                }
+                onCheckedChange={(next) => updateValues(null, next === true)}
               />
               <span className="eda-null" aria-hidden="true">
                 null
@@ -577,14 +571,13 @@ export function ColumnFilter({
       )}
       {!lowCardinality && (
         <label className="flex items-center gap-2 border-t border-border pt-2 text-xs has-[:disabled]:opacity-60">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={missingOnly}
             disabled={missingRows === 0 && !missingOnly}
-            onChange={(event) =>
+            onCheckedChange={(next) =>
               onChange(
                 columnId,
-                event.currentTarget.checked
+                next === true
                   ? { type: "value", field: profile.name, values: [null] }
                   : undefined
               )

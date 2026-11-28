@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { X } from "lucide-react";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import type { ChartSettingsPanelProps } from "@/types/ChartTypes";
 import type { JointMissingnessSettings } from "./definition";
@@ -121,17 +122,18 @@ export function JointMissingnessSettingsPanel({
         <div className="flex flex-wrap gap-x-3 gap-y-1">
           {settings.fields.map((field) => (
             <label key={field} className="flex items-center gap-1 text-sm">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={rule.fields.includes(field)}
-                onChange={(event) =>
+                onCheckedChange={(checked) =>
                   setRule({
                     ...rule,
-                    fields: event.target.checked
-                      ? settings.fields.filter(
-                          (item) => item === field || rule.fields.includes(item)
-                        )
-                      : rule.fields.filter((item) => item !== field),
+                    fields:
+                      checked === true
+                        ? settings.fields.filter(
+                            (item) =>
+                              item === field || rule.fields.includes(item)
+                          )
+                        : rule.fields.filter((item) => item !== field),
                   })
                 }
               />

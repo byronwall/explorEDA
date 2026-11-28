@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import { DataLayerProvider, useDataLayer } from "@/providers/DataLayerProvider";
 import { buildFieldProfile } from "@/lib/fieldProfiles";
 import { parseExpression } from "@/lib/calculations/parser/semantics";
@@ -7,6 +7,12 @@ import {
   CalculationEditorProvider,
   useMapCategories,
 } from "./CalculationEditor";
+
+vi.mock("@/lib/calculations/parser/semantics", async (load) => {
+  const real =
+    await load<typeof import("@/lib/calculations/parser/semantics")>();
+  return { ...real, parseExpression: vi.fn(real.parseExpression) };
+});
 
 const useStateLayer = () => useDataLayer((state) => state);
 
@@ -225,4 +231,44 @@ it("keeps the draft when a rename is cancelled or unchanged, and checks the new 
     screen.getByText("A field named Country already exists.")
   ).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Apply" })).toBeDisabled();
+});
+
+it("opens a saved mapping without parsing it again, with the header box partial for some rows", async () => {
+  let state!: ReturnType<typeof useStateLayer>;
+  let mapCategories!: ReturnType<typeof useMapCategories>;
+  function Workspace() {
+    state = useStateLayer();
+    mapCategories = useMapCategories();
+    return null;
+  }
+  render(
+    <DataLayerProvider
+      data={[{ Country: "USA" }, { Country: "US" }]}
+      charts={[]}
+    >
+      <CalculationEditorProvider>
+        <Workspace />
+      </CalculationEditorProvider>
+    </DataLayerProvider>
+  );
+  await act(async () => {
+    await state.addCalculation({
+      resultColumnName: "Group",
+      expression: parseExpression('recode(["Country"], "US", "USA")'),
+    });
+  });
+  vi.mocked(parseExpression).mockClear();
+  act(() => mapCategories!("Group"));
+  expect(screen.getByText("1 value mapped · others kept")).toBeInTheDocument();
+  expect(parseExpression).not.toHaveBeenCalled();
+
+  const all = screen.getByRole("checkbox", { name: "Select shown values" });
+  expect(all).toHaveAttribute("aria-checked", "false");
+  fireEvent.click(screen.getByRole("checkbox", { name: "Select “US”" }));
+  expect(all).toHaveAttribute("aria-checked", "mixed");
+  // From partial, the header box selects every shown value, then clears them.
+  fireEvent.click(all);
+  expect(all).toHaveAttribute("aria-checked", "true");
+  fireEvent.click(all);
+  expect(all).toHaveAttribute("aria-checked", "false");
 });

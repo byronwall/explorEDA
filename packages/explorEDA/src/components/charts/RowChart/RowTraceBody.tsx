@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { categoryIncludes } from "@/lib/categories";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { TraceReadout, TraceSection } from "../ChartTraceDetails";
 import { AggregateContributorTable } from "../BarChart/GroupedAggregateInspector";
@@ -126,12 +127,11 @@ export function RowTraceBody({ trace }: { trace: RowTrace }) {
           {matching.slice(page * 25, (page + 1) * 25).map((item) => (
             <div className="flex items-center gap-2" key={item.key}>
               <label className="flex min-w-0 flex-1 items-center gap-2 break-all">
-                <input
-                  type="checkbox"
+                <Checkbox
                   disabled={!settings}
                   aria-label={`Select ${item.label}`}
                   checked={categoryIncludes(selected, item.value)}
-                  onChange={(event) => select([item], !event.target.checked)}
+                  onCheckedChange={(next) => select([item], next !== true)}
                 />
                 {item.label}
               </label>

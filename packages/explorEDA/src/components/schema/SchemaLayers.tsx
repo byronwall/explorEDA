@@ -1,5 +1,6 @@
 import { Grid3x3, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
@@ -81,11 +82,10 @@ export function SchemaLayersMenu({
       <PopoverContent align="end" className="eda-schema-layers">
         {rows.map(([key, label, count]) => (
           <label key={key} className="eda-schema-layer">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={layers[key]}
-              onChange={(event) =>
-                onChange({ ...layers, [key]: event.target.checked })
+              onCheckedChange={(next) =>
+                onChange({ ...layers, [key]: next === true })
               }
             />
             <span>{label}</span>
