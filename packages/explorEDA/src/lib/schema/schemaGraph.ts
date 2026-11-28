@@ -62,6 +62,8 @@ export interface SchemaNode {
   folded?: boolean;
   /** The views that read this table, by title, when a drawing counts them. */
   readers?: string[];
+  /** The same views, by node ID. */
+  readerIds?: string[];
   /** A table no view reads, drawn because the user opened it. */
   unused?: boolean;
   rows: SchemaRow[];
@@ -73,7 +75,7 @@ export interface SchemaRow {
    * A field (the default), a query step, a chart or section heading in a
    * view, or one place a view reads a field.
    */
-  kind?: "field" | "step" | "heading" | "use" | "table";
+  kind?: "field" | "step" | "heading" | "use" | "table" | "more";
   label: string;
   /** A short fact at the end of the row, such as how a view uses a field. */
   detail?: string;

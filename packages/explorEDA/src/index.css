@@ -3033,6 +3033,115 @@ html {
 .eda-schema-detail[data-readers] {
   color: var(--warning);
 }
+.eda-schema-row[data-kind="more"] {
+  cursor: pointer;
+  color: var(--muted-foreground);
+}
+.eda-schema-hidden-lines {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  color: var(--warning);
+}
+.eda-schema-layer-count {
+  min-width: 14px;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+.eda-schema-layers {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 260px;
+  padding: 6px;
+}
+.eda-schema-layer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+@media (hover: hover) {
+  .eda-schema-layer:hover {
+    background: var(--muted);
+  }
+}
+.eda-schema-layer-detail {
+  margin-left: auto;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+.eda-schema-coverage {
+  width: auto;
+  max-width: min(760px, calc(100vw - 32px));
+  max-height: min(560px, calc(100vh - 120px));
+  overflow: auto;
+  padding: 8px;
+}
+.eda-schema-coverage table {
+  border-collapse: collapse;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.eda-schema-coverage caption {
+  margin-bottom: 6px;
+  text-align: left;
+  font-weight: 600;
+}
+.eda-schema-coverage th,
+.eda-schema-coverage td {
+  height: 26px;
+  padding: 0 8px;
+  border-bottom: 1px solid color-mix(in oklab, var(--border) 55%, transparent);
+}
+.eda-schema-coverage thead th {
+  height: auto;
+  padding: 4px;
+  vertical-align: bottom;
+}
+.eda-schema-coverage thead button {
+  max-width: 84px;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .eda-schema-coverage thead button:hover {
+    background: var(--muted);
+  }
+}
+.eda-schema-coverage tbody th {
+  text-align: left;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.eda-schema-coverage tr[data-unused] th {
+  color: var(--muted-foreground);
+}
+.eda-schema-coverage td {
+  text-align: center;
+}
+.eda-schema-coverage [data-lit] {
+  background: color-mix(in oklab, var(--primary) 8%, transparent);
+}
+.eda-schema-coverage-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--primary);
+}
 /* The list of tables no view reads. */
 .eda-schema-card[data-kind="list"] .eda-schema-card-header {
   background: var(--muted);
