@@ -328,14 +328,25 @@ export function routeSchemaEdges(
   }
   const blocked: SchemaEdge[] = [];
   if (!routed.length) return { paths, blocked };
+  // Walls just outside the drawing keep every line inside it, so a narrow
+  // drawer never clips one; a line with no room left is blocked instead.
+  const far = 100_000;
+  const walls = [
+    { id: "wall:left", x: -far, y: -far, width: far, height: far * 3 },
+    { id: "wall:right", x: layout.width, y: -far, width: far, height: far * 3 },
+    { id: "wall:top", x: -far, y: -far, width: far * 3, height: far },
+  ];
   const out = route({
-    nodes: Object.entries(layout.boxes).map(([id, box]) => ({
-      id,
-      x: box.x,
-      y: box.y,
-      width: box.width,
-      height: box.height,
-    })),
+    nodes: [
+      ...Object.entries(layout.boxes).map(([id, box]) => ({
+        id,
+        x: box.x,
+        y: box.y,
+        width: box.width,
+        height: box.height,
+      })),
+      ...walls,
+    ],
     edges: routed.map((item) => item.input),
     // A full pass costs about 0.5 s at 30 lines, so larger drawings route
     // quickly; both modes keep lines clear of cards.
