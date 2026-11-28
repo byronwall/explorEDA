@@ -43,6 +43,13 @@ import {
   type SchemaLayout,
 } from "@/lib/schema/schemaLayout";
 import { SchemaInspector, type SchemaChartLinks } from "./SchemaInspector";
+import {
+  saveLayers,
+  savedLayers,
+  SchemaCoverage,
+  SchemaLayersMenu,
+  type SchemaLayerState,
+} from "./SchemaLayers";
 import { traceField } from "@/lib/schema/schemaTrace";
 import {
   compactViews,
@@ -190,14 +197,34 @@ export function SchemaDiagram({
       ]),
     [editing?.project?.suggestions]
   );
-  const graph = useMemo(
+  const [layers, setLayers] = useState(savedLayers);
+  const changeLayers = useCallback((next: SchemaLayerState) => {
+    setLayers(next);
+    saveLayers(next);
+  }, []);
+  const condensed = useMemo(
     () =>
       condenseProject(
         detailGraph,
-        new Set([...openTables, ...suggestionTables])
+        new Set([...openTables, ...suggestionTables]),
+        { relationships: layers.relationships }
       ),
-    [detailGraph, openTables, suggestionTables]
+    [detailGraph, openTables, suggestionTables, layers.relationships]
   );
+  // Hidden layers leave the drawing; the details still read every table.
+  const graph = useMemo((): SchemaGraph => {
+    const hidden = (edge: SchemaEdge) =>
+      (!layers.lines && edge.kind === "reads") ||
+      (!layers.relationships && edge.kind === "relationship") ||
+      (!layers.unused &&
+        (edge.from.nodeId === UNUSED_LIST || edge.to.nodeId === UNUSED_LIST));
+    return {
+      nodes: condensed.nodes.filter(
+        (node) => layers.unused || node.id !== UNUSED_LIST
+      ),
+      edges: condensed.edges.filter((edge) => !hidden(edge)),
+    };
+  }, [condensed, layers]);
   const toggleTable = useCallback((nodeId: string) => {
     setOpenTables((current) => {
       const next = new Set(current);
@@ -751,6 +778,37 @@ export function SchemaDiagram({
           {suggestions.length === 1 ? "link" : "links"}
         </Button>
       )}
+      {condensed.nodes.some((node) => node.kind === "view") && (
+        <>
+          <SchemaLayersMenu
+            layers={layers}
+            counts={{
+              lines: condensed.edges.filter((edge) => edge.kind === "reads")
+                .length,
+              relationships: condensed.edges.filter(
+                (edge) => edge.kind === "relationship"
+              ).length,
+              unused:
+                condensed.nodes.find((node) => node.id === UNUSED_LIST)?.rows
+                  .length ?? 0,
+            }}
+            onChange={changeLayers}
+          />
+          <SchemaCoverage
+            drawn={condensed}
+            detail={detailGraph}
+            litViewId={
+              selection?.kind === "table" &&
+              nodesById.get(selection.nodeId)?.kind === "view"
+                ? selection.nodeId
+                : undefined
+            }
+            onLight={(viewId) =>
+              setSelection({ kind: "table", nodeId: viewId })
+            }
+          />
+        </>
+      )}
       {onAddSource && (
         <Button
           type="button"
@@ -901,6 +959,17 @@ export function SchemaDiagram({
           );
           if (listed) {
             toggleTable(listed.dataset.schemaRow!);
+            return;
+          }
+          // A short card's "more fields" row opens the whole table.
+          const more = (event.target as Element).closest<HTMLElement>(
+            '[data-kind="more"]'
+          );
+          if (more) {
+            toggleTable(
+              more.closest<HTMLElement>("[data-schema-node]")!.dataset
+                .schemaNode!
+            );
             return;
           }
           setSelection(selectionAt(event.target as Element));
@@ -1153,6 +1222,19 @@ function SchemaRowItem({
   dropTarget: boolean;
   relatable: boolean;
 }) {
+  if (row.kind === "more") {
+    return (
+      <li
+        className="eda-schema-row"
+        data-kind="more"
+        data-schema-row={row.id}
+        style={{ height: SCHEMA_SIZES.row }}
+      >
+        <span className="eda-schema-type" aria-hidden="true" />
+        <span className="eda-schema-label">{row.label}</span>
+      </li>
+    );
+  }
   if (row.kind === "heading") {
     return (
       <li

@@ -106,7 +106,8 @@ const endKey = (end: SchemaEndpoint) => `${end.nodeId}\u0000${end.rowId}`;
  */
 export function condenseProject(
   graph: SchemaGraph,
-  open: ReadonlySet<string>
+  open: ReadonlySet<string>,
+  { relationships = false }: { relationships?: boolean } = {}
 ): SchemaGraph {
   // A single table has nothing to set aside or route around; it draws as is.
   if (graph.nodes.filter((node) => node.kind === "table").length <= 1) {
@@ -161,8 +162,28 @@ export function condenseProject(
           .map((node) => node.id)
       : []
   );
-  const folded = new Set([...unused].filter((id) => !open.has(id)));
+  // With the relationships layer on, an unused table that a relationship
+  // touches shows as a short card: its key, linked, and used fields.
+  const linkedRows = new Map<string, Set<string>>();
+  if (relationships) {
+    for (const edge of graph.edges) {
+      if (edge.kind !== "relationship") continue;
+      for (const end of [edge.from, edge.to]) {
+        linkedRows.set(
+          end.nodeId,
+          (linkedRows.get(end.nodeId) ?? new Set()).add(end.rowId)
+        );
+      }
+    }
+  }
+  const short = new Set(
+    [...unused].filter((id) => !open.has(id) && linkedRows.has(id))
+  );
+  const folded = new Set(
+    [...unused].filter((id) => !open.has(id) && !short.has(id))
+  );
 
+  const shortened = new Set<string>();
   const nodes: SchemaNode[] = [];
   for (const node of graph.nodes) {
     if (passThrough.has(node.id) || folded.has(node.id)) continue;
@@ -172,13 +193,35 @@ export function condenseProject(
     }
     const tableReaders = readers.get(node.id) ?? [];
     const used = usedRows.get(node.id)!;
-    const rows = node.rows.map((row) =>
+    let rows = node.rows.map((row) =>
       used.has(row.id) ? { ...row, used: true } : row
     );
+    if (short.has(node.id)) {
+      const kept = rows.filter(
+        (row) =>
+          row.key || used.has(row.id) || linkedRows.get(node.id)!.has(row.id)
+      );
+      const more = rows.length - kept.length;
+      rows = more
+        ? [
+            ...kept,
+            {
+              id: `${node.id}:more`,
+              kind: "more",
+              label: `${more} more ${more === 1 ? "field" : "fields"}`,
+            },
+          ]
+        : kept;
+      for (const row of node.rows) {
+        if (!kept.includes(row))
+          shortened.add(endKey({ nodeId: node.id, rowId: row.id }));
+      }
+    }
     nodes.push({
       ...node,
       rows,
       readers: tableReaders.map((view) => view.title),
+      readerIds: tableReaders.map((view) => view.id),
       detail: !tableReaders.length
         ? node.detail
         : tableReaders.length === 1
@@ -187,7 +230,10 @@ export function condenseProject(
       unused: unused.has(node.id) || undefined,
     });
   }
-  const unusedTables = graph.nodes.filter((node) => unused.has(node.id));
+  // A short card's table leaves the list; an opened one stays, marked open.
+  const unusedTables = graph.nodes.filter(
+    (node) => unused.has(node.id) && !short.has(node.id)
+  );
   if (unusedTables.length) {
     nodes.push({
       id: UNUSED_LIST,
@@ -204,9 +250,14 @@ export function condenseProject(
     });
   }
 
-  // Lines to a folded table land on its row in the list.
+  // Lines to a folded table land on its row in the list; lines to a field a
+  // short card leaves out land on its header.
   const place = (end: SchemaEndpoint): SchemaEndpoint =>
-    folded.has(end.nodeId) ? { nodeId: UNUSED_LIST, rowId: end.nodeId } : end;
+    folded.has(end.nodeId)
+      ? { nodeId: UNUSED_LIST, rowId: end.nodeId }
+      : shortened.has(endKey(end))
+        ? { nodeId: end.nodeId, rowId: HEADER_ROW }
+        : end;
   const seen = new Set<string>();
   const edges: SchemaEdge[] = [];
   for (const edge of graph.edges) {
