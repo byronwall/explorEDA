@@ -399,10 +399,23 @@ export function SchemaDiagram({
     }
   }, [fullGraph]);
   // An edit can remove what was selected, such as a removed relationship.
+  // Suggested links belong to the relationships layer.
   const suggestions = useMemo(
-    () => editing?.project?.suggestions ?? [],
-    [editing?.project?.suggestions]
+    () => (layers.relationships ? (editing?.project?.suggestions ?? []) : []),
+    [editing?.project?.suggestions, layers.relationships]
   );
+  // Choosing a relationship, as from a field's details, shows that layer
+  // for now without changing the viewer's saved choice.
+  useEffect(() => {
+    if (
+      !layers.relationships &&
+      (selection?.kind === "relationship" ||
+        selection?.kind === "suggestion" ||
+        selection?.kind === "proposal")
+    ) {
+      setLayers((current) => ({ ...current, relationships: true }));
+    }
+  }, [selection, layers.relationships]);
   useEffect(() => {
     if (
       selection &&
@@ -532,13 +545,16 @@ export function SchemaDiagram({
       const view = nodesById.get(selection.nodeId)!;
       const reads = new Set([view.id, `query:${view.queryId}`]);
       reads.forEach((id) => nodesById.has(id) && lit.add(id));
-      for (const edge of graph.edges) {
-        if (!reads.has(edge.to.nodeId)) continue;
-        if (edge.kind === "reads") {
+      // The tables a view reads light up even with their lines hidden.
+      for (const edge of condensed.edges) {
+        if (edge.kind === "reads" && edge.to.nodeId === view.id) {
           edges.add(edge.id);
           lit.add(edge.from.nodeId);
-          continue;
         }
+      }
+      for (const edge of graph.edges) {
+        if (!reads.has(edge.to.nodeId)) continue;
+        if (edge.kind === "reads") continue;
         if (edge.kind !== "usage") continue;
         // Each field the view reads, and everything upstream of it: query
         // steps, calculations, and the table fields they read.
@@ -579,7 +595,7 @@ export function SchemaDiagram({
           ? lit
           : undefined;
     return { rows, edges, key, nodes };
-  }, [graph, nodesById, selection, suggestions]);
+  }, [graph, condensed, nodesById, selection, suggestions]);
 
   // Every drawn line is routed in one pass, so none runs through a card. A
   // view's field lines show only for the selection, so they route apart.
@@ -811,6 +827,10 @@ export function SchemaDiagram({
         if (rowIndex >= 0) toggleTable(node.rows[rowIndex]!.id);
         return;
       }
+      if (rowIndex >= 0 && node.rows[rowIndex]!.kind === "more") {
+        toggleTable(node.id);
+        return;
+      }
       setSelection(
         rowIndex >= 0
           ? { kind: "field", nodeId: node.id, rowId: node.rows[rowIndex]!.id }
@@ -861,9 +881,10 @@ export function SchemaDiagram({
                 ? selection.nodeId
                 : undefined
             }
-            onLight={(viewId) =>
-              setSelection({ kind: "table", nodeId: viewId })
-            }
+            onLight={(viewId) => {
+              setSelection({ kind: "table", nodeId: viewId });
+              setScrollTo(viewId);
+            }}
           />
         </>
       )}
