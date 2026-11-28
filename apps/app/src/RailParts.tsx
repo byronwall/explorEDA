@@ -18,12 +18,14 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { X } from "lucide-react";
 
 /** Details beside a control, opened by hover or keyboard focus. */
-function Tip({
+export function Tip({
   content,
   children,
+  side = "right",
 }: {
   content: ReactNode;
   children: ReactElement;
+  side?: "right" | "bottom";
 }) {
   return (
     <Tooltip.Root>
@@ -31,7 +33,7 @@ function Tip({
       <Tooltip.Portal>
         <Tooltip.Content
           className="app-tip"
-          side="right"
+          side={side}
           sideOffset={8}
           collisionPadding={8}
         >

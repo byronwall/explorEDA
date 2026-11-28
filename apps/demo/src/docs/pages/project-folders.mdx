@@ -61,7 +61,9 @@ shop/
 - **Sources can also come from a database.** See [database sources](/docs/database-sources).
 - **A subfolder with its own project is left out.** A folder inside that has an `exploreda.eda` or `.exploreda/`, such as a copied `--example`, is a separate project, so its files don't show in this one.
 
-When a file changes on disk, for example after `git pull` or an edit in your text editor, the open page reloads it and says so. Undo history lasts while the page is open.
+When a file changes on disk, for example after `git pull` or an edit in your text editor, the open page reloads it and says so.
+
+Undo and Redo (⌘Z and ⇧⌘Z, or Ctrl+Z and Ctrl+Shift+Z) step back through chart, filter, and calculation edits, such as an Apply in Map categories. An undo saves to the folder like any other edit. The history lasts until the page closes or the folder reloads from disk. Notebook text has its own undo in the editor.
 
 ## Project text
 

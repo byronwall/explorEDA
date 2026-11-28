@@ -82,6 +82,18 @@
 }
 
 /* An explored source's name and size, where an analysis shows its tabs. */
+/* Undo and Redo, first among the host's toolbar actions. */
+.app-undo {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.app-undo .app-icon-button {
+  width: 30px;
+  height: 30px;
+}
+
 .app-explore-head {
   display: flex;
   align-items: baseline;
