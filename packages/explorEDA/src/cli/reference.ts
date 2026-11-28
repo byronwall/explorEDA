@@ -54,6 +54,12 @@ Sources:
 
 Relationships and queries:
   relate @id source.field -> source.field [many-to-one|one-to-one|one-to-many|many-to-many]
+  The first field is the many side (jobs.run_id), the second the other
+  table's key (runs.run_id). Declare a relate line for every pair of tables
+  that share a key, even with no lookup yet: the schema diagram draws it and
+  any query can then look up across it. exploreda-dsl project <folder>, and
+  the project and add_data tools, list suggested links from key names whose
+  values match; add the right ones.
   query @id ["Name"] glyph=X [frame=label] [output=step] { steps }
   glyph= is required: one character, such as ◆ or ▲.
   Each step reads the step before it; from=step reads another.

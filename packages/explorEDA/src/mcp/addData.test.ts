@@ -3,7 +3,7 @@ import type { AddressInfo } from "node:net";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { memoryProjectFiles } from "@/lib/project/files";
 import { addData } from "./addData";
-import { writeEda } from "./tools";
+import { project, readEda, writeEda } from "./tools";
 
 const CSV = "id,region,revenue\nA,East,3\nB,West,5\n";
 let server: Server;
@@ -39,6 +39,32 @@ afterAll(() => {
 });
 
 describe("add_data", () => {
+  it("suggests relate lines to tables that share a key, until declared", async () => {
+    const files = memoryProjectFiles();
+    await addData(files, {
+      path: "data/runs.csv",
+      rows: "run_id,repo\nr1,a\nr2,a\nr3,b\n",
+    });
+    const jobs = await addData(files, {
+      path: "data/jobs.csv",
+      rows: "job_id,run_id\nj1,r1\nj2,r1\nj3,r3\n",
+    });
+    const relate = "relate @jobs-runs jobs.run_id -> runs.run_id";
+    expect(jobs.suggestedLinks).toEqual([{ relate, matched: 3, total: 3 }]);
+    expect(jobs.howToUse).toContain("relate line");
+    expect((await project(files)).suggestedLinks).toEqual(jobs.suggestedLinks);
+
+    const { text, version } = await readEda(files, { path: "exploreda.eda" });
+    await writeEda(files, {
+      path: "exploreda.eda",
+      text: `${text}\n${relate}\n`,
+      version,
+    });
+    const after = await project(files);
+    expect(after.suggestedLinks).toBeUndefined();
+    expect(after.next).toBeUndefined();
+  });
+
   it("starts an empty folder from rows, ready to chart", async () => {
     const files = memoryProjectFiles();
     const added = await addData(files, { path: "data/sales.csv", rows: CSV });

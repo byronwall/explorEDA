@@ -104,6 +104,10 @@ An agent can start from an empty folder. `add_data` takes one of three kinds of 
 
 Each call writes the file where the agent names it, such as `data/sales.csv`, and adds a source for it to the project text, which it creates if needed. The result lists the new source's fields, ready for an analysis that starts with `eda query=sales`.
 
+### Related tables
+
+When the agent adds a table that shares a key with one already in the project, such as `run_id` in both `runs.csv` and `jobs.csv`, `add_data` returns `suggestedLinks`: the `relate` lines to declare, each with how many rows match. `project` lists every suggested link the project text lacks. The agent adds the right ones to `exploreda.eda`, so the schema diagram draws them and any query can look up across them. Between data files, a suggestion needs a key that names the other source's ID (`jobs.run_id` finds `runs.run_id`, `orders.customer_id` finds customers' `id`), a nearly unique key in that source, and 90% of the values found in it. When two sources fit equally, such as `crm_customers` and `billing_customers`, neither is suggested.
+
 `add_data` never replaces a file. It refuses a file over 100 MB, a web page, an address that redirects more than five times, and an address that doesn't answer in 30 seconds. A refused call writes nothing.
 
 ## An example session

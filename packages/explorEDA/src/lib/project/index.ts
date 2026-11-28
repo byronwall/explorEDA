@@ -79,6 +79,7 @@ export {
   proposalRelationship,
   proposeLinks,
   UNIQUE_SHARE,
+  withoutLocalSources,
   type ForeignKey,
   type LinkProposal,
 } from "./linkProposals";

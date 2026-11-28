@@ -29,6 +29,18 @@ function setup(tables: Record<string, AnalysisSourceRow[]>) {
 
 const range = (count: number) => Array.from({ length: count }, (_, i) => i);
 
+/** File sources, each keyed on its first field, and their links. */
+function fileLinks(tables: Record<string, AnalysisSourceRow[]>) {
+  const { project } = setup(tables);
+  for (const source of project.sources) {
+    source.entityKey = source.fields[0]!.id;
+  }
+  return proposeLinks({ project, tables }).map(
+    (link) =>
+      `${link.from.sourceId}.${link.from.fieldId} -> ${link.to.sourceId}.${link.to.fieldId} ${link.matched}/${link.total}`
+  );
+}
+
 describe("proposeLinks", () => {
   it("matches warehouse key names whose values overlap", () => {
     const input = setup({
@@ -160,5 +172,147 @@ describe("proposeLinks", () => {
       cardinality: "one-to-one",
     });
     expect(proposeLinks(input)).toEqual([]);
+  });
+
+  it("links file sources by key name, skipping links through a parent", () => {
+    // CI exports: a job copies its run's key, a step copies both, and a
+    // sample of runs holds every run a job names.
+    expect(
+      fileLinks({
+        runs: range(30).map((i) => ({ run_id: `r${i}`, repo: "a" })),
+        jobs: range(60).map((i) => ({ job_id: `j${i}`, run_id: `r${i % 10}` })),
+        steps: range(120).map((i) => ({
+          step_id: `s${i}`,
+          job_id: `j${i % 60}`,
+          run_id: `r${i % 10}`,
+        })),
+        sample: range(10).map((i) => ({ run_id: `r${i}`, wall_s: i })),
+      })
+    ).toEqual([
+      "jobs.run_id -> runs.run_id 60/60",
+      "steps.job_id -> jobs.job_id 120/120",
+      "sample.run_id -> runs.run_id 10/10",
+    ]);
+  });
+
+  it("keeps a direct link whose values differ from the parent's", () => {
+    // A shipment's customer is the recipient, not the order's buyer.
+    expect(
+      fileLinks({
+        customers: range(10).map((i) => ({ customer_id: `c${i}` })),
+        orders: range(20).map((i) => ({
+          order_id: `o${i}`,
+          shipment_id: `s${i}`,
+          customer_id: `c${i % 10}`,
+        })),
+        shipments: range(20).map((i) => ({
+          shipment_id: `s${i}`,
+          customer_id: `c${(i + 3) % 10}`,
+        })),
+      })
+    ).toEqual([
+      "orders.shipment_id -> shipments.shipment_id 20/20",
+      "orders.customer_id -> customers.customer_id 20/20",
+      "shipments.customer_id -> customers.customer_id 20/20",
+    ]);
+  });
+
+  it("skips row numbers two files share, and fields project text can't name", () => {
+    expect(
+      fileLinks({
+        builds: range(3).map((i) => ({ event_id: i + 1, ok: true })),
+        emails: range(3).map((i) => ({ mail_id: i, event_id: i + 1 })),
+        jobs: [{ "job id": "j1", "run id": "r1" }],
+        runs: [{ "run id": "r1" }],
+      })
+    ).toEqual([]);
+    // Unless a file's name says what the numbers count.
+    expect(
+      fileLinks({
+        events: range(3).map((i) => ({ event_id: i + 1 })),
+        emails: range(3).map((i) => ({ mail_id: i, event_id: i + 1 })),
+      })
+    ).toEqual(["emails.event_id -> events.event_id 3/3"]);
+  });
+
+  it("keeps a direct link that reaches rows the parent path misses", () => {
+    expect(
+      fileLinks({
+        runs: range(10).map((i) => ({ run_id: `r${i}` })),
+        jobs: range(10).map((i) => ({ job_id: `j${i}`, run_id: `r${i}` })),
+        // The last step lost its job but still names its run.
+        steps: range(10).map((i) => ({
+          step_id: `s${i}`,
+          job_id: i < 9 ? `j${i}` : "",
+          run_id: `r${i}`,
+        })),
+      })
+    ).toEqual([
+      "jobs.run_id -> runs.run_id 10/10",
+      "steps.job_id -> jobs.job_id 9/9",
+      "steps.run_id -> runs.run_id 10/10",
+    ]);
+  });
+
+  it("links dotted field names", () => {
+    expect(
+      fileLinks({
+        runs: range(5).map((i) => ({ "ci.run_id": `r${i}` })),
+        jobs: range(5).map((i) => ({ job_id: `j${i}`, "ci.run_id": `r${i}` })),
+      })
+    ).toEqual(["jobs.ci.run_id -> runs.ci.run_id 5/5"]);
+  });
+
+  it("skips a key two files fit equally, and names with -es plurals", () => {
+    const people = range(5).map((i) => ({ customer_id: i + 1 }));
+    expect(
+      fileLinks({
+        crm_customers: people,
+        billing_customers: people,
+        orders: range(5).map((i) => ({
+          order_id: `o${i}`,
+          customer_id: i + 1,
+        })),
+        invoices: range(5).map((i) => ({ invoice_id: `i${i}` })),
+        payments: range(5).map((i) => ({ pay_id: i, invoice_id: `i${i}` })),
+      })
+    ).toEqual(["payments.invoice_id -> invoices.invoice_id 5/5"]);
+  });
+
+  it("brings back a direct link when its parent link is dismissed", () => {
+    const tables = {
+      runs: range(4).map((i) => ({ run_id: `r${i}` })),
+      jobs: range(4).map((i) => ({ job_id: `j${i}`, run_id: `r${i}` })),
+      steps: range(4).map((i) => ({
+        step_id: `s${i}`,
+        job_id: `j${i}`,
+        run_id: `r${i}`,
+      })),
+    };
+    const { project } = setup(tables);
+    const ids = (dismissed?: Set<string>) =>
+      proposeLinks({ project, tables, dismissed }).map((link) => link.id);
+    expect(ids()).toEqual([
+      "rel-jobs-run_id-runs-run_id",
+      "rel-steps-job_id-jobs-job_id",
+    ]);
+    expect(ids(new Set(["rel-jobs-run_id-runs-run_id"]))).toEqual([
+      "rel-steps-job_id-jobs-job_id",
+      "rel-steps-run_id-runs-run_id",
+    ]);
+  });
+
+  it("counts a value that names two rows as unmatched", () => {
+    const runs = range(100).map((i) => ({ run_id: `r${i}` }));
+    runs.push({ run_id: "r0" });
+    expect(
+      fileLinks({
+        runs,
+        jobs: range(20).map((i) => ({
+          job_id: `j${i}`,
+          run_id: i < 2 ? "r0" : `r${i}`,
+        })),
+      })
+    ).toEqual(["jobs.run_id -> runs.run_id 18/20"]);
   });
 });

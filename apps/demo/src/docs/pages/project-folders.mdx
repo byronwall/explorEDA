@@ -99,6 +99,8 @@ A declaration's head sits on one line. `@name` gives it an ID, `{ }` holds its b
 
 Every source can also be charted on its own: a source with no query of its name gets one that reads it.
 
+Data files that share a key get **suggested links**. When a key names another source, such as `jobs.run_id` and the `runs` source's `run_id`, and 90% of its values are found there, the schema diagram draws the link dashed and the project rail shows **N to review**. Accept a link to add its `relate` line. `npx -p exploreda exploreda-dsl project <folder>` lists the same suggestions as `relate` lines. A link that a lookup through another table already gives, such as from steps to runs through jobs, isn't suggested.
+
 ### Query steps
 
 Each step reads the step before it. Use `from=step` to read another one, and add `@id` to name a step differently.
