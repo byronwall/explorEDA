@@ -27,13 +27,16 @@ jobs:
           node-version: 24
           cache: "pnpm"
 
-      - run: pnpm install --frozen-lockfile
+      - id: install
+        run: pnpm install --frozen-lockfile
 
       - name: Branch checks
         timeout-minutes: 2
         run: pnpm check:pr origin/${{ github.base_ref }}
 
+      # Runs even when Branch checks fail, so one push shows every failure.
       - name: Check
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         timeout-minutes: 20
         run: pnpm check
 

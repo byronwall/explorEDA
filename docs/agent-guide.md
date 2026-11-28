@@ -66,7 +66,9 @@ Runs `check:ui`, then each package's build, type check, and tests, one package a
 pnpm check:pr
 ```
 
-Fails when a branch changes the `exploreda` package without a changeset, or has a commit with an invalid author. CI runs it and `pnpm check` on every pull request.
+Fails when a branch changes the `exploreda` package without a changeset, or has a commit with an invalid author. CI runs it and `pnpm check` on every pull request. Pass a base and a head to check another branch: `pnpm check:pr origin/claude/layer-below claude/layer`.
+
+A pre-push hook (`.githooks/pre-push`) runs `check:pr` on each pushed branch against its PR's base: the layer below it in a gh stack, else its open PR's base, else `origin/main`. When the checked-out commit is pushed, it also runs `check:ui`. It takes about 2 seconds.
 
 A pre-commit hook (`.githooks/pre-commit`, installed by `pnpm install`) formats the staged files with Prettier and fails on oxlint errors in them, so don't run Prettier by hand before committing. A file with unstaged edits as well is only checked; format it and stage it again. Never format a whole folder; it rewrites unrelated files.
 

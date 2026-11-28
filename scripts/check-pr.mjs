@@ -1,12 +1,14 @@
 // Checks a branch against its base before it merges:
 // - a change to what exploreda users get carries a changeset;
 // - every commit has a real author (not a flag such as "--worktree").
-// Usage: pnpm check:pr [base]   (default base: origin/main)
+// Usage: pnpm check:pr [base] [head]   (defaults: origin/main, HEAD)
+// The pre-push hook (scripts/pre-push.mjs) runs it on each pushed branch.
 import { execFileSync } from "node:child_process";
 
 const git = (...args) => execFileSync("git", args, { encoding: "utf8" }).trim();
 const base = process.argv[2] ?? process.env.PR_BASE ?? "origin/main";
-const mergeBase = git("merge-base", base, "HEAD");
+const head = process.argv[3] ?? "HEAD";
+const mergeBase = git("merge-base", base, head);
 const failures = [];
 
 const changed = git(
@@ -14,7 +16,7 @@ const changed = git(
   "--name-only",
   "--diff-filter=ACMRD",
   mergeBase,
-  "HEAD"
+  head
 )
   .split("\n")
   .filter(Boolean);
@@ -37,7 +39,7 @@ const packageChanges = changed.filter(
     ) &&
     !(
       path === "packages/explorEDA/package.json" &&
-      manifestForUsers(mergeBase) === manifestForUsers("HEAD")
+      manifestForUsers(mergeBase) === manifestForUsers(head)
     )
 );
 const changesets = changed.filter(
@@ -58,7 +60,7 @@ const badAuthors = git(
   "log",
   "--date=short",
   "--format=%ad %h %an <%ae>",
-  `${mergeBase}..HEAD`
+  `${mergeBase}..${head}`
 )
   .split("\n")
   .filter(Boolean)
