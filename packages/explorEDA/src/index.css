@@ -1936,6 +1936,8 @@ html {
 }
 .eda-field-pick > [data-slot="checkbox"] {
   margin-right: 6px;
+  /* The row draws the focus ring. */
+  outline: none;
 }
 .eda-field-pick-name {
   flex: 1 1 auto;
