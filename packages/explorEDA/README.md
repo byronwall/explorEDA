@@ -639,7 +639,7 @@ Dismiss. `proposeLinks` drafts them from a project's tables: within the file
 sources, and within each database connection's tables, it pairs key names
 (`jobs.run_id` and `runs.run_id`, `orders.customer_id` and customers' `id`)
 where 90% of the values match a nearly unique key, plus any foreign keys
-you pass.
+you pass. Between files, the key must also name the file it reaches.
 
 Pass every saved view as `views` so the diagram shows what each one reads;
 views other than the current one fold to one row per chart. Pass
