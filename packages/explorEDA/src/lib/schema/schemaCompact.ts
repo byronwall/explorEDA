@@ -108,6 +108,10 @@ export function condenseProject(
   graph: SchemaGraph,
   open: ReadonlySet<string>
 ): SchemaGraph {
+  // A single table has nothing to set aside or route around; it draws as is.
+  if (graph.nodes.filter((node) => node.kind === "table").length <= 1) {
+    return graph;
+  }
   const views = graph.nodes.filter((node) => node.kind === "view");
   const reads = querySources(graph);
   const readers = new Map<string, SchemaNode[]>();
