@@ -527,11 +527,7 @@ export function ProjectWorkspace({
         usedBy={usedBy}
         onOpenSchema={
           project.sources.length > 1 && view && !notebook
-            ? () =>
-                // With links to review, the whole diagram shows first.
-                workspace.current?.openSchema?.(
-                  proposals.length ? undefined : viewSource(project, view)
-                )
+            ? () => workspace.current?.openSchema?.()
             : undefined
         }
       />
@@ -612,13 +608,6 @@ export function ProjectWorkspace({
 
 const plural = (count: number, word: string) =>
   `${count.toLocaleString()} ${word}${count === 1 ? "" : "s"}`;
-
-/** The table a view's query reads first. */
-function viewSource(project: AnalysisProject, view: AnalysisView) {
-  const query = project.queries.find((item) => item.id === view.queryId);
-  const first = query?.steps.find((step) => step.kind === "source");
-  return first?.kind === "source" ? first.sourceId : undefined;
-}
 
 function FirstRun({
   dataFiles,

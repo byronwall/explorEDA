@@ -1,0 +1,536 @@
+{
+  "schema_version": "0.5.0",
+  "initiative": {
+    "title": "Schema diagram that shows what the analyses use",
+    "slug": "schema-diagram-focus",
+    "scale": "feature",
+    "current_phase": "execution",
+    "last_updated": "2026-11-27",
+    "summary": "Make the Schema diagram readable on real projects by emphasizing the tables, fields, and queries that views use, while keeping all data reachable.",
+    "status": "active",
+    "next_action": "Build M1; draftably#715 session (local_90c4e9a2) builds the router API"
+  },
+  "artifacts": {
+    "intent_brief": {
+      "path": "intent-brief.md",
+      "status": "current",
+      "updated_at": "2026-11-27"
+    },
+    "brainstorm": {
+      "path": "brainstorm.md",
+      "status": "current",
+      "updated_at": "2026-11-27"
+    },
+    "shape_brief": {
+      "path": "shape-brief.md",
+      "status": "current",
+      "updated_at": "2026-11-27"
+    },
+    "implementation_plan": {
+      "path": "implementation-plan.md",
+      "status": "draft",
+      "updated_at": "2026-11-27"
+    }
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "type": "transcript",
+      "location": "~/Projects/planning/tasks/TASK-0092/recorder-2026-11-27/ledger.md",
+      "anchor": "B06 1:56-2:14, mark 008",
+      "authority": "user"
+    },
+    {
+      "id": "S2",
+      "type": "transcript",
+      "location": "/Users/byronwall/Movies/ContextRecorder/2026-11-27_11-01-28/recording.mp4",
+      "anchor": "2:19 at least it has all the data there",
+      "authority": "user"
+    },
+    {
+      "id": "S3",
+      "type": "repo",
+      "location": "packages/explorEDA/src/lib/schema/schemaGraph.ts, schemaLayout.ts, schemaCompact.ts; components/schema/SchemaDiagram.tsx",
+      "anchor": "projectSchemaGraph, layoutSchemaGraph, compactViews",
+      "authority": "repo"
+    },
+    {
+      "id": "S4",
+      "type": "repo",
+      "location": "~/Projects/planning/tasks/TASK-0091/explorEDA",
+      "anchor": "views read 16 of 139 fields, 4 of 14 tables; 14 one-step queries",
+      "authority": "repo"
+    },
+    {
+      "id": "qa-round-1",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "1",
+      "authority": "user"
+    },
+    {
+      "id": "S5",
+      "type": "qa",
+      "location": "shared notes w4-data-explorer.md (W4 round 1 answers)",
+      "anchor": "relationship view as a separate action; coverage of sources by dashboards",
+      "authority": "user"
+    },
+    {
+      "id": "S6",
+      "type": "repo",
+      "location": "PRs #695, #698, #699 on main 0c56a873",
+      "anchor": "Tables and links rail row, SourceCard hover, sourceUsage.ts, proposeLinks database-only",
+      "authority": "repo"
+    },
+    {
+      "id": "qa-round-1b",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "1b",
+      "authority": "user"
+    },
+    {
+      "id": "qa-round-2",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "2",
+      "authority": "user"
+    },
+    {
+      "id": "qa-mockups-1",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "mockup review 1",
+      "authority": "user"
+    },
+    {
+      "id": "S7",
+      "type": "repo",
+      "location": "~/Projects/draftably-render-stack src/engines/routing-engine.ts @3f785596",
+      "anchor": "RouteLab.compute, cfg.fromAt/toAt; graph-api route() lacks row ports",
+      "authority": "repo"
+    }
+  ],
+  "intent": {
+    "claims": [
+      {
+        "id": "C1",
+        "statement": "The diagram must emphasize the data the analyses actually use.",
+        "kind": "goal",
+        "sources": ["S1"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C2",
+        "statement": "All data stays reachable from the diagram; unused data is quiet, not removed.",
+        "kind": "constraint",
+        "sources": ["S2"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C3",
+        "statement": "A project with no relationships and many pass-through queries must read cleanly.",
+        "kind": "goal",
+        "sources": ["S1", "S4"],
+        "confidence": "high"
+      },
+      {
+        "id": "C4",
+        "statement": "Tracing, editing, and Add source keep working.",
+        "kind": "constraint",
+        "sources": ["S3"],
+        "confidence": "high"
+      },
+      {
+        "id": "C5",
+        "statement": "Row browsing belongs to the data explorer (W4), not this initiative.",
+        "kind": "boundary",
+        "sources": ["S1"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C6",
+        "statement": "Byron wants to see how data sources relate, then build a dashboard on a slice; he sees this as a separate action from hovering or clicking a source in the Data rail.",
+        "kind": "goal",
+        "sources": ["S5"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C7",
+        "statement": "Byron wants to see which data sources the existing dashboards cover. W4 leaves this view to W5 and will link to it.",
+        "kind": "goal",
+        "sources": ["S5"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C8",
+        "statement": "The diagram first serves two jobs: how tables relate, and what the dashboards cover. The full model is secondary.",
+        "kind": "decision",
+        "sources": ["qa-round-1b"],
+        "confidence": "high"
+      },
+      {
+        "id": "C9",
+        "statement": "Show where each source came from.",
+        "kind": "goal",
+        "sources": ["qa-round-1b"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C10",
+        "statement": "Coverage: mark each table with its readers and light up one analysis path in the diagram; a sources x analyses grid is secondary.",
+        "kind": "decision",
+        "sources": ["qa-round-1b"],
+        "confidence": "high"
+      },
+      {
+        "id": "C11",
+        "statement": "Unused tables collapse with progressive disclosure; unused fields matter less.",
+        "kind": "decision",
+        "sources": ["qa-round-1b"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C12",
+        "statement": "The Schema button opens the whole project fitted; a per-analysis entry may open that analysis view.",
+        "kind": "decision",
+        "sources": ["qa-round-1b"],
+        "confidence": "high"
+      },
+      {
+        "id": "C13",
+        "statement": "Done bar: one screen of content readable at normal zoom, with no pan or zoom needed to see structure and read labels.",
+        "kind": "constraint",
+        "sources": ["qa-round-1b"],
+        "confidence": "high"
+      },
+      {
+        "id": "C14",
+        "statement": "Agents that build a workspace should declare relationships.",
+        "kind": "goal",
+        "sources": ["qa-round-1b"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C15",
+        "statement": "Provenance stays in the hover card and is low effort; below the cut for this initiative.",
+        "kind": "boundary",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C16",
+        "statement": "Relationships for file sources (agent declarations first, data-based suggestions second) are wanted but are a separate initiative from the diagram.",
+        "kind": "boundary",
+        "sources": ["qa-round-2"],
+        "confidence": "medium"
+      },
+      {
+        "id": "C17",
+        "statement": "Condense to start: used tables show all fields, unused tables collapse; scroll is acceptable once the used part overflows one screen.",
+        "kind": "decision",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C18",
+        "statement": "Per-analysis view and coverage grid: the agent picks the simplest mechanism; Byron judges by feel.",
+        "kind": "decision",
+        "sources": ["qa-round-2"],
+        "confidence": "high"
+      },
+      {
+        "id": "C19",
+        "statement": "Mockup A (condensed columns) is the base direction.",
+        "kind": "decision",
+        "sources": ["qa-mockups-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C20",
+        "statement": "The coverage grid is available on demand (popover or similar), not the main view.",
+        "kind": "decision",
+        "sources": ["qa-mockups-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C21",
+        "statement": "The relationship map (declared and suggested links) is an overlay layer the user shows or hides; the diagram is a base plus several overlay layers.",
+        "kind": "decision",
+        "sources": ["qa-mockups-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C22",
+        "statement": "Edge routes must never cross nodes; use Draftably layout and routing approaches or its actual algorithms.",
+        "kind": "constraint",
+        "sources": ["qa-mockups-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C23",
+        "statement": "Depend on @draftably/runtime route() with the draftably#715 API; do not copy the engine. Assume the API exists while building.",
+        "kind": "decision",
+        "sources": ["qa-mockups-1"],
+        "confidence": "high"
+      }
+    ],
+    "themes": [],
+    "conflicts": [
+      {
+        "id": "X1",
+        "statement": "Resolved: the CI project was written by an agent script (TASK-0091 dashboard.py) that declared one source and one pass-through query per CSV and no relationships. Byron assumed they were modeled.",
+        "sources": ["S4", "qa-round-1b"]
+      }
+    ],
+    "human_questions": []
+  },
+  "brainstorm": {
+    "status": "draft",
+    "requested_count": 3,
+    "options": [
+      {
+        "id": "O1",
+        "name": "Usage-weighted layout",
+        "premise": "one picture, emphasis by use"
+      },
+      {
+        "id": "O2",
+        "name": "Lineage from the views back",
+        "premise": "views are the anchor, trace back"
+      },
+      {
+        "id": "O3",
+        "name": "Two modes: Used and All",
+        "premise": "two pictures with a switch"
+      }
+    ],
+    "selected_option": "O1 + layers"
+  },
+  "shape": {
+    "status": "current",
+    "appetite": "One stack of three or four PRs in lib/schema, SchemaDiagram.tsx, and the rail; no data model or project text change.",
+    "problem": "The diagram draws every table, field, and pass-through query at equal weight and fits at 60%, so nothing reads without zooming and zooming loses structure.",
+    "recommended_shape": "Usage-weighted condensed drawing (Option 1) as a draw-only transform, fitted at 100% with vertical overflow, plus coverage light-up per analysis and a coverage grid tab.",
+    "success_moves": [
+      "Condense as a draw-only step after projectSchemaGraph, like compactViews, so sourceUsage, tracing, and editing read one full graph",
+      "Usage lines already start at table fields, so dropping pass-through query cards loses no usage line",
+      "Prove the one-screen bar first on the real CI project before coverage work",
+      "Reuse traceField walk to compute used fields instead of a second definition",
+      "Keep relationships for file sources as a separate initiative"
+    ],
+    "first_proof": {
+      "question": "Does the condensed CI project read at scale 1 without horizontal overflow at 1512 and 1280 px?",
+      "artifact": "app-shot screenshots plus an --eval of viewport scrollWidth and transform scale",
+      "decision_rule": "Fits at 1280 px: continue to M2. Otherwise tighten column gap and move the unused list to a bottom strip before M2."
+    },
+    "rabbit_holes": [
+      "Provenance and derived-from lines",
+      "Separate per-analysis drawing",
+      "CSV link suggestions inside this initiative"
+    ],
+    "open_decisions": []
+  },
+  "implementation": {
+    "status": "planned",
+    "repository_snapshot": {
+      "root": "packages/explorEDA",
+      "revision": "0c56a873",
+      "worktree_status": null,
+      "subsystems": [
+        "packages/explorEDA/src/lib/schema",
+        "packages/explorEDA/src/components/schema/SchemaDiagram.tsx",
+        "packages/explorEDA/src/components/ExplorEdaProject.tsx",
+        "apps/app/src/ProjectRail.tsx"
+      ],
+      "test_commands": [
+        "pnpm --filter exploreda exec vitest run src/lib/schema src/components/schema",
+        "node scripts/app-shot.mjs"
+      ],
+      "deployment_surfaces": []
+    },
+    "dependencies": [
+      {
+        "id": "draftably-router",
+        "name": "Draftably RouteLab / @draftably/runtime route()",
+        "first_proof_role": "real (bundled RouteLab.compute in the mockup: 11 lines, 0 card crossings, 0 blocked, 40-66 ms)",
+        "seam": "one route call per drawing in lib/schema/schemaLayout.ts",
+        "gap": "byronwall/draftably#715: row ports, strict no-crossing mode, browser subpath"
+      }
+    ],
+    "fast_local_loop": {
+      "command": "pnpm --filter exploreda exec vitest run src/lib/schema src/components/schema"
+    },
+    "milestones": [
+      {
+        "id": "m1",
+        "title": "One readable screen on the CI project",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m2",
+        "title": "Lines that never cross a card (Draftably router)",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m3",
+        "title": "Light up an analysis and rail entry",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m4",
+        "title": "Layers and the Coverage popover",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m5",
+        "title": "Docs and retirement",
+        "status": "planned",
+        "evidence": []
+      }
+    ],
+    "cut_line": [
+      "Provenance beyond file path",
+      "Derived-from lines",
+      "Separate per-analysis drawing",
+      "Relationships for file sources (separate initiative)"
+    ],
+    "open_decisions": []
+  },
+  "history": [
+    {
+      "date": "2026-11-27",
+      "change": "Created intent brief, three approaches, and round 1 questions from the TASK-0092 walkthrough."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Added W4 round 1 answers relayed by the data explorer session: relationship view and dashboard coverage belong to W5."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Took stock of W1-W4 (exploreda 0.6.0). Superseded unanswered round 1 with round 1b."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Recorded round 1b answers: relate + coverage first, provenance, whole-project start, one readable screen."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Recorded round 2 answers; intent is shape-ready."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Wrote shape brief and implementation plan (4 milestones). Open PRs checked: none touch schema files or ProjectRail."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Built seven HTML mockups seeded from the real app DOM and CSS (captured with Playwright): condensed columns, lanes by table, coverage grid, relationship map, tiles, field-to-chart flow, overview plus path. Byron said the approved mockup is the go-ahead."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Byron picked mockup A, with the coverage grid on demand, the relationship map as a show/hide overlay, and Draftably-style routing that never crosses nodes."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Shape: A plus layers (lines, relationships overlay, unused list) and a Coverage popover. Plan: 5 milestones with Draftably routing in M2. Filed byronwall/draftably#715 for row ports and strict mode."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Byron: assume the #715 API, do not copy the engine; started a Draftably session for #715. Implementation started."
+    }
+  ],
+  "closure": null,
+  "question_rounds": {
+    "rounds": [
+      {
+        "round": 1,
+        "theme": "goals and stakes",
+        "source": "qa-round-1",
+        "questions": [
+          {
+            "question": "What do you open the Schema diagram for, most often?"
+          },
+          {
+            "question": "How should unused tables appear by default?"
+          },
+          {
+            "question": "How should unused fields inside a used table appear?"
+          },
+          {
+            "question": "What should a one-step Read query draw?"
+          },
+          {
+            "question": "Which outcome would make this not a mess?"
+          }
+        ],
+        "answers": null
+      },
+      {
+        "round": 2,
+        "theme": "goals and stakes after W1-W4 shipped (round 1b; round 1 superseded unanswered)",
+        "source": "qa-round-1b",
+        "questions": [
+          {
+            "question": "What is the diagram main job now?"
+          },
+          {
+            "question": "What does built on relationships mean, and should file sources get suggested links?"
+          },
+          {
+            "question": "What does dashboard coverage look like?"
+          },
+          {
+            "question": "How should unused tables, unused fields, and one-step queries appear?"
+          },
+          {
+            "question": "Where should the diagram open?"
+          },
+          {
+            "question": "What is the bar for not a mess?"
+          }
+        ],
+        "answers": [
+          "Most important jobs: relating tables (see how sources connect, then build a dashboard on a slice) and a coverage map. Also important: where the data came from. Full model is less important for the first schema viewer.",
+          "He assumed the relationships were modeled and is surprised they were not; agents should include relationships when they build the workspace.",
+          "Both coverage views are good: in-diagram marking with one analysis lit up is more important; a quick sources x analyses grid is also wanted.",
+          "Unused tables are worse than unused fields; use progressive disclosure to expand an unused table.",
+          "Open on the whole project. Maybe a schema button next to each dashboard and analysis shows its dedicated view; the single Schema button shows the whole workspace.",
+          "The bar: readable at normal zoom without panning, a screen of readable content. Today you must zoom in to read, and then lose the overall structure."
+        ]
+      },
+      {
+        "round": 3,
+        "theme": "behavior and limits (round 2)",
+        "source": "qa-round-2",
+        "questions": [
+          {
+            "question": "What should where-it-came-from show?"
+          },
+          {
+            "question": "Relationships for file sources: diagram suggestions, agent declarations, or both, and in this initiative?"
+          },
+          {
+            "question": "Check: used tables show all fields; only unused tables collapse?"
+          },
+          {
+            "question": "When the used part does not fit one readable screen, what gives?"
+          },
+          {
+            "question": "Per-analysis view and coverage grid: where do they live?"
+          }
+        ],
+        "answers": [
+          "Provenance can live in the hover card; unsure how much effort it deserves.",
+          "Both, but agents declaring relationships is more useful; automatic suggestions from data are good too.",
+          "Yes: used tables show all fields, unused tables collapse; avoid excess space and condense to start.",
+          "When the used part does not fit, scrolling is OK.",
+          "Find a simple way to make the per-analysis view and grid work; he will see how it feels."
+        ]
+      }
+    ]
+  }
+}

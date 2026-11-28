@@ -1,3 +1,4 @@
+import { readsOneTable } from "@/lib/schema/schemaCompact";
 import { useMemo, type RefObject } from "react";
 import { useDataLayer } from "@/providers/DataLayerProvider";
 import { tableSchemaGraph, type SchemaGraph } from "@/lib/schema/schemaGraph";
@@ -133,7 +134,10 @@ export function SchemaDrawer({
     calculationEditor,
   ]);
   const tables = graph.nodes.filter((node) => node.kind === "table");
-  const queries = graph.nodes.filter((node) => node.kind === "query").length;
+  // Queries that only read one table draw no card, so they are not counted.
+  const queries = graph.nodes.filter(
+    (node) => node.kind === "query" && !readsOneTable(node)
+  ).length;
   const views = graph.nodes.filter((node) => node.kind === "view").length;
   const fields = tables.reduce((sum, node) => sum + node.rows.length, 0);
   const relationships = graph.edges.filter(
