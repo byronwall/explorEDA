@@ -439,7 +439,13 @@ export function ProjectWorkspace({
             tables: folder.tables,
             databases: folder.databases,
             foreignKeys: keys,
-          }).filter((item) => !dismissed.has(item.id)),
+          }).filter(
+            (item) =>
+              !dismissed.has(item.id) &&
+              // An analysis's own source can't be named in project text.
+              !(item.from.sourceId in folder.localSources) &&
+              !(item.to.sourceId in folder.localSources)
+          ),
     [readOnly, project, folder, keys, dismissed]
   );
   const dismissLink = (id: string) => {

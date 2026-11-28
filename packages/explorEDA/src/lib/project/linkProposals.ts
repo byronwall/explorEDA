@@ -61,6 +61,10 @@ const singular = (name: string) =>
     .replace(/ies$/, "y")
     .replace(/(s|es)$/, "");
 
+/** Whether a key field names a table: `event_id` and `events`. */
+const namesTable = (field: string, table: string) =>
+  Boolean(stem(field)) && singular(stem(field)) === singular(table);
+
 /** Whether a field of one table names the key of another. */
 function namesKey(
   field: string,
@@ -85,8 +89,30 @@ function namesKey(
 }
 
 interface Column {
-  values: Set<unknown>;
+  /** Each value and how many rows hold it. */
+  values: Map<unknown, number>;
   count: number;
+}
+
+/** An ID project text writes bare in `source.field`: no space, no dot. */
+const PLAIN_ID = /^[A-Za-z0-9_][\w-]*$/;
+
+/**
+ * Whether a key's values look like row numbers: whole numbers 0 or 1 to N
+ * with none missing. Two exports that number their rows share these
+ * values without naming the same things.
+ */
+function isCounter(values: Map<unknown, number>) {
+  let min = Infinity;
+  let max = -Infinity;
+  for (const value of values.keys()) {
+    const number = typeof value === "number" ? value : Number(value);
+    if (!Number.isInteger(number) || String(number) !== String(value))
+      return false;
+    min = Math.min(min, number);
+    max = Math.max(max, number);
+  }
+  return (min === 0 || min === 1) && max - min + 1 === values.size;
 }
 
 export function proposeLinks({
@@ -111,12 +137,12 @@ export function proposeLinks({
     const key = `${sourceId}\u0000${fieldId}`;
     let found = columns.get(key);
     if (!found) {
-      const values = new Set<unknown>();
+      const values = new Map<unknown, number>();
       let count = 0;
       for (const row of tables[sourceId] ?? []) {
         const value = row[fieldId];
         if (value == null || value === "") continue;
-        values.add(value);
+        values.set(value, (values.get(value) ?? 0) + 1);
         count += 1;
       }
       found = { values, count };
@@ -139,7 +165,8 @@ export function proposeLinks({
       const value = row[from.fieldId];
       if (value == null || value === "") continue;
       total += 1;
-      if (target.has(value)) matched += 1;
+      // A lookup finds nothing when the value names two rows.
+      if (target.get(value) === 1) matched += 1;
     }
     return { matched, total };
   };
@@ -213,8 +240,11 @@ export function proposeLinks({
       }
     }
 
+    const files = !databases[ids[0]!];
     for (const fromId of ids) {
+      if (!PLAIN_ID.test(fromId)) continue;
       for (const field of sources.get(fromId)!.fields) {
+        if (!PLAIN_ID.test(field.id)) continue;
         let best:
           | {
               to: LinkProposal["to"];
@@ -224,12 +254,25 @@ export function proposeLinks({
         for (const toId of ids) {
           if (toId === fromId) continue;
           for (const target of sources.get(toId)!.fields) {
+            const toSource = sources.get(toId)!;
             if (
+              !PLAIN_ID.test(toId) ||
+              !PLAIN_ID.test(target.id) ||
               !namesKey(field.id, target.id, {
                 id: toId,
                 table: databases[toId]?.table,
               }) ||
               !unique(toId, target.id)
+            )
+              continue;
+            // Files declare no keys, so a file link needs the other file's
+            // own key, and row numbers only when the file's name says what
+            // they number (events.csv for event_id).
+            if (
+              files &&
+              (toSource.entityKey !== target.id ||
+                (isCounter(column(toId, target.id).values) &&
+                  !namesTable(field.id, toId)))
             )
               continue;
             const to = { sourceId: toId, fieldId: target.id };
@@ -263,21 +306,51 @@ export function proposeLinks({
       }
     }
   }
-  return withoutShortcuts(project.relationships, proposals);
+  return withoutShortcuts(project.relationships, proposals, tables);
 }
 
 /**
  * Drops a link by name that a lookup through another table already gives:
  * steps.run_id → runs when steps.job_id → jobs and jobs.run_id → runs. A
  * table that copies its parent's keys would otherwise draw a link to every
- * ancestor.
+ * ancestor. Only when the data agrees: a shipment's customer_id may be
+ * the recipient while its order's customer_id is the buyer.
  */
 function withoutShortcuts(
   accepted: readonly RelationshipDefinition[],
-  proposals: LinkProposal[]
+  proposals: LinkProposal[],
+  tables: Record<string, readonly AnalysisSourceRow[]>
 ): LinkProposal[] {
   const kept = [...proposals];
   const edges = () => [...accepted, ...kept];
+  // Whether every row's own value of `field` is the one its row of the
+  // middle table holds: then both paths reach the same row of the target.
+  const agrees = (
+    from: string,
+    field: string,
+    step: {
+      from: { fieldId: string };
+      to: { sourceId: string; fieldId: string };
+    }
+  ) => {
+    const middle = new Map<unknown, unknown>();
+    const twice = new Set<unknown>();
+    for (const row of tables[step.to.sourceId] ?? []) {
+      const key = row[step.to.fieldId];
+      if (middle.has(key)) twice.add(key);
+      middle.set(key, row[field]);
+    }
+    let checked = 0;
+    for (const row of tables[from] ?? []) {
+      const value = row[field];
+      const key = row[step.from.fieldId];
+      if (value == null || value === "" || !middle.has(key) || twice.has(key))
+        continue;
+      if (middle.get(key) !== value) return false;
+      checked += 1;
+    }
+    return checked > 0;
+  };
   for (const proposal of proposals) {
     if (proposal.reason !== "name") continue;
     const { from, to } = proposal;
@@ -294,7 +367,8 @@ function withoutShortcuts(
             next.from.fieldId === from.fieldId &&
             next.to.sourceId === to.sourceId &&
             next.to.fieldId === to.fieldId
-        )
+        ) &&
+        agrees(from.sourceId, from.fieldId, step)
     );
     if (implied) kept.splice(kept.indexOf(proposal), 1);
   }

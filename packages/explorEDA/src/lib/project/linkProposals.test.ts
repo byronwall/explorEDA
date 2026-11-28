@@ -29,6 +29,18 @@ function setup(tables: Record<string, AnalysisSourceRow[]>) {
 
 const range = (count: number) => Array.from({ length: count }, (_, i) => i);
 
+/** File sources, each keyed on its first field, and their links. */
+function fileLinks(tables: Record<string, AnalysisSourceRow[]>) {
+  const { project } = setup(tables);
+  for (const source of project.sources) {
+    source.entityKey = source.fields[0]!.id;
+  }
+  return proposeLinks({ project, tables }).map(
+    (link) =>
+      `${link.from.sourceId}.${link.from.fieldId} -> ${link.to.sourceId}.${link.to.fieldId} ${link.matched}/${link.total}`
+  );
+}
+
 describe("proposeLinks", () => {
   it("matches warehouse key names whose values overlap", () => {
     const input = setup({
@@ -165,24 +177,75 @@ describe("proposeLinks", () => {
   it("links file sources by key name, skipping links through a parent", () => {
     // CI exports: a job copies its run's key, a step copies both, and a
     // sample of runs holds every run a job names.
-    const { project, tables } = setup({
-      runs: range(30).map((i) => ({ run_id: `r${i}`, repo: "a" })),
-      jobs: range(60).map((i) => ({ job_id: `j${i}`, run_id: `r${i % 10}` })),
-      steps: range(120).map((i) => ({
-        step_id: `s${i}`,
-        job_id: `j${i % 60}`,
-        run_id: `r${i % 10}`,
-      })),
-      sample: range(10).map((i) => ({ run_id: `r${i}`, wall_s: i })),
-    });
-    const links = proposeLinks({ project, tables }).map(
-      (link) =>
-        `${link.from.sourceId}.${link.from.fieldId} -> ${link.to.sourceId}.${link.to.fieldId}`
-    );
-    expect(links).toEqual([
-      "jobs.run_id -> runs.run_id",
-      "steps.job_id -> jobs.job_id",
-      "sample.run_id -> runs.run_id",
+    expect(
+      fileLinks({
+        runs: range(30).map((i) => ({ run_id: `r${i}`, repo: "a" })),
+        jobs: range(60).map((i) => ({ job_id: `j${i}`, run_id: `r${i % 10}` })),
+        steps: range(120).map((i) => ({
+          step_id: `s${i}`,
+          job_id: `j${i % 60}`,
+          run_id: `r${i % 10}`,
+        })),
+        sample: range(10).map((i) => ({ run_id: `r${i}`, wall_s: i })),
+      })
+    ).toEqual([
+      "jobs.run_id -> runs.run_id 60/60",
+      "steps.job_id -> jobs.job_id 120/120",
+      "sample.run_id -> runs.run_id 10/10",
     ]);
+  });
+
+  it("keeps a direct link whose values differ from the parent's", () => {
+    // A shipment's customer is the recipient, not the order's buyer.
+    expect(
+      fileLinks({
+        customers: range(10).map((i) => ({ customer_id: `c${i}` })),
+        orders: range(20).map((i) => ({
+          order_id: `o${i}`,
+          shipment_id: `s${i}`,
+          customer_id: `c${i % 10}`,
+        })),
+        shipments: range(20).map((i) => ({
+          shipment_id: `s${i}`,
+          customer_id: `c${(i + 3) % 10}`,
+        })),
+      })
+    ).toEqual([
+      "orders.shipment_id -> shipments.shipment_id 20/20",
+      "orders.customer_id -> customers.customer_id 20/20",
+      "shipments.customer_id -> customers.customer_id 20/20",
+    ]);
+  });
+
+  it("skips row numbers two files share, and fields project text can't name", () => {
+    expect(
+      fileLinks({
+        builds: range(3).map((i) => ({ event_id: i + 1, ok: true })),
+        emails: range(3).map((i) => ({ mail_id: i, event_id: i + 1 })),
+        jobs: [{ "job id": "j1", "run id": "r1" }],
+        runs: [{ "run id": "r1" }],
+      })
+    ).toEqual([]);
+    // Unless a file's name says what the numbers count.
+    expect(
+      fileLinks({
+        events: range(3).map((i) => ({ event_id: i + 1 })),
+        emails: range(3).map((i) => ({ mail_id: i, event_id: i + 1 })),
+      })
+    ).toEqual(["emails.event_id -> events.event_id 3/3"]);
+  });
+
+  it("counts a value that names two rows as unmatched", () => {
+    const runs = range(100).map((i) => ({ run_id: `r${i}` }));
+    runs.push({ run_id: "r0" });
+    expect(
+      fileLinks({
+        runs,
+        jobs: range(20).map((i) => ({
+          job_id: `j${i}`,
+          run_id: i < 2 ? "r0" : `r${i}`,
+        })),
+      })
+    ).toEqual(["jobs.run_id -> runs.run_id 18/20"]);
   });
 });

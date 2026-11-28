@@ -433,25 +433,31 @@ export function suggestedLinks(
   source?: string
 ): SuggestedLink[] {
   const taken = new Set(read.project.relationships.map((item) => item.id));
+  // An analysis's own source isn't there when the project text compiles.
+  const local = (id: string) => id in read.localSources;
   return proposeLinks({
     project: read.project,
     tables: read.tables,
     databases: read.databases,
   })
-    .filter(
-      (link) =>
-        !source || link.from.sourceId === source || link.to.sourceId === source
-    )
+    .filter((link) => !local(link.from.sourceId) && !local(link.to.sourceId))
     .map(({ from, to, matched, total }) => {
-      let id = `${from.sourceId}-${to.sourceId}`;
-      if (taken.has(id)) id = `${id}-${from.fieldId}`;
+      // IDs come before the filter, so project and add_data agree.
+      const base = `${from.sourceId}-${to.sourceId}`;
+      let id = base;
+      for (let n = 1; taken.has(id); n++)
+        id = n === 1 ? `${base}-${from.fieldId}` : `${base}-${n}`;
       taken.add(id);
       return {
+        from: from.sourceId,
+        to: to.sourceId,
         relate: `relate @${id} ${from.sourceId}.${from.fieldId} -> ${to.sourceId}.${to.fieldId}`,
         matched,
         total,
       };
-    });
+    })
+    .filter((link) => !source || link.from === source || link.to === source)
+    .map(({ relate, matched, total }) => ({ relate, matched, total }));
 }
 
 /** The folder at a glance: its project text, sources, queries, and files. */
