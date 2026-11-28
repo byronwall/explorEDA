@@ -61,9 +61,18 @@ const singular = (name: string) =>
     .replace(/ies$/, "y")
     .replace(/(s|es)$/, "");
 
-/** Whether a key field names a table: `event_id` and `events`. */
-const namesTable = (field: string, table: string) =>
-  Boolean(stem(field)) && singular(stem(field)) === singular(table);
+/**
+ * Whether a key field names a table: `run_id` and `runs`, `ss_item_sk`
+ * and `item`, `run_id` and `ci-runs`.
+ */
+function namesTable(field: string, table: string) {
+  const entities = [field, withoutPrefix(field) ?? ""]
+    .map((name) => stem(name.split(".").at(-1)!))
+    .filter(Boolean)
+    .map(singular);
+  const tables = [table, table.split(/[-_.]/).at(-1)!].map(singular);
+  return entities.some((entity) => tables.includes(entity));
+}
 
 /** Whether a field of one table names the key of another. */
 function namesKey(
@@ -94,26 +103,12 @@ interface Column {
   count: number;
 }
 
-/** An ID project text writes bare in `source.field`: no space, no dot. */
-const PLAIN_ID = /^[A-Za-z0-9_][\w-]*$/;
-
 /**
- * Whether a key's values look like row numbers: whole numbers 0 or 1 to N
- * with none missing. Two exports that number their rows share these
- * values without naming the same things.
+ * IDs `relate source.field` reads back: a source ID ends at the first dot,
+ * so it has none; a field ID may.
  */
-function isCounter(values: Map<unknown, number>) {
-  let min = Infinity;
-  let max = -Infinity;
-  for (const value of values.keys()) {
-    const number = typeof value === "number" ? value : Number(value);
-    if (!Number.isInteger(number) || String(number) !== String(value))
-      return false;
-    min = Math.min(min, number);
-    max = Math.max(max, number);
-  }
-  return (min === 0 || min === 1) && max - min + 1 === values.size;
-}
+const SOURCE_ID = /^[A-Za-z0-9_][\w-]*$/;
+const FIELD_ID = /^[A-Za-z0-9_][\w.-]*$/;
 
 export function proposeLinks({
   project,
@@ -186,6 +181,7 @@ export function proposeLinks({
     )
   );
   const proposals: LinkProposal[] = [];
+  const ids = new Set(project.relationships.map((item) => item.id));
   const add = (
     from: LinkProposal["from"],
     to: LinkProposal["to"],
@@ -198,8 +194,12 @@ export function proposeLinks({
     );
     if (taken.has(key)) return;
     taken.add(key);
+    const base = `rel-${from.sourceId}-${from.fieldId}-${to.sourceId}-${to.fieldId}`;
+    let id = base;
+    for (let n = 2; ids.has(id); n++) id = `${base}-${n}`;
+    ids.add(id);
     proposals.push({
-      id: `rel-${from.sourceId}-${from.fieldId}-${to.sourceId}-${to.fieldId}`,
+      id,
       from,
       to,
       // A unique from field in a few rows is often chance, and a lookup
@@ -242,9 +242,9 @@ export function proposeLinks({
 
     const files = !databases[ids[0]!];
     for (const fromId of ids) {
-      if (!PLAIN_ID.test(fromId)) continue;
+      if (!SOURCE_ID.test(fromId)) continue;
       for (const field of sources.get(fromId)!.fields) {
-        if (!PLAIN_ID.test(field.id)) continue;
+        if (!FIELD_ID.test(field.id)) continue;
         let best:
           | {
               to: LinkProposal["to"];
@@ -254,10 +254,9 @@ export function proposeLinks({
         for (const toId of ids) {
           if (toId === fromId) continue;
           for (const target of sources.get(toId)!.fields) {
-            const toSource = sources.get(toId)!;
             if (
-              !PLAIN_ID.test(toId) ||
-              !PLAIN_ID.test(target.id) ||
+              !SOURCE_ID.test(toId) ||
+              !FIELD_ID.test(target.id) ||
               !namesKey(field.id, target.id, {
                 id: toId,
                 table: databases[toId]?.table,
@@ -265,16 +264,11 @@ export function proposeLinks({
               !unique(toId, target.id)
             )
               continue;
-            // Files declare no keys, so a file link needs the other file's
-            // own key, and row numbers only when the file's name says what
-            // they number (events.csv for event_id).
-            if (
-              files &&
-              (toSource.entityKey !== target.id ||
-                (isCounter(column(toId, target.id).values) &&
-                  !namesTable(field.id, toId)))
-            )
-              continue;
+            // Files declare no keys, and two exports often number their
+            // rows the same way, so a file link needs the key to name the
+            // other file: jobs.run_id finds runs, not another export of
+            // run IDs.
+            if (files && !namesTable(field.id, toId)) continue;
             const to = { sourceId: toId, fieldId: target.id };
             const counts = matches({ sourceId: fromId, fieldId: field.id }, to);
             if (counts.total === 0) continue;
@@ -283,8 +277,7 @@ export function proposeLinks({
             const bestShare = best
               ? best.counts.matched / best.counts.total
               : -1;
-            // On a tie, the larger table: a sample of runs also holds every
-            // run a job names, but the runs table is the one to look up.
+            // On a tie, the larger table, the likelier to hold every row.
             if (
               share > bestShare ||
               (share === bestShare &&
@@ -340,13 +333,16 @@ function withoutShortcuts(
       if (middle.has(key)) twice.add(key);
       middle.set(key, row[field]);
     }
+    // Every row the direct link reads must reach the same value through
+    // one row of the middle table; a missing or doubled middle key keeps
+    // the direct link.
     let checked = 0;
     for (const row of tables[from] ?? []) {
       const value = row[field];
+      if (value == null || value === "") continue;
       const key = row[step.from.fieldId];
-      if (value == null || value === "" || !middle.has(key) || twice.has(key))
-        continue;
-      if (middle.get(key) !== value) return false;
+      if (!middle.has(key) || twice.has(key) || middle.get(key) !== value)
+        return false;
       checked += 1;
     }
     return checked > 0;
@@ -373,6 +369,20 @@ function withoutShortcuts(
     if (implied) kept.splice(kept.indexOf(proposal), 1);
   }
   return kept;
+}
+
+/**
+ * The project without analyses' own sources: the project text compiles
+ * before them, so a relate line can't name one.
+ */
+export function withoutLocalSources(
+  project: AnalysisProject,
+  localSources: Record<string, string>
+): AnalysisProject {
+  return {
+    ...project,
+    sources: project.sources.filter((source) => !(source.id in localSources)),
+  };
 }
 
 /** The relationship an accepted proposal adds. */

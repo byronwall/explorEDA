@@ -235,6 +235,34 @@ describe("proposeLinks", () => {
     ).toEqual(["emails.event_id -> events.event_id 3/3"]);
   });
 
+  it("keeps a direct link that reaches rows the parent path misses", () => {
+    expect(
+      fileLinks({
+        runs: range(10).map((i) => ({ run_id: `r${i}` })),
+        jobs: range(10).map((i) => ({ job_id: `j${i}`, run_id: `r${i}` })),
+        // The last step lost its job but still names its run.
+        steps: range(10).map((i) => ({
+          step_id: `s${i}`,
+          job_id: i < 9 ? `j${i}` : "",
+          run_id: `r${i}`,
+        })),
+      })
+    ).toEqual([
+      "jobs.run_id -> runs.run_id 10/10",
+      "steps.job_id -> jobs.job_id 9/9",
+      "steps.run_id -> runs.run_id 10/10",
+    ]);
+  });
+
+  it("links dotted field names", () => {
+    expect(
+      fileLinks({
+        runs: range(5).map((i) => ({ "ci.run_id": `r${i}` })),
+        jobs: range(5).map((i) => ({ job_id: `j${i}`, "ci.run_id": `r${i}` })),
+      })
+    ).toEqual(["jobs.ci.run_id -> runs.ci.run_id 5/5"]);
+  });
+
   it("counts a value that names two rows as unmatched", () => {
     const runs = range(100).map((i) => ({ run_id: `r${i}` }));
     runs.push({ run_id: "r0" });

@@ -8,6 +8,7 @@ import {
   projectFileText,
   proposeLinks,
   readNotebookText,
+  withoutLocalSources,
   sourceUsage,
   type AnalysisProject,
   type ForeignKey,
@@ -435,17 +436,11 @@ export function ProjectWorkspace({
       readOnly
         ? []
         : proposeLinks({
-            project,
+            project: withoutLocalSources(project, folder.localSources),
             tables: folder.tables,
             databases: folder.databases,
             foreignKeys: keys,
-          }).filter(
-            (item) =>
-              !dismissed.has(item.id) &&
-              // An analysis's own source can't be named in project text.
-              !(item.from.sourceId in folder.localSources) &&
-              !(item.to.sourceId in folder.localSources)
-          ),
+          }).filter((item) => !dismissed.has(item.id)),
     [readOnly, project, folder, keys, dismissed]
   );
   const dismissLink = (id: string) => {

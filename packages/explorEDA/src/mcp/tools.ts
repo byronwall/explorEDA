@@ -31,7 +31,7 @@ import {
   readProjectFolder,
   type ProjectFolder,
 } from "@/lib/project/folder";
-import { proposeLinks } from "@/lib/project/linkProposals";
+import { proposeLinks, withoutLocalSources } from "@/lib/project/linkProposals";
 import { formatNotebook, isNotebookPath } from "@/lib/notebook";
 import { NOTEBOOK_REFERENCE, PROJECT_REFERENCE } from "@/cli/reference";
 
@@ -433,14 +433,11 @@ export function suggestedLinks(
   source?: string
 ): SuggestedLink[] {
   const taken = new Set(read.project.relationships.map((item) => item.id));
-  // An analysis's own source isn't there when the project text compiles.
-  const local = (id: string) => id in read.localSources;
   return proposeLinks({
-    project: read.project,
+    project: withoutLocalSources(read.project, read.localSources),
     tables: read.tables,
     databases: read.databases,
   })
-    .filter((link) => !local(link.from.sourceId) && !local(link.to.sourceId))
     .map(({ from, to, matched, total }) => {
       // IDs come before the filter, so project and add_data agree.
       const base = `${from.sourceId}-${to.sourceId}`;
