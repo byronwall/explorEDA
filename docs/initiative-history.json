@@ -128,7 +128,7 @@
     "slug": "analytical-chart-coverage",
     "outcome": "completed",
     "retired_at": "2026-10-04",
-    "summary": "Delivered analytical chart expansion. Byron waived remaining cross-view and browser-restore acceptance checks; no ongoing initiative obligations remain. Reconciled against 3873c2766be43a3f970a2ba62c80d459979234ea and the prior Node 24 pnpm check pass (530 library and 21 demo tests). Relevant uncommitted changes are this review\u2019s durable chart documentation and planning cleanup. No new browser check ran.",
+    "summary": "Delivered analytical chart expansion. Byron waived remaining cross-view and browser-restore acceptance checks; no ongoing initiative obligations remain. Reconciled against 3873c2766be43a3f970a2ba62c80d459979234ea and the prior Node 24 pnpm check pass (530 library and 21 demo tests). Relevant uncommitted changes are this review’s durable chart documentation and planning cleanup. No new browser check ran.",
     "reason": "Byron explicitly requested whole-initiative retirement and said the remaining work was not needed.",
     "documentation": [
       "docs/analytical-chart-coverage.md",
@@ -160,7 +160,7 @@
       {
         "claim_id": "c7",
         "disposition": "delivered",
-        "evidence": "Grouped-bar selection, heatmap, and Calendar initial slices are present; prior plan records #105, #103, and #104 with screenshots. Later stack #114\u2013#123 is merged."
+        "evidence": "Grouped-bar selection, heatmap, and Calendar initial slices are present; prior plan records #105, #103, and #104 with screenshots. Later stack #114–#123 is merged."
       }
     ],
     "waived_work": [
@@ -558,7 +558,7 @@
     "slug": "schema-diagram",
     "outcome": "completed",
     "retired_at": "2026-10-10",
-    "summary": "Delivered all seven milestones: a wide schema drawer with tables, fields, keys, and relationships; queries, calculations, and views with lineage both ways; in-place editing of fields, keys, relationships, and query steps; usage folded across every saved view; and Add source with single-table promotion. Every intent claim is covered by the package README section. Reconciled against 5cf144d; merged PRs #222, #225\u2013#230. No new browser check ran during retirement; milestone evidence recorded Vitest suites and Playwright screenshots.",
+    "summary": "Delivered all seven milestones: a wide schema drawer with tables, fields, keys, and relationships; queries, calculations, and views with lineage both ways; in-place editing of fields, keys, relationships, and query steps; usage folded across every saved view; and Add source with single-table promotion. Every intent claim is covered by the package README section. Reconciled against 5cf144d; merged PRs #222, #225–#230. No new browser check ran during retirement; milestone evidence recorded Vitest suites and Playwright screenshots.",
     "reason": "Byron asked on 2026-10-10 to retire the completed docs/intent initiatives and approved this one by name. Every planned milestone's PR merged into main.",
     "documentation": [
       "packages/explorEDA/README.md",
@@ -595,7 +595,7 @@
     "slug": "in-place-chart-editing",
     "outcome": "completed",
     "retired_at": "2026-10-10",
-    "summary": "Delivered titles, axis titles, and numeric axis ranges edited where they are drawn, plus axis pan and stretch by drag, each one undo step through updateChart and useChartEdit. Subtitle editing, a named target, is not built; Byron approved retirement with it moved to the Product Grid rather than gating closure. Reconciled against 5cf144d; merged PRs #203\u2013#206.",
+    "summary": "Delivered titles, axis titles, and numeric axis ranges edited where they are drawn, plus axis pan and stretch by drag, each one undo step through updateChart and useChartEdit. Subtitle editing, a named target, is not built; Byron approved retirement with it moved to the Product Grid rather than gating closure. Reconciled against 5cf144d; merged PRs #203–#206.",
     "reason": "Byron asked on 2026-10-10 to retire the completed docs/intent initiatives and approved this one by name. Every planned milestone's PR merged into main.",
     "documentation": [
       "docs/ui-defaults.md",
@@ -1112,6 +1112,19 @@
       "A dedicated all-tables and all-fields view, and relationship-first exploration, belong to the schema diagram work (TASK-0092 W5)",
       "Follow a key column into the related table from the explorer, once real projects declare relationships",
       "A summary written to text repeats its filter as both select= and filters="
+    ]
+  },
+  {
+    "title": "Schema diagram that shows what the analyses use",
+    "slug": "schema-diagram-focus",
+    "outcome": "completed",
+    "retired_at": "2026-11-27",
+    "summary": "From TASK-0092 W5. Byron chose mockup A plus layers: the diagram opens at full size on what views use, folds unused tables into a list, drops one-step read queries, marks used fields (through calculations, lookups, and appends), routes every line with Draftably's router (byronwall/draftably#715 API) so none crosses a card, lights up a selected view, and adds Layers and a Coverage popover. openSchema takes { sourceId?, viewId? }; the app rail opens the whole project and each analysis's menu can light it.",
+    "reason": "Every milestone was built and checked in the browser on the real CI project and the demo projects. Shipping the last milestone retires the plan under Byron's standing approval.",
+    "documentation": [
+      "packages/explorEDA/README.md",
+      "apps/demo/src/docs/pages/workspace.mdx",
+      "docs/application-feature-inventory.md"
     ]
   }
 ]
