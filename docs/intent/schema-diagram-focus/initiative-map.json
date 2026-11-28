@@ -8,7 +8,7 @@
     "last_updated": "2026-11-27",
     "summary": "Make the Schema diagram readable on real projects by emphasizing the tables, fields, and queries that views use, while keeping all data reachable.",
     "status": "planned",
-    "next_action": "Byron approves or corrects the shape and plan; then build M1 on the CI project"
+    "next_action": "Byron reviews seven HTML mockups (tmp/mockups/schema/index.html) and approves one or a mix; that becomes the go-ahead and updates the shape"
   },
   "artifacts": {
     "intent_brief": {
@@ -362,6 +362,10 @@
     {
       "date": "2026-11-27",
       "change": "Wrote shape brief and implementation plan (4 milestones). Open PRs checked: none touch schema files or ProjectRail."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Built seven HTML mockups seeded from the real app DOM and CSS (captured with Playwright): condensed columns, lanes by table, coverage grid, relationship map, tiles, field-to-chart flow, overview plus path. Byron said the approved mockup is the go-ahead."
     }
   ],
   "closure": null,
