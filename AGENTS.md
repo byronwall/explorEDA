@@ -34,6 +34,8 @@
 - Pick `patch` for fixes and polish, `minor` for new features or options, and `major` only when Byron asks for a breaking release. While the version is 0.x, a breaking API change is `minor`.
 - Write the summary for package users: what they can now do or what now behaves differently, in one or two plain sentences. It goes straight into the changelog.
 - One changeset per PR is usual. Edit it when the PR's scope changes instead of adding another.
+- In a stack, CI checks each layer against the layer below it. Every layer that changes the package needs its own changeset, describing that layer only.
+- The pre-push hook runs `check:pr` and `check:ui` before each push. Fix what it reports; don't push with `--no-verify` to get past it.
 - Skip it for demo-only, docs-only, test-only, or tooling-only PRs.
 - Never run `changeset version` or `changeset publish`, and never edit versions or `CHANGELOG.md` by hand. The Release workflow does that through the "Version Packages" PR.
 - Follow [the release steps](README.md#release). Use `release.yml` on `main` with npm trusted publishing. Do not add `NPM_TOKEN`.
