@@ -253,6 +253,8 @@ export function App({
         return;
       }
       reloading = reloading.then(async () => {
+        // The new workspace releases the saver once it mounts.
+        saver.hold();
         for (const path of changed) {
           saver.cancel(path);
         }
@@ -263,9 +265,13 @@ export function App({
             () => false
           ))
         ) {
+          saver.release();
           return;
         }
-        const { folder, fetched } = await readAll(files);
+        const { folder, fetched } = await readAll(files).catch((error) => {
+          saver.release();
+          throw error;
+        });
         setLoaded((previous) =>
           previous.status === "ready"
             ? {

@@ -59,6 +59,50 @@ describe("FolderSaver", () => {
     expect(files.snapshot()["a.eda"]).toBe("one\n");
   });
 
+  it("ends on the last change when writes of the same text overlap", async () => {
+    const files = memoryProjectFiles({ "a.eda": "A" });
+    const gates: (() => void)[] = [];
+    const write = files.write;
+    const saver = new FolderSaver(
+      {
+        ...files,
+        write: async (path, text) => {
+          if (text === "B") await new Promise<void>((r) => gates.push(r));
+          await write(path, text);
+        },
+      },
+      () => {},
+      0
+    );
+    saver.known("a.eda", "A");
+    // Undo and Redo back and forth while the first write hangs.
+    for (const text of ["B", "A", "B"]) {
+      saver.queue("a.eda", text);
+      saver.flush();
+    }
+    while (gates.length < 1) await Promise.resolve();
+    gates.shift()!();
+    while (gates.length < 1) await new Promise((r) => setTimeout(r, 0));
+    saver.queue("a.eda", "A");
+    gates.shift()!();
+    await saver.flush();
+    expect(files.snapshot()["a.eda"]).toBe("A");
+  });
+
+  it("ignores changes while held for a reload", async () => {
+    const write = vi.fn(async () => {});
+    const saver = new FolderSaver(
+      { ...memoryProjectFiles(), write },
+      () => {},
+      0
+    );
+    saver.hold();
+    saver.queue("a.eda", "stale\n");
+    saver.release();
+    await saver.flush();
+    expect(write).not.toHaveBeenCalled();
+  });
+
   it("reports a refused save with its file", async () => {
     const files = memoryProjectFiles({}, { refuse: () => true });
     let last: SaveState | undefined;

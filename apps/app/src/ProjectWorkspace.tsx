@@ -235,9 +235,15 @@ export function ProjectWorkspace({
       setDraft(undefined);
       // The left source's draft is gone, so steps that only changed it
       // would undo nothing. Steps that changed the project stay.
+      // Neighbors left with the same project and views collapse to one.
       const kept = (steps: Step[]) =>
         steps
-          .filter((step) => step.project !== project || step.views !== views)
+          .filter(
+            (step, index) =>
+              (step.project !== project || step.views !== views) &&
+              (step.project !== steps[index + 1]?.project ||
+                step.views !== steps[index + 1]?.views)
+          )
           .map((step) => ({ ...step, draft: undefined }));
       setPast(kept);
       setFuture(kept);
@@ -287,6 +293,8 @@ export function ProjectWorkspace({
     for (const item of folder.notebooks) {
       saver.known(item.path, item.text);
     }
+    // A reload held the saver until this workspace showed what it read.
+    saver.release();
     // The saver and folder are fixed for this workspace's lifetime.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

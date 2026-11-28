@@ -21,8 +21,10 @@ export class FolderSaver {
     string,
     { text: string; timer?: ReturnType<typeof setTimeout> }
   >();
-  /** The last text sent to each file whose write hasn't finished. */
-  private readonly inFlight = new Map<string, string>();
+  /** The last write sent to each file that hasn't finished. */
+  private readonly inFlight = new Map<string, { id: number; text: string }>();
+  private writes = 0;
+  private held = false;
   private chain: Promise<void> = Promise.resolve();
   private writing = 0;
   private failure?: { path: string; message: string };
@@ -39,8 +41,20 @@ export class FolderSaver {
     this.onDisk.set(path, text);
   }
 
+  /**
+   * Ignores new changes while the folder reloads: the page that made them
+   * is about to be replaced by what the folder holds.
+   */
+  hold() {
+    this.held = true;
+  }
+
+  release() {
+    this.held = false;
+  }
+
   queue(path: string, text: string) {
-    if (this.readOnly) {
+    if (this.readOnly || this.held) {
       return;
     }
     const waiting = this.pending.get(path);
@@ -50,7 +64,7 @@ export class FolderSaver {
     }
     // Text a write under way is about to put there counts as on disk.
     const latest = this.inFlight.has(path)
-      ? this.inFlight.get(path)
+      ? this.inFlight.get(path)!.text
       : this.onDisk.get(path);
     if (latest === text) {
       this.settle();
@@ -101,12 +115,14 @@ export class FolderSaver {
       clearTimeout(waiting.timer);
       this.pending.delete(path);
       this.writing += 1;
-      this.inFlight.set(path, waiting.text);
-      this.chain = this.chain.then(() => this.write(path, waiting.text));
+      const id = ++this.writes;
+      this.inFlight.set(path, { id, text: waiting.text });
+      this.chain = this.chain.then(() => this.write(path, waiting.text, id));
     }
   }
 
-  private async write(path: string, text: string) {
+  private async write(path: string, text: string, id: number) {
+    const latest = () => this.inFlight.get(path)?.id === id;
     try {
       await this.files.write(path, text);
       this.onDisk.set(path, text);
@@ -117,11 +133,11 @@ export class FolderSaver {
       const message = error instanceof Error ? error.message : String(error);
       this.failure = { path, message };
       // A newer edit to the file replaces this text; otherwise keep it.
-      if (!this.pending.has(path)) {
+      if (!this.pending.has(path) && latest()) {
         this.pending.set(path, { text });
       }
     } finally {
-      if (this.inFlight.get(path) === text) this.inFlight.delete(path);
+      if (latest()) this.inFlight.delete(path);
       this.writing -= 1;
       this.settle();
     }
