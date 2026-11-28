@@ -19,6 +19,8 @@ import {
   type SavedDataStructure,
 } from "exploreda";
 import { createAnalysisWorker } from "exploreda/analysis";
+import * as Tooltip from "@radix-ui/react-tooltip";
+import { Redo2, Undo2 } from "lucide-react";
 import { AddData } from "./AddData";
 import type { FetchedRecord, ServerInfo, ThemePreference } from "./httpFiles";
 import type { FolderSaver, SaveState } from "./saver";
@@ -26,6 +28,7 @@ import type { AddDatabaseActions } from "./AddDatabase";
 import { visibleProblems, waitingFor } from "./databaseSources";
 import { type ReadFailure, WaitingForData } from "./DatabaseSourceViews";
 import { ProjectRail } from "./ProjectRail";
+import { IconButton, Tip } from "./RailParts";
 import {
   exploreView,
   ownQuery,
@@ -33,6 +36,26 @@ import {
   usedByText,
   type ExploreDraft,
 } from "./explore";
+
+/** What one undo step puts back. */
+interface Step {
+  project: AnalysisProject;
+  views: Map<string, AnalysisView[]>;
+  draft?: ExploreDraft;
+}
+
+const MAX_STEPS = 100;
+const MOD_KEY =
+  typeof navigator !== "undefined" &&
+  /Mac|iPhone|iPad/.test(navigator.userAgent)
+    ? "⌘"
+    : "Ctrl+";
+
+/** A field that keeps its own Undo, such as a text input or the editor. */
+const ownsUndo = (target: EventTarget | null) =>
+  target instanceof HTMLElement &&
+  (target.isContentEditable ||
+    Boolean(target.closest("input, textarea, select, [role='combobox']")));
 
 /** A view's ID: its analysis file and its place in that file. */
 const viewId = (path: string, index: number) => `${path}#${index}`;
@@ -106,6 +129,7 @@ export function ProjectWorkspace({
   folder,
   info,
   saver,
+  hold,
   saveState,
   notice,
   readErrors = {},
@@ -134,6 +158,8 @@ export function ProjectWorkspace({
   folder: ProjectFolder;
   info: ServerInfo;
   saver: FolderSaver;
+  /** The saver hold of the reload that made this workspace. */
+  hold?: number;
   saveState: SaveState;
   notice?: string;
   /** Each source's last failed read, by source ID. */
@@ -208,7 +234,23 @@ export function ProjectWorkspace({
     if (exploreMemory) exploreMemory.current = next;
   };
   const setSelected = (next: Selection) => {
-    if (next.source !== selected.source) setDraft(undefined);
+    if (next.source !== selected.source) {
+      setDraft(undefined);
+      // The left source's draft is gone, so steps that only changed it
+      // would undo nothing. Steps that changed the project stay.
+      // Neighbors left with the same project and views collapse to one.
+      const kept = (steps: Step[]) =>
+        steps
+          .filter(
+            (step, index) =>
+              (step.project !== project || step.views !== views) &&
+              (step.project !== steps[index + 1]?.project ||
+                step.views !== steps[index + 1]?.views)
+          )
+          .map((step) => ({ ...step, draft: undefined }));
+      setPast(kept);
+      setFuture(kept);
+    }
     setSelectedState(next);
     onSelect(next);
   };
@@ -254,6 +296,8 @@ export function ProjectWorkspace({
     for (const item of folder.notebooks) {
       saver.known(item.path, item.text);
     }
+    // A reload held the saver until this workspace showed what it read.
+    saver.release(hold);
     // The saver and folder are fixed for this workspace's lifetime.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -268,6 +312,87 @@ export function ProjectWorkspace({
     // fileText reads only folder and names, which don't change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, views, saver]);
+
+  // Session undo. Each project or chart change is one step, and an undo
+  // saves like any edit. A reload from disk remounts this workspace, so a
+  // step never puts back state from before the reload.
+  const [past, setPast] = useState<Step[]>([]);
+  const [future, setFuture] = useState<Step[]>([]);
+  // Remounts the workspace, so it shows the restored settings.
+  const [revision, setRevision] = useState(0);
+  const stepOpen = useRef(false);
+  const checkpoint = () => {
+    // What one action reports, such as a project change and then its
+    // settings, is one step.
+    if (stepOpen.current) return;
+    stepOpen.current = true;
+    queueMicrotask(() => {
+      stepOpen.current = false;
+    });
+    setPast((previous) => [
+      ...previous.slice(1 - MAX_STEPS),
+      { project, views, draft },
+    ]);
+    setFuture([]);
+  };
+  const restore = (step: Step) => {
+    // Only files the step changes are written, so an undo never rewrites a
+    // file it didn't touch, such as one that just changed on disk.
+    const now = { project, views };
+    for (const path of new Set([projectPath, ...step.views.keys()])) {
+      if (fileText(path, now) !== fileText(path, step)) dirty.current.add(path);
+    }
+    setProject(step.project);
+    setViews(step.views);
+    if (selected.source) {
+      setDraft(step.draft?.source === selected.source ? step.draft : undefined);
+    }
+    setRevision((value) => value + 1);
+  };
+  // While the folder reloads, the page is about to be replaced; an undo
+  // now would show a state that never saves.
+  const undo = () => {
+    const step = past.at(-1);
+    if (!step || saver.isHeld) return;
+    setPast(past.slice(0, -1));
+    setFuture([...future, { project, views, draft }]);
+    restore(step);
+  };
+  const redo = () => {
+    const step = future.at(-1);
+    if (!step || saver.isHeld) return;
+    setFuture(future.slice(0, -1));
+    setPast([...past, { project, views, draft }]);
+    restore(step);
+  };
+  const canUndo = !readOnly && !notebook && past.length > 0;
+  const canRedo = !readOnly && !notebook && future.length > 0;
+  // Undo and Redo follow the platform keys unless a field owns them.
+  const shortcut = useRef({ undo, redo, canUndo, canRedo });
+  shortcut.current = { undo, redo, canUndo, canRedo };
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+      const key = event.key.toLowerCase();
+      const isRedo = (key === "z" && event.shiftKey) || key === "y";
+      const isUndo = key === "z" && !event.shiftKey;
+      if (!isUndo && !isRedo) return;
+      if (
+        event.defaultPrevented ||
+        ownsUndo(event.target) ||
+        document.querySelector("[role='dialog'], [role='alertdialog']")
+      ) {
+        return;
+      }
+      const current = shortcut.current;
+      if (isUndo ? !current.canUndo : !current.canRedo) return;
+      event.preventDefault();
+      if (isUndo) current.undo();
+      else current.redo();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   const analysisViews =
     selected.path && !notebook ? (views.get(selected.path) ?? []) : [];
@@ -361,6 +486,17 @@ export function ProjectWorkspace({
     project: next,
     view: changed,
   }: ExplorEdaProjectChange) => {
+    // Inspecting a query step changes only what the file doesn't keep; that
+    // is not an edit.
+    const kept = ({ inspection: _inspection, ...rest }: AnalysisView) =>
+      JSON.stringify(rest);
+    if (
+      JSON.stringify(next) !== JSON.stringify(project) ||
+      !view ||
+      kept(changed) !== kept(view)
+    ) {
+      checkpoint();
+    }
     dirty.current.add(projectPath);
     // An analysis that brings its own source writes it in its own file.
     for (const path of new Set(Object.values(folder.localSources))) {
@@ -382,6 +518,11 @@ export function ProjectWorkspace({
     setProject(next);
   };
   const onStateChange = (settings: SavedDataStructure) => {
+    // Settings the workspace reports back unchanged are not an edit.
+    if (view && JSON.stringify(settings) === JSON.stringify(view.settings)) {
+      return;
+    }
+    checkpoint();
     if (exploring && selected.source) {
       setDraft({
         source: selected.source,
@@ -485,6 +626,23 @@ export function ProjectWorkspace({
     </button>
   );
 
+  const undoButtons = !readOnly && (
+    <Tooltip.Provider delayDuration={140} skipDelayDuration={150}>
+      <div className="app-undo">
+        <Tip side="bottom" content={`Undo (${MOD_KEY}Z)`}>
+          <IconButton label="Undo" disabled={!canUndo} onClick={undo}>
+            <Undo2 aria-hidden="true" />
+          </IconButton>
+        </Tip>
+        <Tip side="bottom" content={`Redo (${MOD_KEY}Shift+Z)`}>
+          <IconButton label="Redo" disabled={!canRedo} onClick={redo}>
+            <Redo2 aria-hidden="true" />
+          </IconButton>
+        </Tip>
+      </div>
+    </Tooltip.Provider>
+  );
+
   const tabs = (
     <div className="app-tabs" role="tablist" aria-label="Views">
       {analysisViews.map((item, index) => (
@@ -569,7 +727,7 @@ export function ProjectWorkspace({
         ) : view ? (
           <ExplorEdaProject
             ref={workspace}
-            key={view.id}
+            key={`${view.id}:${revision}`}
             project={project}
             tables={folder.tables}
             view={view}
@@ -589,7 +747,14 @@ export function ProjectWorkspace({
             onDismissLinkProposal={dismissLink}
             createWorker={createAnalysisWorker}
             toolbarStart={exploreHead || tabs}
-            toolbarEnd={exploreActions || undefined}
+            toolbarEnd={
+              undoButtons || exploreActions ? (
+                <>
+                  {undoButtons}
+                  {exploreActions}
+                </>
+              ) : undefined
+            }
           />
         ) : (
           <FirstRun

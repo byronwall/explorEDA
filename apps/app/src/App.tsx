@@ -51,6 +51,8 @@ type Loaded =
       info: ServerInfo;
       /** Counts reloads, so the workspace starts over from the new files. */
       generation: number;
+      /** The reload's saver hold, which the new workspace releases. */
+      hold?: number;
       notice?: string;
       /** A panel to show open after this reload. */
       panel?: OpenPanel;
@@ -183,9 +185,11 @@ export function App({
     notice?: string,
     panel?: OpenPanel
   ) => {
+    const hold = saver.hold();
     try {
       await saver.flush();
     } catch (error) {
+      saver.release(hold);
       // Reading the folder now would drop the edits that didn't save.
       setLoaded((previous) =>
         previous.status === "ready"
@@ -197,7 +201,10 @@ export function App({
       );
       return;
     }
-    const { folder, fetched } = await readAll(files);
+    const { folder, fetched } = await readAll(files).catch((error) => {
+      saver.release(hold);
+      throw error;
+    });
     selection.current = path ? { path, index: 0 } : selection.current;
     setLoaded((previous) =>
       previous.status === "ready"
@@ -206,6 +213,7 @@ export function App({
             folder,
             fetched,
             generation: previous.generation + 1,
+            hold,
             notice,
             panel,
           }
@@ -253,6 +261,8 @@ export function App({
         return;
       }
       reloading = reloading.then(async () => {
+        // The new workspace releases the saver once it mounts.
+        const hold = saver.hold();
         for (const path of changed) {
           saver.cancel(path);
         }
@@ -263,9 +273,13 @@ export function App({
             () => false
           ))
         ) {
+          saver.release(hold);
           return;
         }
-        const { folder, fetched } = await readAll(files);
+        const { folder, fetched } = await readAll(files).catch((error) => {
+          saver.release(hold);
+          throw error;
+        });
         setLoaded((previous) =>
           previous.status === "ready"
             ? {
@@ -273,12 +287,16 @@ export function App({
                 folder,
                 fetched,
                 generation: previous.generation + 1,
+                hold,
                 notice: describeChange(changed, by),
                 panel: undefined,
               }
             : previous
         );
       });
+      // A read that failed leaves the page as it was; the next change on
+      // disk reads the folder again.
+      reloading = reloading.catch(() => {});
     });
     return stop;
   }, [files, saver]);
@@ -589,6 +607,7 @@ export function App({
         fetched={loaded.fetched}
         info={loaded.info}
         saver={saver}
+        hold={loaded.hold}
         saveState={saveState}
         notice={loaded.notice}
         readErrors={Object.fromEntries(readErrors.current)}
