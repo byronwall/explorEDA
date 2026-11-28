@@ -1,28 +1,15 @@
 import { describe, expect, it } from "vitest";
-import type { AnalysisProject } from "exploreda";
-import { projectSchemaGraph } from "../../../../../packages/explorEDA/src/lib/schema/schemaGraph";
-import {
-  compactViews,
-  condenseProject,
-} from "../../../../../packages/explorEDA/src/lib/schema/schemaCompact";
-import {
-  layoutSchemaGraph,
-  routeSchemaEdges,
-} from "../../../../../packages/explorEDA/src/lib/schema/schemaLayout";
-import { shopProject } from "../multiSourceShop";
-import { beijingAnalysis } from "./beijing";
-import { earthquakesAnalysis } from "./earthquakes";
-import { flightsAnalysis } from "./flights";
-import { worldBankAnalysis } from "./worldbank";
+import { createShopFixture } from "@/test/fixtures/shopProject";
+import { projectSchemaGraph } from "@/lib/schema/schemaGraph";
+import { compactViews, condenseProject } from "@/lib/schema/schemaCompact";
+import { layoutSchemaGraph, routeSchemaEdges } from "@/lib/schema/schemaLayout";
+import type { AnalysisProject } from "@/types/AnalysisProject";
 
+// The demo's typecheck can't follow library source, so this test lives in
+// the package and uses the package's shop fixture.
 const projects: [string, AnalysisProject][] = [
-  ["shop", shopProject.project],
-  ["beijing", beijingAnalysis.project],
-  ["earthquakes", earthquakesAnalysis.project],
-  ["flights", flightsAnalysis.project],
-  ["world bank", worldBankAnalysis.project],
+  ["shop", createShopFixture().project],
 ];
-
 /** Whether an axis-aligned segment runs through the inside of a box. */
 function crosses(
   a: { x: number; y: number },
