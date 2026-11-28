@@ -30,6 +30,35 @@ describe("FolderSaver", () => {
     expect(write).not.toHaveBeenCalled();
   });
 
+  it("writes a return to the old text queued while a write is under way", async () => {
+    const files = memoryProjectFiles({ "a.eda": "one\n" });
+    let release = () => {};
+    const write = files.write;
+    const saver = new FolderSaver(
+      {
+        ...files,
+        write: async (path, text) => {
+          if (text === "two\n") {
+            await new Promise<void>((resolve) => (release = resolve));
+          }
+          await write(path, text);
+        },
+      },
+      () => {},
+      0
+    );
+    saver.known("a.eda", "one\n");
+    saver.queue("a.eda", "two\n");
+    const first = saver.flush();
+    await Promise.resolve();
+    // An undo puts the file back while "two" is still being written.
+    saver.queue("a.eda", "one\n");
+    release();
+    await first;
+    await saver.flush();
+    expect(files.snapshot()["a.eda"]).toBe("one\n");
+  });
+
   it("reports a refused save with its file", async () => {
     const files = memoryProjectFiles({}, { refuse: () => true });
     let last: SaveState | undefined;

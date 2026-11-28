@@ -231,7 +231,17 @@ export function ProjectWorkspace({
     if (exploreMemory) exploreMemory.current = next;
   };
   const setSelected = (next: Selection) => {
-    if (next.source !== selected.source) setDraft(undefined);
+    if (next.source !== selected.source) {
+      setDraft(undefined);
+      // The left source's draft is gone, so steps that only changed it
+      // would undo nothing. Steps that changed the project stay.
+      const kept = (steps: Step[]) =>
+        steps
+          .filter((step) => step.project !== project || step.views !== views)
+          .map((step) => ({ ...step, draft: undefined }));
+      setPast(kept);
+      setFuture(kept);
+    }
     setSelectedState(next);
     onSelect(next);
   };
@@ -315,10 +325,11 @@ export function ProjectWorkspace({
     setFuture([]);
   };
   const restore = (step: Step) => {
-    dirty.current.add(projectPath);
-    for (const path of step.views.keys()) dirty.current.add(path);
-    for (const path of new Set(Object.values(folder.localSources))) {
-      dirty.current.add(path);
+    // Only files the step changes are written, so an undo never rewrites a
+    // file it didn't touch, such as one that just changed on disk.
+    const now = { project, views };
+    for (const path of new Set([projectPath, ...step.views.keys()])) {
+      if (fileText(path, now) !== fileText(path, step)) dirty.current.add(path);
     }
     setProject(step.project);
     setViews(step.views);
@@ -462,7 +473,17 @@ export function ProjectWorkspace({
     project: next,
     view: changed,
   }: ExplorEdaProjectChange) => {
-    checkpoint();
+    // Inspecting a query step changes only what the file doesn't keep; that
+    // is not an edit.
+    const kept = ({ inspection: _inspection, ...rest }: AnalysisView) =>
+      JSON.stringify(rest);
+    if (
+      JSON.stringify(next) !== JSON.stringify(project) ||
+      !view ||
+      kept(changed) !== kept(view)
+    ) {
+      checkpoint();
+    }
     dirty.current.add(projectPath);
     // An analysis that brings its own source writes it in its own file.
     for (const path of new Set(Object.values(folder.localSources))) {

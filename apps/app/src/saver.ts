@@ -21,6 +21,8 @@ export class FolderSaver {
     string,
     { text: string; timer?: ReturnType<typeof setTimeout> }
   >();
+  /** The last text sent to each file whose write hasn't finished. */
+  private readonly inFlight = new Map<string, string>();
   private chain: Promise<void> = Promise.resolve();
   private writing = 0;
   private failure?: { path: string; message: string };
@@ -46,7 +48,11 @@ export class FolderSaver {
       clearTimeout(waiting.timer);
       this.pending.delete(path);
     }
-    if (this.onDisk.get(path) === text) {
+    // Text a write under way is about to put there counts as on disk.
+    const latest = this.inFlight.has(path)
+      ? this.inFlight.get(path)
+      : this.onDisk.get(path);
+    if (latest === text) {
       this.settle();
       return;
     }
@@ -95,6 +101,7 @@ export class FolderSaver {
       clearTimeout(waiting.timer);
       this.pending.delete(path);
       this.writing += 1;
+      this.inFlight.set(path, waiting.text);
       this.chain = this.chain.then(() => this.write(path, waiting.text));
     }
   }
@@ -114,6 +121,7 @@ export class FolderSaver {
         this.pending.set(path, { text });
       }
     } finally {
+      if (this.inFlight.get(path) === text) this.inFlight.delete(path);
       this.writing -= 1;
       this.settle();
     }
