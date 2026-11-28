@@ -304,7 +304,7 @@ function TableBody({
                 ? "Select a field to change its label, unit, or type."
                 : "Select a field to see its details."}
       </p>
-      {node.kind === "view" && !node.current && onToggleView && (
+      {node.kind === "view" && onToggleView && (
         <Button
           type="button"
           size="sm"

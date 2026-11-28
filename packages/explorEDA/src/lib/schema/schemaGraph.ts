@@ -36,7 +36,8 @@ export interface SchemaGraph {
   edges: SchemaEdge[];
 }
 
-export type SchemaNodeKind = "table" | "query" | "view";
+/** A list is the drawn summary of tables no view reads; see `condenseProject`. */
+export type SchemaNodeKind = "table" | "query" | "view" | "list";
 
 export interface SchemaNode {
   id: string;
@@ -56,6 +57,10 @@ export interface SchemaNode {
   current?: boolean;
   /** A view card folded to one row per chart. */
   folded?: boolean;
+  /** The views that read this table, by title, when a drawing counts them. */
+  readers?: string[];
+  /** A table no view reads, drawn because the user opened it. */
+  unused?: boolean;
   rows: SchemaRow[];
 }
 
@@ -65,7 +70,7 @@ export interface SchemaRow {
    * A field (the default), a query step, a chart or section heading in a
    * view, or one place a view reads a field.
    */
-  kind?: "field" | "step" | "heading" | "use";
+  kind?: "field" | "step" | "heading" | "use" | "table";
   label: string;
   /** A short fact at the end of the row, such as how a view uses a field. */
   detail?: string;
@@ -82,6 +87,10 @@ export interface SchemaRow {
   dataType?: DataType;
   /** The table's entity key. */
   key?: boolean;
+  /** A field some view reads, directly or through a calculation. */
+  used?: boolean;
+  /** A list row's table is open as its own card. */
+  open?: boolean;
   /** A calculated field, with the expression that makes it. */
   calculation?: { expression: string; error?: string };
 }
@@ -95,9 +104,10 @@ export interface SchemaEdge {
   id: string;
   /**
    * A relationship between tables; a calculation's input; lineage from a
-   * table to a query step; or usage of a field by a view.
+   * table to a query step; usage of a field by a view; or, in a condensed
+   * drawing, one line from a table to each view that reads it.
    */
-  kind: "relationship" | "calculation" | "lineage" | "usage";
+  kind: "relationship" | "calculation" | "lineage" | "usage" | "reads";
   from: SchemaEndpoint;
   to: SchemaEndpoint;
   label?: string;

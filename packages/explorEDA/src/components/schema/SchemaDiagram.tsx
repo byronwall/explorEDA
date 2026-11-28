@@ -11,6 +11,8 @@ import {
 import { createPortal } from "react-dom";
 import {
   AlertTriangle,
+  ChevronDown,
+  ChevronRight,
   Database,
   Filter,
   KeyRound,
@@ -41,7 +43,11 @@ import {
 } from "@/lib/schema/schemaLayout";
 import { SchemaInspector, type SchemaChartLinks } from "./SchemaInspector";
 import { traceField } from "@/lib/schema/schemaTrace";
-import { compactViews } from "@/lib/schema/schemaCompact";
+import {
+  compactViews,
+  condenseProject,
+  UNUSED_LIST,
+} from "@/lib/schema/schemaCompact";
 import {
   proposalRelationship,
   type LinkProposal,
@@ -49,8 +55,6 @@ import {
 import type { SchemaEditing, SchemaSelection } from "./schemaEditing";
 
 const MIN_SCALE = 0.35;
-/** The smallest scale a fit uses; below it, text is hard to read. */
-const READABLE_SCALE = 0.6;
 const MAX_SCALE = 2;
 /** Movement that turns a press into a pan or a link rather than a click. */
 const DRAG_THRESHOLD = 4;
@@ -67,24 +71,13 @@ interface View {
 const clampScale = (scale: number) =>
   Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale));
 
-/** The scale and offset that show the whole diagram in the viewport. */
-function fitView(
-  layout: { width: number; height: number },
-  width: number,
-  height: number
-): View {
-  if (!width || !height) return { x: 0, y: 0, scale: 1 };
-  // Readable cards matter more than seeing everything at once; past the
-  // smallest readable scale, the diagram pans.
-  const scale = Math.max(
-    READABLE_SCALE,
-    clampScale(Math.min(1, width / layout.width, height / layout.height))
-  );
-  return {
-    x: Math.max(0, (width - layout.width * scale) / 2),
-    y: Math.max(0, (height - layout.height * scale) / 2),
-    scale,
-  };
+/**
+ * Full size, from the top. The layout already fits the viewport's width, so
+ * every label reads without zooming; a diagram taller than the viewport
+ * scrolls down. A narrower one sits in the middle.
+ */
+function fitView(layout: { width: number }, width: number): View {
+  return { x: Math.max(0, (width - layout.width) / 2), y: 0, scale: 1 };
 }
 
 const rowCenter = (
@@ -173,14 +166,31 @@ export function SchemaDiagram({
   /** A card to select when the diagram opens, such as a table just added. */
   focusNodeId?: string;
 }) {
-  // Other views fold to their charts until the user opens one.
+  // Views fold to their charts until the user opens one. Tables no view
+  // reads fold into one list until the user opens one, or adds or focuses it.
   const [expandedViews, setExpandedViews] = useState<ReadonlySet<string>>(
     () => new Set()
   );
-  const graph = useMemo(
-    () => compactViews(fullGraph, expandedViews),
+  const [openTables, setOpenTables] = useState<ReadonlySet<string>>(
+    () => new Set(focusNodeId ? [focusNodeId] : [])
+  );
+  // The details read every table; only the drawing folds the unused ones.
+  const detailGraph = useMemo(
+    () => compactViews(fullGraph, expandedViews, { foldCurrent: true }),
     [fullGraph, expandedViews]
   );
+  const graph = useMemo(
+    () => condenseProject(detailGraph, openTables),
+    [detailGraph, openTables]
+  );
+  const toggleTable = useCallback((nodeId: string) => {
+    setOpenTables((current) => {
+      const next = new Set(current);
+      if (next.has(nodeId)) next.delete(nodeId);
+      else next.add(nodeId);
+      return next;
+    });
+  }, []);
   const toggleView = useCallback((nodeId: string) => {
     setExpandedViews((current) => {
       const next = new Set(current);
@@ -208,13 +218,14 @@ export function SchemaDiagram({
 
   const [view, setView] = useState<View>({ x: 0, y: 0, scale: 1 });
   const fit = useCallback(
-    () => setView(fitView(layout, width, height)),
-    [layout, width, height]
+    () => setView(fitView(layout, width)),
+    [layout, width]
   );
-  // Fit when the drawer opens, its shape changes, or cards come or go. An
-  // edit that renames or relates keeps the user's view.
-  const fitKey = `${shapeWidth}x${shapeHeight}:${graph.nodes
-    .map((node) => `${node.id}/${node.rows.length}`)
+  // Fit when the drawer opens, its shape changes, or the project's cards
+  // come or go. Opening a folded view or table, or an edit that renames or
+  // relates, keeps the user's view.
+  const fitKey = `${shapeWidth}x${shapeHeight}:${fullGraph.nodes
+    .map((node) => node.id)
     .join(",")}`;
   const fittedKey = useRef<string>(undefined);
   useLayoutEffect(() => {
@@ -290,7 +301,10 @@ export function SchemaDiagram({
     fullGraph.nodes
       .filter((node) => node.kind === "table")
       .forEach((node) => knownTables.current.add(node.id));
-    if (added) setSelection({ kind: "table", nodeId: added.id });
+    if (added) {
+      setOpenTables((current) => new Set([...current, added.id]));
+      setSelection({ kind: "table", nodeId: added.id });
+    }
   }, [fullGraph]);
   // An edit can remove what was selected, such as a removed relationship.
   const suggestions = useMemo(
@@ -300,12 +314,12 @@ export function SchemaDiagram({
   useEffect(() => {
     if (
       selection &&
-      (!selectionExists(graph, selection) ||
+      (!selectionExists(detailGraph, selection) ||
         (selection.kind === "suggestion" &&
           !suggestions.some((item) => item.id === selection.id)))
     )
       setSelection(undefined);
-  }, [graph, selection, suggestions]);
+  }, [detailGraph, selection, suggestions]);
 
   // A swap of the details can remove the focused control. Keep focus in the
   // diagram so Escape still clears the selection instead of closing it all.
@@ -357,7 +371,7 @@ export function SchemaDiagram({
     if (suggested)
       return { kind: "suggestion", id: suggested.dataset.schemaSuggestion! };
     const card = target.closest<HTMLElement>("[data-schema-node]");
-    if (!card) return undefined;
+    if (!card || card.dataset.schemaNode === UNUSED_LIST) return undefined;
     const row = target.closest<HTMLElement>("[data-schema-row]");
     const nodeId = card.dataset.schemaNode!;
     return row
@@ -600,6 +614,10 @@ export function SchemaDiagram({
       else focusRow(rowIndex - 1);
     } else if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
+      if (node.kind === "list") {
+        if (rowIndex >= 0) toggleTable(node.rows[rowIndex]!.id);
+        return;
+      }
       setSelection(
         rowIndex >= 0
           ? { kind: "field", nodeId: node.id, rowId: node.rows[rowIndex]!.id }
@@ -666,7 +684,7 @@ export function SchemaDiagram({
         variant="ghost"
         size="icon"
         aria-label="Fit the diagram"
-        tooltip="Fit the whole diagram in view"
+        tooltip="Back to full size, from the top"
         onClick={fit}
       >
         <Scan aria-hidden="true" />
@@ -770,6 +788,13 @@ export function SchemaDiagram({
             return;
           }
           if (current.moved) return;
+          const listed = (event.target as Element).closest<HTMLElement>(
+            `[data-schema-node="${UNUSED_LIST}"] [data-schema-row]`
+          );
+          if (listed) {
+            toggleTable(listed.dataset.schemaRow!);
+            return;
+          }
           setSelection(selectionAt(event.target as Element));
         }}
         onPointerCancel={() => {
@@ -885,7 +910,7 @@ export function SchemaDiagram({
         </div>
         {selection && inspectorStyle && (
           <SchemaInspector
-            graph={graph}
+            graph={detailGraph}
             selection={selection}
             editing={editing}
             charts={charts}
@@ -958,7 +983,17 @@ function SchemaCard({
         )}
         <h3>{node.title}</h3>
         {node.detail && (
-          <span className="eda-schema-detail">{node.detail}</span>
+          <span
+            className="eda-schema-detail"
+            data-readers={node.readers?.length ? "" : undefined}
+            title={
+              node.readers && node.readers.length > 1
+                ? node.readers.join(", ")
+                : undefined
+            }
+          >
+            {node.detail}
+          </span>
         )}
       </header>
       <ul
@@ -1023,14 +1058,23 @@ function SchemaRowItem({
     );
   }
   const Icon =
-    row.kind === "step" && row.step
-      ? STEP_ICONS[row.step]
-      : row.dataType
-        ? typeIcons[row.dataType]
-        : undefined;
+    row.kind === "table"
+      ? row.open
+        ? ChevronDown
+        : ChevronRight
+      : row.kind === "step" && row.step
+        ? STEP_ICONS[row.step]
+        : row.dataType
+          ? typeIcons[row.dataType]
+          : undefined;
   const type = row.dataType ? typeLabels[row.dataType] : undefined;
   const facts = [
-    row.kind === "step" ? "step" : row.kind === "use" ? undefined : type,
+    row.kind === "step"
+      ? "step"
+      : row.kind === "use" || row.kind === "table"
+        ? undefined
+        : type,
+    row.kind === "table" ? (row.open ? "open" : "folded") : undefined,
     row.detail,
     row.key ? "key" : undefined,
     row.calculation ? `calculated: ${row.calculation.expression}` : undefined,
@@ -1050,6 +1094,7 @@ function SchemaRowItem({
       data-drop-target={dropTarget || undefined}
       data-relatable={relatable || undefined}
       data-status={row.status}
+      data-used={row.used || undefined}
       data-calculated={row.calculation ? "" : undefined}
       aria-label={[row.label, ...facts].join(", ")}
       aria-selected={selected}

@@ -35,6 +35,7 @@ const KIND_ORDER: Record<SchemaNode["kind"], number> = {
   table: 0,
   query: 1,
   view: 2,
+  list: 3,
 };
 
 /**
@@ -96,9 +97,15 @@ function tableColumns(graph: SchemaGraph, tables: SchemaNode[]) {
  * Within a column, cards sit near the rows they connect to in the column
  * before.
  */
-function layeredLayout(graph: SchemaGraph): SchemaLayout {
+function layeredLayout(
+  graph: SchemaGraph,
+  viewport?: { width: number; height: number }
+): SchemaLayout {
   const { cardWidth, columnGap, cardGap, margin } = SCHEMA_SIZES;
-  const tables = graph.nodes.filter((node) => node.kind === "table");
+  // A table no view reads sits with the list of such tables, last.
+  const tables = graph.nodes.filter(
+    (node) => node.kind === "table" && !node.unused
+  );
   const tableColumn = tableColumns(graph, tables);
   const tableColumnCount = Math.max(0, ...tableColumn.values()) + 1;
 
@@ -106,16 +113,27 @@ function layeredLayout(graph: SchemaGraph): SchemaLayout {
   for (const node of graph.nodes) {
     columnOf.set(
       node.id,
-      node.kind === "table"
+      node.kind === "table" && !node.unused
         ? (tableColumn.get(node.id) ?? 0)
-        : tableColumnCount + KIND_ORDER[node.kind] - 1
+        : tableColumnCount +
+            KIND_ORDER[node.kind === "table" ? "list" : node.kind] -
+            1
     );
   }
-  const columns: SchemaNode[][] = [];
+  const layers: SchemaNode[][] = [];
   graph.nodes.forEach((node) => {
     const index = columnOf.get(node.id)!;
-    (columns[index] ??= []).push(node);
+    (layers[index] ??= []).push(node);
   });
+  // The list comes before the tables opened from it.
+  for (const layer of layers) {
+    layer?.sort(
+      (a, b) => Number(a.kind === "table") - Number(b.kind === "table")
+    );
+  }
+  const columns = viewport
+    ? spread(graph, layers, viewport)
+    : layers.map((layer) => layer ?? []);
 
   const boxes: Record<string, SchemaBox> = {};
   const nodesById = new Map(graph.nodes.map((node) => [node.id, node]));
@@ -342,113 +360,109 @@ function roundedPath(points: [number, number][], radius = 10) {
   return `${d} L ${lx} ${ly}`;
 }
 
-/**
- * The layered order, poured into columns no taller than `maxHeight`: cards
- * read top to bottom, then on to the next column, so a tall layer wraps
- * instead of leaving the rest of the screen empty. Each kind of card starts
- * a new column.
- */
-function flowLayout(order: SchemaNode[], maxHeight: number): SchemaLayout {
-  const { cardWidth, columnGap, cardGap, margin } = SCHEMA_SIZES;
-  const boxes: Record<string, SchemaBox> = {};
-  let column = 0;
-  let y = margin;
-  let height = 0;
-  let previous: SchemaNode | undefined;
-  for (const node of order) {
-    const nodeHeightValue = nodeHeight(node);
-    // Tables, queries, and views each start their own column, so each kind
-    // reads as one group.
-    const newKind = previous !== undefined && previous.kind !== node.kind;
-    if (y > margin && (newKind || y + nodeHeightValue > margin + maxHeight)) {
-      column += 1;
-      y = margin;
+/** A run of cards stacked in one column, with gaps between them. */
+const stackHeight = (nodes: SchemaNode[]) =>
+  nodes.reduce((sum, node) => sum + nodeHeight(node), 0) +
+  Math.max(0, nodes.length - 1) * SCHEMA_SIZES.cardGap;
+
+/** Cards in order, cut into `count` columns of about equal height. */
+function split(nodes: SchemaNode[], count: number): SchemaNode[][] {
+  const target = stackHeight(nodes) / count;
+  const columns: SchemaNode[][] = [[]];
+  for (const [index, node] of nodes.entries()) {
+    const current = columns[columns.length - 1]!;
+    const left = nodes.length - index;
+    const columnsLeft = count - columns.length;
+    if (
+      current.length &&
+      columnsLeft > 0 &&
+      (stackHeight([...current, node]) > target || left <= columnsLeft)
+    ) {
+      columns.push([node]);
+    } else {
+      current.push(node);
     }
-    previous = node;
-    boxes[node.id] = {
-      x: margin + column * (cardWidth + columnGap),
-      y,
-      width: cardWidth,
-      height: nodeHeightValue,
-      column,
-    };
-    y += nodeHeightValue + cardGap;
-    height = Math.max(height, y - cardGap + margin);
   }
-  return {
-    boxes,
-    width: margin * 2 + (column + 1) * cardWidth + column * columnGap,
-    height: Math.max(height, margin * 2),
-  };
-}
-
-/** How large the diagram can draw while all of it fits the viewport. */
-export function fitScale(
-  layout: { width: number; height: number },
-  viewport: { width: number; height: number }
-) {
-  return Math.min(
-    1,
-    viewport.width / layout.width,
-    viewport.height / layout.height
-  );
+  return columns;
 }
 
 /**
- * A fixed layout that reads left to right and top to bottom. Given the
- * viewport, it picks the arrangement that shows the whole diagram largest,
- * so it reads without zooming or panning: one column per depth when that
- * fits, otherwise the same order wrapped into columns that match the
- * viewport's shape. The same graph and viewport always give the same layout.
+ * Columns that read at full size in the viewport. While the tallest layer is
+ * taller than the viewport and one more column still fits its width, that
+ * layer takes another column. What is still too tall scrolls down; nothing
+ * runs off to the right. Tables are ordered by the first view that reads
+ * them, so lines to views cross less.
+ */
+function spread(
+  graph: SchemaGraph,
+  layers: (SchemaNode[] | undefined)[],
+  viewport: { width: number; height: number }
+): SchemaNode[][] {
+  const { cardWidth, columnGap, margin } = SCHEMA_SIZES;
+  const viewOrder = new Map(
+    graph.nodes
+      .filter((node) => node.kind === "view")
+      .map((node, index) => [node.id, index])
+  );
+  const firstReader = new Map<string, number>();
+  for (const edge of graph.edges) {
+    if (edge.kind !== "reads") continue;
+    const index = viewOrder.get(edge.to.nodeId) ?? Infinity;
+    firstReader.set(
+      edge.from.nodeId,
+      Math.min(firstReader.get(edge.from.nodeId) ?? Infinity, index)
+    );
+  }
+  const ordered = layers
+    .filter((layer): layer is SchemaNode[] => Boolean(layer?.length))
+    .map((layer) =>
+      layer.every((node) => node.kind === "table") && firstReader.size
+        ? [...layer].sort(
+            (a, b) =>
+              (firstReader.get(a.id) ?? Infinity) -
+              (firstReader.get(b.id) ?? Infinity)
+          )
+        : layer
+    );
+  const counts = ordered.map(() => 1);
+  const room = viewport.height - margin * 2;
+  const widthFor = (total: number) =>
+    margin * 2 + total * cardWidth + (total - 1) * columnGap;
+  for (;;) {
+    const heights = ordered.map((layer, index) =>
+      Math.max(...split(layer, counts[index]!).map(stackHeight))
+    );
+    const tallest = heights.indexOf(Math.max(...heights));
+    const total = counts.reduce((sum, count) => sum + count, 0);
+    if (
+      heights[tallest]! <= room ||
+      counts[tallest]! >= ordered[tallest]!.length ||
+      widthFor(total + 1) > viewport.width
+    ) {
+      break;
+    }
+    const next = Math.max(
+      ...split(ordered[tallest]!, counts[tallest]! + 1).map(stackHeight)
+    );
+    if (next >= heights[tallest]!) break;
+    counts[tallest]! += 1;
+  }
+  return ordered.flatMap((layer, index) => split(layer, counts[index]!));
+}
+
+/**
+ * A fixed layout that reads left to right: tables, then queries, then views,
+ * then the tables no view reads. Given the viewport, a tall layer spreads over
+ * more columns while they fit its width, so the diagram reads at full size;
+ * what still does not fit scrolls down. The same graph and viewport always
+ * give the same layout.
  */
 export function layoutSchemaGraph(
   graph: SchemaGraph,
   viewport?: { width: number; height: number }
 ): SchemaLayout {
-  const layered = layeredLayout(graph);
-  if (!viewport?.width || !viewport.height || graph.nodes.length < 2) {
-    return layered;
-  }
-  const order = [...graph.nodes].sort((a, b) => {
-    const boxA = layered.boxes[a.id]!;
-    const boxB = layered.boxes[b.id]!;
-    return boxA.column - boxB.column || boxA.y - boxB.y;
-  });
-
-  // Every column height worth trying ends a column after some run of cards.
-  const heights = new Set<number>();
-  for (let start = 0; start < order.length; start += 1) {
-    let total = -SCHEMA_SIZES.cardGap;
-    for (let end = start; end < order.length; end += 1) {
-      total += nodeHeight(order[end]!) + SCHEMA_SIZES.cardGap;
-      heights.add(total);
-    }
-  }
-
-  // Draw largest; between equal sizes, fill the viewport's shape. A layered
-  // layout keeps depths in their own columns, which reads best, so it wins
-  // unless wrapping draws noticeably larger.
-  const shapeMiss = (layout: SchemaLayout) =>
-    Math.abs(
-      Math.log(
-        layout.width / layout.height / (viewport.width / viewport.height)
-      )
-    );
-  let best = layered;
-  let bestScale = fitScale(layered, viewport) * 1.08;
-  let bestMiss = shapeMiss(layered);
-  for (const maxHeight of [...heights].sort((a, b) => a - b)) {
-    const candidate = flowLayout(order, maxHeight);
-    const scale = fitScale(candidate, viewport);
-    const miss = shapeMiss(candidate);
-    if (
-      scale > bestScale + 0.005 ||
-      (best !== layered && scale > bestScale - 0.005 && miss < bestMiss)
-    ) {
-      best = candidate;
-      bestScale = scale;
-      bestMiss = miss;
-    }
-  }
-  return best;
+  return layeredLayout(
+    graph,
+    viewport?.width && viewport.height ? viewport : undefined
+  );
 }

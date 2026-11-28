@@ -1,11 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createShopFixture } from "@/test/fixtures/shopProject";
 import { projectSchemaGraph, tableSchemaGraph } from "@/lib/schema/schemaGraph";
-import {
-  fitScale,
-  layoutSchemaGraph,
-  routeSchemaEdge,
-} from "@/lib/schema/schemaLayout";
+import { layoutSchemaGraph, routeSchemaEdge } from "@/lib/schema/schemaLayout";
 import type { SchemaGraph } from "@/lib/schema/schemaGraph";
 
 /** Only the tables and their relationships, as Milestone 1 drew them. */
@@ -161,7 +157,7 @@ describe("layoutSchemaGraph", () => {
     }
   });
 
-  it("wraps cards into columns that match a wide viewport", () => {
+  it("spreads a tall layer over columns that fit a wide viewport", () => {
     const graph = manyTables(6);
     const viewport = { width: 1400, height: 700 };
     const stacked = layoutSchemaGraph(graph);
@@ -170,15 +166,24 @@ describe("layoutSchemaGraph", () => {
     expect(new Set(Object.values(stacked.boxes).map((box) => box.x)).size).toBe(
       1
     );
-    expect(fitScale(fitted, viewport)).toBeGreaterThan(
-      fitScale(stacked, viewport)
-    );
-    expect(fitScale(fitted, viewport)).toBe(1);
+    // Full size: wider than one column, never wider than the viewport.
+    const columns = new Set(Object.values(fitted.boxes).map((box) => box.x));
+    expect(columns.size).toBeGreaterThan(1);
+    expect(fitted.width).toBeLessThanOrEqual(viewport.width);
+    expect(fitted.height).toBeLessThan(stacked.height);
     // Cards still read top to bottom, then left to right.
     const order = Object.entries(fitted.boxes)
       .sort(([, a], [, b]) => a.x - b.x || a.y - b.y)
       .map(([id]) => id);
     expect(order).toEqual(graph.nodes.map((node) => node.id));
+  });
+
+  it("scrolls down rather than running past a narrow viewport", () => {
+    const graph = manyTables(6);
+    const fitted = layoutSchemaGraph(graph, { width: 400, height: 300 });
+    expect(new Set(Object.values(fitted.boxes).map((box) => box.x)).size).toBe(
+      1
+    );
   });
 
   it("keeps one column per depth when it already fits", () => {
