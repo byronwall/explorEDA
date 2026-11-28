@@ -14,13 +14,17 @@ import {
   HIDDEN_PROJECT_FILE,
   PROJECT_FILE,
   projectLayout,
+  readProjectFolder,
 } from "@/lib/project/folder";
 import { compileProjectText } from "@/lib/dsl/project";
 import { isDataFile, parseTable } from "@/lib/project/tables";
 import {
   fields,
+  LINKS_NEXT,
+  suggestedLinks,
   ToolError,
   type FieldsResult,
+  type SuggestedLink,
   type ToolOptions,
 } from "./tools";
 
@@ -51,6 +55,8 @@ export interface AddDataResult {
   projectPath: string;
   rows: number;
   fields: FieldsResult["queries"][number]["fields"];
+  /** Links between this source and the others that the data suggests. */
+  suggestedLinks?: SuggestedLink[];
   howToUse: string;
 }
 
@@ -309,12 +315,14 @@ export async function addData(
     throw error;
   }
   const described = await fields(files, { query: source });
+  const links = suggestedLinks(await readProjectFolder(files), source);
   return {
     saved: path,
     source,
     projectPath,
     rows: rows.length,
     fields: described.queries[0]?.fields ?? [],
-    howToUse: `Chart it in an analysis that starts with eda query=${source}; its fields are named ${source}.<field>.`,
+    ...(links.length ? { suggestedLinks: links } : {}),
+    howToUse: `Chart it in an analysis that starts with eda query=${source}; its fields are named ${source}.<field>.${links.length ? ` ${LINKS_NEXT}` : ""}`,
   };
 }

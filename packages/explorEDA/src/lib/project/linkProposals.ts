@@ -1,9 +1,10 @@
 /**
- * Drafts relationships between database tables read from one connection,
- * so a user accepts links instead of drawing each one. A link comes from a
- * foreign key the database declares, or, when it declares none, from key
- * names (`ss_item_sk` and `i_item_sk`, `customerId` and customers' `id`)
- * whose snapshot values match.
+ * Drafts relationships between tables, so a user accepts links instead of
+ * drawing each one. Tables group by where they come from: the database
+ * tables of one connection, and all file sources (CSV, JSON, Parquet) of
+ * the project. Within a group, a link comes from a foreign key the database
+ * declares, or from key names (`ss_item_sk` and `i_item_sk`, `customerId`
+ * and customers' `id`, `run_id` in two files) whose values match.
  */
 import type {
   AnalysisProject,
@@ -91,13 +92,17 @@ interface Column {
 export function proposeLinks({
   project,
   tables,
-  databases,
+  databases = {},
   foreignKeys = {},
 }: {
   project: AnalysisProject;
+  /** Rows by source ID. Only sources with rows get links. */
   tables: Record<string, readonly AnalysisSourceRow[]>;
-  /** Database sources by ID: their connection and table. */
-  databases: Record<string, { connection: string; table?: string }>;
+  /**
+   * Database sources by ID: their connection and table. Any other source
+   * with rows is a file source; all of them form one group.
+   */
+  databases?: Record<string, { connection: string; table?: string }>;
   /** Declared foreign keys, by connection. */
   foreignKeys?: Record<string, ForeignKey[]>;
 }): LinkProposal[] {
@@ -178,22 +183,21 @@ export function proposeLinks({
     });
   };
 
-  // Sources read from the same connection, in project order.
+  // Sources read from the same connection, and file sources, in project
+  // order. The file group's key cannot be a connection name.
   const groups = new Map<string, string[]>();
   for (const source of project.sources) {
     const database = databases[source.id];
-    if (!database) continue;
-    groups.set(database.connection, [
-      ...(groups.get(database.connection) ?? []),
-      source.id,
-    ]);
+    if (!database && !tables[source.id]?.length) continue;
+    const group = database ? database.connection : "\u0000files";
+    groups.set(group, [...(groups.get(group) ?? []), source.id]);
   }
 
   for (const [connection, ids] of groups) {
     if (ids.length < 2) continue;
     const byTable = new Map<string, string[]>();
     for (const id of ids) {
-      const table = databases[id]!.table;
+      const table = databases[id]?.table;
       if (table) byTable.set(table, [...(byTable.get(table) ?? []), id]);
     }
     for (const key of foreignKeys[connection] ?? []) {
@@ -223,19 +227,26 @@ export function proposeLinks({
             if (
               !namesKey(field.id, target.id, {
                 id: toId,
-                table: databases[toId]!.table,
+                table: databases[toId]?.table,
               }) ||
               !unique(toId, target.id)
             )
               continue;
             const to = { sourceId: toId, fieldId: target.id };
             const counts = matches({ sourceId: fromId, fieldId: field.id }, to);
+            if (counts.total === 0) continue;
+            const share = counts.matched / counts.total;
+            if (share < MATCH_SHARE) continue;
+            const bestShare = best
+              ? best.counts.matched / best.counts.total
+              : -1;
+            // On a tie, the larger table: a sample of runs also holds every
+            // run a job names, but the runs table is the one to look up.
             if (
-              counts.total > 0 &&
-              counts.matched / counts.total >= MATCH_SHARE &&
-              (!best ||
-                counts.matched / counts.total >
-                  best.counts.matched / best.counts.total)
+              share > bestShare ||
+              (share === bestShare &&
+                column(toId, target.id).count >
+                  column(best!.to.sourceId, best!.to.fieldId).count)
             ) {
               best = { to, counts };
             }
@@ -252,7 +263,42 @@ export function proposeLinks({
       }
     }
   }
-  return proposals;
+  return withoutShortcuts(project.relationships, proposals);
+}
+
+/**
+ * Drops a link by name that a lookup through another table already gives:
+ * steps.run_id → runs when steps.job_id → jobs and jobs.run_id → runs. A
+ * table that copies its parent's keys would otherwise draw a link to every
+ * ancestor.
+ */
+function withoutShortcuts(
+  accepted: readonly RelationshipDefinition[],
+  proposals: LinkProposal[]
+): LinkProposal[] {
+  const kept = [...proposals];
+  const edges = () => [...accepted, ...kept];
+  for (const proposal of proposals) {
+    if (proposal.reason !== "name") continue;
+    const { from, to } = proposal;
+    const implied = edges().some(
+      (step) =>
+        step !== proposal &&
+        step.from.sourceId === from.sourceId &&
+        step.from.fieldId !== from.fieldId &&
+        step.to.sourceId !== to.sourceId &&
+        edges().some(
+          (next) =>
+            next !== proposal &&
+            next.from.sourceId === step.to.sourceId &&
+            next.from.fieldId === from.fieldId &&
+            next.to.sourceId === to.sourceId &&
+            next.to.fieldId === to.fieldId
+        )
+    );
+    if (implied) kept.splice(kept.indexOf(proposal), 1);
+  }
+  return kept;
 }
 
 /** The relationship an accepted proposal adds. */

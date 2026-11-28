@@ -634,6 +634,13 @@ and keys, change or remove relationships, and add, change, or remove query
 steps; removing a step first names the fields and views it breaks. Each edit
 reaches `onProjectChange` once. `readOnly` keeps the diagram and hides edits.
 
+Pass `linkProposals` to show suggested links dashed, each with Accept and
+Dismiss. `proposeLinks` drafts them from a project's tables: within the file
+sources, and within each database connection's tables, it pairs key names
+(`jobs.run_id` and `runs.run_id`, `orders.customer_id` and customers' `id`)
+where 90% of the values match a nearly unique key, plus any foreign keys
+you pass.
+
 Pass every saved view as `views` so the diagram shows what each one reads;
 views other than the current one fold to one row per chart. Pass
 `onAddSource` to show **Add source**: your app picks a file, reads it with

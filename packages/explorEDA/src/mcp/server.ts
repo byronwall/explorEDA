@@ -29,6 +29,7 @@ const PROTOCOL_VERSIONS = ["2025-06-18", "2025-03-26", "2024-11-05"];
 const INSTRUCTIONS = `explorEDA builds dashboards from .eda text in this project folder. A person may have the app open on it; every save shows there.
 Steps: project (sources, queries, files; an empty folder, or data files project lists as unsourced, start with add_data), fields (each query's fields), reference (the grammar; reference topic=<chart word> for one chart's settings), then write_eda. Each save returns every problem with its line and a fix; repeat until complete is true. check does the same without saving. summarize gives a query's real numbers, grouped, to check a chart or to cite in prose.
 Rules that save rounds:
+- Several tables that share keys (orders.customer_id and customers.id, run_id in runs and jobs) need a relate line for each link in the project text. add_data and project list suggestedLinks from key names and matching values: add the right ones before writing analyses.
 - An analysis starts with eda query=<id>, and names fields as fields lists them, such as orders.amount.
 - Alias, calc, and group lines reach every view in the file, so give each file one query. Put a view on another query in its own file.
 - Write aliases (amount:num=orders.amount), calc, and group lines above the views, not inside a view body.
@@ -110,7 +111,7 @@ const TOOLS = [
     name: "add_data",
     title: "Add data",
     description:
-      "Starts a project from data, or adds more: copies a local CSV or JSON file in (from), writes rows you send (rows), or fetches a CSV or JSON address (url). With only path, it adds a source for a data file already in the folder. Adds the source to the project text and returns its fields. Refuses files over 100 MB, web pages, and replacing a file.",
+      "Starts a project from data, or adds more: copies a local CSV or JSON file in (from), writes rows you send (rows), or fetches a CSV or JSON address (url). With only path, it adds a source for a data file already in the folder. Adds the source to the project text and returns its fields, and suggestedLinks: relate lines to the other sources whose keys its values match. Refuses files over 100 MB, web pages, and replacing a file.",
     inputSchema: {
       type: "object",
       properties: {
@@ -169,7 +170,7 @@ const TOOLS = [
     name: "project",
     title: "Show the project",
     description:
-      "The folder at a glance: where its project text is, each source with its file and row count, the queries an analysis can chart, every analysis and notebook with chart and problem counts, and the data files.",
+      "The folder at a glance: where its project text is, each source with its file and row count, the queries an analysis can chart, every analysis and notebook with chart and problem counts, the data files, and suggestedLinks: relate lines the data suggests that the project text lacks.",
     inputSchema: { type: "object", properties: {} },
     annotations: { readOnlyHint: true },
   },

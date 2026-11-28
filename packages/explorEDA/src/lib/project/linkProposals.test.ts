@@ -161,4 +161,28 @@ describe("proposeLinks", () => {
     });
     expect(proposeLinks(input)).toEqual([]);
   });
+
+  it("links file sources by key name, skipping links through a parent", () => {
+    // CI exports: a job copies its run's key, a step copies both, and a
+    // sample of runs holds every run a job names.
+    const { project, tables } = setup({
+      runs: range(30).map((i) => ({ run_id: `r${i}`, repo: "a" })),
+      jobs: range(60).map((i) => ({ job_id: `j${i}`, run_id: `r${i % 10}` })),
+      steps: range(120).map((i) => ({
+        step_id: `s${i}`,
+        job_id: `j${i % 60}`,
+        run_id: `r${i % 10}`,
+      })),
+      sample: range(10).map((i) => ({ run_id: `r${i}`, wall_s: i })),
+    });
+    const links = proposeLinks({ project, tables }).map(
+      (link) =>
+        `${link.from.sourceId}.${link.from.fieldId} -> ${link.to.sourceId}.${link.to.fieldId}`
+    );
+    expect(links).toEqual([
+      "jobs.run_id -> runs.run_id",
+      "steps.job_id -> jobs.job_id",
+      "sample.run_id -> runs.run_id",
+    ]);
+  });
 });

@@ -31,6 +31,7 @@ import {
   readProjectFolder,
   type ProjectFolder,
 } from "@/lib/project/folder";
+import { proposeLinks } from "@/lib/project/linkProposals";
 import { formatNotebook, isNotebookPath } from "@/lib/notebook";
 import { NOTEBOOK_REFERENCE, PROJECT_REFERENCE } from "@/cli/reference";
 
@@ -404,8 +405,53 @@ export interface ProjectSummary {
   dataFiles: string[];
   /** Data files no source reads yet, and what to do about them. */
   unsourced?: string[];
+  /** Links the data suggests that the project text doesn't declare. */
+  suggestedLinks?: SuggestedLink[];
   next?: string;
   problems: number;
+}
+
+/** A relate line the data suggests, with how many rows it matches. */
+export interface SuggestedLink {
+  relate: string;
+  /** Rows of the from table whose value finds a row of the other. */
+  matched: number;
+  /** Rows of the from table with a value. */
+  total: number;
+}
+
+/** How an agent adds suggested links: they go in the project text. */
+export const LINKS_NEXT =
+  "Add each suggestedLinks relate line to the project text (read_eda, then write_eda) unless it is wrong for this data; queries look up across tables only through declared links.";
+
+/**
+ * Links between file or database tables that key names and values
+ * suggest, as relate lines. With `source`, only links that touch it.
+ */
+export function suggestedLinks(
+  read: ProjectFolder,
+  source?: string
+): SuggestedLink[] {
+  const taken = new Set(read.project.relationships.map((item) => item.id));
+  return proposeLinks({
+    project: read.project,
+    tables: read.tables,
+    databases: read.databases,
+  })
+    .filter(
+      (link) =>
+        !source || link.from.sourceId === source || link.to.sourceId === source
+    )
+    .map(({ from, to, matched, total }) => {
+      let id = `${from.sourceId}-${to.sourceId}`;
+      if (taken.has(id)) id = `${id}-${from.fieldId}`;
+      taken.add(id);
+      return {
+        relate: `relate @${id} ${from.sourceId}.${from.fieldId} -> ${to.sourceId}.${to.fieldId}`,
+        matched,
+        total,
+      };
+    });
 }
 
 /** The folder at a glance: its project text, sources, queries, and files. */
@@ -416,6 +462,15 @@ export async function project(files: ProjectFiles): Promise<ProjectSummary> {
     read.problems.filter((item) => item.path === path).length;
   const sourced = new Set(Object.values(read.paths));
   const unsourced = read.dataFiles.filter((file) => !sourced.has(file));
+  const links = suggestedLinks(read);
+  const next = [
+    ...(unsourced.length
+      ? [
+          `${unsourced.length === 1 ? "This data file has" : "These data files have"} no source yet. Call add_data with only its path to chart it.`,
+        ]
+      : []),
+    ...(links.length ? [LINKS_NEXT] : []),
+  ].join(" ");
   return {
     layout: read.layout,
     ...(read.projectPath ? { projectPath: read.projectPath } : {}),
@@ -457,12 +512,9 @@ export async function project(files: ProjectFiles): Promise<ProjectSummary> {
       problems: count(notebook.path),
     })),
     dataFiles: read.dataFiles,
-    ...(unsourced.length
-      ? {
-          unsourced,
-          next: `${unsourced.length === 1 ? "This data file has" : "These data files have"} no source yet. Call add_data with only its path to chart it.`,
-        }
-      : {}),
+    ...(unsourced.length ? { unsourced } : {}),
+    ...(links.length ? { suggestedLinks: links } : {}),
+    ...(next ? { next } : {}),
     problems: read.problems.length,
   };
 }

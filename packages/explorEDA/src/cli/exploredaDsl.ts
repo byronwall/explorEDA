@@ -24,7 +24,7 @@ import {
   isNotebookPath,
 } from "@/lib/notebook";
 import { nodeProjectFiles } from "@/node/projectFiles";
-import { reference, ToolError } from "@/mcp/tools";
+import { reference, suggestedLinks, ToolError } from "@/mcp/tools";
 
 const USAGE = `Usage:
   exploreda-dsl check <dashboard.eda> --data <rows.csv|rows.json> [--json]
@@ -131,8 +131,15 @@ async function checkProject(folder: string, json: boolean) {
   const read = await readProjectFolder(nodeProjectFiles(folder));
   const { first, rest } = sourcesFirst(read, folder);
   const result = { ...read, problems: [...first, ...rest] };
+  const links = suggestedLinks(read);
   if (json) {
-    console.log(JSON.stringify({ ...result, tables: undefined }, null, 2));
+    console.log(
+      JSON.stringify(
+        { ...result, tables: undefined, suggestedLinks: links },
+        null,
+        2
+      )
+    );
   } else {
     const { project } = result;
     console.log(
@@ -159,6 +166,12 @@ async function checkProject(folder: string, json: boolean) {
       console.log(
         `  source ${source.id}: ${rows} rows${notes.length ? ` (${notes.join(", ")})` : ""}`
       );
+    }
+    if (links.length) {
+      console.log("suggested links (add the right ones to the project text):");
+      for (const link of links) {
+        console.log(`  ${link.relate}   (${link.matched}/${link.total} match)`);
+      }
     }
     for (const analysis of result.analyses) {
       console.log(`${analysis.path}: ${analysis.result.views.length} views`);
