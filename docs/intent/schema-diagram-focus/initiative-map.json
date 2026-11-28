@@ -4,11 +4,11 @@
     "title": "Schema diagram that shows what the analyses use",
     "slug": "schema-diagram-focus",
     "scale": "feature",
-    "current_phase": "plan",
+    "current_phase": "execution",
     "last_updated": "2026-11-27",
     "summary": "Make the Schema diagram readable on real projects by emphasizing the tables, fields, and queries that views use, while keeping all data reachable.",
-    "status": "planned",
-    "next_action": "Byron chooses how explorEDA takes the router (depend on @draftably/runtime after draftably#715, or copy the engine), then approves the plan; build starts with M1"
+    "status": "active",
+    "next_action": "Build M1; draftably#715 session (local_90c4e9a2) builds the router API"
   },
   "artifacts": {
     "intent_brief": {
@@ -266,6 +266,13 @@
         "kind": "constraint",
         "sources": ["qa-mockups-1"],
         "confidence": "high"
+      },
+      {
+        "id": "C23",
+        "statement": "Depend on @draftably/runtime route() with the draftably#715 API; do not copy the engine. Assume the API exists while building.",
+        "kind": "decision",
+        "sources": ["qa-mockups-1"],
+        "confidence": "high"
       }
     ],
     "themes": [],
@@ -430,6 +437,10 @@
     {
       "date": "2026-11-27",
       "change": "Shape: A plus layers (lines, relationships overlay, unused list) and a Coverage popover. Plan: 5 milestones with Draftably routing in M2. Filed byronwall/draftably#715 for row ports and strict mode."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Byron: assume the #715 API, do not copy the engine; started a Draftably session for #715. Implementation started."
     }
   ],
   "closure": null,
