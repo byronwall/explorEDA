@@ -85,6 +85,13 @@ export function compactViews(
 
 export const UNUSED_LIST = "list:unused";
 
+/** A query whose only step reads one table; a condensed drawing omits it. */
+export const readsOneTable = (node: SchemaNode) =>
+  node.kind === "query" &&
+  node.rows.length === 1 &&
+  node.rows[0]!.kind === "step" &&
+  node.rows[0]!.step === "source";
+
 const endKey = (end: SchemaEndpoint) => `${end.nodeId}\u0000${end.rowId}`;
 
 /**
@@ -112,15 +119,7 @@ export function condenseProject(
   }
 
   const passThrough = new Set(
-    graph.nodes
-      .filter(
-        (node) =>
-          node.kind === "query" &&
-          node.rows.length === 1 &&
-          node.rows[0]!.kind === "step" &&
-          node.rows[0]!.step === "source"
-      )
-      .map((node) => node.id)
+    graph.nodes.filter(readsOneTable).map((node) => node.id)
   );
   const unused = new Set(
     views.length

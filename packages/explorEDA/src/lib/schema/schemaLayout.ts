@@ -148,6 +148,9 @@ function layeredLayout(
   const desiredTop = (node: SchemaNode, placed: (id: string) => boolean) => {
     const tops: number[] = [];
     for (const edge of graph.edges) {
+      // Lines to views would pull cards apart and leave gaps; views and the
+      // tables they read stack in reading order instead.
+      if (edge.kind === "reads" || edge.kind === "usage") continue;
       const [own, other] =
         edge.from.nodeId === node.id
           ? [edge.from, edge.to]
