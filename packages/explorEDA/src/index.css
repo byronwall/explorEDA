@@ -360,7 +360,8 @@
 /* The subtitle and the clear-filter control stay, so an active filter is
    never hidden. */
 .eda-panel-header[data-title-editing]
-  > :not(.eda-panel-heading, .eda-panel-subtitle, .eda-panel-status),
+  > :not(.eda-panel-heading, .eda-panel-subtitle, .eda-panel-tray),
+.eda-panel-header[data-title-editing] .eda-panel-tray > .eda-panel-actions,
 .eda-panel-header[data-title-editing]
   .eda-panel-status
   > :not(.eda-chart-filter) {
@@ -476,10 +477,73 @@
   box-shadow: 0 2px 8px rgb(20 40 70 / 12%);
 }
 
-/* Chart header. Compact keeps one line: title, readout, search, actions,
-   then the filter control. A subtitle wraps to its own line below. */
-.eda-panel-status {
+/* Chart header. Compact keeps one line: the title takes it all, and a tray
+   floats over its end with the actions, readout, search, scale chip, and
+   filter control. The tray never takes room from the title, so a filter,
+   a reading, or a hover changes no box in the header. A subtitle wraps to
+   its own line below. */
+.eda-panel-status,
+.eda-panel-tray {
   display: contents;
+}
+.eda-panel:not([data-headline="block"]) .eda-panel-header {
+  container-type: inline-size;
+}
+.eda-panel:not([data-headline="block"]) .eda-panel-tray {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  z-index: 2;
+  display: flex;
+  isolation: isolate;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  max-width: calc(100% - 8px);
+  pointer-events: none;
+}
+.eda-panel:not([data-headline="block"]) .eda-panel-tray > .eda-panel-actions {
+  order: 0;
+}
+.eda-panel:not([data-headline="block"]) .eda-panel-tray .eda-panel-readout {
+  max-width: 65cqw;
+}
+.eda-panel-tray
+  :is(.eda-chart-search, .eda-scale-chip-slot, .eda-chart-filter) {
+  pointer-events: auto;
+}
+/* A wash behind the tray hides the title text it covers. */
+.eda-panel:not([data-headline="block"]) .eda-panel-tray::before {
+  position: absolute;
+  inset: -2px -4px -2px -16px;
+  z-index: -1;
+  display: none;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--eda-panel-surface) 14px
+  );
+  content: "";
+}
+.eda-panel:not([data-headline="block"])
+  .eda-panel-tray:has(
+    .eda-panel-readout:not(:empty),
+    .eda-chart-search,
+    .eda-scale-chip-slot,
+    .eda-chart-filter
+  )::before,
+.eda-panel:not([data-headline="block"])
+  .eda-panel-header:is(:hover, :focus-within)
+  .eda-panel-tray::before {
+  display: block;
+}
+@media not ((hover: hover) and (pointer: fine)) {
+  .eda-panel-tray .eda-panel-actions {
+    pointer-events: auto;
+  }
+  .eda-panel:not([data-headline="block"]) .eda-panel-tray::before {
+    display: block;
+  }
 }
 .eda-panel-heading {
   order: 0;
@@ -1154,6 +1218,13 @@
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
+/* A metric card's two note lines keep their height filtered or not, so the
+   value and trend never move when a filter adds or drops the text. */
+.eda-metric-note > p {
+  height: 1.25em;
+  overflow: hidden;
+  white-space: nowrap;
+}
 /* A filtered metric card's share of the same metric over every row. */
 .eda-metric-bar {
   flex: none;
@@ -1169,14 +1240,46 @@
   background: var(--primary);
 }
 .eda-metric-trend {
+  display: flex;
   flex: 1 1 0;
+  flex-direction: column;
+  gap: 2px;
   min-width: 0;
-  min-height: 28px;
+  min-height: 54px;
   width: 100%;
   height: 100%;
-  max-height: 96px;
+  max-height: 122px;
   align-self: stretch;
+}
+.eda-metric-trend > svg {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
   overflow: visible;
+}
+/* The trend's time axis: first period, field and interval, last period. */
+.eda-metric-trend-axis {
+  display: flex;
+  flex: none;
+  gap: 6px;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 1px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  line-height: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.eda-metric-trend-field {
+  flex: none;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  line-height: 12px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .eda-metric-trend path {
   vector-effect: non-scaling-stroke;

@@ -19,20 +19,6 @@ const formatR = (r: number | undefined) =>
 /** Height of one equation line, used to fit the stack to the panel. */
 const LINE_HEIGHT = 17;
 
-/** The top corner with fewer points under the label stack. */
-function corner(plan: ScatterPlan, lines: number) {
-  const width = Math.min(plan.plotWidth * 0.55, 280);
-  const height = lines * LINE_HEIGHT + 4;
-  let left = 0;
-  let right = 0;
-  for (const point of plan.points) {
-    if (point.y > height) continue;
-    if (point.x < width) left++;
-    if (point.x > plan.plotWidth - width) right++;
-  }
-  return right < left ? "right" : "left";
-}
-
 /** Which fits the stack lists, how many lines it takes, and its corner. */
 function stackLayout(
   fits: ScatterFitPlan | undefined,
@@ -65,7 +51,7 @@ function stackLayout(
     overflow,
     shown,
     lines,
-    side: corner(plan, lines),
+    side: plan.fitCorner,
   };
 }
 

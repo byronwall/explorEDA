@@ -198,6 +198,8 @@ export interface ScatterPlan {
     samples: { value: number; label: string; radius: number }[];
   };
   points: ScatterPoint[];
+  /** The top corner the fit equations take. */
+  fitCorner: "left" | "right";
   exclusions: {
     sourceId: IdType;
     reason:
@@ -519,6 +521,41 @@ export function planScatter(
   }));
   if (size)
     points.sort((a, b) => b.radius - a.radius || a.sourceId - b.sourceId);
+  // Fit equations take the top corner with fewer points under it. Every row
+  // in the chart (or facet) counts, not only the filtered ones, so a filter
+  // never sends the equations across the plot.
+  let fitCorner: "left" | "right" = "left";
+  if (settings.regression || settings.summary) {
+    const allInFacet = snapshot.facetIds?.length
+      ? snapshot.allIds.filter((id) => facetSet.has(id))
+      : snapshot.allIds;
+    const counted =
+      allInFacet.length === ids.length
+        ? points
+        : planScatterPoints({
+            settings,
+            style: pointStyle,
+            ids: allInFacet,
+            xData: snapshot.xData,
+            yData: snapshot.yData,
+            colorData: snapshot.colorData,
+            sizeData: snapshot.sizeData,
+            sizeScale: size,
+            xAxis,
+            yAxis,
+            getColor,
+          });
+    const bandWidth = Math.min(plotWidth * 0.55, 280);
+    const bandHeight = 3 * 17 + 4;
+    let left = 0;
+    let right = 0;
+    for (const point of counted) {
+      if (point.y > bandHeight) continue;
+      if (point.x < bandWidth) left++;
+      if (point.x > plotWidth - bandWidth) right++;
+    }
+    if (right < left) fitCorner = "right";
+  }
   const included = new Set(points.map((point) => point.sourceId));
   const unplotted = (axis: ScatterAxisScale, value: datum) =>
     axis.kind === "numeric" && finiteNumber(value) === undefined;
@@ -801,6 +838,7 @@ export function planScatter(
     pointStyle,
     size,
     points,
+    fitCorner,
     exclusions,
     emptyMessage:
       ids.length > 0 && points.length === 0

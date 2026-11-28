@@ -902,189 +902,200 @@ export function PlotChartPanel({
         {subtitle && (
           <p className="eda-panel-subtitle drag-handle">{subtitle}</p>
         )}
-        {/* Values under the pointer, beside the title and off the plot. */}
-        <div className="eda-panel-status" data-export="omit">
-          <div
-            ref={setReadoutTarget}
-            className="eda-panel-readout"
-            role="status"
-          >
-            {/* How to edit the axis under the pointer, in place of a reading. */}
-            {axisEditing.hint && (
-              <span className="eda-readout-item">{axisEditing.hint}</span>
+        {/* Values under the pointer, the filter state, and the actions sit
+            in one tray over the end of the title line. It never takes room
+            from the title, so nothing moves when a filter or hover adds to it. */}
+        <div className="eda-panel-tray">
+          <div className="eda-panel-status" data-export="omit">
+            <div
+              ref={setReadoutTarget}
+              className="eda-panel-readout"
+              role="status"
+            >
+              {/* How to edit the axis under the pointer, in place of a reading. */}
+              {axisEditing.hint && (
+                <span className="eda-readout-item">{axisEditing.hint}</span>
+              )}
+            </div>
+            {tableSearch && (
+              <div
+                className="eda-chart-search"
+                role="group"
+                aria-label={`Active table search in ${chartTitle}`}
+              >
+                <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                <span className="truncate">{tableSearch}</span>
+                <ActionTooltip content="Clear this table’s search">
+                  <button
+                    type="button"
+                    aria-label={`Clear search “${tableSearch}” in ${chartTitle}`}
+                    onClick={() =>
+                      updateChart(settings.id, { globalSearch: "" })
+                    }
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </ActionTooltip>
+              </div>
+            )}
+            {!faceted && hasScaleTo(settings) && (
+              <ScaleToChipSlot settings={settings} />
+            )}
+            {hasFilter && (
+              <ActionTooltip content="Clear this chart’s filters">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="eda-chart-filter is-active"
+                  aria-label={`Clear filters for ${chartTitle}`}
+                  onClick={() => clearFilter(settings)}
+                >
+                  <FilterX className="h-4 w-4" />
+                </Button>
+              </ActionTooltip>
             )}
           </div>
-          {tableSearch && (
-            <div
-              className="eda-chart-search"
-              role="group"
-              aria-label={`Active table search in ${chartTitle}`}
-            >
-              <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-              <span className="truncate">{tableSearch}</span>
-              <ActionTooltip content="Clear this table’s search">
-                <button
-                  type="button"
-                  aria-label={`Clear search “${tableSearch}” in ${chartTitle}`}
-                  onClick={() => updateChart(settings.id, { globalSearch: "" })}
+          <div
+            className="eda-panel-actions flex shrink-0 items-center gap-0"
+            data-export="omit"
+          >
+            {isTableLike && <div ref={setToolbarTarget} />}
+            {isTraceable(settings.type) &&
+              (settings.type !== "line" || settings.time) && (
+                <ChartTraceInspector type={settings.type} />
+              )}
+            {/* Pairs compares methods, so it shows once a matrix shows both. */}
+            {settings.type === "scatter-matrix" &&
+              settings.correlation === "both" && (
+                <MatrixPairsAction
+                  settings={settings}
+                  chartTitle={chartTitle}
+                />
+              )}
+            {!expanded && canViewData && (
+              <Popover open={dataOpen} onOpenChange={setDataOpen}>
+                <ActionTooltip content="View data: preview the rows behind this chart (V)">
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={`View data for ${chartTitle}`}
+                    >
+                      <Table2 className="h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                </ActionTooltip>
+                <PopoverContent
+                  aria-label={`Data for ${chartTitle}`}
+                  className="w-[min(36rem,calc(100vw-1.5rem))]"
+                  align="end"
                 >
-                  <X className="h-3 w-3" />
-                </button>
-              </ActionTooltip>
-            </div>
-          )}
-          {!faceted && hasScaleTo(settings) && (
-            <ScaleToChipSlot settings={settings} />
-          )}
-          {hasFilter && (
-            <ActionTooltip content="Clear this chart’s filters">
+                  <ChartDataPreview settings={settings} />
+                </PopoverContent>
+              </Popover>
+            )}
+            <ChartImageMenu chartTitle={chartTitle} {...imageExport} />
+            {!expanded && onExplore && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="eda-chart-filter is-active"
-                aria-label={`Clear filters for ${chartTitle}`}
-                onClick={() => clearFilter(settings)}
+                aria-label={`Explore a copy of ${chartTitle}`}
+                tooltip="Explore a copy: change it, add charts, and see its rows, without changing this one"
+                onClick={onExplore}
               >
-                <FilterX className="h-4 w-4" />
+                <PanelRightOpen className="h-4 w-4" />
+              </Button>
+            )}
+            {!expanded && onDuplicate && (
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={`Duplicate ${chartTitle}`}
+                tooltip="Duplicate chart (D)"
+                onClick={onDuplicate}
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            )}
+            <ActionTooltip
+              content={
+                expanded
+                  ? "Close details (Esc)"
+                  : "Open details: the chart beside its settings and data"
+              }
+            >
+              <Button
+                ref={expandRef}
+                variant="ghost"
+                size="icon"
+                aria-label={`${expanded ? "Close" : "Open"} details for ${chartTitle}`}
+                onClick={() => setExpanded(!expanded)}
+              >
+                {expanded ? (
+                  <Minimize2 className="h-4 w-4" />
+                ) : (
+                  <Maximize2 className="h-4 w-4" />
+                )}
               </Button>
             </ActionTooltip>
-          )}
-        </div>
-        <div
-          className="eda-panel-actions flex shrink-0 items-center gap-0"
-          data-export="omit"
-        >
-          {isTableLike && <div ref={setToolbarTarget} />}
-          {isTraceable(settings.type) &&
-            (settings.type !== "line" || settings.time) && (
-              <ChartTraceInspector type={settings.type} />
+            {!expanded && (
+              <Popover open={settingsOpen} onOpenChange={placeSettings}>
+                <PopoverAnchor
+                  virtualRef={settingsAnchor as React.RefObject<HTMLElement>}
+                />
+                <ActionTooltip content="Chart settings (S)">
+                  <PopoverTrigger asChild>
+                    <Button
+                      ref={settingsRef}
+                      variant="ghost"
+                      size="icon"
+                      aria-label={`Configure ${chartTitle}`}
+                    >
+                      <Settings2 className="h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                </ActionTooltip>
+                <PopoverContent
+                  aria-label={`Settings for ${chartTitle}`}
+                  className="eda-settings-popover w-[min(21.5rem,calc(100vw-1rem))]"
+                  style={
+                    {
+                      maxHeight: settingsHeight,
+                      "--eda-settings-height": `${settingsHeight - 18}px`,
+                      overflow: "hidden",
+                    } as React.CSSProperties
+                  }
+                  side={settingsSide}
+                  sideOffset={
+                    settingsSide === "right" || settingsSide === "left"
+                      ? -44
+                      : 4
+                  }
+                  align="start"
+                  collisionPadding={12}
+                  // Stay on screen even when the chart starts low in a tall
+                  // page, as a notebook's charts do; partial would hang below.
+                  sticky="always"
+                >
+                  <SettingsPopoverContext.Provider value={true}>
+                    <ChartSettingsContent settings={settings} />
+                  </SettingsPopoverContext.Provider>
+                </PopoverContent>
+              </Popover>
             )}
-          {/* Pairs compares methods, so it shows once a matrix shows both. */}
-          {settings.type === "scatter-matrix" &&
-            settings.correlation === "both" && (
-              <MatrixPairsAction settings={settings} chartTitle={chartTitle} />
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="eda-panel-delete"
+                aria-label={`Delete ${chartTitle}`}
+                tooltip="Delete chart (X)"
+                onClick={() => void handleDelete()}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             )}
-          {!expanded && canViewData && (
-            <Popover open={dataOpen} onOpenChange={setDataOpen}>
-              <ActionTooltip content="View data: preview the rows behind this chart (V)">
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label={`View data for ${chartTitle}`}
-                  >
-                    <Table2 className="h-4 w-4" />
-                  </Button>
-                </PopoverTrigger>
-              </ActionTooltip>
-              <PopoverContent
-                aria-label={`Data for ${chartTitle}`}
-                className="w-[min(36rem,calc(100vw-1.5rem))]"
-                align="end"
-              >
-                <ChartDataPreview settings={settings} />
-              </PopoverContent>
-            </Popover>
-          )}
-          <ChartImageMenu chartTitle={chartTitle} {...imageExport} />
-          {!expanded && onExplore && (
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={`Explore a copy of ${chartTitle}`}
-              tooltip="Explore a copy: change it, add charts, and see its rows, without changing this one"
-              onClick={onExplore}
-            >
-              <PanelRightOpen className="h-4 w-4" />
-            </Button>
-          )}
-          {!expanded && onDuplicate && (
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={`Duplicate ${chartTitle}`}
-              tooltip="Duplicate chart (D)"
-              onClick={onDuplicate}
-            >
-              <Copy className="h-4 w-4" />
-            </Button>
-          )}
-          <ActionTooltip
-            content={
-              expanded
-                ? "Close details (Esc)"
-                : "Open details: the chart beside its settings and data"
-            }
-          >
-            <Button
-              ref={expandRef}
-              variant="ghost"
-              size="icon"
-              aria-label={`${expanded ? "Close" : "Open"} details for ${chartTitle}`}
-              onClick={() => setExpanded(!expanded)}
-            >
-              {expanded ? (
-                <Minimize2 className="h-4 w-4" />
-              ) : (
-                <Maximize2 className="h-4 w-4" />
-              )}
-            </Button>
-          </ActionTooltip>
-          {!expanded && (
-            <Popover open={settingsOpen} onOpenChange={placeSettings}>
-              <PopoverAnchor
-                virtualRef={settingsAnchor as React.RefObject<HTMLElement>}
-              />
-              <ActionTooltip content="Chart settings (S)">
-                <PopoverTrigger asChild>
-                  <Button
-                    ref={settingsRef}
-                    variant="ghost"
-                    size="icon"
-                    aria-label={`Configure ${chartTitle}`}
-                  >
-                    <Settings2 className="h-4 w-4" />
-                  </Button>
-                </PopoverTrigger>
-              </ActionTooltip>
-              <PopoverContent
-                aria-label={`Settings for ${chartTitle}`}
-                className="eda-settings-popover w-[min(21.5rem,calc(100vw-1rem))]"
-                style={
-                  {
-                    maxHeight: settingsHeight,
-                    "--eda-settings-height": `${settingsHeight - 18}px`,
-                    overflow: "hidden",
-                  } as React.CSSProperties
-                }
-                side={settingsSide}
-                sideOffset={
-                  settingsSide === "right" || settingsSide === "left" ? -44 : 4
-                }
-                align="start"
-                collisionPadding={12}
-                // Stay on screen even when the chart starts low in a tall
-                // page, as a notebook's charts do; partial would hang below.
-                sticky="always"
-              >
-                <SettingsPopoverContext.Provider value={true}>
-                  <ChartSettingsContent settings={settings} />
-                </SettingsPopoverContext.Provider>
-              </PopoverContent>
-            </Popover>
-          )}
-          {onDelete && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="eda-panel-delete"
-              aria-label={`Delete ${chartTitle}`}
-              tooltip="Delete chart (X)"
-              onClick={() => void handleDelete()}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          )}
+          </div>
         </div>
       </div>
       {settings.type !== "scatter" && calculatedFields.length > 0 && (

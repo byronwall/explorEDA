@@ -11,7 +11,7 @@ import { ChartSettings, datum } from "@/types/ChartTypes";
 import { ValueFilter } from "@/types/FilterTypes";
 import { useId, useMemo } from "react";
 import { useColorScales } from "@/hooks/useColorScales";
-import { useGetLiveIds } from "../useGetLiveData";
+import { useGetAllIds, useGetLiveIds } from "../useGetLiveData";
 import { ColorScale } from "./ColorScale";
 import {
   useChartTrace,
@@ -120,6 +120,7 @@ function ChartColorLegendBody({
   const getFieldLabel = useDataLayer((state) => state.getFieldLabel);
   const formatFieldValue = useDataLayer((state) => state.formatFieldValue);
   const liveIds = useGetLiveIds(settings);
+  const allCount = useGetAllIds(settings).length;
 
   const values = getColumnData(field);
   // A categorical scale lists its values in the order it was given, such as
@@ -255,7 +256,9 @@ function ChartColorLegendBody({
   const inspectLegend = (id: string) => traceApi?.inspect(owner, "legend", id);
 
   if (!scale) return null;
-  const countWidth = liveIds.length.toLocaleString().length;
+  // Counts get room for the all-rows total, so a filter that shortens them
+  // moves no legend item.
+  const countWidth = allCount.toLocaleString().length;
   // The legend has one line. Items that fit stay on it; the rest sit behind
   // a "+N more" disclosure, so no value is hidden without a sign.
   const shownOnLine =

@@ -32,6 +32,8 @@ export interface MetricCardPlan {
   totalRows?: number;
   /** How the value compares with the same metric over every row. */
   comparison?: MetricCardComparison;
+  /** The same metric over every row. Unfiltered, it is `valueText`. */
+  allValueText?: string;
   scopeNote: string;
 }
 
@@ -116,7 +118,8 @@ export function planMetricCard(
     snapshot.liveIds.length < snapshot.allIds.length;
   let comparison: MetricCardComparison | undefined;
   let totalRows = snapshot.allIds?.length;
-  if (filtered && state === "value") {
+  let allValueText = state === "value" ? valueText : undefined;
+  if (filtered) {
     const baselineResult = summarizeGroup(
       snapshot.allIds!.map((__ID) => ({
         __ID,
@@ -133,7 +136,8 @@ export function planMetricCard(
     );
     totalRows = baselineResult.rowCount;
     const baseline = baselineResult.value;
-    if (baseline !== undefined) {
+    allValueText = baseline === undefined ? undefined : format(baseline);
+    if (baseline !== undefined && state === "value") {
       const value = result.value!;
       if (
         isAdditiveAggregation(settings.aggregation) &&
@@ -182,6 +186,7 @@ export function planMetricCard(
     contributors: result.contributors,
     totalRows: filtered ? totalRows : undefined,
     comparison,
+    allValueText,
     scopeNote: entityLabel
       ? `Each ${entityLabel} once, among rows that pass this chart's filters and the other active filters.`
       : "Rows that pass this chart's filters and the other active filters.",
