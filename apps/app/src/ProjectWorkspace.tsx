@@ -129,6 +129,7 @@ export function ProjectWorkspace({
   folder,
   info,
   saver,
+  hold,
   saveState,
   notice,
   readErrors = {},
@@ -157,6 +158,8 @@ export function ProjectWorkspace({
   folder: ProjectFolder;
   info: ServerInfo;
   saver: FolderSaver;
+  /** The saver hold of the reload that made this workspace. */
+  hold?: number;
   saveState: SaveState;
   notice?: string;
   /** Each source's last failed read, by source ID. */
@@ -294,7 +297,7 @@ export function ProjectWorkspace({
       saver.known(item.path, item.text);
     }
     // A reload held the saver until this workspace showed what it read.
-    saver.release();
+    saver.release(hold);
     // The saver and folder are fixed for this workspace's lifetime.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -346,16 +349,18 @@ export function ProjectWorkspace({
     }
     setRevision((value) => value + 1);
   };
+  // While the folder reloads, the page is about to be replaced; an undo
+  // now would show a state that never saves.
   const undo = () => {
     const step = past.at(-1);
-    if (!step) return;
+    if (!step || saver.isHeld) return;
     setPast(past.slice(0, -1));
     setFuture([...future, { project, views, draft }]);
     restore(step);
   };
   const redo = () => {
     const step = future.at(-1);
-    if (!step) return;
+    if (!step || saver.isHeld) return;
     setFuture(future.slice(0, -1));
     setPast([...past, { project, views, draft }]);
     restore(step);

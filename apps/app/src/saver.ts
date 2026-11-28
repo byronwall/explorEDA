@@ -24,7 +24,9 @@ export class FolderSaver {
   /** The last write sent to each file that hasn't finished. */
   private readonly inFlight = new Map<string, { id: number; text: string }>();
   private writes = 0;
-  private held = false;
+  private holds = 0;
+  /** The reload that holds the saver now, or 0. */
+  private held = 0;
   private chain: Promise<void> = Promise.resolve();
   private writing = 0;
   private failure?: { path: string; message: string };
@@ -43,14 +45,22 @@ export class FolderSaver {
 
   /**
    * Ignores new changes while the folder reloads: the page that made them
-   * is about to be replaced by what the folder holds.
+   * is about to be replaced by what the folder holds. Returns the reload's
+   * token; only that token releases it, so an earlier reload finishing
+   * can't release a later one.
    */
   hold() {
-    this.held = true;
+    this.held = ++this.holds;
+    return this.held;
   }
 
-  release() {
-    this.held = false;
+  release(token: number | undefined) {
+    if (token !== undefined && token === this.held) this.held = 0;
+  }
+
+  /** True while a reload holds the saver. */
+  get isHeld() {
+    return this.held !== 0;
   }
 
   queue(path: string, text: string) {

@@ -96,11 +96,17 @@ describe("FolderSaver", () => {
       () => {},
       0
     );
-    saver.hold();
+    const first = saver.hold();
+    const second = saver.hold();
+    // The first reload's workspace mounts while the second still reads.
+    saver.release(first);
     saver.queue("a.eda", "stale\n");
-    saver.release();
     await saver.flush();
     expect(write).not.toHaveBeenCalled();
+    saver.release(second);
+    saver.queue("a.eda", "fresh\n");
+    await saver.flush();
+    expect(write).toHaveBeenCalledOnce();
   });
 
   it("reports a refused save with its file", async () => {
