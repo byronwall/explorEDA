@@ -7,6 +7,9 @@ import {
   type SchemaNode,
 } from "./schemaGraph";
 
+/** Lines up to this many get the router's full pass; more route quickly. */
+const FULL_ROUTE_LIMIT = 15;
+
 /** Fixed sizes, so lines can find a row without measuring the page. */
 export const SCHEMA_SIZES = {
   cardWidth: 248,
@@ -334,7 +337,12 @@ export function routeSchemaEdges(
       height: box.height,
     })),
     edges: routed.map((item) => item.input),
-    routing: { avoidNodes: "strict", quality: "full" },
+    // A full pass costs about 0.5 s at 30 lines, so larger drawings route
+    // quickly; both modes keep lines clear of cards.
+    routing: {
+      avoidNodes: "strict",
+      quality: routed.length <= FULL_ROUTE_LIMIT ? "full" : "quick",
+    },
   }).edges;
   for (const { edge } of routed) {
     const line = out[edge.id];
