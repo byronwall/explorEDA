@@ -22,6 +22,7 @@ import {
   Scan,
   Sigma,
   Split,
+  Unlink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { typeIcons, typeLabels } from "@/components/FieldMetadata";
@@ -35,7 +36,7 @@ import type {
 import { fieldRowId, tableNodeId } from "@/lib/schema/schemaGraph";
 import {
   layoutSchemaGraph,
-  routeSchemaEdge,
+  routeSchemaEdges,
   rowOffset,
   SCHEMA_SIZES,
   type SchemaEdgePath,
@@ -207,13 +208,6 @@ export function SchemaDiagram({
   const layout = useMemo(
     () => layoutSchemaGraph(graph, { width: shapeWidth, height: shapeHeight }),
     [graph, shapeWidth, shapeHeight]
-  );
-  const paths = useMemo(
-    () =>
-      graph.edges
-        .map((edge) => routeSchemaEdge(graph, layout, edge))
-        .filter((path): path is SchemaEdgePath => Boolean(path)),
-    [graph, layout]
   );
 
   const [view, setView] = useState<View>({ x: 0, y: 0, scale: 1 });
@@ -433,20 +427,63 @@ export function SchemaDiagram({
     return { rows, edges, key, nodes };
   }, [graph, selection, suggestions]);
 
+  // Every drawn line is routed in one pass, so none runs through a card. A
+  // view's field lines show only for the selection, so they route apart.
+  const routing = useMemo(() => {
+    const suggested = suggestions.map(
+      (suggestion): SchemaEdge => ({
+        id: `suggestion:${suggestion.id}`,
+        kind: "relationship",
+        from: suggestionEnds(suggestion)[0]!,
+        to: suggestionEnds(suggestion)[1]!,
+      })
+    );
+    return routeSchemaEdges(graph, layout, [
+      ...graph.edges.filter((edge) => edge.kind !== "usage"),
+      ...suggested,
+    ]);
+  }, [graph, layout, suggestions]);
+  const usageRouting = useMemo(
+    () =>
+      routeSchemaEdges(
+        graph,
+        layout,
+        graph.edges.filter(
+          (edge) => edge.kind === "usage" && emphasis.edges.has(edge.id)
+        )
+      ),
+    [graph, layout, emphasis]
+  );
+  const paths = useMemo(
+    () => [
+      ...routing.paths.filter(
+        (path) => !path.edge.id.startsWith("suggestion:")
+      ),
+      ...usageRouting.paths,
+    ],
+    [routing, usageRouting]
+  );
   const suggestionPaths = useMemo(
     () =>
-      suggestions.flatMap((suggestion) => {
-        const [from, to] = suggestionEnds(suggestion);
-        const path = routeSchemaEdge(graph, layout, {
-          id: `suggestion:${suggestion.id}`,
-          kind: "relationship",
-          from: from!,
-          to: to!,
-        });
-        return path ? [{ suggestion, path }] : [];
+      routing.paths.flatMap((path) => {
+        const suggestion = suggestions.find(
+          (item) => `suggestion:${item.id}` === path.edge.id
+        );
+        return suggestion ? [{ suggestion, path }] : [];
       }),
-    [graph, layout, suggestions]
+    [routing, suggestions]
   );
+  // A card says how many of its lines could not be drawn without crossing
+  // another card.
+  const hiddenLines = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const edge of [...routing.blocked, ...usageRouting.blocked]) {
+      for (const nodeId of new Set([edge.from.nodeId, edge.to.nodeId])) {
+        counts.set(nodeId, (counts.get(nodeId) ?? 0) + 1);
+      }
+    }
+    return counts;
+  }, [routing, usageRouting]);
   const acceptAll = () => {
     const project = editing?.project;
     if (!project) return;
@@ -817,27 +854,18 @@ export function SchemaDiagram({
             height={layout.height}
             aria-hidden="true"
           >
-            {paths
-              // A view's rows name where each field comes from; its lines
-              // show only for the selection, so they do not crowd the rest.
-              .filter(
-                (path) =>
-                  path.edge.kind !== "usage" || emphasis.edges.has(path.edge.id)
-              )
-              .map((path) => (
-                <SchemaEdgeLine
-                  key={path.edge.id}
-                  path={path}
-                  selected={
-                    selection?.kind === "relationship" &&
-                    selection.edgeId === path.edge.id
-                  }
-                  emphasized={emphasis.edges.has(path.edge.id)}
-                  dimmed={
-                    Boolean(selection) && !emphasis.edges.has(path.edge.id)
-                  }
-                />
-              ))}
+            {paths.map((path) => (
+              <SchemaEdgeLine
+                key={path.edge.id}
+                path={path}
+                selected={
+                  selection?.kind === "relationship" &&
+                  selection.edgeId === path.edge.id
+                }
+                emphasized={emphasis.edges.has(path.edge.id)}
+                dimmed={Boolean(selection) && !emphasis.edges.has(path.edge.id)}
+              />
+            ))}
             {suggestionPaths.map(({ suggestion, path }) => (
               <SuggestedLine
                 key={suggestion.id}
@@ -903,6 +931,7 @@ export function SchemaDiagram({
                     : undefined
                 }
                 relatable={canRelate && Boolean(node.sourceId)}
+                hiddenLines={hiddenLines.get(node.id) ?? 0}
                 onKeyDown={(event) => onCardKeyDown(event, node)}
               />
             );
@@ -947,6 +976,7 @@ function SchemaCard({
   isEmphasized,
   dropTarget,
   relatable,
+  hiddenLines,
   onKeyDown,
 }: {
   node: SchemaNode;
@@ -958,6 +988,7 @@ function SchemaCard({
   isEmphasized: (rowId: string) => boolean;
   dropTarget?: string;
   relatable: boolean;
+  hiddenLines: number;
   onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => void;
 }) {
   return (
@@ -982,6 +1013,18 @@ function SchemaCard({
           </span>
         )}
         <h3>{node.title}</h3>
+        {hiddenLines > 0 && (
+          <Unlink
+            className="eda-schema-hidden-lines"
+            aria-label={`${hiddenLines} ${hiddenLines === 1 ? "line" : "lines"} not drawn`}
+          >
+            <title>
+              {hiddenLines === 1
+                ? "1 line is not drawn: it would cross another card"
+                : `${hiddenLines} lines are not drawn: they would cross other cards`}
+            </title>
+          </Unlink>
+        )}
         {node.detail && (
           <span
             className="eda-schema-detail"
@@ -1228,12 +1271,18 @@ function ProposalLine({
   layout: SchemaLayout;
   selection: Extract<SchemaSelection, { kind: "proposal" }>;
 }) {
-  const path = routeSchemaEdge(graph, layout, {
-    id: "proposal",
-    kind: "relationship",
-    from: selection.from,
-    to: selection.to,
-  });
+  const path = useMemo(
+    () =>
+      routeSchemaEdges(graph, layout, [
+        {
+          id: "proposal",
+          kind: "relationship",
+          from: selection.from,
+          to: selection.to,
+        },
+      ]).paths[0],
+    [graph, layout, selection.from, selection.to]
+  );
   if (!path) return null;
   return <path className="eda-schema-edge" data-kind="ghost" d={path.d} />;
 }

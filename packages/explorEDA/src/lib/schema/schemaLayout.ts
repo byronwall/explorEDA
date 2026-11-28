@@ -1,3 +1,4 @@
+import { route, type EdgeIn } from "@draftably/runtime/route";
 import {
   HEADER_ROW,
   type SchemaEdge,
@@ -247,120 +248,102 @@ function layeredLayout(
 export interface SchemaEdgePath {
   edge: SchemaEdge;
   d: string;
+  /** The routed corners; an arc beside one card has just its two ends. */
+  points: { x: number; y: number }[];
   /** Where each end meets its card, for cardinality marks. */
   start: { x: number; y: number; side: -1 | 1 };
   end: { x: number; y: number; side: -1 | 1 };
 }
 
 /**
- * A smooth line from row to row. Lines leave a card on the side that faces
- * the other card. Rows of one card, or of cards in one column, join on the
- * right with an arc that clears the cards.
+ * Lines from row to row, routed together by Draftably's router so no line
+ * runs through a card. Each end sits on its row (or the header's middle), on
+ * the side that faces the other card; rows of cards in one column join on
+ * the right. A line the router cannot place without crossing a card is
+ * returned in `blocked` and drawn nowhere. A line between two rows of one
+ * card stays an arc beside it.
  */
-export function routeSchemaEdge(
+export function routeSchemaEdges(
   graph: SchemaGraph,
   layout: SchemaLayout,
-  edge: SchemaEdge
-): SchemaEdgePath | undefined {
-  const point = (endpoint: SchemaEndpoint) => {
+  edges: SchemaEdge[]
+): { paths: SchemaEdgePath[]; blocked: SchemaEdge[] } {
+  const nodes = new Map(graph.nodes.map((node) => [node.id, node]));
+  const end = (endpoint: SchemaEndpoint) => {
     const box = layout.boxes[endpoint.nodeId];
-    const node = graph.nodes.find((item) => item.id === endpoint.nodeId);
-    const offset = rowOffset(node, endpoint.rowId);
-    if (!box || offset === undefined) return undefined;
-    return { box, y: box.y + offset };
+    const offset = rowOffset(nodes.get(endpoint.nodeId), endpoint.rowId);
+    return box && offset !== undefined ? { box, offset } : undefined;
   };
-  const a = point(edge.from);
-  const b = point(edge.to);
-  if (!a || !b) return undefined;
-
-  if (a.box.column === b.box.column) {
-    const x = a.box.x + a.box.width;
-    const reach = Math.min(
-      SCHEMA_SIZES.columnGap * 0.45,
-      18 + Math.abs(b.y - a.y) * 0.25
-    );
-    return {
-      edge,
-      d: `M ${x} ${a.y} C ${x + reach} ${a.y}, ${x + reach} ${b.y}, ${x} ${b.y}`,
-      start: { x, y: a.y, side: 1 },
-      end: { x, y: b.y, side: 1 },
-    };
-  }
-  const rightward = a.box.column < b.box.column;
-  const x1 = rightward ? a.box.x + a.box.width : a.box.x;
-  const x2 = rightward ? b.box.x : b.box.x + b.box.width;
-  const start = { x: x1, y: a.y, side: (rightward ? 1 : -1) as 1 | -1 };
-  const end = { x: x2, y: b.y, side: (rightward ? -1 : 1) as 1 | -1 };
-
-  // A line that skips a column runs in a lane above or below the cards it
-  // passes, so it never seems to end at a row it only crosses.
-  const [low, high] = [
-    Math.min(a.box.column, b.box.column),
-    Math.max(a.box.column, b.box.column),
-  ];
-  const between = Object.values(layout.boxes).filter(
-    (box) => box.column > low && box.column < high
-  );
-  if (between.length) {
-    const clearance = SCHEMA_SIZES.cardGap / 2;
-    const above = Math.min(...between.map((box) => box.y)) - clearance;
-    const below =
-      Math.max(...between.map((box) => box.y + box.height)) + clearance;
-    const lane =
-      Math.abs(above - a.y) + Math.abs(above - b.y) <=
-      Math.abs(below - a.y) + Math.abs(below - b.y)
-        ? above
-        : below;
-    const gap = SCHEMA_SIZES.columnGap / 2;
-    const out = x1 + (rightward ? gap : -gap);
-    const into = x2 + (rightward ? -gap : gap);
-    return {
-      edge,
-      d: roundedPath([
-        [x1, a.y],
-        [out, a.y],
-        [out, lane],
-        [into, lane],
-        [into, b.y],
-        [x2, b.y],
-      ]),
-      start,
-      end,
-    };
-  }
-  const bend = Math.max(40, Math.abs(x2 - x1) * 0.45);
-  const c1 = rightward ? x1 + bend : x1 - bend;
-  const c2 = rightward ? x2 - bend : x2 + bend;
-  return {
-    edge,
-    d: `M ${x1} ${a.y} C ${c1} ${a.y}, ${c2} ${b.y}, ${x2} ${b.y}`,
-    start,
-    end,
-  };
-}
-
-/** A polyline with its corners rounded, as an SVG path. */
-function roundedPath(points: [number, number][], radius = 10) {
-  let d = `M ${points[0]![0]} ${points[0]![1]}`;
-  for (let index = 1; index < points.length - 1; index += 1) {
-    const [px, py] = points[index - 1]!;
-    const [x, y] = points[index]!;
-    const [nx, ny] = points[index + 1]!;
-    const inLength = Math.hypot(x - px, y - py);
-    const outLength = Math.hypot(nx - x, ny - y);
-    const r = Math.min(radius, inLength / 2, outLength / 2);
-    if (!r) {
-      d += ` L ${x} ${y}`;
+  const paths: SchemaEdgePath[] = [];
+  const routed: { edge: SchemaEdge; input: EdgeIn }[] = [];
+  for (const edge of edges) {
+    const a = end(edge.from);
+    const b = end(edge.to);
+    if (!a || !b) continue;
+    if (edge.from.nodeId === edge.to.nodeId) {
+      const x = a.box.x + a.box.width;
+      const [y1, y2] = [a.box.y + a.offset, b.box.y + b.offset];
+      const reach = Math.min(
+        SCHEMA_SIZES.columnGap * 0.4,
+        18 + Math.abs(y2 - y1) * 0.25
+      );
+      paths.push({
+        edge,
+        d: `M ${x} ${y1} C ${x + reach} ${y1}, ${x + reach} ${y2}, ${x} ${y2}`,
+        points: [
+          { x, y: y1 },
+          { x, y: y2 },
+        ],
+        start: { x, y: y1, side: 1 },
+        end: { x, y: y2, side: 1 },
+      });
       continue;
     }
-    const ax = x - ((x - px) / inLength) * r;
-    const ay = y - ((y - py) / inLength) * r;
-    const bx = x + ((nx - x) / outLength) * r;
-    const by = y + ((ny - y) / outLength) * r;
-    d += ` L ${ax} ${ay} Q ${x} ${y} ${bx} ${by}`;
+    const sameColumn = a.box.column === b.box.column;
+    const rightward = a.box.x < b.box.x;
+    routed.push({
+      edge,
+      input: {
+        id: edge.id,
+        source: edge.from.nodeId,
+        target: edge.to.nodeId,
+        sourceSide: sameColumn || rightward ? "right" : "left",
+        targetSide: sameColumn || !rightward ? "right" : "left",
+        sourceAt: a.offset,
+        targetAt: b.offset,
+      },
+    });
   }
-  const [lx, ly] = points[points.length - 1]!;
-  return `${d} L ${lx} ${ly}`;
+  const blocked: SchemaEdge[] = [];
+  if (!routed.length) return { paths, blocked };
+  const out = route({
+    nodes: Object.entries(layout.boxes).map(([id, box]) => ({
+      id,
+      x: box.x,
+      y: box.y,
+      width: box.width,
+      height: box.height,
+    })),
+    edges: routed.map((item) => item.input),
+    routing: { avoidNodes: "strict", quality: "full" },
+  }).edges;
+  for (const { edge } of routed) {
+    const line = out[edge.id];
+    if (!line || line.blocked || line.points.length < 2) {
+      blocked.push(edge);
+      continue;
+    }
+    const first = line.points[0]!;
+    const last = line.points[line.points.length - 1]!;
+    paths.push({
+      edge,
+      d: line.path,
+      points: line.points,
+      start: { ...first, side: line.sourceSide === "left" ? -1 : 1 },
+      end: { ...last, side: line.targetSide === "left" ? -1 : 1 },
+    });
+  }
+  return { paths, blocked };
 }
 
 /** A run of cards stacked in one column, with gaps between them. */

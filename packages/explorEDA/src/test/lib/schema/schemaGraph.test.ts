@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createShopFixture } from "@/test/fixtures/shopProject";
 import { projectSchemaGraph, tableSchemaGraph } from "@/lib/schema/schemaGraph";
-import { layoutSchemaGraph, routeSchemaEdge } from "@/lib/schema/schemaLayout";
+import { layoutSchemaGraph, routeSchemaEdges } from "@/lib/schema/schemaLayout";
 import type { SchemaGraph } from "@/lib/schema/schemaGraph";
 
 /** Only the tables and their relationships, as Milestone 1 drew them. */
@@ -221,7 +221,9 @@ describe("layoutSchemaGraph", () => {
     const edge = graph.edges.find(
       (item) => item.from.nodeId === "table:items"
     )!;
-    const path = routeSchemaEdge(graph, layout, edge)!;
+    const { paths, blocked } = routeSchemaEdges(graph, layout, [edge]);
+    expect(blocked).toEqual([]);
+    const path = paths[0]!;
     const items = layout.boxes["table:items"]!;
     expect(path.start.x).toBe(items.x + items.width);
     expect(path.start.side).toBe(1);
