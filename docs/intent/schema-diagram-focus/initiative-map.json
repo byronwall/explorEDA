@@ -8,7 +8,7 @@
     "last_updated": "2026-11-27",
     "summary": "Make the Schema diagram readable on real projects by emphasizing the tables, fields, and queries that views use, while keeping all data reachable.",
     "status": "planned",
-    "next_action": "Byron reviews seven HTML mockups (tmp/mockups/schema/index.html) and approves one or a mix; that becomes the go-ahead and updates the shape"
+    "next_action": "Byron chooses how explorEDA takes the router (depend on @draftably/runtime after draftably#715, or copy the engine), then approves the plan; build starts with M1"
   },
   "artifacts": {
     "intent_brief": {
@@ -95,6 +95,20 @@
       "location": "conversation",
       "anchor": "2",
       "authority": "user"
+    },
+    {
+      "id": "qa-mockups-1",
+      "type": "question-round",
+      "location": "conversation",
+      "anchor": "mockup review 1",
+      "authority": "user"
+    },
+    {
+      "id": "S7",
+      "type": "repo",
+      "location": "~/Projects/draftably-render-stack src/engines/routing-engine.ts @3f785596",
+      "anchor": "RouteLab.compute, cfg.fromAt/toAt; graph-api route() lacks row ports",
+      "authority": "repo"
     }
   ],
   "intent": {
@@ -224,6 +238,34 @@
         "kind": "decision",
         "sources": ["qa-round-2"],
         "confidence": "high"
+      },
+      {
+        "id": "C19",
+        "statement": "Mockup A (condensed columns) is the base direction.",
+        "kind": "decision",
+        "sources": ["qa-mockups-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C20",
+        "statement": "The coverage grid is available on demand (popover or similar), not the main view.",
+        "kind": "decision",
+        "sources": ["qa-mockups-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C21",
+        "statement": "The relationship map (declared and suggested links) is an overlay layer the user shows or hides; the diagram is a base plus several overlay layers.",
+        "kind": "decision",
+        "sources": ["qa-mockups-1"],
+        "confidence": "high"
+      },
+      {
+        "id": "C22",
+        "statement": "Edge routes must never cross nodes; use Draftably layout and routing approaches or its actual algorithms.",
+        "kind": "constraint",
+        "sources": ["qa-mockups-1"],
+        "confidence": "high"
       }
     ],
     "themes": [],
@@ -256,7 +298,7 @@
         "premise": "two pictures with a switch"
       }
     ],
-    "selected_option": "O1"
+    "selected_option": "O1 + layers"
   },
   "shape": {
     "status": "current",
@@ -300,7 +342,15 @@
       ],
       "deployment_surfaces": []
     },
-    "dependencies": [],
+    "dependencies": [
+      {
+        "id": "draftably-router",
+        "name": "Draftably RouteLab / @draftably/runtime route()",
+        "first_proof_role": "real (bundled RouteLab.compute in the mockup: 11 lines, 0 card crossings, 0 blocked, 40-66 ms)",
+        "seam": "one route call per drawing in lib/schema/schemaLayout.ts",
+        "gap": "byronwall/draftably#715: row ports, strict no-crossing mode, browser subpath"
+      }
+    ],
     "fast_local_loop": {
       "command": "pnpm --filter exploreda exec vitest run src/lib/schema src/components/schema"
     },
@@ -313,18 +363,24 @@
       },
       {
         "id": "m2",
-        "title": "Light up an analysis",
+        "title": "Lines that never cross a card (Draftably router)",
         "status": "planned",
         "evidence": []
       },
       {
         "id": "m3",
-        "title": "Coverage grid and rail entry",
+        "title": "Light up an analysis and rail entry",
         "status": "planned",
         "evidence": []
       },
       {
         "id": "m4",
+        "title": "Layers and the Coverage popover",
+        "status": "planned",
+        "evidence": []
+      },
+      {
+        "id": "m5",
         "title": "Docs and retirement",
         "status": "planned",
         "evidence": []
@@ -366,6 +422,14 @@
     {
       "date": "2026-11-27",
       "change": "Built seven HTML mockups seeded from the real app DOM and CSS (captured with Playwright): condensed columns, lanes by table, coverage grid, relationship map, tiles, field-to-chart flow, overview plus path. Byron said the approved mockup is the go-ahead."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Byron picked mockup A, with the coverage grid on demand, the relationship map as a show/hide overlay, and Draftably-style routing that never crosses nodes."
+    },
+    {
+      "date": "2026-11-27",
+      "change": "Shape: A plus layers (lines, relationships overlay, unused list) and a Coverage popover. Plan: 5 milestones with Draftably routing in M2. Filed byronwall/draftably#715 for row ports and strict mode."
     }
   ],
   "closure": null,
