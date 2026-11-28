@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { createShopFixture } from "@/test/fixtures/shopProject";
 import { projectSchemaGraph } from "@/lib/schema/schemaGraph";
-import { compactViews } from "@/lib/schema/schemaCompact";
+import {
+  compactViews,
+  condenseProject,
+  UNUSED_LIST,
+} from "@/lib/schema/schemaCompact";
+import { sourceUsage } from "@/lib/schema/sourceUsage";
 import { traceField } from "@/lib/schema/schemaTrace";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
 
@@ -59,5 +64,110 @@ describe("compactViews", () => {
     expect(
       compact.nodes.find((node) => node.id === "view:other")!.folded
     ).toBeUndefined();
+  });
+});
+
+describe("condenseProject", () => {
+  // A CI-shaped project: one more query that only reads a table, as agents
+  // write them, and one view on the orders-and-customers query.
+  const withRead = {
+    ...project,
+    queries: [
+      ...project.queries,
+      {
+        id: "products-read",
+        name: "products",
+        glyph: "◆",
+        frameLabel: "products",
+        steps: [{ id: "read", kind: "source" as const, sourceId: "products" }],
+        outputStepId: "read",
+      },
+    ],
+  };
+  const views = [
+    { id: "now", name: "Now", queryId: "orders-by-customer", settings },
+  ];
+  const condensed = (open: Set<string> = new Set(), list = views) =>
+    condenseProject(
+      compactViews(projectSchemaGraph(withRead, sources, list), new Set(), {
+        foldCurrent: true,
+      }),
+      open
+    );
+
+  it("folds tables no view reads into one list and drops read-only queries", () => {
+    const graph = condensed();
+    const ids = graph.nodes.map((node) => node.id);
+    expect(ids).toContain("table:orders");
+    expect(ids).toContain("table:customers");
+    expect(ids).not.toContain("table:items");
+    expect(ids).not.toContain("query:products-read");
+    // A query with a lookup keeps its card.
+    expect(ids).toContain("query:orders-by-customer");
+    const list = graph.nodes.find((node) => node.id === UNUSED_LIST)!;
+    expect(list.rows.map((row) => row.id)).toEqual([
+      "table:items",
+      "table:products",
+    ]);
+  });
+
+  it("marks the fields a view reads and names its readers", () => {
+    const graph = condensed();
+    const customers = graph.nodes.find(
+      (node) => node.id === "table:customers"
+    )!;
+    expect(customers.readers).toEqual(["Now"]);
+    expect(customers.rows.find((row) => row.id === "field:name")!.used).toBe(
+      true
+    );
+    expect(
+      customers.rows.find((row) => row.id === "field:joinedAt")!.used
+    ).toBeUndefined();
+    expect(graph.edges).toContainEqual(
+      expect.objectContaining({
+        kind: "reads",
+        from: { nodeId: "table:customers", rowId: "header" },
+        to: { nodeId: "view:now", rowId: "header" },
+      })
+    );
+  });
+
+  it("agrees with sourceUsage on who reads each table", () => {
+    const graph = condensed();
+    const usage = sourceUsage(withRead, sources, views);
+    for (const node of graph.nodes.filter((item) => item.kind === "table")) {
+      expect(usage.get(node.sourceId!)?.length ?? 0).toBe(
+        node.readers?.length ?? 0
+      );
+    }
+  });
+
+  it("draws an opened table as its own card and moves its lines to the list", () => {
+    const open = condensed(new Set(["table:items"]));
+    expect(open.nodes.find((node) => node.id === "table:items")!.unused).toBe(
+      true
+    );
+    const folded = condensed();
+    // The orders–items relationship now lands on items' row in the list.
+    expect(
+      folded.edges.some(
+        (edge) =>
+          edge.kind === "relationship" &&
+          edge.to.nodeId === UNUSED_LIST &&
+          edge.to.rowId === "table:items"
+      ) ||
+        folded.edges.some(
+          (edge) =>
+            edge.kind === "relationship" &&
+            edge.from.nodeId === UNUSED_LIST &&
+            edge.from.rowId === "table:items"
+        )
+    ).toBe(true);
+  });
+
+  it("folds nothing when there are no views", () => {
+    const graph = condensed(new Set(), []);
+    expect(graph.nodes.some((node) => node.id === UNUSED_LIST)).toBe(false);
+    expect(graph.nodes.some((node) => node.id === "table:items")).toBe(true);
   });
 });

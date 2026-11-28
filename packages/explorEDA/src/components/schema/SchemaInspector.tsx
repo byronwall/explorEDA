@@ -1152,19 +1152,24 @@ function Lineage({
           <span>Used by</span>
           <ul>
             {uses.map((item) => {
+              // A folded view's row is the chart itself.
               const heading =
-                item.row.kind === "use"
-                  ? headingOf(item.node, item.row.id)
-                  : undefined;
+                item.row.kind !== "use"
+                  ? undefined
+                  : item.node.folded
+                    ? item.row.label
+                    : headingOf(item.node, item.row.id);
               const chartId =
                 charts?.nodeId === item.node.id ? item.row.chartId : undefined;
               const text =
                 item.row.kind === "use"
-                  ? item.node.folded
-                    ? [item.node.title, item.row.label]
-                    : [item.node.title, heading, item.row.detail]
-                        .filter(Boolean)
-                        .join(" · ")
+                  ? [
+                      item.node.title,
+                      heading,
+                      item.node.folded ? undefined : item.row.detail,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")
                   : `${item.row.mark} ${item.row.label} in ${item.node.title}`;
               return (
                 <li

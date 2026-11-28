@@ -558,7 +558,12 @@ function usageNode({
   };
 
   for (const [key, group] of groups) {
-    rows.push({ id: `${key}:heading`, kind: "heading", label: group.heading });
+    rows.push({
+      id: `${key}:heading`,
+      kind: "heading",
+      label: group.heading,
+      chartId: group.chartId,
+    });
     for (const [field, roles] of group.fields) {
       const rowId = `use:${key}:${field}`;
       const from = sourceOf(field);

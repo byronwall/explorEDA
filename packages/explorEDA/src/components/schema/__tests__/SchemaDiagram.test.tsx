@@ -202,7 +202,7 @@ describe("SchemaDiagram editing", () => {
     const details = selectField("Customers", "Name");
     expect(details).toHaveTextContent("Used by");
     // Every view starts folded to its charts, so the use names the chart.
-    expect(details).toHaveTextContent("Orders viewBy customer");
+    expect(details).toHaveTextContent("Orders view · By customer");
     fireEvent.click(
       within(details).getByRole("button", { name: "Show By customer" })
     );
