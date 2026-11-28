@@ -10,7 +10,10 @@ import type {
 } from "@/types/AnalysisProject";
 import type { SavedDataStructure } from "@/types/SavedDataStructure";
 import { parseExpression } from "@/lib/calculations/parser/semantics";
-import { evaluateAnalysisQuery } from "@/lib/analysis/evaluateProject";
+import {
+  appendFieldMatch,
+  evaluateAnalysisQuery,
+} from "@/lib/analysis/evaluateProject";
 import {
   fieldName as queryFieldName,
   stepDetail,
@@ -246,6 +249,7 @@ export function projectSchemaGraph(
       usage: settingsFieldUsage(view.settings),
       label: (field) => lineage?.labels.get(field) ?? undefined,
       origin: (field) => lineage?.outputs.get(field),
+      fills: (field) => lineage?.fills.get(field) ?? [],
     });
     viewNode.node.queryId = view.queryId;
     viewNode.node.viewId = view.id;
@@ -271,6 +275,8 @@ interface QueryLineage {
   edges: SchemaEdge[];
   /** Where each output field comes from, for the views that read it. */
   outputs: Map<string, SchemaEndpoint>;
+  /** Other fields that fill an output field, such as an appended table's. */
+  fills: Map<string, SchemaEndpoint[]>;
   labels: Map<string, string>;
 }
 
@@ -451,6 +457,37 @@ function queryLineage(
     labels.set(field.id, queryFieldName(project, evaluation!.fields, field.id));
   }
 
+  // An appended table fills the base table's fields, by the rule the
+  // evaluator uses, so a view that reads one reads the other too.
+  const fills = new Map<string, SchemaEndpoint[]>();
+  const fields = evaluation?.fields ?? [];
+  const base = query.steps.find((step) => step.kind === "source");
+  for (const step of query.steps) {
+    if (step.kind !== "append" || base?.kind !== "source") continue;
+    const appended = project.sources.find((item) => item.id === step.sourceId);
+    if (!appended) continue;
+    const baseFields = fields.flatMap((field) =>
+      "sourceId" in field.origin && field.origin.sourceId === base.sourceId
+        ? [field.origin.fieldId]
+        : []
+    );
+    const matched = appendFieldMatch(
+      baseFields,
+      appended.fields.map((field) => field.id),
+      step.match
+    );
+    for (const field of fields) {
+      if (!("sourceId" in field.origin)) continue;
+      if (field.origin.sourceId !== base.sourceId) continue;
+      const fieldId = matched[field.origin.fieldId];
+      if (fieldId === undefined) continue;
+      fills.set(field.id, [
+        ...(fills.get(field.id) ?? []),
+        { nodeId: tableNodeId(step.sourceId), rowId: fieldRowId(fieldId) },
+      ]);
+    }
+  }
+
   return {
     queryId: query.id,
     node: {
@@ -464,6 +501,7 @@ function queryLineage(
     },
     edges,
     outputs,
+    fills,
     labels,
   };
 }
@@ -495,6 +533,7 @@ function usageNode({
   usage,
   label,
   origin,
+  fills = () => [],
 }: {
   id: string;
   title: string;
@@ -503,6 +542,8 @@ function usageNode({
   usage: SettingsFieldUsage;
   label: (field: string) => string | undefined;
   origin: (field: string) => SchemaEndpoint | undefined;
+  /** Other fields whose values a field also carries. */
+  fills?: (field: string) => SchemaEndpoint[];
 }): { node: SchemaNode; edges: SchemaEdge[] } {
   const rows: SchemaRow[] = [];
   const edges: SchemaEdge[] = [];
@@ -577,6 +618,7 @@ function usageNode({
         status: from ? undefined : "missing",
       });
       link("usage", from, rowId);
+      for (const fill of fills(field)) link("usage", fill, rowId);
     }
   }
   if (calculations.size) {

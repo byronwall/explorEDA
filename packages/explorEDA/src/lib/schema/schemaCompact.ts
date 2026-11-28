@@ -75,7 +75,7 @@ export function compactViews(
       continue;
     }
     const to = { nodeId: edge.to.nodeId, rowId: target };
-    const key = `${edge.from.nodeId}\u0000${edge.from.rowId}\u0000${target}`;
+    const key = `${edge.from.nodeId}\u0000${edge.from.rowId}\u0000${edge.to.nodeId}\u0000${target}`;
     if (seen.has(key)) continue;
     seen.add(key);
     edges.push({ ...edge, id: `${edge.id}:folded`, to });
@@ -122,11 +122,40 @@ export function condenseProject(
     }
   }
 
+  // A field a view reads, through any calculation; that view reads its table
+  // too, which covers a workspace view that has no query.
+  const viewIds = new Set(views.map((view) => view.id));
+  const usedRows = new Map<string, Set<string>>();
+  for (const node of graph.nodes) {
+    if (node.kind !== "table") continue;
+    const used = new Set<string>();
+    const tableReaders = new Set(readers.get(node.id) ?? []);
+    for (const row of node.rows) {
+      const trace = traceField(graph, { nodeId: node.id, rowId: row.id });
+      const reached = trace.downstream.filter((end) => viewIds.has(end.nodeId));
+      if (!reached.length) continue;
+      used.add(row.id);
+      for (const end of reached) {
+        tableReaders.add(views.find((view) => view.id === end.nodeId)!);
+      }
+    }
+    usedRows.set(node.id, used);
+    if (tableReaders.size) {
+      readers.set(
+        node.id,
+        views.filter((view) => tableReaders.has(view))
+      );
+    }
+  }
   const passThrough = new Set(
-    graph.nodes.filter(readsOneTable).map((node) => node.id)
+    graph.nodes
+      .filter((node) => readsOneTable(node) && !open.has(node.id))
+      .map((node) => node.id)
   );
+  // With no views, or one table, there is nothing to set aside.
+  const tableCount = graph.nodes.filter((node) => node.kind === "table").length;
   const unused = new Set(
-    views.length
+    views.length && tableCount > 1
       ? graph.nodes
           .filter((node) => node.kind === "table" && !readers.has(node.id))
           .map((node) => node.id)
@@ -142,13 +171,10 @@ export function condenseProject(
       continue;
     }
     const tableReaders = readers.get(node.id) ?? [];
-    const rows = node.rows.map((row) => {
-      const trace = traceField(graph, { nodeId: node.id, rowId: row.id });
-      const used = trace.downstream.some((end) =>
-        views.some((view) => view.id === end.nodeId)
-      );
-      return used ? { ...row, used: true } : row;
-    });
+    const used = usedRows.get(node.id)!;
+    const rows = node.rows.map((row) =>
+      used.has(row.id) ? { ...row, used: true } : row
+    );
     nodes.push({
       ...node,
       rows,

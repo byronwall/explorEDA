@@ -410,10 +410,23 @@ function spread(
           )
         : layer
     );
-  const counts = ordered.map(() => 1);
-  const room = viewport.height - margin * 2;
+  if (!ordered.length) return [];
   const widthFor = (total: number) =>
     margin * 2 + total * cardWidth + (total - 1) * columnGap;
+  // Too many layers for the width: the last ones share a column, read top to
+  // bottom, so nothing runs off to the right.
+  const budget = Math.max(
+    1,
+    Math.floor(
+      (viewport.width - margin * 2 + columnGap) / (cardWidth + columnGap)
+    )
+  );
+  while (ordered.length > budget) {
+    const last = ordered.pop()!;
+    ordered[ordered.length - 1] = [...ordered[ordered.length - 1]!, ...last];
+  }
+  const counts = ordered.map(() => 1);
+  const room = viewport.height - margin * 2;
   for (;;) {
     const heights = ordered.map((layer, index) =>
       Math.max(...split(layer, counts[index]!).map(stackHeight))

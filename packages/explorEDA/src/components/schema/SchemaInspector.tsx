@@ -51,6 +51,8 @@ import type {
 } from "./schemaEditing";
 import { CommitInput, Field } from "./InspectorControls";
 import { traceField } from "@/lib/schema/schemaTrace";
+import { querySources } from "@/lib/schema/sourceUsage";
+import { readsOneTable } from "@/lib/schema/schemaCompact";
 import { proposalRelationship } from "@/lib/project/linkProposals";
 
 /** Lets a use of a field jump to the chart in this workspace that reads it. */
@@ -150,6 +152,7 @@ export function SchemaInspector({
     title = node.title;
     body = (
       <TableBody
+        graph={graph}
         node={node}
         editing={editing}
         onSelect={onSelect}
@@ -232,11 +235,13 @@ export function SchemaInspector({
 }
 
 function TableBody({
+  graph,
   node,
   editing,
   onSelect,
   onToggleView,
 }: {
+  graph: SchemaGraph;
   node: SchemaNode;
   editing?: SchemaEditing;
   onSelect: (selection: SchemaSelection) => void;
@@ -253,6 +258,26 @@ function TableBody({
     return total ? `${total} ${total === 1 ? one : many}` : undefined;
   };
   const calculated = node.rows.filter((row) => row.calculation).length;
+  // The views that read this table, as the drawing's lines show, and a query
+  // that only reads it: the drawing omits that query's card.
+  const reads = querySources(graph);
+  const readers =
+    node.kind === "table"
+      ? graph.nodes.filter(
+          (item) =>
+            item.kind === "view" &&
+            node.sourceId &&
+            reads.get(item.queryId ?? "")?.has(node.sourceId)
+        )
+      : [];
+  const ownQueries =
+    node.kind === "table"
+      ? graph.nodes.filter(
+          (item) =>
+            readsOneTable(item) &&
+            reads.get(item.queryId ?? "")?.has(node.sourceId ?? "")
+        )
+      : [];
   return (
     <>
       <p className="eda-schema-inspector-facts">
@@ -269,6 +294,24 @@ function TableBody({
           .filter(Boolean)
           .join(" · ")}
       </p>
+      {readers.length > 0 && (
+        <div className="eda-schema-inspector-section">
+          <span>Read by</span>
+          <ul>
+            {readers.map((view) => (
+              <li key={view.id}>
+                <button
+                  type="button"
+                  className="eda-schema-inspector-link"
+                  onClick={() => onSelect({ kind: "table", nodeId: view.id })}
+                >
+                  {view.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {project && source && (
         <Field label="Key field">
           <Select
@@ -339,6 +382,19 @@ function TableBody({
           Add calculation
         </Button>
       )}
+      {project &&
+        ownQueries.map((query) => (
+          <Button
+            key={query.id}
+            type="button"
+            size="sm"
+            variant="outline"
+            tooltip="Show this query's card, where you can add steps"
+            onClick={() => onSelect({ kind: "table", nodeId: query.id })}
+          >
+            Steps of {query.title}
+          </Button>
+        ))}
       {node.kind === "table" && node.rows[0] && (
         <Button
           type="button"

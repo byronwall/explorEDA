@@ -178,6 +178,30 @@ describe("layoutSchemaGraph", () => {
     expect(order).toEqual(graph.nodes.map((node) => node.id));
   });
 
+  it("lays out an empty graph in a sized viewport", () => {
+    const layout = layoutSchemaGraph(
+      { nodes: [], edges: [] },
+      { width: 1000, height: 650 }
+    );
+    expect(layout.boxes).toEqual({});
+    expect(Number.isFinite(layout.width)).toBe(true);
+  });
+
+  it("fits every card within the viewport's width at full size", () => {
+    const { project, sources: tables } = createShopFixture();
+    const graph = projectSchemaGraph(project, tables, [
+      { id: "v", name: "View", queryId: "orders-by-customer" },
+    ]);
+    for (const width of [1512, 1280, 783, 390]) {
+      const layout = layoutSchemaGraph(graph, { width, height: 800 });
+      for (const box of Object.values(layout.boxes)) {
+        expect(box.x + box.width).toBeLessThanOrEqual(
+          Math.max(width, 248 + 64)
+        );
+      }
+    }
+  });
+
   it("scrolls down rather than running past a narrow viewport", () => {
     const graph = manyTables(6);
     const fitted = layoutSchemaGraph(graph, { width: 400, height: 300 });
