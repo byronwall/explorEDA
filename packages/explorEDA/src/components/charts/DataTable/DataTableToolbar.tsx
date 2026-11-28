@@ -120,7 +120,11 @@ export function DataTableToolbar({
         </Popover>
       )}
       <span
-        className="ml-auto whitespace-nowrap text-muted-foreground tabular-nums"
+        className="ml-auto whitespace-nowrap text-right text-muted-foreground tabular-nums"
+        // Room for the unfiltered count, so a filter moves nothing beside it.
+        style={{
+          minWidth: `${Math.max(data.length, filteredData.length).toLocaleString().length + 5}ch`,
+        }}
         aria-live="polite"
       >
         {filteredData.length.toLocaleString()}{" "}

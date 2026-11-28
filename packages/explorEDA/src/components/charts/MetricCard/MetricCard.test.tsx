@@ -102,7 +102,9 @@ it("updates from linked filters and field conversion, and inspects the same cont
   const card = screen.getByLabelText("Sum of Revenue");
   expect(within(card).getByText("$30.00")).toBeInTheDocument();
   expect(card).toHaveTextContent("1 excluded");
-  expect(card).toHaveTextContent("86% of the $35.00 total · 3 of 4 rows");
+  expect(card).toHaveTextContent(
+    "86% of the $35.00 total3 of 4 rows · 1 excluded"
+  );
   fireEvent.click(within(card).getByText("$30.00"));
   expect(card).toHaveTextContent("3 of 4 rows");
   fireEvent.click(card, { altKey: true });
@@ -116,7 +118,7 @@ it("updates from linked filters and field conversion, and inspects the same cont
   fireEvent.click(screen.getByText("Average", { exact: true }));
   expect(screen.queryByLabelText("Metric card trace")).not.toBeInTheDocument();
   expect(screen.getByLabelText("Average of Revenue")).toHaveTextContent(
-    "$15.00+$3.33 vs $11.67 for all rows · 3 of 4 rows"
+    "$15.00+$3.33 vs $11.67 for all rows3 of 4 rows"
   );
   fireEvent.click(screen.getByText("Count", { exact: true }));
   expect(screen.getByLabelText("Row count")).toHaveTextContent(

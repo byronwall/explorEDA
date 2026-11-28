@@ -345,10 +345,28 @@ export function planTimeSeries(
     if (value < yLow) yLow = value;
     if (value > yHigh) yHigh = value;
   }
+  const yScaleType = filled ? "linear" : settings.yAxis.scaleType;
+  // Lines can use a true log scale; filled areas keep proportional heights.
+  const log = !filled && settings.yAxis.scaleType === "log";
+  const yScale = numericScale(
+    { ...settings.yAxis, scaleType: yScaleType },
+    !filled
+  ).domain(
+    log
+      ? logDomain([...allValues, ...values], settings.yAxis)
+      : boundedDomain(
+          yHigh === yLow ? [yLow, yLow + 1] : [yLow, yHigh],
+          settings.yAxis
+        )
+  );
+  // Bounds draw exactly as entered.
+  if (!hasAxisBounds(settings.yAxis)) yScale.nice();
   // Y labels claim their measured width, never less than the old estimate.
+  // The drawn domain's ends set it, so a filter that leaves the axis alone
+  // leaves the plot where it was.
   const yTickSize = settings.yAxis.tickFontSize ?? typography.tickSize;
   const yLabelWidth = Math.max(
-    ...[yLow, yHigh].map((value) => {
+    ...yScale.domain().map((value) => {
       const text = formatValue(value);
       return Math.max(
         text.length * yTickSize * 0.6,
@@ -380,24 +398,7 @@ export function planTimeSeries(
   const xScale = scaleLinear()
     .domain(Number.isFinite(start) ? [start, end] : [0, DAY_MS])
     .range([0, plotWidth]);
-  const yScaleType = filled ? "linear" : settings.yAxis.scaleType;
-  // Lines can use a true log scale; filled areas keep proportional heights.
-  const log = !filled && settings.yAxis.scaleType === "log";
-  const yScale = numericScale(
-    { ...settings.yAxis, scaleType: yScaleType },
-    !filled
-  )
-    .domain(
-      log
-        ? logDomain([...allValues, ...values], settings.yAxis)
-        : boundedDomain(
-            yHigh === yLow ? [yLow, yLow + 1] : [yLow, yHigh],
-            settings.yAxis
-          )
-    )
-    .range([plotHeight, 0]);
-  // Bounds draw exactly as entered.
-  if (!hasAxisBounds(settings.yAxis)) yScale.nice();
+  yScale.range([plotHeight, 0]);
   for (const point of points) {
     point.x = xScale((point.start + point.end) / 2);
     const value =
