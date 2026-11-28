@@ -1016,14 +1016,13 @@ function SchemaCard({
         {hiddenLines > 0 && (
           <Unlink
             className="eda-schema-hidden-lines"
-            aria-label={`${hiddenLines} ${hiddenLines === 1 ? "line" : "lines"} not drawn`}
-          >
-            <title>
-              {hiddenLines === 1
+            role="img"
+            aria-label={
+              hiddenLines === 1
                 ? "1 line is not drawn: it would cross another card"
-                : `${hiddenLines} lines are not drawn: they would cross other cards`}
-            </title>
-          </Unlink>
+                : `${hiddenLines} lines are not drawn: they would cross other cards`
+            }
+          />
         )}
         {node.detail && (
           <span
