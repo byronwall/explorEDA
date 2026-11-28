@@ -98,8 +98,11 @@ export function ProjectRail({
   initialConnection?: string;
   problems: ProjectFolder["problems"];
   suggestedLinks: number;
-  /** Opens the schema diagram; missing where the view has none. */
-  onOpenSchema?: () => void;
+  /**
+   * Opens the schema diagram, with a view lit when given; missing where the
+   * view has none.
+   */
+  onOpenSchema?: (viewId?: string) => void;
   /** The analyses and notebooks that read each source, by source ID. */
   usedBy: Record<string, string[]>;
 }) {
@@ -233,6 +236,14 @@ export function ProjectRail({
                       current={analysis.path === selected.path}
                       onSelect={() => choose({ path: analysis.path, index: 0 })}
                       actions={readOnly ? undefined : actions}
+                      onSchema={
+                        onOpenSchema
+                          ? () => {
+                              setShown(false);
+                              onOpenSchema(`${analysis.path}#0`);
+                            }
+                          : undefined
+                      }
                     />
                   </li>
                 ))}
@@ -629,6 +640,7 @@ function AnalysisRow({
   current,
   onSelect,
   actions,
+  onSchema,
 }: {
   path: string;
   name: string;
@@ -636,6 +648,8 @@ function AnalysisRow({
   onSelect: () => void;
   /** Absent when viewing only. */
   actions?: ProjectActions;
+  /** Opens the Schema diagram with this analysis lit. */
+  onSchema?: () => void;
 }) {
   const [mode, setMode] = useState<"idle" | "rename" | "delete">("idle");
   const [draft, setDraft] = useState(name);
@@ -690,12 +704,12 @@ function AnalysisRow({
           current={current}
           onClick={onSelect}
           action={
-            actions && (
+            (actions || onSchema) && (
               <DropdownMenu.Root modal={false}>
                 <DropdownMenu.Trigger asChild>
                   <IconButton
                     className="app-row-reveal"
-                    label={`Rename or delete ${name}`}
+                    label={`More for ${name}`}
                   >
                     <Ellipsis />
                   </IconButton>
@@ -712,25 +726,37 @@ function AnalysisRow({
                       next.current = false;
                     }}
                   >
-                    <DropdownMenu.Item
-                      className="app-menu-item"
-                      onSelect={() => {
-                        next.current = true;
-                        setDraft(name);
-                        setMode("rename");
-                      }}
-                    >
-                      <Pencil /> Rename
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item
-                      className="app-menu-item app-menu-danger"
-                      onSelect={() => {
-                        next.current = true;
-                        setMode("delete");
-                      }}
-                    >
-                      <Trash2 /> Delete…
-                    </DropdownMenu.Item>
+                    {onSchema && (
+                      <DropdownMenu.Item
+                        className="app-menu-item"
+                        onSelect={onSchema}
+                      >
+                        <Network /> Show what it reads
+                      </DropdownMenu.Item>
+                    )}
+                    {actions && (
+                      <>
+                        <DropdownMenu.Item
+                          className="app-menu-item"
+                          onSelect={() => {
+                            next.current = true;
+                            setDraft(name);
+                            setMode("rename");
+                          }}
+                        >
+                          <Pencil /> Rename
+                        </DropdownMenu.Item>
+                        <DropdownMenu.Item
+                          className="app-menu-item app-menu-danger"
+                          onSelect={() => {
+                            next.current = true;
+                            setMode("delete");
+                          }}
+                        >
+                          <Trash2 /> Delete…
+                        </DropdownMenu.Item>
+                      </>
+                    )}
                   </DropdownMenu.Content>
                 </DropdownMenu.Portal>
               </DropdownMenu.Root>

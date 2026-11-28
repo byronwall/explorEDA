@@ -41,10 +41,12 @@ import type { LinkProposal } from "@/lib/project/linkProposals";
 /** `ExplorEda`'s handle, plus a way to show the Schema diagram. */
 export interface ExplorEdaProjectHandle extends ExplorEdaHandle {
   /**
-   * Opens the Schema diagram, with this source's table selected. Always set
-   * on an `ExplorEdaProject` handle; optional so an `ExplorEdaHandle` ref fits.
+   * Opens the Schema diagram on the whole project. With `sourceId`, that
+   * table is selected; with `viewId`, that view lights up what it reads.
+   * Always set on an `ExplorEdaProject` handle; optional so an
+   * `ExplorEdaHandle` ref fits.
    */
-  openSchema?: (sourceId?: string) => void;
+  openSchema?: (focus?: { sourceId?: string; viewId?: string }) => void;
 }
 
 export interface ExplorEdaProjectChange {
@@ -136,9 +138,17 @@ export const ExplorEdaProject = forwardRef<
   const chartRef = useRef<ExplorEdaHandle>(null);
   const [openPanel, setOpenPanel] = useState<"schema" | "query">();
   const [diagramOpen, setDiagramOpen] = useState(Boolean(schemaFocus));
-  const [diagramFocus, setDiagramFocus] = useState(schemaFocus);
-  const openDiagram = (sourceId?: string) => {
-    setDiagramFocus(sourceId);
+  const [diagramFocus, setDiagramFocus] = useState(
+    schemaFocus ? `table:${schemaFocus}` : undefined
+  );
+  const openDiagram = (focus?: { sourceId?: string; viewId?: string }) => {
+    setDiagramFocus(
+      focus?.viewId
+        ? `view:${focus.viewId}`
+        : focus?.sourceId
+          ? `table:${focus.sourceId}`
+          : undefined
+    );
     setOpenPanel(undefined);
     setDiagramOpen(true);
   };
@@ -339,7 +349,7 @@ export const ExplorEdaProject = forwardRef<
           update(project, { ...shownView, settings: undefined })
         }
         onOpenView={readOnly ? undefined : onOpenView}
-        onOpenDiagram={openDiagram}
+        onOpenDiagram={() => openDiagram()}
         suggestions={readOnly ? undefined : suggestions}
       />
     ),
@@ -467,7 +477,7 @@ export const ExplorEdaProject = forwardRef<
                 },
             viewId: shownView.id,
             onAddSource,
-            focusNodeId: diagramFocus ? `table:${diagramFocus}` : undefined,
+            focusNodeId: diagramFocus,
             open: diagramOpen,
             onOpenChange: setDiagramOpen,
           }}

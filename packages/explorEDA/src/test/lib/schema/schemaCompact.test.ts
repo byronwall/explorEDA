@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createShopFixture } from "@/test/fixtures/shopProject";
-import { projectSchemaGraph } from "@/lib/schema/schemaGraph";
+import { projectSchemaGraph, tableSchemaGraph } from "@/lib/schema/schemaGraph";
 import {
   compactViews,
   condenseProject,
@@ -169,5 +169,84 @@ describe("condenseProject", () => {
     const graph = condensed(new Set(), []);
     expect(graph.nodes.some((node) => node.id === UNUSED_LIST)).toBe(false);
     expect(graph.nodes.some((node) => node.id === "table:items")).toBe(true);
+  });
+});
+
+describe("condenseProject edge cases", () => {
+  it("never folds the only table of a workspace", () => {
+    const graph = tableSchemaGraph({
+      title: "Data",
+      fields: [{ name: "amount", label: "Amount" }],
+      calculations: [],
+      settings: {
+        charts: [
+          { id: "c", type: "bar", title: "C", field: "amount", filters: [] },
+        ],
+        calculations: [],
+      } as unknown as SavedDataStructure,
+    });
+    const drawn = condenseProject(graph, new Set());
+    expect(drawn.nodes.some((node) => node.id === UNUSED_LIST)).toBe(false);
+  });
+
+  it("marks an appended table's fields used when a view reads the field they fill", () => {
+    const appended = {
+      ...project,
+      queries: [
+        {
+          id: "all-amounts",
+          name: "All amounts",
+          glyph: "◆",
+          frameLabel: "All amounts",
+          steps: [
+            { id: "s", kind: "source" as const, sourceId: "orders" },
+            {
+              id: "a",
+              kind: "append" as const,
+              inputStepId: "s",
+              sourceId: "items",
+              field: "source",
+              match: { amount: "revenue" },
+            },
+          ],
+          outputStepId: "a",
+        },
+      ],
+    };
+    const chart = {
+      charts: [
+        {
+          id: "c",
+          type: "bar",
+          title: "C",
+          field: "orders.amount",
+          filters: [],
+        },
+      ],
+      calculations: [],
+    } as unknown as SavedDataStructure;
+    const drawn = condenseProject(
+      projectSchemaGraph(appended, sources, [
+        { id: "v", name: "V", queryId: "all-amounts", settings: chart },
+      ]),
+      new Set()
+    );
+    const items = drawn.nodes.find((node) => node.id === "table:items")!;
+    expect(items.rows.find((row) => row.id === "field:revenue")!.used).toBe(
+      true
+    );
+  });
+
+  it("keeps each folded view's line when two views share a chart id", () => {
+    const compact = compactViews(graph, new Set(), { foldCurrent: true });
+    const into = (viewId: string) =>
+      compact.edges.some(
+        (edge) =>
+          edge.kind === "usage" &&
+          edge.to.nodeId === viewId &&
+          edge.from.rowId === "field:name"
+      );
+    expect(into("view:now")).toBe(true);
+    expect(into("view:other")).toBe(true);
   });
 });

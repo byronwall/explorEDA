@@ -527,7 +527,8 @@ export function ProjectWorkspace({
         usedBy={usedBy}
         onOpenSchema={
           project.sources.length > 1 && view && !notebook
-            ? () => workspace.current?.openSchema?.()
+            ? (viewId?: string) =>
+                workspace.current?.openSchema?.(viewId ? { viewId } : undefined)
             : undefined
         }
       />

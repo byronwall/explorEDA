@@ -180,9 +180,23 @@ export function SchemaDiagram({
     () => compactViews(fullGraph, expandedViews, { foldCurrent: true }),
     [fullGraph, expandedViews]
   );
+  // Tables a suggested link touches stay drawn, so each link can be
+  // reviewed on its own.
+  const suggestionTables = useMemo(
+    () =>
+      (editing?.project?.suggestions ?? []).flatMap((suggestion) => [
+        tableNodeId(suggestion.from.sourceId),
+        tableNodeId(suggestion.to.sourceId),
+      ]),
+    [editing?.project?.suggestions]
+  );
   const graph = useMemo(
-    () => condenseProject(detailGraph, openTables),
-    [detailGraph, openTables]
+    () =>
+      condenseProject(
+        detailGraph,
+        new Set([...openTables, ...suggestionTables])
+      ),
+    [detailGraph, openTables, suggestionTables]
   );
   const toggleTable = useCallback((nodeId: string) => {
     setOpenTables((current) => {
@@ -227,6 +241,19 @@ export function SchemaDiagram({
     fittedKey.current = fitKey;
     fit();
   }, [fit, fitKey, width]);
+
+  // Opening or folding a card can change the drawing's width; keep it
+  // centered when it fits, and inside the viewport when it does not.
+  useEffect(() => {
+    setView((current) => {
+      const drawn = layout.width * current.scale;
+      const x =
+        drawn <= width
+          ? (width - drawn) / 2
+          : Math.min(0, Math.max(width - drawn, current.x));
+      return x === current.x ? current : { ...current, x };
+    });
+  }, [layout.width, width]);
 
   const zoomAt = useCallback(
     (factor: number, originX = width / 2, originY = height / 2) => {
@@ -378,11 +405,34 @@ export function SchemaDiagram({
     [graph]
   );
 
+  // A selection the drawing folds away, such as a table from a link in the
+  // details or a query that only reads a table, opens on the canvas.
+  useEffect(() => {
+    if (!selection) return;
+    const named =
+      selection.kind === "table" || selection.kind === "field"
+        ? [selection.nodeId]
+        : selection.kind === "relationship"
+          ? (() => {
+              const edge = detailGraph.edges.find(
+                (item) => item.id === selection.edgeId
+              );
+              return edge ? [edge.from.nodeId, edge.to.nodeId] : [];
+            })()
+          : selection.kind === "proposal"
+            ? [selection.from.nodeId, selection.to.nodeId]
+            : [];
+    const hidden = named.filter((id) => !nodesById.has(id));
+    if (hidden.length)
+      setOpenTables((current) => new Set([...current, ...hidden]));
+  }, [selection, detailGraph, nodesById]);
+
   // Rows and lines tied to the selection, so the eye follows it.
   const emphasis = useMemo(() => {
     const rows = new Set<string>();
     const edges = new Set<string>();
     const key = (end: SchemaEndpoint) => `${end.nodeId}\u0000${end.rowId}`;
+    const lit = new Set<string>();
     if (selection?.kind === "relationship") {
       const edge = graph.edges.find((item) => item.id === selection.edgeId);
       if (edge) {
@@ -402,6 +452,25 @@ export function SchemaDiagram({
         rows.add(key(edge.from));
         rows.add(key(edge.to));
       }
+    } else if (
+      selection?.kind === "table" &&
+      nodesById.get(selection.nodeId)?.kind === "view"
+    ) {
+      // A view lights up what it reads: its tables, the fields it uses, and
+      // its query; the rest fades.
+      const view = nodesById.get(selection.nodeId)!;
+      const reads = new Set([view.id, `query:${view.queryId}`]);
+      reads.forEach((id) => nodesById.has(id) && lit.add(id));
+      for (const edge of graph.edges) {
+        if (!reads.has(edge.to.nodeId)) continue;
+        if (edge.kind === "usage") {
+          rows.add(key(edge.from));
+          lit.add(edge.from.nodeId);
+        } else {
+          edges.add(edge.id);
+          lit.add(edge.from.nodeId);
+        }
+      }
     } else if (selection?.kind === "table") {
       for (const edge of graph.edges) {
         if (
@@ -419,13 +488,15 @@ export function SchemaDiagram({
       if (suggestion)
         suggestionEnds(suggestion).forEach((end) => rows.add(key(end)));
     }
-    // Cards outside a field's lineage fade, so its path stands out.
+    // Cards outside a field's lineage, or a lit view's reads, fade.
     const nodes =
       selection?.kind === "field"
         ? new Set([...rows].map((row) => row.split("\u0000")[0]!))
-        : undefined;
+        : lit.size
+          ? lit
+          : undefined;
     return { rows, edges, key, nodes };
-  }, [graph, selection, suggestions]);
+  }, [graph, nodesById, selection, suggestions]);
 
   // Every drawn line is routed in one pass, so none runs through a card. A
   // view's field lines show only for the selection, so they route apart.
