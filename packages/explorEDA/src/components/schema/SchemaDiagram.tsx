@@ -986,11 +986,6 @@ function SchemaCard({
           <span
             className="eda-schema-detail"
             data-readers={node.readers?.length ? "" : undefined}
-            title={
-              node.readers && node.readers.length > 1
-                ? node.readers.join(", ")
-                : undefined
-            }
           >
             {node.detail}
           </span>
