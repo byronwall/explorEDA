@@ -1,5 +1,20 @@
 # exploreda
 
+## 0.7.0
+
+### Minor Changes
+
+- da0321a: The Schema diagram has a Layers menu to show or hide view lines, relationships and the unused list, and a Coverage grid of tables by views.
+- 1d11812: Selecting a view in the Schema diagram lights up the tables, fields and query it reads, and dims the rest. ExplorEdaProject's openSchema now takes { sourceId?, viewId? }, and the analysis menu opens the diagram with that analysis lit.
+- f0d6c3f: The Schema diagram opens on the whole project at full size. Tables no view reads fold into one list, fields that views read are marked, and each table draws one line to each view that reads it.
+- 300340f: Suggested links now cover CSV and other file sources: the schema diagram and project rail propose relationships between files that share key names and values. The `add_data` and `project` agent tools, and `exploreda-dsl project`, return these as `relate` lines, and the agent guidance tells agents to declare them.
+
+### Patch Changes
+
+- 387d2de: Filtering no longer moves anything inside a chart. Metric cards keep their value, note and trend in fixed places, and each trend now labels its time field and first and last period. Header controls float over the end of the title instead of squeezing it. Legend counts, table row counts, scatter fit labels and line-chart axes also stay put.
+- b1e1d10: The Schema diagram keeps lines inside the drawing, keeps a lit view lit when the lines layer is hidden, and draws a single-table workspace as before.
+- 6557431: Schema diagram lines are routed so none crosses a card. A line that can't be placed is not drawn, and its cards show a marker.
+
 ## 0.6.0
 
 ### Minor Changes
