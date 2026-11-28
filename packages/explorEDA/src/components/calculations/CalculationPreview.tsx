@@ -6,6 +6,7 @@ import type {
 import type { DatumObject, HasId } from "@/providers/DataLayerProvider";
 import { calculationValue } from "./calculationHelpers";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Props = {
   calculation: CalculationDefinition;
@@ -65,11 +66,10 @@ export function CalculationPreview({
         </p>
         {errors.size > 0 && (
           <label className="flex items-center gap-2 text-xs">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={errorsOnly}
-              onChange={(event) => {
-                setErrorsOnly(event.target.checked);
+              onCheckedChange={(next) => {
+                setErrorsOnly(next === true);
                 setPage(0);
               }}
             />

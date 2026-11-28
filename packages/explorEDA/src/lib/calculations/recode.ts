@@ -83,10 +83,7 @@ function constant(expression: Expression): CategoryValue | undefined {
   return undefined;
 }
 
-/**
- * Reads recode() text the editor can show: one field, then constant pairs
- * with text or null targets. Anything else stays a plain formula.
- */
+/** Reads recode() text, such as a formula draft; see recodeOf. */
 export function readRecode(text: string): Recode | undefined {
   let expression: Expression;
   try {
@@ -94,6 +91,16 @@ export function readRecode(text: string): Recode | undefined {
   } catch {
     return undefined;
   }
+  return recodeOf(expression);
+}
+
+/**
+ * Reads a recode() the editor can show: one field, then constant pairs with
+ * text or null targets. Anything else stays a plain formula. A saved
+ * calculation is already parsed, so pass its expression: parsing a large
+ * mapping again takes seconds.
+ */
+export function recodeOf(expression: Expression): Recode | undefined {
   if (expression.type !== "function" || !isRecodeExpression(expression)) {
     return undefined;
   }

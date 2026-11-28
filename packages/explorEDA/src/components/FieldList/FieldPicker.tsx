@@ -4,6 +4,7 @@ import { FieldMetadata } from "@/components/FieldMetadata";
 import { CalculatedFieldBadge } from "@/components/calculations/CalculatedFieldBadge";
 import { summarizeField } from "@/components/SummaryTable/components/FieldDistribution";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { useFilteredFieldProfiles } from "@/hooks/useFilteredFieldProfiles";
 import { useDataLayer } from "@/providers/DataLayerProvider";
@@ -89,15 +90,14 @@ export function FieldPicker({
               return (
                 <li key={profile.name} className="eda-field-row">
                   <label className="eda-field-row-line eda-field-pick">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={checked}
                       // The last field stays, so the table never goes empty.
                       disabled={checked && chosen.size === 1}
                       aria-label={label}
-                      onChange={(event) =>
+                      onCheckedChange={(next) =>
                         onChange(
-                          event.target.checked
+                          next === true
                             ? [...selected, profile.name]
                             : selected.filter((field) => field !== profile.name)
                         )

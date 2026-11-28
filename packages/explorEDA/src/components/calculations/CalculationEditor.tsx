@@ -31,7 +31,7 @@ import { CalculationPreview } from "./CalculationPreview";
 import { CalculationTrace } from "./CalculationTrace";
 import { dependentCalculations } from "./calculationHelpers";
 import { CheckCircle2, CircleAlert } from "lucide-react";
-import { readRecode } from "@/lib/calculations/recode";
+import { readRecode, recodeOf } from "@/lib/calculations/recode";
 import { CategoryMapDialog, type CategoryMapTarget } from "./CategoryMapEditor";
 
 type Editor = {
@@ -61,9 +61,7 @@ export function useMapCategories() {
   return (field: string, focus?: HTMLElement | null) => {
     const calc = calculations.find((item) => item.resultColumnName === field);
     editor.openMap(
-      calc && readRecode(calc.expression.rawInput)
-        ? { name: field }
-        : { field },
+      calc && recodeOf(calc.expression) ? { name: field } : { field },
       focus
     );
   };
@@ -122,7 +120,7 @@ export function CalculationEditorProvider({
   const open = useCallback(
     (name?: string, row?: number, target?: HTMLElement | null) => {
       const calc = calculations.find((item) => item.resultColumnName === name);
-      if (calc && readRecode(calc.expression.rawInput)) {
+      if (calc && recodeOf(calc.expression)) {
         openMap({ name }, target);
       } else {
         openFormula(name, row, target);
@@ -327,7 +325,8 @@ export function CalculationEditorProvider({
             onClose={() => setVisible(false)}
             onMapCategories={() =>
               openMap(
-                readRecode(draft.expression)
+                draft.expression !== calculation?.expression.rawInput &&
+                  readRecode(draft.expression)
                   ? { name: selected, text: draft.expression }
                   : { name: selected }
               )

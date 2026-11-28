@@ -1650,15 +1650,12 @@
   padding: 2px 2px 8px;
   scrollbar-gutter: stable;
 }
-.eda-settings
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.eda-settings input:not([type="radio"]):not([type="range"]),
 .eda-settings button[role="combobox"],
 .eda-settings [data-slot="select-trigger"],
 .eda-settings select,
-.eda-inspector
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-.eda-add-chart-fields
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+.eda-inspector input:not([type="radio"]):not([type="range"]),
+.eda-add-chart-fields input:not([type="radio"]):not([type="range"]),
 .eda-add-chart-fields button[role="combobox"],
 .eda-add-chart-fields [data-slot="select-trigger"] {
   min-width: 0;
@@ -1707,8 +1704,8 @@
   align-items: center;
   gap: 6px 10px;
 }
-/* The field inspector. Native radios and checkboxes follow the theme, and
-   failure text uses a red that reads on a dark popover. */
+/* The field inspector. Native radios follow the theme, and failure text
+   uses a red that reads on a dark popover. */
 .dark .eda-inspector {
   --destructive: hsl(0 72% 66%);
   color-scheme: dark;
@@ -1937,15 +1934,16 @@ html {
   padding-left: 6px;
   cursor: pointer;
 }
-.eda-field-pick > input {
-  flex-shrink: 0;
+.eda-field-pick > [data-slot="checkbox"] {
   margin-right: 6px;
+  /* The row draws the focus ring. */
+  outline: none;
 }
 .eda-field-pick-name {
   flex: 1 1 auto;
   min-width: 0;
 }
-.eda-field-pick:has(input:focus-visible) {
+.eda-field-pick:has([data-slot="checkbox"]:focus-visible) {
   outline: 2px solid var(--ring);
   outline-offset: -2px;
 }
@@ -6083,13 +6081,6 @@ html {
 .eda-catmap-check {
   width: 28px;
 }
-.eda-catmap-check input {
-  display: block;
-  width: 14px;
-  height: 14px;
-  margin: 0;
-  accent-color: var(--primary);
-}
 .eda-catmap-count {
   text-align: right !important;
   font-variant-numeric: tabular-nums;
@@ -6128,9 +6119,6 @@ html {
 /* Set to missing reads as a value; a null that is only kept stays muted. */
 .eda-catmap-missing-set::placeholder {
   color: var(--foreground) !important;
-}
-.dark .eda-catmap input[type="checkbox"] {
-  color-scheme: dark;
 }
 .eda-catmap-null {
   flex-shrink: 0;

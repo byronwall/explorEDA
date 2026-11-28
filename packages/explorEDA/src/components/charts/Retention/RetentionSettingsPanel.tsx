@@ -1,5 +1,6 @@
 import { FieldSelector } from "@/components/FieldSelector";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ActionTooltip } from "@/components/ui/tooltip";
@@ -163,16 +164,16 @@ export function RetentionSettingsPanel({
             {events.map((item) => (
               <li key={item.key}>
                 <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={activity.has(item.key)}
-                    onChange={(event) => {
-                      const next = event.target.checked
-                        ? [...(settings.activityEvents ?? []), item.value]
-                        : (settings.activityEvents ?? []).filter(
-                            (value) =>
-                              categoryKey(categoryValue(value)) !== item.key
-                          );
+                    onCheckedChange={(checked) => {
+                      const next =
+                        checked === true
+                          ? [...(settings.activityEvents ?? []), item.value]
+                          : (settings.activityEvents ?? []).filter(
+                              (value) =>
+                                categoryKey(categoryValue(value)) !== item.key
+                            );
                       change({
                         activityEvents: next.length ? next : undefined,
                       });

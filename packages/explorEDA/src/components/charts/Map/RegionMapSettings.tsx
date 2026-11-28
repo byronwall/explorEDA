@@ -1,6 +1,7 @@
 import { useId, useMemo, useState } from "react";
 import { FieldSelector } from "@/components/FieldSelector";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ActionTooltip } from "@/components/ui/tooltip";
@@ -315,15 +316,14 @@ export function RegionMapSettings({
         />
         <Label htmlFor={`${id}-labels`}>Region labels</Label>
         <ActionTooltip content="Show the joined region key at each visible region's center. Turn labels off when regions are small or overlap.">
-          <input
+          <Checkbox
             id={`${id}-labels`}
             className="justify-self-start"
-            type="checkbox"
             checked={settings.showRegionLabels ?? false}
-            onChange={(e) =>
+            onCheckedChange={(next) =>
               onSettingsChange({
                 ...settings,
-                showRegionLabels: e.target.checked,
+                showRegionLabels: next === true,
               })
             }
           />

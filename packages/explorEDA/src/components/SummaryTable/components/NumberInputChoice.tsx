@@ -1,4 +1,5 @@
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ActionTooltip } from "@/components/ui/tooltip";
 import {
   numberInputLabel,
@@ -116,12 +117,11 @@ export function NumberInputChoice({ settings, counts, onChange }: Props) {
             key={option.key}
             className="flex cursor-pointer flex-wrap items-center gap-x-2 py-0.5"
           >
-            <input
-              type="checkbox"
+            <Checkbox
               checked={Boolean(settings[option.key])}
-              onChange={(event) =>
+              onCheckedChange={(next) =>
                 onChange(
-                  option.key === "currencyInput" && event.target.checked
+                  option.key === "currencyInput" && next === true
                     ? {
                         currencyInput: true,
                         currency,
@@ -131,7 +131,7 @@ export function NumberInputChoice({ settings, counts, onChange }: Props) {
                             ? "currency"
                             : settings.format,
                       }
-                    : { [option.key]: event.target.checked || undefined }
+                    : { [option.key]: next === true || undefined }
                 )
               }
             />

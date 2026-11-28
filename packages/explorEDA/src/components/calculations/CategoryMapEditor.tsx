@@ -6,6 +6,7 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, CircleAlert, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +30,7 @@ import {
   categoryOf,
   readRecode,
   recodeLookup,
+  recodeOf,
   recodeText,
   suggestGroups,
   type CategoryValue,
@@ -167,8 +169,10 @@ function CategoryMapForm({
     (calc) => calc.resultColumnName === target.name
   );
   const initial = useMemo(
-    () =>
-      readRecode(target.text ?? saved?.expression.rawInput ?? "") ?? undefined,
+    () => {
+      if (target.text !== undefined) return readRecode(target.text);
+      return saved && recodeOf(saved.expression);
+    },
     // The draft starts once, when the editor opens.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
@@ -284,6 +288,7 @@ function CategoryMapForm({
   const allShown =
     visible.length > 0 &&
     visible.every((item) => selected.has(keyOf(item.value)));
+  const someShown = visible.some((item) => selected.has(keyOf(item.value)));
 
   const setTarget = (value: CategoryValue, next: string | null | undefined) => {
     if (unmappedOnly)
@@ -684,12 +689,12 @@ function CategoryMapForm({
             <thead>
               <tr>
                 <th className="eda-catmap-check">
-                  <input
-                    type="checkbox"
+                  <Checkbox
+                    className="block"
                     aria-label="Select shown values"
-                    checked={allShown}
+                    checked={allShown || (someShown ? "indeterminate" : false)}
                     disabled={!visible.length}
-                    onChange={() =>
+                    onCheckedChange={() =>
                       setSelected((previous) => {
                         const copy = new Set(previous);
                         for (const item of visible) {
@@ -719,11 +724,11 @@ function CategoryMapForm({
                     data-selected={selected.has(key) || undefined}
                   >
                     <td className="eda-catmap-check">
-                      <input
-                        type="checkbox"
+                      <Checkbox
+                        className="block"
                         aria-label={`Select ${label}`}
                         checked={selected.has(key)}
-                        onChange={() => toggle(item.value)}
+                        onCheckedChange={() => toggle(item.value)}
                       />
                     </td>
                     <td>
